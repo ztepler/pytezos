@@ -1,0 +1,445 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pytezos.repl.arithmetic &mdash; PyTezos  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+    <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> PyTezos
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../quick_start.html">Quick start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../integration_tests.html">Michelson integration tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pytezos_cli.html">Pytezos CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../high_level.html">High-level interfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../crypto.html">Cryptography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../operation_groups.html">Building and parsing operations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rpc_queries.html">RPC query engine</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../script_wrappers.html">Michelson script wrappers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pack.html">Michelson type encoding</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../code.html">Working with Michelson code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../repl.html">Michelson REPL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../inspect_proposals.html">Inspecting proposals</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">PyTezos</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>pytezos.repl.arithmetic</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pytezos.repl.arithmetic</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">hashlib</span> <span class="kn">import</span> <span class="n">sha256</span><span class="p">,</span> <span class="n">sha512</span>
+
+<span class="kn">from</span> <span class="nn">pytezos</span> <span class="kn">import</span> <span class="n">crypto</span> <span class="k">as</span> <span class="n">crypto</span>
+<span class="kn">from</span> <span class="nn">pytezos.repl.control</span> <span class="kn">import</span> <span class="n">instruction</span>
+<span class="kn">from</span> <span class="nn">pytezos.repl.context</span> <span class="kn">import</span> <span class="n">Context</span>
+<span class="kn">from</span> <span class="nn">pytezos.repl.types</span> <span class="kn">import</span> <span class="n">assert_stack_type</span><span class="p">,</span> <span class="n">Int</span><span class="p">,</span> <span class="n">Nat</span><span class="p">,</span> <span class="n">Timestamp</span><span class="p">,</span> <span class="n">Mutez</span><span class="p">,</span> <span class="n">Option</span><span class="p">,</span> <span class="n">Pair</span><span class="p">,</span> <span class="n">Bool</span><span class="p">,</span> <span class="n">Bytes</span><span class="p">,</span> <span class="n">Key</span><span class="p">,</span> \
+    <span class="n">Signature</span><span class="p">,</span> <span class="n">KeyHash</span><span class="p">,</span> <span class="n">dispatch_type_map</span>
+
+
+<div class="viewcode-block" id="do_abs"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.arithmetic.do_abs">[docs]</a><span class="nd">@instruction</span><span class="p">(</span><span class="s1">&#39;ABS&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">do_abs</span><span class="p">(</span><span class="n">ctx</span><span class="p">:</span> <span class="n">Context</span><span class="p">,</span> <span class="n">prim</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">annots</span><span class="p">):</span>
+    <span class="n">top</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">pop1</span><span class="p">()</span>
+    <span class="n">assert_stack_type</span><span class="p">(</span><span class="n">top</span><span class="p">,</span> <span class="n">Int</span><span class="p">)</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">Nat</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">top</span><span class="p">)))</span>
+    <span class="n">ctx</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">annots</span><span class="o">=</span><span class="n">annots</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="do_add"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.arithmetic.do_add">[docs]</a><span class="nd">@instruction</span><span class="p">(</span><span class="s1">&#39;ADD&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">do_add</span><span class="p">(</span><span class="n">ctx</span><span class="p">:</span> <span class="n">Context</span><span class="p">,</span> <span class="n">prim</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">annots</span><span class="p">):</span>
+    <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">pop2</span><span class="p">()</span>
+    <span class="n">res_type</span> <span class="o">=</span> <span class="n">dispatch_type_map</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="p">{</span>
+        <span class="p">(</span><span class="n">Nat</span><span class="p">,</span> <span class="n">Nat</span><span class="p">):</span> <span class="n">Nat</span><span class="p">,</span>
+        <span class="p">(</span><span class="n">Nat</span><span class="p">,</span> <span class="n">Int</span><span class="p">):</span> <span class="n">Int</span><span class="p">,</span>
+        <span class="p">(</span><span class="n">Int</span><span class="p">,</span> <span class="n">Nat</span><span class="p">):</span> <span class="n">Int</span><span class="p">,</span>
+        <span class="p">(</span><span class="n">Int</span><span class="p">,</span> <span class="n">Int</span><span class="p">):</span> <span class="n">Int</span><span class="p">,</span>
+        <span class="p">(</span><span class="n">Timestamp</span><span class="p">,</span> <span class="n">Int</span><span class="p">):</span> <span class="n">Timestamp</span><span class="p">,</span>
+        <span class="p">(</span><span class="n">Int</span><span class="p">,</span> <span class="n">Timestamp</span><span class="p">):</span> <span class="n">Timestamp</span><span class="p">,</span>
+        <span class="p">(</span><span class="n">Mutez</span><span class="p">,</span> <span class="n">Mutez</span><span class="p">):</span> <span class="n">Mutez</span>
+    <span class="p">})</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">res_type</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="o">+</span> <span class="nb">int</span><span class="p">(</span><span class="n">b</span><span class="p">))</span>
+    <span class="n">ctx</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">annots</span><span class="o">=</span><span class="n">annots</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="do_compare"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.arithmetic.do_compare">[docs]</a><span class="nd">@instruction</span><span class="p">(</span><span class="s1">&#39;COMPARE&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">do_compare</span><span class="p">(</span><span class="n">ctx</span><span class="p">:</span> <span class="n">Context</span><span class="p">,</span> <span class="n">prim</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">annots</span><span class="p">):</span>
+    <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">pop2</span><span class="p">()</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">Int</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">__cmp__</span><span class="p">(</span><span class="n">b</span><span class="p">))</span>
+    <span class="n">ctx</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">annots</span><span class="o">=</span><span class="n">annots</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="do_ediv"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.arithmetic.do_ediv">[docs]</a><span class="nd">@instruction</span><span class="p">(</span><span class="s1">&#39;EDIV&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">do_ediv</span><span class="p">(</span><span class="n">ctx</span><span class="p">:</span> <span class="n">Context</span><span class="p">,</span> <span class="n">prim</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">annots</span><span class="p">):</span>
+    <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">pop2</span><span class="p">()</span>
+    <span class="n">q_type</span><span class="p">,</span> <span class="n">r_type</span> <span class="o">=</span> <span class="n">dispatch_type_map</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="p">{</span>
+        <span class="p">(</span><span class="n">Nat</span><span class="p">,</span> <span class="n">Nat</span><span class="p">):</span> <span class="p">(</span><span class="n">Nat</span><span class="p">,</span> <span class="n">Nat</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">Nat</span><span class="p">,</span> <span class="n">Int</span><span class="p">):</span> <span class="p">(</span><span class="n">Int</span><span class="p">,</span> <span class="n">Nat</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">Int</span><span class="p">,</span> <span class="n">Nat</span><span class="p">):</span> <span class="p">(</span><span class="n">Int</span><span class="p">,</span> <span class="n">Nat</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">Int</span><span class="p">,</span> <span class="n">Int</span><span class="p">):</span> <span class="p">(</span><span class="n">Int</span><span class="p">,</span> <span class="n">Nat</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">Mutez</span><span class="p">,</span> <span class="n">Nat</span><span class="p">):</span> <span class="p">(</span><span class="n">Mutez</span><span class="p">,</span> <span class="n">Mutez</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">Mutez</span><span class="p">,</span> <span class="n">Mutez</span><span class="p">):</span> <span class="p">(</span><span class="n">Nat</span><span class="p">,</span> <span class="n">Mutez</span><span class="p">)</span>
+    <span class="p">})</span>
+    <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">b</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">Option</span><span class="o">.</span><span class="n">none</span><span class="p">(</span><span class="n">Pair</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">q_type</span><span class="p">(),</span> <span class="n">r_type</span><span class="p">())</span><span class="o">.</span><span class="n">type_expr</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">q</span><span class="p">,</span> <span class="n">r</span> <span class="o">=</span> <span class="nb">divmod</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">a</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">b</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">r</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">r</span> <span class="o">+=</span> <span class="nb">abs</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">b</span><span class="p">))</span>
+            <span class="n">q</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">Option</span><span class="o">.</span><span class="n">some</span><span class="p">(</span><span class="n">Pair</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">q_type</span><span class="p">(</span><span class="n">q</span><span class="p">),</span> <span class="n">r_type</span><span class="p">(</span><span class="n">r</span><span class="p">)))</span>
+    <span class="n">ctx</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">annots</span><span class="o">=</span><span class="n">annots</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="do_eq"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.arithmetic.do_eq">[docs]</a><span class="nd">@instruction</span><span class="p">([</span><span class="s1">&#39;EQ&#39;</span><span class="p">,</span> <span class="s1">&#39;GE&#39;</span><span class="p">,</span> <span class="s1">&#39;GT&#39;</span><span class="p">,</span> <span class="s1">&#39;LE&#39;</span><span class="p">,</span> <span class="s1">&#39;LT&#39;</span><span class="p">,</span> <span class="s1">&#39;NEQ&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">do_eq</span><span class="p">(</span><span class="n">ctx</span><span class="p">:</span> <span class="n">Context</span><span class="p">,</span> <span class="n">prim</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">annots</span><span class="p">):</span>
+    <span class="n">top</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">pop1</span><span class="p">()</span>
+    <span class="n">assert_stack_type</span><span class="p">(</span><span class="n">top</span><span class="p">,</span> <span class="n">Int</span><span class="p">)</span>
+    <span class="n">handlers</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;EQ&#39;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s1">&#39;GE&#39;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s1">&#39;GT&#39;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s1">&#39;LE&#39;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s1">&#39;LT&#39;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s1">&#39;NEQ&#39;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">!=</span> <span class="mi">0</span>
+    <span class="p">}</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">Bool</span><span class="p">(</span><span class="n">handlers</span><span class="p">[</span><span class="n">prim</span><span class="p">](</span><span class="nb">int</span><span class="p">(</span><span class="n">top</span><span class="p">)))</span>
+    <span class="n">ctx</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">annots</span><span class="o">=</span><span class="n">annots</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="do_int"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.arithmetic.do_int">[docs]</a><span class="nd">@instruction</span><span class="p">(</span><span class="s1">&#39;INT&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">do_int</span><span class="p">(</span><span class="n">ctx</span><span class="p">:</span> <span class="n">Context</span><span class="p">,</span> <span class="n">prim</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">annots</span><span class="p">):</span>
+    <span class="n">top</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">pop1</span><span class="p">()</span>
+    <span class="n">assert_stack_type</span><span class="p">(</span><span class="n">top</span><span class="p">,</span> <span class="n">Nat</span><span class="p">)</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">Int</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">top</span><span class="p">))</span>
+    <span class="n">ctx</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">annots</span><span class="o">=</span><span class="n">annots</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="do_is_nat"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.arithmetic.do_is_nat">[docs]</a><span class="nd">@instruction</span><span class="p">(</span><span class="s1">&#39;ISNAT&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">do_is_nat</span><span class="p">(</span><span class="n">ctx</span><span class="p">:</span> <span class="n">Context</span><span class="p">,</span> <span class="n">prim</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">annots</span><span class="p">):</span>
+    <span class="n">top</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">pop1</span><span class="p">()</span>
+    <span class="n">assert_stack_type</span><span class="p">(</span><span class="n">top</span><span class="p">,</span> <span class="n">Int</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">top</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">Option</span><span class="o">.</span><span class="n">some</span><span class="p">(</span><span class="n">Nat</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">top</span><span class="p">)))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">Option</span><span class="o">.</span><span class="n">none</span><span class="p">(</span><span class="n">Nat</span><span class="p">()</span><span class="o">.</span><span class="n">type_expr</span><span class="p">)</span>
+    <span class="n">ctx</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">annots</span><span class="o">=</span><span class="n">annots</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="do_lsl"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.arithmetic.do_lsl">[docs]</a><span class="nd">@instruction</span><span class="p">([</span><span class="s1">&#39;LSL&#39;</span><span class="p">,</span> <span class="s1">&#39;LSR&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">do_lsl</span><span class="p">(</span><span class="n">ctx</span><span class="p">:</span> <span class="n">Context</span><span class="p">,</span> <span class="n">prim</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">annots</span><span class="p">):</span>
+    <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">pop2</span><span class="p">()</span>
+    <span class="n">assert_stack_type</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">Nat</span><span class="p">)</span>
+    <span class="n">assert_stack_type</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">Nat</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">int</span><span class="p">(</span><span class="n">b</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">257</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;shift overflow </span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">b</span><span class="p">)</span><span class="si">}</span><span class="s1">, should not exceed 256&#39;</span>
+    <span class="n">handlers</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;LSL&#39;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+        <span class="s1">&#39;LSR&#39;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;&gt;</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="p">}</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">Nat</span><span class="p">(</span><span class="n">handlers</span><span class="p">[</span><span class="n">prim</span><span class="p">]((</span><span class="nb">int</span><span class="p">(</span><span class="n">a</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">b</span><span class="p">))))</span>
+    <span class="n">ctx</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">annots</span><span class="o">=</span><span class="n">annots</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="do_mul"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.arithmetic.do_mul">[docs]</a><span class="nd">@instruction</span><span class="p">(</span><span class="s1">&#39;MUL&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">do_mul</span><span class="p">(</span><span class="n">ctx</span><span class="p">:</span> <span class="n">Context</span><span class="p">,</span> <span class="n">prim</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">annots</span><span class="p">):</span>
+    <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">pop2</span><span class="p">()</span>
+    <span class="n">res_type</span> <span class="o">=</span> <span class="n">dispatch_type_map</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="p">{</span>
+        <span class="p">(</span><span class="n">Nat</span><span class="p">,</span> <span class="n">Nat</span><span class="p">):</span> <span class="n">Nat</span><span class="p">,</span>
+        <span class="p">(</span><span class="n">Nat</span><span class="p">,</span> <span class="n">Int</span><span class="p">):</span> <span class="n">Int</span><span class="p">,</span>
+        <span class="p">(</span><span class="n">Int</span><span class="p">,</span> <span class="n">Nat</span><span class="p">):</span> <span class="n">Int</span><span class="p">,</span>
+        <span class="p">(</span><span class="n">Int</span><span class="p">,</span> <span class="n">Int</span><span class="p">):</span> <span class="n">Int</span><span class="p">,</span>
+        <span class="p">(</span><span class="n">Mutez</span><span class="p">,</span> <span class="n">Nat</span><span class="p">):</span> <span class="n">Mutez</span><span class="p">,</span>
+        <span class="p">(</span><span class="n">Nat</span><span class="p">,</span> <span class="n">Mutez</span><span class="p">):</span> <span class="n">Mutez</span>
+    <span class="p">})</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">res_type</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="o">*</span> <span class="nb">int</span><span class="p">(</span><span class="n">b</span><span class="p">))</span>
+    <span class="n">ctx</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">annots</span><span class="o">=</span><span class="n">annots</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="do_neg"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.arithmetic.do_neg">[docs]</a><span class="nd">@instruction</span><span class="p">(</span><span class="s1">&#39;NEG&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">do_neg</span><span class="p">(</span><span class="n">ctx</span><span class="p">:</span> <span class="n">Context</span><span class="p">,</span> <span class="n">prim</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">annots</span><span class="p">):</span>
+    <span class="n">top</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">pop1</span><span class="p">()</span>
+    <span class="n">assert_stack_type</span><span class="p">(</span><span class="n">top</span><span class="p">,</span> <span class="p">[</span><span class="n">Int</span><span class="p">,</span> <span class="n">Nat</span><span class="p">])</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">Int</span><span class="p">(</span><span class="o">-</span><span class="nb">int</span><span class="p">(</span><span class="n">top</span><span class="p">))</span>
+    <span class="n">ctx</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">annots</span><span class="o">=</span><span class="n">annots</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="do_sub"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.arithmetic.do_sub">[docs]</a><span class="nd">@instruction</span><span class="p">(</span><span class="s1">&#39;SUB&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">do_sub</span><span class="p">(</span><span class="n">ctx</span><span class="p">:</span> <span class="n">Context</span><span class="p">,</span> <span class="n">prim</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">annots</span><span class="p">):</span>
+    <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">pop2</span><span class="p">()</span>
+    <span class="n">res_type</span> <span class="o">=</span> <span class="n">dispatch_type_map</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="p">{</span>
+        <span class="p">(</span><span class="n">Nat</span><span class="p">,</span> <span class="n">Nat</span><span class="p">):</span> <span class="n">Int</span><span class="p">,</span>
+        <span class="p">(</span><span class="n">Nat</span><span class="p">,</span> <span class="n">Int</span><span class="p">):</span> <span class="n">Int</span><span class="p">,</span>
+        <span class="p">(</span><span class="n">Int</span><span class="p">,</span> <span class="n">Nat</span><span class="p">):</span> <span class="n">Int</span><span class="p">,</span>
+        <span class="p">(</span><span class="n">Int</span><span class="p">,</span> <span class="n">Int</span><span class="p">):</span> <span class="n">Int</span><span class="p">,</span>
+        <span class="p">(</span><span class="n">Timestamp</span><span class="p">,</span> <span class="n">Int</span><span class="p">):</span> <span class="n">Timestamp</span><span class="p">,</span>
+        <span class="p">(</span><span class="n">Timestamp</span><span class="p">,</span> <span class="n">Timestamp</span><span class="p">):</span> <span class="n">Int</span><span class="p">,</span>
+        <span class="p">(</span><span class="n">Mutez</span><span class="p">,</span> <span class="n">Mutez</span><span class="p">):</span> <span class="n">Mutez</span>
+    <span class="p">})</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">res_type</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="o">-</span> <span class="nb">int</span><span class="p">(</span><span class="n">b</span><span class="p">))</span>
+    <span class="n">ctx</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">annots</span><span class="o">=</span><span class="n">annots</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="do_or_xor"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.arithmetic.do_or_xor">[docs]</a><span class="nd">@instruction</span><span class="p">([</span><span class="s1">&#39;OR&#39;</span><span class="p">,</span> <span class="s1">&#39;XOR&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">do_or_xor</span><span class="p">(</span><span class="n">ctx</span><span class="p">:</span> <span class="n">Context</span><span class="p">,</span> <span class="n">prim</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">annots</span><span class="p">):</span>
+    <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">pop2</span><span class="p">()</span>
+    <span class="n">val_type</span><span class="p">,</span> <span class="n">res_type</span> <span class="o">=</span> <span class="n">dispatch_type_map</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="p">{</span>
+        <span class="p">(</span><span class="n">Bool</span><span class="p">,</span> <span class="n">Bool</span><span class="p">):</span> <span class="p">(</span><span class="nb">bool</span><span class="p">,</span> <span class="n">Bool</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">Nat</span><span class="p">,</span> <span class="n">Nat</span><span class="p">):</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">Nat</span><span class="p">),</span>
+    <span class="p">})</span>
+    <span class="n">handlers</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;OR&#39;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">|</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+        <span class="s1">&#39;XOR&#39;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">^</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="p">}</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">res_type</span><span class="p">(</span><span class="n">handlers</span><span class="p">[</span><span class="n">prim</span><span class="p">]((</span><span class="n">val_type</span><span class="p">(</span><span class="n">a</span><span class="p">),</span> <span class="n">val_type</span><span class="p">(</span><span class="n">b</span><span class="p">))))</span>
+    <span class="n">ctx</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">annots</span><span class="o">=</span><span class="n">annots</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="do_and"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.arithmetic.do_and">[docs]</a><span class="nd">@instruction</span><span class="p">(</span><span class="s1">&#39;AND&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">do_and</span><span class="p">(</span><span class="n">ctx</span><span class="p">:</span> <span class="n">Context</span><span class="p">,</span> <span class="n">prim</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">annots</span><span class="p">):</span>
+    <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">pop2</span><span class="p">()</span>
+    <span class="n">val_type</span><span class="p">,</span> <span class="n">res_type</span> <span class="o">=</span> <span class="n">dispatch_type_map</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="p">{</span>
+        <span class="p">(</span><span class="n">Bool</span><span class="p">,</span> <span class="n">Bool</span><span class="p">):</span> <span class="p">(</span><span class="nb">bool</span><span class="p">,</span> <span class="n">Bool</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">Nat</span><span class="p">,</span> <span class="n">Nat</span><span class="p">):</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">Nat</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">Int</span><span class="p">,</span> <span class="n">Nat</span><span class="p">):</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">Nat</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">Nat</span><span class="p">,</span> <span class="n">Int</span><span class="p">):</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">Nat</span><span class="p">)</span>
+    <span class="p">})</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">res_type</span><span class="p">(</span><span class="n">val_type</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">val_type</span><span class="p">(</span><span class="n">b</span><span class="p">))</span>
+    <span class="n">ctx</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">annots</span><span class="o">=</span><span class="n">annots</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="do_not"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.arithmetic.do_not">[docs]</a><span class="nd">@instruction</span><span class="p">(</span><span class="s1">&#39;NOT&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">do_not</span><span class="p">(</span><span class="n">ctx</span><span class="p">:</span> <span class="n">Context</span><span class="p">,</span> <span class="n">prim</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">annots</span><span class="p">):</span>
+    <span class="n">top</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">pop1</span><span class="p">()</span>
+    <span class="n">assert_stack_type</span><span class="p">(</span><span class="n">top</span><span class="p">,</span> <span class="p">[</span><span class="n">Nat</span><span class="p">,</span> <span class="n">Int</span><span class="p">,</span> <span class="n">Bool</span><span class="p">])</span>
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">top</span><span class="p">)</span> <span class="ow">in</span> <span class="p">[</span><span class="n">Nat</span><span class="p">,</span> <span class="n">Int</span><span class="p">]:</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">Int</span><span class="p">(</span><span class="o">~</span><span class="nb">int</span><span class="p">(</span><span class="n">top</span><span class="p">))</span>
+    <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">top</span><span class="p">)</span> <span class="o">==</span> <span class="n">Bool</span><span class="p">:</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">Bool</span><span class="p">(</span><span class="ow">not</span> <span class="nb">bool</span><span class="p">(</span><span class="n">top</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="kc">False</span>
+    <span class="n">ctx</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">annots</span><span class="o">=</span><span class="n">annots</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="do_blake2b"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.arithmetic.do_blake2b">[docs]</a><span class="nd">@instruction</span><span class="p">(</span><span class="s1">&#39;BLAKE2B&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">do_blake2b</span><span class="p">(</span><span class="n">ctx</span><span class="p">:</span> <span class="n">Context</span><span class="p">,</span> <span class="n">prim</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">annots</span><span class="p">):</span>
+    <span class="n">top</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">pop1</span><span class="p">()</span>
+    <span class="n">assert_stack_type</span><span class="p">(</span><span class="n">top</span><span class="p">,</span> <span class="n">Bytes</span><span class="p">)</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">Bytes</span><span class="p">(</span><span class="n">crypto</span><span class="o">.</span><span class="n">blake2b_32</span><span class="p">(</span><span class="nb">bytes</span><span class="p">(</span><span class="n">top</span><span class="p">))</span><span class="o">.</span><span class="n">digest</span><span class="p">())</span>
+    <span class="n">ctx</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">annots</span><span class="o">=</span><span class="n">annots</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="do_check_sig"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.arithmetic.do_check_sig">[docs]</a><span class="nd">@instruction</span><span class="p">(</span><span class="s1">&#39;CHECK_SIGNATURE&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">do_check_sig</span><span class="p">(</span><span class="n">ctx</span><span class="p">:</span> <span class="n">Context</span><span class="p">,</span> <span class="n">prim</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">annots</span><span class="p">):</span>
+    <span class="n">pk</span><span class="p">,</span> <span class="n">sig</span><span class="p">,</span> <span class="n">msg</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">pop3</span><span class="p">()</span>
+    <span class="n">assert_stack_type</span><span class="p">(</span><span class="n">pk</span><span class="p">,</span> <span class="n">Key</span><span class="p">)</span>
+    <span class="n">assert_stack_type</span><span class="p">(</span><span class="n">sig</span><span class="p">,</span> <span class="n">Signature</span><span class="p">)</span>
+    <span class="n">assert_stack_type</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">Bytes</span><span class="p">)</span>
+    <span class="n">key</span> <span class="o">=</span> <span class="n">crypto</span><span class="o">.</span><span class="n">Key</span><span class="o">.</span><span class="n">from_encoded_key</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">pk</span><span class="p">))</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">key</span><span class="o">.</span><span class="n">verify</span><span class="p">(</span><span class="n">signature</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">sig</span><span class="p">),</span> <span class="n">message</span><span class="o">=</span><span class="nb">bytes</span><span class="p">(</span><span class="n">msg</span><span class="p">))</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">Bool</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">Bool</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">ctx</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">annots</span><span class="o">=</span><span class="n">annots</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="do_hash_key"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.arithmetic.do_hash_key">[docs]</a><span class="nd">@instruction</span><span class="p">(</span><span class="s1">&#39;HASH_KEY&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">do_hash_key</span><span class="p">(</span><span class="n">ctx</span><span class="p">:</span> <span class="n">Context</span><span class="p">,</span> <span class="n">prim</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">annots</span><span class="p">):</span>
+    <span class="n">top</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">pop1</span><span class="p">()</span>
+    <span class="n">assert_stack_type</span><span class="p">(</span><span class="n">top</span><span class="p">,</span> <span class="n">Key</span><span class="p">)</span>
+    <span class="n">key</span> <span class="o">=</span> <span class="n">crypto</span><span class="o">.</span><span class="n">Key</span><span class="o">.</span><span class="n">from_encoded_key</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">top</span><span class="p">))</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">KeyHash</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">key</span><span class="o">.</span><span class="n">public_key_hash</span><span class="p">())</span>
+    <span class="n">ctx</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">annots</span><span class="o">=</span><span class="n">annots</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="do_sha"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.arithmetic.do_sha">[docs]</a><span class="nd">@instruction</span><span class="p">([</span><span class="s1">&#39;SHA256&#39;</span><span class="p">,</span> <span class="s1">&#39;SHA512&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">do_sha</span><span class="p">(</span><span class="n">ctx</span><span class="p">:</span> <span class="n">Context</span><span class="p">,</span> <span class="n">prim</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">annots</span><span class="p">):</span>
+    <span class="n">top</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">pop1</span><span class="p">()</span>
+    <span class="n">assert_stack_type</span><span class="p">(</span><span class="n">top</span><span class="p">,</span> <span class="n">Bytes</span><span class="p">)</span>
+    <span class="n">handlers</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;SHA256&#39;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">sha256</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">digest</span><span class="p">(),</span>
+        <span class="s1">&#39;SHA512&#39;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">sha512</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">digest</span><span class="p">(),</span>
+    <span class="p">}</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">Bytes</span><span class="p">(</span><span class="n">handlers</span><span class="p">[</span><span class="n">prim</span><span class="p">](</span><span class="nb">bytes</span><span class="p">(</span><span class="n">top</span><span class="p">)))</span>
+    <span class="n">ctx</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">annots</span><span class="o">=</span><span class="n">annots</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Baking Bad
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

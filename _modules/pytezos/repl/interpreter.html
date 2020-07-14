@@ -1,0 +1,416 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pytezos.repl.interpreter &mdash; PyTezos  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+    <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> PyTezos
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../quick_start.html">Quick start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../integration_tests.html">Michelson integration tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pytezos_cli.html">Pytezos CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../high_level.html">High-level interfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../crypto.html">Cryptography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../operation_groups.html">Building and parsing operations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rpc_queries.html">RPC query engine</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../script_wrappers.html">Michelson script wrappers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pack.html">Michelson type encoding</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../code.html">Working with Michelson code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../repl.html">Michelson REPL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../inspect_proposals.html">Inspecting proposals</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">PyTezos</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>pytezos.repl.interpreter</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pytezos.repl.interpreter</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">yaml</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
+<span class="kn">from</span> <span class="nn">pprint</span> <span class="kn">import</span> <span class="n">pformat</span>
+
+<span class="kn">from</span> <span class="nn">pytezos.michelson.grammar</span> <span class="kn">import</span> <span class="n">MichelsonParser</span><span class="p">,</span> <span class="n">MichelsonParserError</span>
+<span class="kn">from</span> <span class="nn">pytezos.michelson.converter</span> <span class="kn">import</span> <span class="n">michelson_to_micheline</span><span class="p">,</span> <span class="n">micheline_to_michelson</span>
+<span class="kn">from</span> <span class="nn">pytezos.repl.control</span> <span class="kn">import</span> <span class="n">do_interpret</span><span class="p">,</span> <span class="n">MichelsonRuntimeError</span>
+<span class="kn">from</span> <span class="nn">pytezos.repl.helpers</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">pytezos.repl.arithmetic</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">pytezos.repl.structures</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">pytezos.repl.blockchain</span> <span class="kn">import</span> <span class="o">*</span>
+
+
+<span class="k">def</span> <span class="nf">get_content</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+    <span class="n">content</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;_content&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">content</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">format_content</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">{}</span>
+
+
+<span class="k">def</span> <span class="nf">format_stack_item</span><span class="p">(</span><span class="n">item</span><span class="p">:</span> <span class="n">StackItem</span><span class="p">):</span>
+    <span class="n">row</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">Operation</span><span class="p">):</span>
+        <span class="n">row</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">get_content</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">val_expr</span><span class="p">))</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">List</span><span class="p">)</span> <span class="ow">and</span> <span class="n">item</span><span class="o">.</span><span class="n">val_type</span><span class="p">()</span> <span class="o">==</span> <span class="n">Operation</span><span class="p">:</span>
+        <span class="n">row</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">([</span><span class="n">get_content</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">val_expr</span><span class="p">])</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">row</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">micheline_to_michelson</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">val_expr</span><span class="p">)</span>
+
+    <span class="n">row</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">micheline_to_michelson</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">type_expr</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">row</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;@</span><span class="si">{</span><span class="n">item</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">&#39;</span>
+
+    <span class="k">return</span> <span class="n">row</span>
+
+
+<span class="k">def</span> <span class="nf">format_diff</span><span class="p">(</span><span class="n">diff</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">diff</span><span class="p">[</span><span class="s1">&#39;action&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;alloc&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;big_map&#39;</span><span class="p">:</span> <span class="n">diff</span><span class="p">[</span><span class="s1">&#39;big_map&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;action&#39;</span><span class="p">:</span> <span class="n">diff</span><span class="p">[</span><span class="s1">&#39;action&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;key&#39;</span><span class="p">:</span> <span class="n">micheline_to_michelson</span><span class="p">(</span><span class="n">diff</span><span class="p">[</span><span class="s1">&#39;key_type&#39;</span><span class="p">]),</span>
+                <span class="s1">&#39;value&#39;</span><span class="p">:</span> <span class="n">micheline_to_michelson</span><span class="p">(</span><span class="n">diff</span><span class="p">[</span><span class="s1">&#39;value_type&#39;</span><span class="p">])}</span>
+    <span class="k">elif</span> <span class="n">diff</span><span class="p">[</span><span class="s1">&#39;action&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;update&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;big_map&#39;</span><span class="p">:</span> <span class="n">diff</span><span class="p">[</span><span class="s1">&#39;big_map&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;action&#39;</span><span class="p">:</span> <span class="n">diff</span><span class="p">[</span><span class="s1">&#39;action&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;key&#39;</span><span class="p">:</span> <span class="n">micheline_to_michelson</span><span class="p">(</span><span class="n">diff</span><span class="p">[</span><span class="s1">&#39;key&#39;</span><span class="p">]),</span>
+                <span class="s1">&#39;value&#39;</span><span class="p">:</span> <span class="n">micheline_to_michelson</span><span class="p">(</span><span class="n">diff</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">])</span> <span class="k">if</span> <span class="n">diff</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;value&#39;</span><span class="p">)</span> <span class="k">else</span> <span class="s1">&#39;null&#39;</span><span class="p">}</span>
+    <span class="k">elif</span> <span class="n">diff</span><span class="p">[</span><span class="s1">&#39;action&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;copy&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;destination_big_map&#39;</span><span class="p">:</span> <span class="n">diff</span><span class="p">[</span><span class="s1">&#39;big_map&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;action&#39;</span><span class="p">:</span> <span class="n">diff</span><span class="p">[</span><span class="s1">&#39;action&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;value&#39;</span><span class="p">:</span> <span class="n">diff</span><span class="p">[</span><span class="s1">&#39;source_big_map&#39;</span><span class="p">]}</span>
+    <span class="k">elif</span> <span class="n">diff</span><span class="p">[</span><span class="s1">&#39;action&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;remove&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;big_map&#39;</span><span class="p">:</span> <span class="n">diff</span><span class="p">[</span><span class="s1">&#39;big_map&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;action&#39;</span><span class="p">:</span> <span class="n">diff</span><span class="p">[</span><span class="s1">&#39;action&#39;</span><span class="p">]}</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="kc">False</span><span class="p">,</span> <span class="n">diff</span><span class="p">[</span><span class="s1">&#39;action&#39;</span><span class="p">]</span>
+
+
+<span class="k">def</span> <span class="nf">format_content</span><span class="p">(</span><span class="n">content</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">content</span><span class="p">[</span><span class="s1">&#39;kind&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;transaction&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;kind&#39;</span><span class="p">:</span> <span class="n">content</span><span class="p">[</span><span class="s1">&#39;kind&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;target&#39;</span><span class="p">:</span> <span class="n">content</span><span class="p">[</span><span class="s1">&#39;destination&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;amount&#39;</span><span class="p">:</span> <span class="n">content</span><span class="p">[</span><span class="s1">&#39;amount&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;entrypoint&#39;</span><span class="p">:</span> <span class="n">content</span><span class="p">[</span><span class="s1">&#39;parameters&#39;</span><span class="p">][</span><span class="s1">&#39;entrypoint&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;parameters&#39;</span><span class="p">:</span> <span class="n">micheline_to_michelson</span><span class="p">(</span><span class="n">content</span><span class="p">[</span><span class="s1">&#39;parameters&#39;</span><span class="p">][</span><span class="s1">&#39;value&#39;</span><span class="p">])}</span>
+    <span class="k">elif</span> <span class="n">content</span><span class="p">[</span><span class="s1">&#39;kind&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;origination&#39;</span><span class="p">:</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;kind&#39;</span><span class="p">:</span> <span class="n">content</span><span class="p">[</span><span class="s1">&#39;kind&#39;</span><span class="p">],</span>
+               <span class="s1">&#39;target&#39;</span><span class="p">:</span> <span class="n">content</span><span class="p">[</span><span class="s1">&#39;originated_contract&#39;</span><span class="p">],</span>
+               <span class="s1">&#39;amount&#39;</span><span class="p">:</span> <span class="n">content</span><span class="p">[</span><span class="s1">&#39;balance&#39;</span><span class="p">],</span>
+               <span class="s1">&#39;storage&#39;</span><span class="p">:</span> <span class="n">micheline_to_michelson</span><span class="p">(</span><span class="n">content</span><span class="p">[</span><span class="s1">&#39;script&#39;</span><span class="p">][</span><span class="s1">&#39;storage&#39;</span><span class="p">]),</span>
+               <span class="s1">&#39;code&#39;</span><span class="p">:</span> <span class="n">micheline_to_michelson</span><span class="p">(</span><span class="n">content</span><span class="p">[</span><span class="s1">&#39;script&#39;</span><span class="p">][</span><span class="s1">&#39;code&#39;</span><span class="p">])}</span>
+        <span class="k">if</span> <span class="n">content</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;delegate&#39;</span><span class="p">):</span>
+            <span class="n">res</span><span class="p">[</span><span class="s1">&#39;delegate&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">content</span><span class="p">[</span><span class="s1">&#39;delegate&#39;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">res</span>
+    <span class="k">elif</span> <span class="n">content</span><span class="p">[</span><span class="s1">&#39;kind&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;delegation&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;kind&#39;</span><span class="p">:</span> <span class="n">content</span><span class="p">[</span><span class="s1">&#39;kind&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;target&#39;</span><span class="p">:</span> <span class="n">content</span><span class="p">[</span><span class="s1">&#39;delegate&#39;</span><span class="p">]}</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="kc">False</span><span class="p">,</span> <span class="n">content</span><span class="p">[</span><span class="s1">&#39;kind&#39;</span><span class="p">]</span>
+
+
+<span class="k">def</span> <span class="nf">format_stdout</span><span class="p">(</span><span class="n">items</span><span class="p">):</span>
+    <span class="n">newline</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">depth</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">def</span> <span class="nf">break_line</span><span class="p">():</span>
+        <span class="k">nonlocal</span> <span class="n">newline</span>
+        <span class="k">nonlocal</span> <span class="n">res</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">newline</span><span class="p">:</span>
+            <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="n">newline</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">items</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">item</span><span class="p">[</span><span class="s1">&#39;action&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;begin&#39;</span><span class="p">:</span>
+            <span class="n">break_line</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">item</span><span class="p">[</span><span class="s1">&#39;prim&#39;</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;parameter&#39;</span><span class="p">,</span> <span class="s1">&#39;storage&#39;</span><span class="p">,</span> <span class="s1">&#39;code&#39;</span><span class="p">,</span> <span class="s1">&#39;STORAGE&#39;</span><span class="p">,</span> <span class="s1">&#39;DUMP&#39;</span><span class="p">]:</span>
+                <span class="n">res</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s1">&#39;  &#39;</span> <span class="o">*</span> <span class="n">depth</span><span class="p">,</span> <span class="n">item</span><span class="p">[</span><span class="s1">&#39;prim&#39;</span><span class="p">],</span> <span class="s1">&#39;:&#39;</span><span class="p">])</span>
+                <span class="n">depth</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">newline</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">elif</span> <span class="n">item</span><span class="p">[</span><span class="s1">&#39;action&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;end&#39;</span><span class="p">:</span>
+            <span class="n">depth</span> <span class="o">-=</span> <span class="mi">1</span>
+            <span class="n">break_line</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">item</span><span class="p">[</span><span class="s1">&#39;action&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;message&#39;</span><span class="p">,</span> <span class="s1">&#39;event&#39;</span><span class="p">]:</span>
+            <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;  &#39;</span> <span class="o">*</span> <span class="n">depth</span> <span class="k">if</span> <span class="n">newline</span> <span class="k">else</span> <span class="s1">&#39; &#39;</span><span class="p">)</span>
+            <span class="n">res</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">item</span><span class="p">[</span><span class="s1">&#39;text&#39;</span><span class="p">],</span> <span class="s1">&#39;;&#39;</span><span class="p">])</span>
+            <span class="n">newline</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="kc">False</span><span class="p">,</span> <span class="n">item</span><span class="p">[</span><span class="s1">&#39;action&#39;</span><span class="p">]</span>
+
+    <span class="n">res</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">res</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">res</span> <span class="ow">and</span> <span class="nb">all</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="s1">&#39;action&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;message&#39;</span><span class="p">,</span> <span class="n">items</span><span class="p">)):</span>
+        <span class="k">return</span> <span class="s1">&#39;&#39;</span>
+
+    <span class="k">return</span> <span class="n">res</span>
+
+
+<span class="k">def</span> <span class="nf">format_result</span><span class="p">(</span><span class="n">result</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">result</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="n">kind</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;kind&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">kind</span> <span class="o">==</span> <span class="s1">&#39;message&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">result</span>
+    <span class="k">elif</span> <span class="n">kind</span> <span class="o">==</span> <span class="s1">&#39;big_map_diff&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;value&#39;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">format_diff</span><span class="p">,</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;big_map_diff&#39;</span><span class="p">])),</span> <span class="o">**</span><span class="n">result</span><span class="p">}</span>
+    <span class="k">elif</span> <span class="n">kind</span> <span class="o">==</span> <span class="s1">&#39;code&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;value&#39;</span><span class="p">:</span> <span class="n">micheline_to_michelson</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;code&#39;</span><span class="p">]),</span> <span class="o">**</span><span class="n">result</span><span class="p">}</span>
+    <span class="k">elif</span> <span class="n">kind</span> <span class="o">==</span> <span class="s1">&#39;stack&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;value&#39;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">format_stack_item</span><span class="p">,</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;stack&#39;</span><span class="p">])),</span> <span class="o">**</span><span class="n">result</span><span class="p">}</span>
+    <span class="k">elif</span> <span class="n">kind</span> <span class="o">==</span> <span class="s1">&#39;output&#39;</span><span class="p">:</span>
+        <span class="n">operations</span> <span class="o">=</span> <span class="p">[</span><span class="n">format_content</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;_content&#39;</span><span class="p">))</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;operations&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">val_expr</span><span class="p">]</span>
+        <span class="n">storage</span> <span class="o">=</span> <span class="p">[</span><span class="n">format_stack_item</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;storage&#39;</span><span class="p">])]</span>
+        <span class="n">big_map_diff</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">format_diff</span><span class="p">,</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;big_map_diff&#39;</span><span class="p">]))</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;value&#39;</span><span class="p">:</span> <span class="p">(</span><span class="n">operations</span><span class="p">,</span> <span class="n">storage</span><span class="p">,</span> <span class="n">big_map_diff</span><span class="p">),</span> <span class="o">**</span><span class="n">result</span><span class="p">}</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="kc">False</span><span class="p">,</span> <span class="n">kind</span>
+
+
+<span class="k">def</span> <span class="nf">format_stderr</span><span class="p">(</span><span class="n">error</span><span class="p">):</span>
+    <span class="n">ename</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">error</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">error</span><span class="p">,</span> <span class="n">MichelsonRuntimeError</span><span class="p">):</span>
+        <span class="n">evalue</span><span class="p">,</span> <span class="n">traceback</span> <span class="o">=</span> <span class="n">error</span><span class="o">.</span><span class="n">message</span><span class="p">,</span> <span class="s1">&#39;at &#39;</span> <span class="o">+</span> <span class="s1">&#39; -&gt; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">error</span><span class="o">.</span><span class="n">trace</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">error</span><span class="p">,</span> <span class="n">MichelsonParserError</span><span class="p">):</span>
+        <span class="n">evalue</span><span class="p">,</span> <span class="n">traceback</span> <span class="o">=</span> <span class="n">error</span><span class="o">.</span><span class="n">message</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;at line </span><span class="si">{</span><span class="n">error</span><span class="o">.</span><span class="n">line</span><span class="si">}</span><span class="s1">, pos </span><span class="si">{</span><span class="n">error</span><span class="o">.</span><span class="n">pos</span><span class="si">}</span><span class="s1">&#39;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">evalue</span><span class="p">,</span> <span class="n">traceback</span> <span class="o">=</span> <span class="n">pformat</span><span class="p">(</span><span class="n">error</span><span class="o">.</span><span class="n">args</span><span class="p">,</span> <span class="n">compact</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span> <span class="s1">&#39;&#39;</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">ename</span><span class="p">,</span>
+            <span class="s1">&#39;value&#39;</span><span class="p">:</span> <span class="n">evalue</span><span class="p">,</span>
+            <span class="s1">&#39;trace&#39;</span><span class="p">:</span> <span class="n">traceback</span><span class="p">}</span>
+
+
+<div class="viewcode-block" id="Interpreter"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.interpreter.Interpreter">[docs]</a><span class="k">class</span> <span class="nc">Interpreter</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot; Michelson interpreter reimplemented in Python.</span>
+<span class="sd">    Based on the following reference: https://michelson.nomadic-labs.com/</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">debug</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ctx</span> <span class="o">=</span> <span class="n">Context</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parser</span> <span class="o">=</span> <span class="n">MichelsonParser</span><span class="p">(</span><span class="n">extra_primitives</span><span class="o">=</span><span class="n">helpers_prim</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">debug</span> <span class="o">=</span> <span class="n">debug</span>
+
+<div class="viewcode-block" id="Interpreter.execute"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.interpreter.Interpreter.execute">[docs]</a>    <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">code</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Execute Michelson instructions (note that stack is not cleared after execution).</span>
+
+<span class="sd">        :param code: Michelson source (any valid Michelson expression or special helpers)</span>
+<span class="sd">        :returns: {&quot;success&quot;: True|False, &quot;stdout&quot;: &quot;&quot;, &quot;stderr&quot;: {}, &quot;result&quot;: {&quot;value&quot;: &quot;&quot;, ...}}</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">int_res</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;success&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">}</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">code_expr</span> <span class="o">=</span> <span class="n">michelson_to_micheline</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="n">parser</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">MichelsonParserError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">e</span>
+            <span class="n">int_res</span><span class="p">[</span><span class="s1">&#39;stderr&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">format_stderr</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">int_res</span>
+
+        <span class="n">backup</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ctx</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">do_interpret</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ctx</span><span class="p">,</span> <span class="n">code_expr</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">res</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">ctx</span><span class="o">.</span><span class="n">pushed</span><span class="p">:</span>
+                <span class="n">res</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;kind&#39;</span><span class="p">:</span> <span class="s1">&#39;stack&#39;</span><span class="p">,</span> <span class="s1">&#39;stack&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ctx</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">count</span><span class="o">=</span><span class="mi">1</span><span class="p">)}</span>
+
+            <span class="n">int_res</span><span class="p">[</span><span class="s1">&#39;result&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">format_result</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+            <span class="n">int_res</span><span class="p">[</span><span class="s1">&#39;stdout&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">format_stdout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ctx</span><span class="o">.</span><span class="n">stdout</span><span class="p">)</span>
+            <span class="n">int_res</span><span class="p">[</span><span class="s1">&#39;success&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ctx</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+        <span class="k">except</span> <span class="n">MichelsonRuntimeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">int_res</span><span class="p">[</span><span class="s1">&#39;stderr&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">format_stderr</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+            <span class="n">int_res</span><span class="p">[</span><span class="s1">&#39;stdout&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">format_stdout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ctx</span><span class="o">.</span><span class="n">stdout</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ctx</span> <span class="o">=</span> <span class="n">backup</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">int_res</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;stdout&#39;</span><span class="p">):</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="n">int_res</span><span class="p">[</span><span class="s1">&#39;stdout&#39;</span><span class="p">])</span>
+                <span class="k">raise</span> <span class="n">e</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">int_res</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;stdout&#39;</span><span class="p">):</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">int_res</span><span class="p">[</span><span class="s1">&#39;stdout&#39;</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">int_res</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;result&#39;</span><span class="p">):</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;RESULT: &#39;</span> <span class="o">+</span> <span class="n">pformat</span><span class="p">(</span><span class="n">int_res</span><span class="p">[</span><span class="s1">&#39;result&#39;</span><span class="p">]))</span>
+
+        <span class="k">return</span> <span class="n">int_res</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Baking Bad
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

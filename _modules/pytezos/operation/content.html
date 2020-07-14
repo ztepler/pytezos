@@ -1,0 +1,477 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pytezos.operation.content &mdash; PyTezos  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+    <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> PyTezos
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../quick_start.html">Quick start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../integration_tests.html">Michelson integration tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pytezos_cli.html">Pytezos CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../high_level.html">High-level interfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../crypto.html">Cryptography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../operation_groups.html">Building and parsing operations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rpc_queries.html">RPC query engine</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../script_wrappers.html">Michelson script wrappers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pack.html">Michelson type encoding</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../code.html">Working with Michelson code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../repl.html">Michelson REPL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../inspect_proposals.html">Inspecting proposals</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">PyTezos</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>pytezos.operation.content</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pytezos.operation.content</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">decimal</span> <span class="kn">import</span> <span class="n">Decimal</span>
+
+<span class="kn">from</span> <span class="nn">pytezos.tools.docstring</span> <span class="kn">import</span> <span class="n">inline_doc</span>
+
+
+<span class="k">def</span> <span class="nf">format_mutez</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot; Format amount in mutez (10^-6).</span>
+
+<span class="sd">    :param value: can be None (==0), Decimal (treated as tez), int (treated as mutez)</span>
+<span class="sd">    :returns: amount in mutez, stringified</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">Decimal</span><span class="p">):</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span> <span class="o">*</span> <span class="mi">10</span> <span class="o">**</span> <span class="mi">6</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Please use decimal instead of float&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">format_tez</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Decimal</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot; Format amount in tez.</span>
+
+<span class="sd">    :param value: can be None (==0), Decimal (treated as tez), int (treated as mutez)</span>
+<span class="sd">    :rtype: Decimal</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">tez</span> <span class="o">=</span> <span class="n">Decimal</span><span class="p">(</span><span class="n">format_mutez</span><span class="p">(</span><span class="n">value</span><span class="p">))</span> <span class="o">/</span> <span class="mi">10</span> <span class="o">**</span> <span class="mi">6</span>
+    <span class="k">return</span> <span class="n">tez</span><span class="o">.</span><span class="n">quantize</span><span class="p">(</span><span class="n">Decimal</span><span class="p">(</span><span class="s1">&#39;0.000001&#39;</span><span class="p">))</span>
+
+
+<span class="k">class</span> <span class="nc">ContentMixin</span><span class="p">:</span>
+
+    <span class="k">def</span> <span class="nf">operation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">content</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">content</span>
+
+    <span class="nd">@inline_doc</span>
+    <span class="k">def</span> <span class="nf">endorsement</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">level</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Endorse a block.</span>
+
+<span class="sd">        :param level: Endorsed level</span>
+<span class="sd">        :returns: dict or OperationGroup</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">operation</span><span class="p">({</span>
+            <span class="s1">&#39;kind&#39;</span><span class="p">:</span> <span class="s1">&#39;endorsement&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;level&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">level</span><span class="p">)</span>
+        <span class="p">})</span>
+
+    <span class="nd">@inline_doc</span>
+    <span class="k">def</span> <span class="nf">seed_nonce_revelation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">level</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">nonce</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Reveal the nonce committed operation in the previous cycle.</span>
+<span class="sd">        More info https://tezos.stackexchange.com/questions/567/what-are-nonce-revelations</span>
+
+<span class="sd">        :param level: When nonce hash was committed</span>
+<span class="sd">        :param nonce: Hex string</span>
+<span class="sd">        :returns: dict or OperationGroup</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">operation</span><span class="p">({</span>
+            <span class="s1">&#39;kind&#39;</span><span class="p">:</span> <span class="s1">&#39;seed_nonce_revelation&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;level&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">level</span><span class="p">),</span>
+            <span class="s1">&#39;nonce&#39;</span><span class="p">:</span> <span class="n">nonce</span>
+        <span class="p">})</span>
+
+    <span class="nd">@inline_doc</span>
+    <span class="k">def</span> <span class="nf">double_endorsement_evidence</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">op1</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">op2</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Provide evidence of double endorsement (endorsing two different blocks at the same block height).</span>
+
+<span class="sd">        :param op1: Inline endorsement</span>
+<span class="sd">            {</span>
+<span class="sd">                &quot;branch&quot;: $block_hash,</span>
+<span class="sd">                &quot;operations&quot;: {</span>
+<span class="sd">                    &quot;kind&quot;: &quot;endorsement&quot;,</span>
+<span class="sd">                    &quot;level&quot;: integer ∈ [-2^31-2, 2^31+2]</span>
+<span class="sd">                },</span>
+<span class="sd">                &quot;signature&quot;?: $Signature</span>
+<span class="sd">            }</span>
+<span class="sd">        :param op2: Inline endorsement</span>
+<span class="sd">        :returns: dict or OperationGroup</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">operation</span><span class="p">({</span>
+            <span class="s1">&#39;kind&#39;</span><span class="p">:</span> <span class="s1">&#39;double_endorsement_evidence&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;op1&#39;</span><span class="p">:</span> <span class="n">op1</span><span class="p">,</span>
+            <span class="s1">&#39;op2&#39;</span><span class="p">:</span> <span class="n">op2</span>
+        <span class="p">})</span>
+
+    <span class="nd">@inline_doc</span>
+    <span class="k">def</span> <span class="nf">double_baking_evidence</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bh1</span><span class="p">,</span> <span class="n">bh2</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Provide evidence of double baking (two different blocks at the same height).</span>
+
+<span class="sd">        :param bh1: First block hash</span>
+<span class="sd">        :param bh2: Second block hash</span>
+<span class="sd">        :returns: dict or OperationGroup</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">operation</span><span class="p">({</span>
+            <span class="s1">&#39;kind&#39;</span><span class="p">:</span> <span class="s1">&#39;double_baking_evidence&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;bh1&#39;</span><span class="p">:</span> <span class="n">bh1</span><span class="p">,</span>
+            <span class="s1">&#39;bh2&#39;</span><span class="p">:</span> <span class="n">bh2</span>
+        <span class="p">})</span>
+
+    <span class="nd">@inline_doc</span>
+    <span class="k">def</span> <span class="nf">activate_account</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">activation_code</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">pkh</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Activate recommended allocations for contributions to the TF fundraiser.</span>
+<span class="sd">        More info https://activate.tezos.com/</span>
+
+<span class="sd">        :param activation_code: Secret code from pdf, leave empty for autocomplete</span>
+<span class="sd">        :param pkh: Public key hash, leave empty for autocomplete</span>
+<span class="sd">        :returns: dict or OperationGroup</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">operation</span><span class="p">({</span>
+            <span class="s1">&#39;kind&#39;</span><span class="p">:</span> <span class="s1">&#39;activate_account&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;pkh&#39;</span><span class="p">:</span> <span class="n">pkh</span><span class="p">,</span>
+            <span class="s1">&#39;secret&#39;</span><span class="p">:</span> <span class="n">activation_code</span>
+        <span class="p">})</span>
+
+    <span class="nd">@inline_doc</span>
+    <span class="k">def</span> <span class="nf">proposals</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">proposals</span><span class="p">,</span>
+                  <span class="n">source</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">period</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Submit and/or upvote proposals to amend the protocol.</span>
+<span class="sd">        Can only be submitted during a proposal period.</span>
+<span class="sd">        More info https://tezos.gitlab.io/master/whitedoc/voting.html</span>
+
+<span class="sd">        :param proposals: List of proposal hashes or single proposal hash</span>
+<span class="sd">        :param source: Public key hash (of the signatory), leave None for autocomplete</span>
+<span class="sd">        :param period: Number of the current voting period, leave 0 for autocomplete</span>
+<span class="sd">        :returns: dict or OperationGroup</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">proposals</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">proposals</span> <span class="o">=</span> <span class="p">[</span><span class="n">proposals</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">operation</span><span class="p">({</span>
+            <span class="s1">&#39;kind&#39;</span><span class="p">:</span> <span class="s1">&#39;proposals&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;source&#39;</span><span class="p">:</span> <span class="n">source</span><span class="p">,</span>
+            <span class="s1">&#39;period&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">period</span><span class="p">),</span>
+            <span class="s1">&#39;proposals&#39;</span><span class="p">:</span> <span class="n">proposals</span>
+        <span class="p">})</span>
+
+    <span class="nd">@inline_doc</span>
+    <span class="k">def</span> <span class="nf">ballot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">proposal</span><span class="p">,</span> <span class="n">ballot</span><span class="p">,</span>
+               <span class="n">source</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">period</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Vote for a proposal in a given voting period.</span>
+<span class="sd">        Can only be submitted during Testing_vote or Promotion_vote periods, and only once per period.</span>
+<span class="sd">        More info https://tezos.gitlab.io/master/whitedoc/voting.html</span>
+
+<span class="sd">        :param proposal: Hash of the proposal</span>
+<span class="sd">        :param ballot: &#39;Yay&#39;, &#39;Nay&#39; or &#39;Pass&#39;</span>
+<span class="sd">        :param source: Public key hash (of the signatory), leave None for autocomplete</span>
+<span class="sd">        :param period: Number of the current voting period, leave None for autocomplete</span>
+<span class="sd">        :returns: dict or OperationGroup</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">operation</span><span class="p">({</span>
+            <span class="s1">&#39;kind&#39;</span><span class="p">:</span> <span class="s1">&#39;ballot&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;source&#39;</span><span class="p">:</span> <span class="n">source</span><span class="p">,</span>
+            <span class="s1">&#39;period&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">period</span><span class="p">),</span>
+            <span class="s1">&#39;proposal&#39;</span><span class="p">:</span> <span class="n">proposal</span><span class="p">,</span>
+            <span class="s1">&#39;ballot&#39;</span><span class="p">:</span> <span class="n">ballot</span>
+        <span class="p">})</span>
+
+    <span class="nd">@inline_doc</span>
+    <span class="k">def</span> <span class="nf">reveal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">public_key</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+               <span class="n">source</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">counter</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">fee</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">gas_limit</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">storage_limit</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Reveal the public key associated with a tz address.</span>
+
+<span class="sd">        :param public_key: Public key to reveal, Base58 encoded</span>
+<span class="sd">        :param source: Public key hash of the key revealed, leave None to use signatory address</span>
+<span class="sd">        :param counter: Current account counter, leave None for autocomplete \</span>
+<span class="sd">        (More info https://tezos.stackexchange.com/questions/632/how-counter-grows)</span>
+<span class="sd">        :param fee: Leave None for autocomplete</span>
+<span class="sd">        :param gas_limit: Leave None for autocomplete</span>
+<span class="sd">        :param storage_limit: Leave None for autocomplete</span>
+<span class="sd">        :returns: dict or OperationGroup</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">operation</span><span class="p">({</span>
+            <span class="s1">&#39;kind&#39;</span><span class="p">:</span> <span class="s1">&#39;reveal&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;source&#39;</span><span class="p">:</span> <span class="n">source</span><span class="p">,</span>
+            <span class="s1">&#39;fee&#39;</span><span class="p">:</span> <span class="n">format_mutez</span><span class="p">(</span><span class="n">fee</span><span class="p">),</span>
+            <span class="s1">&#39;counter&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">counter</span><span class="p">),</span>
+            <span class="s1">&#39;gas_limit&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">gas_limit</span><span class="p">),</span>
+            <span class="s1">&#39;storage_limit&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">storage_limit</span><span class="p">),</span>
+            <span class="s1">&#39;public_key&#39;</span><span class="p">:</span> <span class="n">public_key</span>
+        <span class="p">})</span>
+
+    <span class="nd">@inline_doc</span>
+    <span class="k">def</span> <span class="nf">transaction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">destination</span><span class="p">,</span> <span class="n">amount</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">parameters</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                    <span class="n">source</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">counter</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">fee</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">gas_limit</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">storage_limit</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Transfer tez to a given address (implicit or originated).</span>
+<span class="sd">        If the receiver is a smart contract, then optional parameters may be passed.</span>
+
+<span class="sd">        :param source: Address from which funds will be sent, leave None to use signatory address</span>
+<span class="sd">        :param destination: Address</span>
+<span class="sd">        :param amount: Amount to send in microtez (int) or tez (Decimal) (optional)</span>
+<span class="sd">        :param counter: Current account counter, leave None for autocomplete</span>
+<span class="sd">        :param parameters: { &quot;entrypoint&quot;: $string, &quot;value&quot;: $Micheline expression } (optional)</span>
+<span class="sd">        :param fee: Leave None for autocomplete</span>
+<span class="sd">        :param gas_limit: Leave None for autocomplete</span>
+<span class="sd">        :param storage_limit: Leave None for autocomplete</span>
+<span class="sd">        :returns: dict or OperationGroup</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">content</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;kind&#39;</span><span class="p">:</span> <span class="s1">&#39;transaction&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;source&#39;</span><span class="p">:</span> <span class="n">source</span><span class="p">,</span>
+            <span class="s1">&#39;fee&#39;</span><span class="p">:</span> <span class="n">format_mutez</span><span class="p">(</span><span class="n">fee</span><span class="p">),</span>
+            <span class="s1">&#39;counter&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">counter</span><span class="p">),</span>
+            <span class="s1">&#39;gas_limit&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">gas_limit</span><span class="p">),</span>
+            <span class="s1">&#39;storage_limit&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">storage_limit</span><span class="p">),</span>
+            <span class="s1">&#39;amount&#39;</span><span class="p">:</span> <span class="n">format_mutez</span><span class="p">(</span><span class="n">amount</span><span class="p">),</span>
+            <span class="s1">&#39;destination&#39;</span><span class="p">:</span> <span class="n">destination</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="n">parameters</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">content</span><span class="p">[</span><span class="s1">&#39;parameters&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">parameters</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">operation</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
+
+    <span class="nd">@inline_doc</span>
+    <span class="k">def</span> <span class="nf">origination</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">script</span><span class="p">,</span> <span class="n">balance</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">delegate</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                    <span class="n">source</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">counter</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">fee</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">gas_limit</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">storage_limit</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Deploy smart contract (scriptless KT accounts are not used for delegation since Babylon)</span>
+
+<span class="sd">        :param script: {&quot;code&quot;: $Micheline, &quot;storage&quot;: $Micheline}</span>
+<span class="sd">        :param balance: Amount transferred on the balance, WARNING: there is no default way to withdraw funds. \</span>
+<span class="sd">        More info: https://tezos.stackexchange.com/questions/1315/can-i-withdraw-funds-from-an-empty-smart-contract</span>
+<span class="sd">        :param delegate: Set contract delegate, default None</span>
+<span class="sd">        :param source: Address from which funds will be sent, leave None to use signatory address</span>
+<span class="sd">        :param counter: Current account counter, leave None for autocomplete</span>
+<span class="sd">        :param fee: Leave None for autocomplete</span>
+<span class="sd">        :param gas_limit: Leave None for autocomplete</span>
+<span class="sd">        :param storage_limit: Leave None for autocomplete</span>
+<span class="sd">        :returns: dict or OperationGroup</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">content</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;kind&#39;</span><span class="p">:</span> <span class="s1">&#39;origination&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;source&#39;</span><span class="p">:</span> <span class="n">source</span><span class="p">,</span>
+            <span class="s1">&#39;fee&#39;</span><span class="p">:</span> <span class="n">format_mutez</span><span class="p">(</span><span class="n">fee</span><span class="p">),</span>
+            <span class="s1">&#39;counter&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">counter</span><span class="p">),</span>
+            <span class="s1">&#39;gas_limit&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">gas_limit</span><span class="p">),</span>
+            <span class="s1">&#39;storage_limit&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">storage_limit</span><span class="p">),</span>
+            <span class="s1">&#39;balance&#39;</span><span class="p">:</span> <span class="n">format_mutez</span><span class="p">(</span><span class="n">balance</span><span class="p">),</span>
+            <span class="s1">&#39;script&#39;</span><span class="p">:</span> <span class="n">script</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="n">delegate</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">content</span><span class="p">[</span><span class="s1">&#39;delegate&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">delegate</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">operation</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
+
+    <span class="nd">@inline_doc</span>
+    <span class="k">def</span> <span class="nf">delegation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">delegate</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+                   <span class="n">source</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">counter</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">fee</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">gas_limit</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">storage_limit</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Delegate funds or register yourself as a delegate.</span>
+
+<span class="sd">        :param delegate: tz address of delegate, leave None to register yourself as a delegate</span>
+<span class="sd">        :param source: Address from which funds will be delegated, leave None to use signatory address</span>
+<span class="sd">        :param counter: Current account counter, leave None for autocomplete</span>
+<span class="sd">        :param fee: Leave None for autocomplete</span>
+<span class="sd">        :param gas_limit: Leave None for autocomplete</span>
+<span class="sd">        :param storage_limit: Leave None for autocomplete</span>
+<span class="sd">        :returns: dict or OperationGroup</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">operation</span><span class="p">({</span>
+            <span class="s1">&#39;kind&#39;</span><span class="p">:</span> <span class="s1">&#39;delegation&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;source&#39;</span><span class="p">:</span> <span class="n">source</span><span class="p">,</span>
+            <span class="s1">&#39;fee&#39;</span><span class="p">:</span> <span class="n">format_mutez</span><span class="p">(</span><span class="n">fee</span><span class="p">),</span>
+            <span class="s1">&#39;counter&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">counter</span><span class="p">),</span>
+            <span class="s1">&#39;gas_limit&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">gas_limit</span><span class="p">),</span>
+            <span class="s1">&#39;storage_limit&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">storage_limit</span><span class="p">),</span>
+            <span class="s1">&#39;delegate&#39;</span><span class="p">:</span> <span class="n">delegate</span>
+        <span class="p">})</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Baking Bad
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

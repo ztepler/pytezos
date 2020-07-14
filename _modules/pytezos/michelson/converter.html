@@ -1,0 +1,353 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pytezos.michelson.converter &mdash; PyTezos  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+    <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> PyTezos
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../quick_start.html">Quick start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../integration_tests.html">Michelson integration tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pytezos_cli.html">Pytezos CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../high_level.html">High-level interfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../crypto.html">Cryptography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../operation_groups.html">Building and parsing operations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rpc_queries.html">RPC query engine</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../script_wrappers.html">Michelson script wrappers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pack.html">Michelson type encoding</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../code.html">Working with Michelson code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../repl.html">Michelson REPL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../inspect_proposals.html">Inspecting proposals</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">PyTezos</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>pytezos.michelson.converter</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pytezos.michelson.converter</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">pprint</span> <span class="kn">import</span> <span class="n">pprint</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">namedtuple</span>
+
+<span class="kn">from</span> <span class="nn">pytezos.michelson.forge</span> <span class="kn">import</span> <span class="n">prim_tags</span>
+<span class="kn">from</span> <span class="nn">pytezos.michelson.micheline</span> <span class="kn">import</span> <span class="n">Schema</span><span class="p">,</span> <span class="n">collapse_micheline</span><span class="p">,</span> <span class="n">build_maps</span><span class="p">,</span> <span class="n">parse_micheline</span><span class="p">,</span> \
+    <span class="n">parse_json</span><span class="p">,</span> <span class="n">make_micheline</span><span class="p">,</span> <span class="n">michelson_to_micheline</span>
+<span class="kn">from</span> <span class="nn">pytezos.michelson.formatter</span> <span class="kn">import</span> <span class="n">micheline_to_michelson</span>
+<span class="kn">from</span> <span class="nn">pytezos.michelson.docstring</span> <span class="kn">import</span> <span class="n">generate_docstring</span>
+
+<span class="n">BigMapSchema</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s1">&#39;BigMapSchema&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;bin_to_id&#39;</span><span class="p">,</span> <span class="s1">&#39;id_to_bin&#39;</span><span class="p">])</span>
+
+
+<div class="viewcode-block" id="MichelineSchemaError"><a class="viewcode-back" href="../../../pack.html#pytezos.michelson.converter.MichelineSchemaError">[docs]</a><span class="k">class</span> <span class="nc">MichelineSchemaError</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="build_schema"><a class="viewcode-back" href="../../../pack.html#pytezos.michelson.converter.build_schema">[docs]</a><span class="k">def</span> <span class="nf">build_schema</span><span class="p">(</span><span class="n">code</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Schema</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot; Creates internal structures necessary for decoding/encoding micheline:</span>
+<span class="sd">    `metadata` -&gt; micheline tree with collapsed `pair`, `or`, and `option` nodes</span>
+<span class="sd">    `bin_types` -&gt; maps binary path to primitive</span>
+<span class="sd">    `bin_names` -&gt; binary path to key name mapping</span>
+<span class="sd">    `json_to_bin` -&gt; json path to binary path mapping</span>
+
+<span class="sd">    :param code: parameter or storage section of smart contract source code (in micheline)</span>
+<span class="sd">    :rtype: Schema</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">metadata</span> <span class="o">=</span> <span class="n">collapse_micheline</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Schema</span><span class="p">(</span><span class="n">metadata</span><span class="p">,</span> <span class="o">*</span><span class="n">build_maps</span><span class="p">(</span><span class="n">metadata</span><span class="p">))</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">KeyError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">pprint</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="n">compact</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">MichelineSchemaError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Failed to build schema&#39;</span><span class="p">,</span> <span class="n">e</span><span class="o">.</span><span class="n">args</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="decode_micheline"><a class="viewcode-back" href="../../../pack.html#pytezos.michelson.converter.decode_micheline">[docs]</a><span class="k">def</span> <span class="nf">decode_micheline</span><span class="p">(</span><span class="n">val_expr</span><span class="p">,</span> <span class="n">type_expr</span><span class="p">,</span> <span class="n">schema</span><span class="p">:</span> <span class="n">Schema</span><span class="p">,</span> <span class="n">root</span><span class="o">=</span><span class="s1">&#39;0&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Converts Micheline data into Python object.</span>
+
+<span class="sd">    :param val_expr: Micheline value expression</span>
+<span class="sd">    :param type_expr: Michelson type expression for the entire type</span>
+<span class="sd">    :param schema: schema built for particular contract/section</span>
+<span class="sd">    :param root: which binary node to take as root, used to decode BigMap values/diffs</span>
+<span class="sd">    :returns: Object</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">parse_micheline</span><span class="p">(</span><span class="n">val_expr</span><span class="p">,</span> <span class="n">type_expr</span><span class="p">,</span> <span class="n">schema</span><span class="p">,</span> <span class="n">root</span><span class="p">)</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">KeyError</span><span class="p">,</span> <span class="ne">IndexError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">generate_docstring</span><span class="p">(</span><span class="n">schema</span><span class="p">,</span> <span class="s1">&#39;schema&#39;</span><span class="p">))</span>
+        <span class="n">pprint</span><span class="p">(</span><span class="n">val_expr</span><span class="p">,</span> <span class="n">compact</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">MichelineSchemaError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Failed to decode micheline expression&#39;</span><span class="p">,</span> <span class="n">e</span><span class="o">.</span><span class="n">args</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="encode_micheline"><a class="viewcode-back" href="../../../pack.html#pytezos.michelson.converter.encode_micheline">[docs]</a><span class="k">def</span> <span class="nf">encode_micheline</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">schema</span><span class="p">:</span> <span class="n">Schema</span><span class="p">,</span> <span class="n">root</span><span class="o">=</span><span class="s1">&#39;0&#39;</span><span class="p">,</span> <span class="n">binary</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Converts Python object into Micheline expression.</span>
+
+<span class="sd">    :param data: Python object</span>
+<span class="sd">    :param schema: schema built for particular contract/section</span>
+<span class="sd">    :param root: which binary node to take as root, used to encode BigMap values</span>
+<span class="sd">    :param binary: Encode keys and addresses in bytes rather than strings, default is False</span>
+<span class="sd">    :returns: Micheline expression</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">bin_values</span> <span class="o">=</span> <span class="n">parse_json</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">schema</span><span class="p">,</span> <span class="n">root</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">make_micheline</span><span class="p">(</span><span class="n">bin_values</span><span class="p">,</span> <span class="n">schema</span><span class="o">.</span><span class="n">bin_types</span><span class="p">,</span> <span class="n">root</span><span class="p">,</span> <span class="n">binary</span><span class="p">)</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">KeyError</span><span class="p">,</span> <span class="ne">IndexError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">generate_docstring</span><span class="p">(</span><span class="n">schema</span><span class="p">,</span> <span class="s1">&#39;schema&#39;</span><span class="p">))</span>
+        <span class="n">pprint</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">compact</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">MichelineSchemaError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Failed to encode micheline expression&#39;</span><span class="p">,</span> <span class="n">e</span><span class="o">.</span><span class="n">args</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="convert"><a class="viewcode-back" href="../../../pack.html#pytezos.michelson.converter.convert">[docs]</a><span class="k">def</span> <span class="nf">convert</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">schema</span><span class="p">:</span> <span class="n">Schema</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="s1">&#39;micheline&#39;</span><span class="p">,</span> <span class="n">inline</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Convert data between different representations (DO NOT USE FOR STORAGE/PARAMETER, can be ambiguous).</span>
+
+<span class="sd">    :param source: Data, can be one of Michelson (string), Micheline expression, object</span>
+<span class="sd">    :param schema: Needed if decoding/encoding objects (optional)</span>
+<span class="sd">    :param output: Output format, one of &#39;micheline&#39; (default), &#39;michelson&#39;, &#39;object&#39;</span>
+<span class="sd">    :param inline: Used for michelson output, whether to omit line breaks</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">source</span> <span class="o">=</span> <span class="n">michelson_to_micheline</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">schema</span>
+            <span class="n">source</span> <span class="o">=</span> <span class="n">encode_micheline</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">schema</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="ow">not</span> <span class="n">is_micheline</span><span class="p">(</span><span class="n">source</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">schema</span>
+        <span class="n">source</span> <span class="o">=</span> <span class="n">encode_micheline</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">schema</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">output</span> <span class="o">==</span> <span class="s1">&#39;michelson&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">micheline_to_michelson</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">inline</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">output</span> <span class="o">==</span> <span class="s1">&#39;object&#39;</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="kc">False</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;not supported&#39;</span>
+    <span class="k">elif</span> <span class="n">output</span> <span class="o">==</span> <span class="s1">&#39;micheline&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">source</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="kc">False</span><span class="p">,</span> <span class="n">output</span></div>
+
+
+<div class="viewcode-block" id="build_big_map_schema"><a class="viewcode-back" href="../../../pack.html#pytezos.michelson.converter.build_big_map_schema">[docs]</a><span class="k">def</span> <span class="nf">build_big_map_schema</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">schema</span><span class="p">:</span> <span class="n">Schema</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BigMapSchema</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot; Generate Big_map schema from the contract storage</span>
+
+<span class="sd">    :param data: Raw storage (Micheline expression)</span>
+<span class="sd">    :param schema: Storage schema</span>
+<span class="sd">    :returns: Mappings: Big_map id to JSON path and vice versa</span>
+<span class="sd">    :rtype: BigMapSchema</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">bin_to_id</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">id_to_bin</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">scan_big_map_ids</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">node</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;int&#39;</span><span class="p">),</span> <span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+            <span class="k">yield</span> <span class="nb">int</span><span class="p">(</span><span class="n">node</span><span class="p">[</span><span class="s1">&#39;int&#39;</span><span class="p">])</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">node</span><span class="p">:</span>
+                <span class="k">yield from</span> <span class="n">scan_big_map_ids</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">node</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;args&#39;</span><span class="p">),</span> <span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+            <span class="k">yield from</span> <span class="n">scan_big_map_ids</span><span class="p">(</span><span class="n">node</span><span class="p">[</span><span class="s1">&#39;args&#39;</span><span class="p">][</span><span class="nb">int</span><span class="p">(</span><span class="n">path</span><span class="p">[</span><span class="mi">0</span><span class="p">])],</span> <span class="n">path</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+
+    <span class="k">for</span> <span class="n">bin_path</span><span class="p">,</span> <span class="n">prim</span> <span class="ow">in</span> <span class="n">schema</span><span class="o">.</span><span class="n">bin_types</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">prim</span> <span class="o">==</span> <span class="s1">&#39;big_map&#39;</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">big_map_id</span> <span class="ow">in</span> <span class="n">scan_big_map_ids</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">bin_path</span><span class="p">[</span><span class="mi">1</span><span class="p">:]):</span>
+                <span class="n">bin_to_id</span><span class="p">[</span><span class="n">bin_path</span><span class="p">],</span> <span class="n">id_to_bin</span><span class="p">[</span><span class="n">big_map_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">big_map_id</span><span class="p">,</span> <span class="n">bin_path</span>
+
+    <span class="k">return</span> <span class="n">BigMapSchema</span><span class="p">(</span><span class="n">bin_to_id</span><span class="p">,</span> <span class="n">id_to_bin</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="is_micheline"><a class="viewcode-back" href="../../../pack.html#pytezos.michelson.converter.is_micheline">[docs]</a><span class="k">def</span> <span class="nf">is_micheline</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot; Check if value is a Micheline expression (using heuristics, so not 100% accurate).</span>
+
+<span class="sd">    :param value: Object</span>
+<span class="sd">    :rtype: bool</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">get_prim</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">x</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;prim&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="nb">set</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">get_prim</span><span class="p">,</span> <span class="n">value</span><span class="p">))</span> <span class="o">==</span> <span class="p">{</span><span class="s1">&#39;parameter&#39;</span><span class="p">,</span> <span class="s1">&#39;storage&#39;</span><span class="p">,</span> <span class="s1">&#39;code&#39;</span><span class="p">}</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="n">primitives</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">prim_tags</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="k">return</span> <span class="nb">any</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">value</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;prim&#39;</span><span class="p">,</span> <span class="s1">&#39;args&#39;</span><span class="p">,</span> <span class="s1">&#39;annots&#39;</span><span class="p">,</span> <span class="o">*</span><span class="n">primitives</span><span class="p">]))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Baking Bad
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

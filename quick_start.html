@@ -1,0 +1,739 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Quick start &mdash; PyTezos  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Michelson integration tests" href="integration_tests.html" />
+    <link rel="prev" title="Welcome to PyTezos documentation!" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> PyTezos
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Quick start</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#introduction">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#requirements">Requirements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#set-key-and-rpc-node">Set key and RPC node</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#faucet-account">Faucet account</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sandboxed-mode">Sandboxed mode</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#activate-account">Activate account</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#reveal-public-key">Reveal public key</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#originate-contract">Originate contract</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#access-storage">Access storage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#bigmap-lookup">BigMap lookup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#call-entrypoint">Call entrypoint</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="integration_tests.html">Michelson integration tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pytezos_cli.html">Pytezos CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="high_level.html">High-level interfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="crypto.html">Cryptography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="operation_groups.html">Building and parsing operations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rpc_queries.html">RPC query engine</a></li>
+<li class="toctree-l1"><a class="reference internal" href="script_wrappers.html">Michelson script wrappers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pack.html">Michelson type encoding</a></li>
+<li class="toctree-l1"><a class="reference internal" href="code.html">Working with Michelson code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="repl.html">Michelson REPL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="inspect_proposals.html">Inspecting proposals</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">PyTezos</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Quick start</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/quick_start.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="quick-start">
+<h1>Quick start<a class="headerlink" href="#quick-start" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<p>PyTezos library is a Python toolset for Tezos blockchain, including work with keys, signatures, contracts, operations,
+RPC query builder, and a high-level interface for smart contract interaction. It can be used to build a full-fledged
+application, but also it’s perfect for doing researches in Jupyter interactive notebooks.
+In this quick start guide, we’ll go through the main concepts and inspect one of the common use cases.</p>
+</div>
+<div class="section" id="requirements">
+<h2>Requirements<a class="headerlink" href="#requirements" title="Permalink to this headline">¶</a></h2>
+<p>First of all you’ll probably need to install cryptographic libraries in your system.</p>
+<p><em>Linux</em></p>
+<p>Use apt or your favourite package manager:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ sudo apt install libsodium-dev libsecp256k1-dev libgmp-dev
+</pre></div>
+</div>
+<p><em>MacOS</em></p>
+<p>Use homebrew:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ brew tap cuber/homebrew-libsecp256k1
+$ brew install libsodium libsecp256k1 gmp
+</pre></div>
+</div>
+<p><em>Windows</em></p>
+<p>The recommended way is to use WSL and then follow the instructions for Linux,
+but if you feel lucky you can try to install natively:</p>
+<ol class="arabic simple">
+<li><p>Install MinGW from <a class="reference external" href="https://osdn.net/projects/mingw/">https://osdn.net/projects/mingw/</a></p></li>
+<li><p>Make sure <code class="docutils literal notranslate"><span class="pre">C:\MinGW\bin</span></code> is added to your <code class="docutils literal notranslate"><span class="pre">PATH</span></code></p></li>
+<li><p>Download the latest libsodium-X.Y.Z-msvc.zip from <a class="reference external" href="https://download.libsodium.org/libsodium/releases/">https://download.libsodium.org/libsodium/releases/</a>.</p></li>
+<li><p>Extract the Win64/Release/v143/dynamic/libsodium.dll from the zip file</p></li>
+<li><p>Copy libsodium.dll to C:WindowsSystem32libsodium.dll</p></li>
+</ol>
+</div>
+<div class="section" id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<p>In console:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pip install pytezos
+</pre></div>
+</div>
+<p>In Google Colab notebook:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>&gt;&gt;&gt; !apt install libsodium-dev libsecp256k1-dev libgmp-dev
+&gt;&gt;&gt; !pip install pytezos
+[RESTART RUNTIME]
+</pre></div>
+</div>
+<p>That’s it! You can open Python console or Jupyter notebook and get to the next step.</p>
+</div>
+<div class="section" id="set-key-and-rpc-node">
+<h2>Set key and RPC node<a class="headerlink" href="#set-key-and-rpc-node" title="Permalink to this headline">¶</a></h2>
+<p>All active interaction with the blockchain starts with the PyTezosClient:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pytezos</span> <span class="kn">import</span> <span class="n">pytezos</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pytezos</span>
+<span class="go">&lt;pytezos.client.PyTezosClient object at 0x7f904cf339e8&gt;</span>
+
+<span class="go">Properties</span>
+<span class="go">.key  # tz1grSQDByRpnVs7sPtaprNZRp531ZKz6Jmm</span>
+<span class="go">.shell  # https://tezos-dev.cryptonomic-infra.tech/ (alphanet)</span>
+
+<span class="go">Helpers</span>
+<span class="go">.account()</span>
+<span class="go">.activate_account()</span>
+<span class="go">.ballot()</span>
+<span class="go">.contract()</span>
+<span class="go">.delegation()</span>
+<span class="go">.double_baking_evidence()</span>
+<span class="go">.double_endorsement_evidence()</span>
+<span class="go">.endorsement()</span>
+<span class="go">.operation()</span>
+<span class="go">.operation_group()</span>
+<span class="go">.origination()</span>
+<span class="go">.proposals()</span>
+<span class="go">.reveal()</span>
+<span class="go">.seed_nonce_revelation()</span>
+<span class="go">.transaction()</span>
+<span class="go">.using()</span>
+</pre></div>
+</div>
+<p>This is one of the cool features in the interactive mode: aside from the autocomplete and call docstrings,
+you can see the list of available methods for class, or list of arguments and return value for a particular methods.
+We are interested in <code class="docutils literal notranslate"><span class="pre">using</span></code> method, which is responsible for setting up manager key and RPC connection.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pytezos</span><span class="o">.</span><span class="n">using</span>
+<span class="go">&lt;function Interop.using at 0x7fe5d2232840&gt;</span>
+
+<span class="go">Change current rpc endpoint and account (private key)</span>
+<span class="go">:param shell: one of &#39;alphanet&#39;, &#39;mainnet&#39;, &#39;zeronet&#39;, RPC node uri, or instance of `ShellQuery`</span>
+<span class="go">:param key: base58 encoded key, path to the faucet file, alias from tezos-client, or instance of `Key`</span>
+<span class="go">:return: A copy of current object with changes applied</span>
+</pre></div>
+</div>
+<p>Note, that by default <code class="docutils literal notranslate"><span class="pre">pytezos</span></code> is initialized with <code class="docutils literal notranslate"><span class="pre">alphanet</span></code> and a predefined private key for demo purpose,
+so you can start to interact immediately, but it’s highly recommended to use your own key. Let’s do that!</p>
+<div class="section" id="faucet-account">
+<h3>Faucet account<a class="headerlink" href="#faucet-account" title="Permalink to this headline">¶</a></h3>
+<p>Go to the <a class="reference external" href="https://faucet.tzalpha.net/">https://faucet.tzalpha.net/</a> and download key file.
+Then configure the client (we can leave <code class="docutils literal notranslate"><span class="pre">shell</span></code> parameter empty, but we will set it explicitly for better understanding)</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pytezos</span> <span class="o">=</span> <span class="n">pytezos</span><span class="o">.</span><span class="n">using</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">key</span><span class="o">=</span><span class="s1">&#39;~/Downloads/tz1cnQZXoznhduu4MVWfJF6GSyP6mMHMbbWa.json&#39;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">shell</span><span class="o">=</span><span class="s1">&#39;alphanet&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Public available RPC providers are available at <code class="docutils literal notranslate"><span class="pre">pytezos.rpc</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pytezos.rpc</span> <span class="kn">import</span> <span class="n">tzkt</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tzkt</span>
+<span class="go">&lt;pytezos.rpc.RpcProvider object at 0x7f6f56ad77b8&gt;</span>
+
+<span class="go">Networks</span>
+<span class="go">.mainnet  # https://rpc.tzkt.io/mainnet/</span>
+<span class="go">.alphanet  # https://rpc.tzkt.io/alphanet/</span>
+<span class="go">.zeronet  # https://rpc.tzkt.io/zeronet/</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="sandboxed-mode">
+<h3>Sandboxed mode<a class="headerlink" href="#sandboxed-mode" title="Permalink to this headline">¶</a></h3>
+<p>Accounts are pre-created in Sandboxed mode, this shows how to find the secret keys:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ grep SECRET src/bin_client/tezos-init-sandboxed-client.sh
+export BOOTSTRAP1_SECRET=&quot;unencrypted:edsk3gUfUPyBSfrS9CCgmCiQsTCHGkviBDusMxDJstFtojtc1zcpsh&quot;
+export BOOTSTRAP2_SECRET=&quot;unencrypted:edsk39qAm1fiMjgmPkw1EgQYkMzkJezLNewd7PLNHTkr6w9XA2zdfo&quot;
+export BOOTSTRAP3_SECRET=&quot;unencrypted:edsk4ArLQgBTLWG5FJmnGnT689VKoqhXwmDPBuGx3z4cvwU9MmrPZZ&quot;
+export BOOTSTRAP4_SECRET=&quot;unencrypted:edsk2uqQB9AY4FvioK2YMdfmyMrer5R8mGFyuaLLFfSRo8EoyNdht3&quot;
+export BOOTSTRAP5_SECRET=&quot;unencrypted:edsk4QLrcijEffxV31gGdN2HU7UpyJjA8drFoNcmnB28n89YjPNRFm&quot;
+export ACTIVATOR_SECRET=&quot;unencrypted:edsk31vznjHSSpGExDMHYASz45VZqXN4DPxvsa4hAyY8dHM28cZzp6&quot;
+</pre></div>
+</div>
+<p>Use one of these unencrypted private keys to connect to the sandbox:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pytezos</span> <span class="kn">import</span> <span class="n">pytezos</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pytezos</span><span class="o">.</span><span class="n">using</span><span class="p">(</span><span class="n">shell</span><span class="o">=</span><span class="s1">&#39;http://localhost:18731&#39;</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s1">&#39;edsk3gUfUPyBSfrS9CCgmCiQsTCHGkviBDusMxDJstFtojtc1zcpsh&#39;</span><span class="p">)</span>
+<span class="go">&lt;pytezos.client.PyTezosClient object at 0x7f2c2d78da10&gt;</span>
+
+<span class="go">Properties</span>
+<span class="go">.key  # tz1KqTpEZ7Yob7QbPE4Hy4Wo8fHG8LhKxZSx</span>
+<span class="go">.shell  # http://localhost:18731 ()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="activate-account">
+<h2>Activate account<a class="headerlink" href="#activate-account" title="Permalink to this headline">¶</a></h2>
+<p>In order to start using our faucet account we need to claim balance.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pytezos</span><span class="o">.</span><span class="n">activate_account</span>
+<span class="go">&lt;function ContentMixin.activate_account at 0x7f6f555e5400&gt;</span>
+
+<span class="go">Activate recommended allocations for contributions to the TF fundraiser.</span>
+<span class="go">More info https://activate.tezos.com/</span>
+<span class="go">:param pkh: Public key hash, leave empty for autocomplete</span>
+<span class="go">:param activation_code: Secret code from pdf, leave empty for autocomplete</span>
+<span class="go">:return: dict or OperationGroup</span>
+</pre></div>
+</div>
+<p>Cool! We can just leave all fields empty and let PyTezos do all the work. There are two autocomplete function available:
+<code class="docutils literal notranslate"><span class="pre">fill</span></code> and <code class="docutils literal notranslate"><span class="pre">autofill</span></code>. The only difference is that <code class="docutils literal notranslate"><span class="pre">autofill</span></code> simulates the operation and sets precise values for fee
+and gas/storage limits.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pytezos</span><span class="o">.</span><span class="n">activate_account</span><span class="p">()</span><span class="o">.</span><span class="n">autofill</span><span class="p">()</span>
+<span class="go">&lt;pytezos.operation.group.OperationGroup object at 0x7f291b7074e0&gt;</span>
+
+<span class="go">Properties</span>
+<span class="go">.key  # tz1cnQZXoznhduu4MVWfJF6GSyP6mMHMbbWa</span>
+<span class="go">.shell  # https://tezos-dev.cryptonomic-infra.tech/ (alphanet)</span>
+
+<span class="go">Payload</span>
+<span class="go">{&#39;branch&#39;: &#39;BL5UtKR4ysFLwcK2ign1h2KoZLJY88zd1vzWUZPzto9iEJqUj1d&#39;,</span>
+<span class="go"> &#39;contents&#39;: [{&#39;kind&#39;: &#39;activate_account&#39;,</span>
+<span class="go">               &#39;pkh&#39;: &#39;tz1cnQZXoznhduu4MVWfJF6GSyP6mMHMbbWa&#39;,</span>
+<span class="go">               &#39;secret&#39;: &#39;e8d47034af5ea23a9613dba219f8b4a792b22c5f&#39;}],</span>
+<span class="go"> &#39;protocol&#39;: &#39;Pt24m4xiPbLDhVgVfABUjirbmda3yohdN82Sp9FeuAXJ4eV9otd&#39;,</span>
+<span class="go"> &#39;signature&#39;: None}</span>
+
+<span class="go">Helpers</span>
+<span class="go">.activate_account()</span>
+<span class="go">.autofill()</span>
+<span class="go">.ballot()</span>
+<span class="go">.binary_payload()</span>
+<span class="go">.delegation()</span>
+<span class="go">.double_baking_evidence()</span>
+<span class="go">.double_endorsement_evidence()</span>
+<span class="go">.endorsement()</span>
+<span class="go">.fill()</span>
+<span class="go">.forge()</span>
+<span class="go">.hash()</span>
+<span class="go">.inject()</span>
+<span class="go">.json_payload()</span>
+<span class="go">.operation()</span>
+<span class="go">.origination()</span>
+<span class="go">.preapply()</span>
+<span class="go">.proposals()</span>
+<span class="go">.reveal()</span>
+<span class="go">.run()</span>
+<span class="go">.seed_nonce_revelation()</span>
+<span class="go">.sign()</span>
+<span class="go">.transaction()</span>
+<span class="go">.using()</span>
+</pre></div>
+</div>
+<p>Have you noticed that operation helpers are still available? We can easily chain operations but we cannot for example
+put <code class="docutils literal notranslate"><span class="pre">activate_account</span></code> and <code class="docutils literal notranslate"><span class="pre">reveal</span></code> together because they are from different validation passes.
+Ok, let’s sign and preapply operation to see what’s going to happen:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pytezos</span><span class="o">.</span><span class="n">activate_account</span><span class="p">()</span><span class="o">.</span><span class="n">fill</span><span class="p">()</span><span class="o">.</span><span class="n">sign</span><span class="p">()</span><span class="o">.</span><span class="n">preapply</span><span class="p">()</span>
+<span class="go">[{&#39;contents&#39;: [{&#39;kind&#39;: &#39;activate_account&#39;,</span>
+<span class="go">    &#39;pkh&#39;: &#39;tz1cnQZXoznhduu4MVWfJF6GSyP6mMHMbbWa&#39;,</span>
+<span class="go">    &#39;secret&#39;: &#39;e8d47034af5ea23a9613dba219f8b4a792b22c5f&#39;,</span>
+<span class="go">    &#39;metadata&#39;: {&#39;balance_updates&#39;: [{&#39;kind&#39;: &#39;contract&#39;,</span>
+<span class="go">       &#39;contract&#39;: &#39;tz1cnQZXoznhduu4MVWfJF6GSyP6mMHMbbWa&#39;,</span>
+<span class="go">       &#39;change&#39;: &#39;10848740286&#39;}]}}],</span>
+<span class="go">  &#39;signature&#39;: &#39;sigRg96wY6mxLKJ7jaTrVcXzABqhyEa4J1Ji5rGPKPVHv2YugViGfeH1b7qu7eavhhEGoASqffwjnH2fr46oBXVZrMWC6ZFg&#39;}]</span>
+</pre></div>
+</div>
+<p>Everything looks good! Ready to inject the operation.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pytezos</span><span class="o">.</span><span class="n">activate_account</span><span class="p">()</span><span class="o">.</span><span class="n">fill</span><span class="p">()</span><span class="o">.</span><span class="n">sign</span><span class="p">()</span><span class="o">.</span><span class="n">inject</span><span class="p">()</span>
+<span class="go">&#39;oo77zoEsa9RuA7NubhvckM8NBNta8dUbL4e5GuhXmqnZ9XQGK5k&#39;</span>
+</pre></div>
+</div>
+<p>We can search our operation in the node mempool to check what status it has:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pytezos</span><span class="o">.</span><span class="n">shell</span><span class="o">.</span><span class="n">mempool</span><span class="o">.</span><span class="n">pending_operations</span><span class="p">[</span><span class="s1">&#39;oo77zoEsa9RuA7NubhvckM8NBNta8dUbL4e5GuhXmqnZ9XQGK5k&#39;</span><span class="p">]</span>
+<span class="go">{&#39;status&#39;: &#39;applied&#39;,</span>
+<span class="go"> &#39;hash&#39;: &#39;oo77zoEsa9RuA7NubhvckM8NBNta8dUbL4e5GuhXmqnZ9XQGK5k&#39;,</span>
+<span class="go"> &#39;branch&#39;: &#39;BMdgSQxnGGTXuvGp7qrgnM2pMu16dS9Hdjq9UbdHGxzxfKfVR75&#39;,</span>
+<span class="go"> &#39;contents&#39;: [{&#39;kind&#39;: &#39;activate_account&#39;,</span>
+<span class="go">   &#39;pkh&#39;: &#39;tz1cnQZXoznhduu4MVWfJF6GSyP6mMHMbbWa&#39;,</span>
+<span class="go">   &#39;secret&#39;: &#39;e8d47034af5ea23a9613dba219f8b4a792b22c5f&#39;}],</span>
+<span class="go"> &#39;signature&#39;: &#39;sigbMMUu6h9vAxoM7ZZdwttDk2CcgpwbmCrFjSTQBtTsoLFYNdz85wCKQBMZ2ZMEVrBnt61XGZXyWuuDDbp7WepjHgR6DTrT&#39;}</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pytezos</span><span class="o">.</span><span class="n">account</span><span class="p">()</span>
+<span class="go">{&#39;manager&#39;: &#39;tz1cnQZXoznhduu4MVWfJF6GSyP6mMHMbbWa&#39;,</span>
+<span class="go"> &#39;balance&#39;: &#39;10848740286&#39;,</span>
+<span class="go"> &#39;spendable&#39;: True,</span>
+<span class="go"> &#39;delegate&#39;: {&#39;setable&#39;: False},</span>
+<span class="go"> &#39;counter&#39;: &#39;715917&#39;}</span>
+</pre></div>
+</div>
+<p>Yay! We have claimed our account balance.</p>
+</div>
+<div class="section" id="reveal-public-key">
+<h2>Reveal public key<a class="headerlink" href="#reveal-public-key" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pytezos</span><span class="o">.</span><span class="n">reveal</span><span class="p">()</span><span class="o">.</span><span class="n">autofill</span><span class="p">()</span><span class="o">.</span><span class="n">sign</span><span class="p">()</span><span class="o">.</span><span class="n">inject</span><span class="p">()</span>
+<span class="go">&#39;oo3TzPdNhtz5nmE9nL2yGLqwUzSfmb1vjTpu8wFkX5CTKLV67AE&#39;</span>
+</pre></div>
+</div>
+<p>We can also search for operation by hash if we know exact block level or that it was injected recently:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pytezos</span><span class="o">.</span><span class="n">shell</span><span class="o">.</span><span class="n">blocks</span><span class="p">[</span><span class="mi">580244</span><span class="p">]</span><span class="o">.</span><span class="n">operations</span><span class="p">[</span><span class="s1">&#39;oo3TzPdNhtz5nmE9nL2yGLqwUzSfmb1vjTpu8wFkX5CTKLV67AE&#39;</span><span class="p">]</span>
+<span class="go">&lt;pytezos.rpc.protocol.OperationQuery object at 0x7f70650925c0&gt;</span>
+
+<span class="go">Properties</span>
+<span class="go">.path  # /chains/main/blocks/580244/operations/3/16 (cached)</span>
+<span class="go">.node  # https://tezos-dev.cryptonomic-infra.tech/ (alphanet)</span>
+
+<span class="go">()</span>
+<span class="go">The `m-th` operation in the `n-th` validation pass of the block.</span>
+<span class="go">:return: Object</span>
+
+<span class="go">Helpers</span>
+<span class="go">.unsigned()</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pytezos</span><span class="o">.</span><span class="n">shell</span><span class="o">.</span><span class="n">blocks</span><span class="p">[</span><span class="o">-</span><span class="mi">20</span><span class="p">:]</span><span class="o">.</span><span class="n">find_operation</span><span class="p">(</span><span class="s1">&#39;oo3TzPdNhtz5nmE9nL2yGLqwUzSfmb1vjTpu8wFkX5CTKLV67AE&#39;</span><span class="p">)</span>
+<span class="go">{&#39;protocol&#39;: &#39;Pt24m4xiPbLDhVgVfABUjirbmda3yohdN82Sp9FeuAXJ4eV9otd&#39;,</span>
+<span class="go"> &#39;chain_id&#39;: &#39;NetXgtSLGNJvNye&#39;,</span>
+<span class="go"> &#39;hash&#39;: &#39;oo3TzPdNhtz5nmE9nL2yGLqwUzSfmb1vjTpu8wFkX5CTKLV67AE&#39;,</span>
+<span class="go"> &#39;branch&#39;: &#39;BLdKQLeV5FaPspBLP6J7Tx5xs2XRRH7pJGnXhwEW1uKz9PGBF8H&#39;,</span>
+<span class="go"> &#39;contents&#39;: [{&#39;kind&#39;: &#39;reveal&#39;,</span>
+<span class="go">   &#39;source&#39;: &#39;tz1cnQZXoznhduu4MVWfJF6GSyP6mMHMbbWa&#39;,</span>
+<span class="go">   &#39;fee&#39;: &#39;1261&#39;,</span>
+<span class="go">   &#39;counter&#39;: &#39;715918&#39;,</span>
+<span class="go">   &#39;gas_limit&#39;: &#39;10000&#39;,</span>
+<span class="go">   &#39;storage_limit&#39;: &#39;0&#39;,</span>
+<span class="go">   &#39;public_key&#39;: &#39;edpktn9Xg5TaBJ9j6gs1X4AAsQR43zxzmaVNdyerq2PxTy7dUfN3X8&#39;,</span>
+<span class="go">   &#39;metadata&#39;: {&#39;balance_updates&#39;: [{&#39;kind&#39;: &#39;contract&#39;,</span>
+<span class="go">      &#39;contract&#39;: &#39;tz1cnQZXoznhduu4MVWfJF6GSyP6mMHMbbWa&#39;,</span>
+<span class="go">      &#39;change&#39;: &#39;-1261&#39;},</span>
+<span class="go">     {&#39;kind&#39;: &#39;freezer&#39;,</span>
+<span class="go">      &#39;category&#39;: &#39;fees&#39;,</span>
+<span class="go">      &#39;delegate&#39;: &#39;tz3gN8NTLNLJg5KRsUU47NHNVHbdhcFXjjaB&#39;,</span>
+<span class="go">      &#39;cycle&#39;: 283,</span>
+<span class="go">      &#39;change&#39;: &#39;1261&#39;}],</span>
+<span class="go">    &#39;operation_result&#39;: {&#39;status&#39;: &#39;applied&#39;, &#39;consumed_gas&#39;: &#39;10000&#39;}}}],</span>
+<span class="go"> &#39;signature&#39;: &#39;sigjzUVPWuFKxmMizHfMUgjqXpo2cqNEHjgRDykqwWiot2129KRWCanZjytUfxFWSDwpNSjkakmWqzhxLwNNcBcQQWJ5mAsW&#39;}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="originate-contract">
+<h2>Originate contract<a class="headerlink" href="#originate-contract" title="Permalink to this headline">¶</a></h2>
+<p>Now we can do something interesting. Let’s deploy a Michelson smart contract! First we need to load data, in this
+tutorial we will get it from Michelson source file. There are plenty of available methods, but we’are interested in
+<code class="docutils literal notranslate"><span class="pre">script</span></code> which gives us payload for origination.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pytezos</span> <span class="kn">import</span> <span class="n">Contract</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">contract</span> <span class="o">=</span> <span class="n">Contract</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="s1">&#39;~/Documents/demo_contract.tz&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">contract</span><span class="o">.</span><span class="n">script</span>
+<span class="go">&lt;function Contract.script at 0x7fe01c0d9c80&gt;</span>
+
+<span class="go">Generate script for contract origination</span>
+<span class="go">:param storage: Python object, leave None to generate empty</span>
+<span class="go">:return: {&quot;code&quot;: $Micheline, &quot;storage&quot;: $Micheline}</span>
+</pre></div>
+</div>
+<p>PyTezos can generate empty storage based on the type description. This is a small part of the high-level interface
+functionality we will further learn.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pytezos</span><span class="o">.</span><span class="n">origination</span><span class="p">(</span><span class="n">script</span><span class="o">=</span><span class="n">contract</span><span class="o">.</span><span class="n">script</span><span class="p">())</span><span class="o">.</span><span class="n">autofill</span><span class="p">()</span><span class="o">.</span><span class="n">sign</span><span class="p">()</span><span class="o">.</span><span class="n">inject</span><span class="p">()</span>
+<span class="go">&#39;op3ZRdR6LjmA8AeNEjKEimr2uQeAWwXSXEftUBiTVx4k86Rw66m&#39;</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">opg</span> <span class="o">=</span> <span class="n">pytezos</span><span class="o">.</span><span class="n">shell</span><span class="o">.</span><span class="n">blocks</span><span class="p">[</span><span class="o">-</span><span class="mi">5</span><span class="p">:]</span><span class="o">.</span><span class="n">find_operation</span><span class="p">(</span><span class="s1">&#39;op3ZRdR6LjmA8AeNEjKEimr2uQeAWwXSXEftUBiTVx4k86Rw66m&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">contract_id</span> <span class="o">=</span> <span class="n">opg</span><span class="p">[</span><span class="s1">&#39;contents&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;metadata&#39;</span><span class="p">][</span><span class="s1">&#39;operation_result&#39;</span><span class="p">][</span><span class="s1">&#39;originated_contracts&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">contract_id</span>
+<span class="go">&#39;KT1RX74ty3TqBfU6pBs7ce3uV7PLBrUEav6X&#39;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="access-storage">
+<h2>Access storage<a class="headerlink" href="#access-storage" title="Permalink to this headline">¶</a></h2>
+<p>Let’s play with <a class="reference external" href="https://better-call.dev/alpha/KT1HnvV5Z53naoh51jYvPF7w168nW8nfyx5v/operations">KT1HnvV5Z53naoh51jYvPF7w168nW8nfyx5v</a>
+as it has BigMap entries, named entrypoints, and non-trivial data scheme.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ci</span> <span class="o">=</span> <span class="n">pytezos</span><span class="o">.</span><span class="n">contract</span><span class="p">(</span><span class="s1">&#39;KT1HnvV5Z53naoh51jYvPF7w168nW8nfyx5v&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ci</span>
+<span class="go">&lt;pytezos.michelson.interface.ContractInterface object at 0x7f8bbb11c748&gt;</span>
+
+<span class="go">Properties</span>
+<span class="go">.key -&gt; tz1cnQZXoznhduu4MVWfJF6GSyP6mMHMbbWa</span>
+<span class="go">.shell -&gt; https://tezos-dev.cryptonomic-infra.tech/ (alphanet)</span>
+<span class="go">.address -&gt; KT1HnvV5Z53naoh51jYvPF7w168nW8nfyx5v</span>
+
+<span class="go">Entrypoints</span>
+<span class="go">.transfer()</span>
+<span class="go">.approve()</span>
+<span class="go">.transfer_from()</span>
+<span class="go">.balance_of()</span>
+<span class="go">.allowance()</span>
+<span class="go">.create_account()</span>
+<span class="go">.create_accounts()</span>
+
+<span class="go">Helpers</span>
+<span class="go">.big_map_get()</span>
+<span class="go">.storage()</span>
+<span class="go">.using()</span>
+</pre></div>
+</div>
+<p>You can access contract storage at any block level, just pass block id into the <code class="docutils literal notranslate"><span class="pre">storage</span></code> method:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ci</span><span class="o">.</span><span class="n">storage</span><span class="p">(</span><span class="n">block_id</span><span class="o">=</span><span class="s1">&#39;head~4096&#39;</span><span class="p">)</span>
+<span class="go">{&#39;accounts&#39;: {},</span>
+<span class="go"> &#39;version&#39;: 1,</span>
+<span class="go"> &#39;total_supply&#39;: 1000,</span>
+<span class="go"> &#39;decimals&#39;: 0,</span>
+<span class="go"> &#39;name&#39;: &#39;Calamares&#39;,</span>
+<span class="go"> &#39;symbol&#39;: &#39;PLA&#39;,</span>
+<span class="go"> &#39;owner&#39;: &#39;tz1WWLRiCFnSzT1uXQYjJYaMVcUefrMxWT25&#39;}</span>
+</pre></div>
+</div>
+<p>Under the hood PyTezos has parsed the storage type, collapsed all nested structures, converted annotations into keys,
+and in the result we get a simple Python object which is much easier to manipulate. Take a look at the storage scheme -
+it looks like Tezos RPC API generated docs.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ci</span><span class="o">.</span><span class="n">contract</span><span class="o">.</span><span class="n">storage</span>
+<span class="go">&lt;pytezos.michelson.contract.ContractStorage object at 0x7f5d1411f550&gt;</span>
+
+<span class="go">$storage:</span>
+<span class="go">    {</span>
+<span class="go">      &quot;accounts&quot;: { $address : $account , ... }  /* big_map */,</span>
+<span class="go">      &quot;version&quot;: $nat,</span>
+<span class="go">      &quot;total_supply&quot;: $nat,</span>
+<span class="go">      &quot;decimals&quot;: $nat,</span>
+<span class="go">      &quot;name&quot;: string,</span>
+<span class="go">      &quot;symbol&quot;: string,</span>
+<span class="go">      &quot;owner&quot;: $address</span>
+<span class="go">    }</span>
+
+<span class="go">$account:</span>
+<span class="go">    {</span>
+<span class="go">      &quot;balance&quot;: $nat,</span>
+<span class="go">      &quot;allowances&quot;: { $address : $nat , ... }</span>
+<span class="go">    }</span>
+
+<span class="go">$nat:</span>
+<span class="go">    int  /* Natural number */</span>
+
+<span class="go">$address:</span>
+<span class="go">    string  /* Base58 encoded `tz` or `KT` address */</span>
+
+
+<span class="go">Helpers</span>
+<span class="go">.big_map_decode()</span>
+<span class="go">.big_map_diff_decode()</span>
+<span class="go">.big_map_query()</span>
+<span class="go">.decode()</span>
+<span class="go">.default()</span>
+<span class="go">.encode()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="bigmap-lookup">
+<h2>BigMap lookup<a class="headerlink" href="#bigmap-lookup" title="Permalink to this headline">¶</a></h2>
+<p>It looks like we are talking about some token,
+let’s take a peek at the <a class="reference external" href="https://better-call.dev/alpha/KT1HnvV5Z53naoh51jYvPF7w168nW8nfyx5v/operations">better-call.dev</a>
+and query balance for an account from the big map.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ci</span><span class="o">.</span><span class="n">big_map_get</span><span class="p">(</span><span class="s1">&#39;KT1FxfNNcmdEs3n38E1o2GcXhikmpGkyARDq&#39;</span><span class="p">)</span>
+<span class="go">{&#39;balance&#39;: 45, &#39;allowances&#39;: {}}</span>
+</pre></div>
+</div>
+<p>Pretty cool, hah?</p>
+</div>
+<div class="section" id="call-entrypoint">
+<h2>Call entrypoint<a class="headerlink" href="#call-entrypoint" title="Permalink to this headline">¶</a></h2>
+<p>We can do the same using special entrypoint <code class="docutils literal notranslate"><span class="pre">balance_of</span></code>. Let’s give a look at the interface:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ci</span><span class="o">.</span><span class="n">balance_of</span>
+<span class="go">&lt;pytezos.michelson.interface.ContractEntrypoint object at 0x7f4f0cc76e48&gt;</span>
+
+<span class="go">Properties</span>
+<span class="go">.key  # tz1cnQZXoznhduu4MVWfJF6GSyP6mMHMbbWa</span>
+<span class="go">.shell  # https://tezos-dev.cryptonomic-infra.tech/ (alphanet)</span>
+<span class="go">.address  # KT1HnvV5Z53naoh51jYvPF7w168nW8nfyx5v</span>
+
+<span class="go">$kwargs:</span>
+<span class="go">    {</span>
+<span class="go">      &quot;address&quot;: $address,</span>
+<span class="go">      &quot;nat_contract&quot;: $contract (nat)</span>
+<span class="go">    }</span>
+
+<span class="go">$contract:</span>
+<span class="go">    string  /* Base58 encoded `KT` address */</span>
+
+<span class="go">$address:</span>
+<span class="go">    string  /* Base58 encoded `tz` or `KT` address */</span>
+</pre></div>
+</div>
+<p>Apparently, we need to pass an address which balance we want to retrieve and a contract address having a single <code class="docutils literal notranslate"><span class="pre">nat</span></code>
+parameter which will receive the balance (this is how view methods work in michelson).
+Using <a class="reference external" href="https://github.com/baking-bad/conseilpy">conseilpy</a> we can find such contract
+(for testing purposes, in order not to write our own).</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ci</span><span class="o">.</span><span class="n">balance_of</span><span class="p">(</span>
+<span class="gp">... </span>   <span class="n">address</span><span class="o">=</span><span class="s1">&#39;KT1FxfNNcmdEs3n38E1o2GcXhikmpGkyARDq&#39;</span><span class="p">,</span>
+<span class="gp">... </span>   <span class="n">nat_contract</span><span class="o">=</span><span class="s1">&#39;KT1JTpEkByTStHYTT3qD8khJomNnvvnrfh4v&#39;</span><span class="p">)</span>
+<span class="go">&lt;pytezos.michelson.interface.ContractCall object at 0x7f4f0cc980b8&gt;</span>
+
+<span class="go">Properties</span>
+<span class="go">.key  # tz1cnQZXoznhduu4MVWfJF6GSyP6mMHMbbWa</span>
+<span class="go">.shell  # https://tezos-dev.cryptonomic-infra.tech/ (alphanet)</span>
+
+<span class="go">Payload</span>
+<span class="go">{&#39;branch&#39;: &#39;BMDPbTmdsLnD1JBurPAqiYE45UDunYTBad2UWgCtg5bgyi2UFxu&#39;,</span>
+<span class="go"> &#39;contents&#39;: [{&#39;amount&#39;: &#39;0&#39;,</span>
+<span class="go">               &#39;counter&#39;: &#39;715920&#39;,</span>
+<span class="go">               &#39;destination&#39;: &#39;KT1HnvV5Z53naoh51jYvPF7w168nW8nfyx5v&#39;,</span>
+<span class="go">               &#39;fee&#39;: &#39;40364&#39;,</span>
+<span class="go">               &#39;gas_limit&#39;: &#39;400000&#39;,</span>
+<span class="go">               &#39;kind&#39;: &#39;transaction&#39;,</span>
+<span class="go">               &#39;parameters&#39;: {&#39;args&#39;: [{&#39;args&#39;: [{&#39;args&#39;: [{&#39;args&#39;: [{&#39;args&#39;: [{&#39;string&#39;: &#39;KT1FxfNNcmdEs3n38E1o2GcXhikmpGkyARDq&#39;},</span>
+<span class="go">                                                                               {&#39;string&#39;: &#39;KT1JTpEkByTStHYTT3qD8khJomNnvvnrfh4v&#39;}],</span>
+<span class="go">                                                                      &#39;prim&#39;: &#39;Pair&#39;}],</span>
+<span class="go">                                                            &#39;prim&#39;: &#39;Left&#39;}],</span>
+<span class="go">                                                  &#39;prim&#39;: &#39;Right&#39;}],</span>
+<span class="go">                                        &#39;prim&#39;: &#39;Right&#39;}],</span>
+<span class="go">                              &#39;prim&#39;: &#39;Right&#39;},</span>
+<span class="go">               &#39;source&#39;: &#39;tz1cnQZXoznhduu4MVWfJF6GSyP6mMHMbbWa&#39;,</span>
+<span class="go">               &#39;storage_limit&#39;: &#39;60000&#39;}],</span>
+<span class="go"> &#39;protocol&#39;: &#39;Pt24m4xiPbLDhVgVfABUjirbmda3yohdN82Sp9FeuAXJ4eV9otd&#39;,</span>
+<span class="go"> &#39;signature&#39;: None}</span>
+
+<span class="go">Helpers</span>
+<span class="go">.cmdline()</span>
+<span class="go">.inject()</span>
+<span class="go">.operation_group</span>
+<span class="go">.using()</span>
+<span class="go">.with_amount()</span>
+</pre></div>
+</div>
+<p>What we got is a ready to inject operation group with encoded parameters.
+In our case we just want to view data, so we can use <code class="docutils literal notranslate"><span class="pre">preapply</span></code> to see actual result.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ci</span><span class="o">.</span><span class="n">balance_of</span><span class="p">(</span><span class="n">address</span><span class="o">=</span><span class="s1">&#39;KT1FxfNNcmdEs3n38E1o2GcXhikmpGkyARDq&#39;</span><span class="p">,</span>
+<span class="gp">... </span>              <span class="n">nat_contract</span><span class="o">=</span><span class="s1">&#39;KT1JTpEkByTStHYTT3qD8khJomNnvvnrfh4v&#39;</span><span class="p">)</span> \
+<span class="gp">... </span>   <span class="o">.</span><span class="n">operation_group</span> \
+<span class="gp">... </span>   <span class="o">.</span><span class="n">sign</span><span class="p">()</span> \
+<span class="gp">... </span>   <span class="o">.</span><span class="n">preapply</span><span class="p">()</span>
+<span class="go">[{&#39;contents&#39;: [{&#39;kind&#39;: &#39;transaction&#39;,</span>
+<span class="go">    &#39;source&#39;: &#39;tz1cnQZXoznhduu4MVWfJF6GSyP6mMHMbbWa&#39;,</span>
+<span class="go">    &#39;fee&#39;: &#39;40364&#39;,</span>
+<span class="go">    &#39;counter&#39;: &#39;715920&#39;,</span>
+<span class="go">    &#39;gas_limit&#39;: &#39;400000&#39;,</span>
+<span class="go">    &#39;storage_limit&#39;: &#39;60000&#39;,</span>
+<span class="go">    &#39;amount&#39;: &#39;0&#39;,</span>
+<span class="go">    &#39;destination&#39;: &#39;KT1HnvV5Z53naoh51jYvPF7w168nW8nfyx5v&#39;,</span>
+<span class="go">    &#39;parameters&#39;: {&#39;prim&#39;: &#39;Right&#39;,</span>
+<span class="go">     &#39;args&#39;: [{&#39;prim&#39;: &#39;Right&#39;,</span>
+<span class="go">       &#39;args&#39;: [{&#39;prim&#39;: &#39;Right&#39;,</span>
+<span class="go">         &#39;args&#39;: [{&#39;prim&#39;: &#39;Left&#39;,</span>
+<span class="go">           &#39;args&#39;: [{&#39;prim&#39;: &#39;Pair&#39;,</span>
+<span class="go">             &#39;args&#39;: [{&#39;string&#39;: &#39;KT1FxfNNcmdEs3n38E1o2GcXhikmpGkyARDq&#39;},</span>
+<span class="go">              {&#39;string&#39;: &#39;KT1JTpEkByTStHYTT3qD8khJomNnvvnrfh4v&#39;}]}]}]}]}]},</span>
+<span class="go">    &#39;metadata&#39;: {&#39;balance_updates&#39;: [{&#39;kind&#39;: &#39;contract&#39;,</span>
+<span class="go">      &lt;...&gt;</span>
+<span class="go">     &#39;internal_operation_results&#39;: [{&#39;kind&#39;: &#39;transaction&#39;,</span>
+<span class="go">       &#39;source&#39;: &#39;KT1HnvV5Z53naoh51jYvPF7w168nW8nfyx5v&#39;,</span>
+<span class="go">       &#39;nonce&#39;: 0,</span>
+<span class="go">       &#39;amount&#39;: &#39;0&#39;,</span>
+<span class="go">       &#39;destination&#39;: &#39;KT1JTpEkByTStHYTT3qD8khJomNnvvnrfh4v&#39;,</span>
+<span class="go">       &#39;parameters&#39;: {&#39;int&#39;: &#39;45&#39;},</span>
+<span class="go">       &#39;result&#39;: {&#39;status&#39;: &#39;applied&#39;,</span>
+<span class="go">        &#39;storage&#39;: {&#39;int&#39;: &#39;45&#39;},</span>
+<span class="go">        &#39;consumed_gas&#39;: &#39;12290&#39;,</span>
+<span class="go">        &#39;storage_size&#39;: &#39;86&#39;}}]}}],</span>
+<span class="go">  &#39;signature&#39;: &#39;sigsGCtnZKxWt4UD3HqkxPyemFTgeSVrgBDR4vawFBBFtLKok78JE8Jawn9VCp48ZZ9wYMZN52GhgZYHw8aCfk7fgAG5jMZS&#39;}]</span>
+</pre></div>
+</div>
+<p>It worked! In the <code class="docutils literal notranslate"><span class="pre">internal_operation_results</span></code> we see a spawned transaction with parameters <code class="docutils literal notranslate"><span class="pre">{'int':</span> <span class="pre">'45'}</span></code></p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="integration_tests.html" class="btn btn-neutral float-right" title="Michelson integration tests" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral float-left" title="Welcome to PyTezos documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Baking Bad
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

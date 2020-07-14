@@ -1,0 +1,796 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pytezos.repl.types &mdash; PyTezos  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+    <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> PyTezos
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../quick_start.html">Quick start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../integration_tests.html">Michelson integration tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pytezos_cli.html">Pytezos CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../high_level.html">High-level interfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../crypto.html">Cryptography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../operation_groups.html">Building and parsing operations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rpc_queries.html">RPC query engine</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../script_wrappers.html">Michelson script wrappers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pack.html">Michelson type encoding</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../code.html">Working with Michelson code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../repl.html">Michelson REPL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../inspect_proposals.html">Inspecting proposals</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">PyTezos</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>pytezos.repl.types</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pytezos.repl.types</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">pprint</span> <span class="kn">import</span> <span class="n">pformat</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
+
+<span class="kn">from</span> <span class="nn">pytezos.michelson.pack</span> <span class="kn">import</span> <span class="n">get_key_hash</span>
+<span class="kn">from</span> <span class="nn">pytezos.michelson.converter</span> <span class="kn">import</span> <span class="n">micheline_to_michelson</span>
+<span class="kn">from</span> <span class="nn">pytezos.encoding</span> <span class="kn">import</span> <span class="n">is_pkh</span><span class="p">,</span> <span class="n">is_kt</span><span class="p">,</span> <span class="n">is_chain_id</span>
+<span class="kn">from</span> <span class="nn">pytezos.repl.parser</span> <span class="kn">import</span> <span class="n">parse_expression</span><span class="p">,</span> <span class="n">parse_prim_expr</span><span class="p">,</span> <span class="n">assert_expr_equal</span><span class="p">,</span> <span class="n">assert_comparable</span><span class="p">,</span> \
+    <span class="n">expr_equal</span><span class="p">,</span> <span class="n">assert_type</span><span class="p">,</span> <span class="n">get_prim_args</span><span class="p">,</span> <span class="n">assert_big_map_val</span><span class="p">,</span> <span class="n">Unit</span> <span class="k">as</span> <span class="n">UnitNone</span>
+
+
+<div class="viewcode-block" id="assert_stack_item"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.types.assert_stack_item">[docs]</a><span class="k">def</span> <span class="nf">assert_stack_item</span><span class="p">(</span><span class="n">item</span><span class="p">:</span> <span class="s1">&#39;StackItem&#39;</span><span class="p">):</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">StackItem</span><span class="p">),</span> <span class="sa">f</span><span class="s1">&#39;expected StackItem, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">item</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1">&#39;</span></div>
+
+
+<div class="viewcode-block" id="assert_stack_type"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.types.assert_stack_type">[docs]</a><span class="k">def</span> <span class="nf">assert_stack_type</span><span class="p">(</span><span class="n">item</span><span class="p">:</span> <span class="s1">&#39;StackItem&#39;</span><span class="p">,</span> <span class="n">item_type</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item_type</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="n">item_type</span> <span class="o">=</span> <span class="p">[</span><span class="n">item_type</span><span class="p">]</span>
+    <span class="n">expected</span> <span class="o">=</span> <span class="s1">&#39; or &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">item_type</span><span class="p">))</span>
+    <span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="ow">in</span> <span class="n">item_type</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;expected </span><span class="si">{</span><span class="n">expected</span><span class="si">}</span><span class="s1">, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">item</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1">&#39;</span></div>
+
+
+<div class="viewcode-block" id="dispatch_type_map"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.types.dispatch_type_map">[docs]</a><span class="k">def</span> <span class="nf">dispatch_type_map</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">mapping</span><span class="p">):</span>
+    <span class="k">assert</span> <span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">a</span><span class="p">),</span> <span class="nb">type</span><span class="p">(</span><span class="n">b</span><span class="p">))</span> <span class="ow">in</span> <span class="n">mapping</span><span class="p">,</span> \
+        <span class="sa">f</span><span class="s1">&#39;unsupported argument types </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">a</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1"> and </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">b</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1">&#39;</span>
+    <span class="k">return</span> <span class="n">mapping</span><span class="p">[(</span><span class="nb">type</span><span class="p">(</span><span class="n">a</span><span class="p">),</span> <span class="nb">type</span><span class="p">(</span><span class="n">b</span><span class="p">))]</span></div>
+
+
+<div class="viewcode-block" id="assert_equal_types"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.types.assert_equal_types">[docs]</a><span class="k">def</span> <span class="nf">assert_equal_types</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+    <span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="o">==</span> <span class="nb">type</span><span class="p">(</span><span class="n">b</span><span class="p">),</span> <span class="sa">f</span><span class="s1">&#39;different types </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">a</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1"> and </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">b</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1">&#39;</span></div>
+
+
+<div class="viewcode-block" id="get_name"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.types.get_name">[docs]</a><span class="k">def</span> <span class="nf">get_name</span><span class="p">(</span><span class="n">annots</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">prefix</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">annots</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">next</span><span class="p">((</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">annots</span> <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">prefix</span><span class="p">)),</span> <span class="n">default</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">default</span></div>
+
+
+<div class="viewcode-block" id="StackItem"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.types.StackItem">[docs]</a><span class="k">class</span> <span class="nc">StackItem</span><span class="p">:</span>
+    <span class="n">prim</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+    <span class="n">__cls__</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">val_expr</span><span class="p">,</span> <span class="n">type_expr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_val</span> <span class="o">=</span> <span class="n">val</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">val_expr</span> <span class="o">=</span> <span class="n">val_expr</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">type_expr</span> <span class="o">=</span> <span class="n">type_expr</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_get_type</span><span class="p">(</span><span class="n">type_expr</span><span class="p">):</span>
+        <span class="n">prim</span><span class="p">,</span> <span class="n">args</span> <span class="o">=</span> <span class="n">parse_prim_expr</span><span class="p">(</span><span class="n">type_expr</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">prim</span> <span class="ow">in</span> <span class="n">StackItem</span><span class="o">.</span><span class="n">__cls__</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">prim</span><span class="si">}</span><span class="s1">: unknown type primitive&#39;</span>
+        <span class="n">item_cls</span><span class="p">,</span> <span class="n">args_len</span> <span class="o">=</span> <span class="n">StackItem</span><span class="o">.</span><span class="n">__cls__</span><span class="p">[</span><span class="n">type_expr</span><span class="p">[</span><span class="s1">&#39;prim&#39;</span><span class="p">]]</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="n">args_len</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">prim</span><span class="si">}</span><span class="s1">: expected </span><span class="si">{</span><span class="n">args_len</span><span class="si">}</span><span class="s1"> arg(s), got </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="k">return</span> <span class="n">item_cls</span>
+
+<div class="viewcode-block" id="StackItem.init"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.types.StackItem.init">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">init</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">val_expr</span><span class="p">,</span> <span class="n">type_expr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">val</span><span class="o">=</span><span class="n">parse_expression</span><span class="p">(</span><span class="n">val_expr</span><span class="p">,</span> <span class="n">type_expr</span><span class="p">),</span>
+                   <span class="n">val_expr</span><span class="o">=</span><span class="n">val_expr</span><span class="p">,</span>
+                   <span class="n">type_expr</span><span class="o">=</span><span class="n">type_expr</span><span class="p">,</span>
+                   <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="StackItem.parse"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.types.StackItem.parse">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="n">val_expr</span><span class="p">,</span> <span class="n">type_expr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">StackItem</span><span class="o">.</span><span class="n">_get_type</span><span class="p">(</span><span class="n">type_expr</span><span class="p">)</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">val_expr</span><span class="p">,</span> <span class="n">type_expr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">__init_subclass__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">prim</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">args_len</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init_subclass__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">__cls__</span><span class="p">[</span><span class="n">prim</span><span class="p">]</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">,</span> <span class="n">args_len</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">prim</span> <span class="o">=</span> <span class="n">prim</span>
+
+    <span class="k">def</span> <span class="nf">__cmp__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="s1">&#39;StackItem&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="n">assert_stack_item</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+        <span class="n">assert_expr_equal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">type_expr</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">type_expr</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_val</span> <span class="o">&gt;</span> <span class="n">other</span><span class="o">.</span><span class="n">_val</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mi">1</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_val</span> <span class="o">&lt;</span> <span class="n">other</span><span class="o">.</span><span class="n">_val</span><span class="p">:</span>
+            <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mi">0</span>
+
+    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="s1">&#39;StackItem&#39;</span><span class="p">):</span>
+        <span class="n">assert_stack_item</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+        <span class="n">assert_expr_equal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">type_expr</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">type_expr</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">expr_equal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">val_expr</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">val_expr</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__int__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">assert_type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_val</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_val</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">assert_type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_val</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_val</span>
+
+    <span class="k">def</span> <span class="fm">__bytes__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">assert_type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_val</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_val</span>
+
+    <span class="k">def</span> <span class="fm">__bool__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">assert_type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_val</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_val</span>
+
+    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_val</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_val</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_modify</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cache_val</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">param</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+            <span class="n">val_expr</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;val_expr&#39;</span><span class="p">,</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">val_expr</span><span class="p">)),</span>
+            <span class="n">type_expr</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;type_expr&#39;</span><span class="p">,</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">type_expr</span><span class="p">)),</span>
+            <span class="n">name</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="s1">&#39;val&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span> <span class="ow">or</span> <span class="n">cache_val</span><span class="p">:</span>
+            <span class="n">param</span><span class="p">[</span><span class="s1">&#39;val&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;val&#39;</span><span class="p">,</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_val</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">param</span><span class="p">[</span><span class="s1">&#39;val&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">parse_expression</span><span class="p">(</span><span class="n">param</span><span class="p">[</span><span class="s1">&#39;val_expr&#39;</span><span class="p">],</span> <span class="n">param</span><span class="p">[</span><span class="s1">&#39;type_expr&#39;</span><span class="p">])</span>
+        <span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)(</span><span class="o">**</span><span class="n">param</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__deepcopy__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">memodict</span><span class="o">=</span><span class="p">{}):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_modify</span><span class="p">(</span><span class="n">cache_val</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<div class="viewcode-block" id="StackItem.rename"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.types.StackItem.rename">[docs]</a>    <span class="k">def</span> <span class="nf">rename</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">annots</span><span class="p">:</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_modify</span><span class="p">(</span><span class="n">cache_val</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">get_name</span><span class="p">(</span><span class="n">annots</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;@&#39;</span><span class="p">))</span></div></div>
+
+
+<div class="viewcode-block" id="String"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.types.String">[docs]</a><span class="k">class</span> <span class="nc">String</span><span class="p">(</span><span class="n">StackItem</span><span class="p">,</span> <span class="n">prim</span><span class="o">=</span><span class="s1">&#39;string&#39;</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">val_expr</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">type_expr</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">String</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">val</span><span class="o">=</span><span class="n">val</span> <span class="k">if</span> <span class="n">val_expr</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">parse_expression</span><span class="p">(</span><span class="n">val_expr</span><span class="p">,</span> <span class="n">type_expr</span><span class="p">),</span>
+                                     <span class="n">val_expr</span><span class="o">=</span><span class="n">val_expr</span> <span class="ow">or</span> <span class="p">{</span><span class="s1">&#39;string&#39;</span><span class="p">:</span> <span class="n">val</span><span class="p">},</span>
+                                     <span class="n">type_expr</span><span class="o">=</span><span class="n">type_expr</span> <span class="ow">or</span> <span class="p">{</span><span class="s1">&#39;prim&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">prim</span><span class="p">},</span>
+                                     <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+        <span class="n">assert_type</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="nb">slice</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)(</span><span class="bp">self</span><span class="o">.</span><span class="n">_val</span><span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">start</span><span class="p">:</span><span class="n">item</span><span class="o">.</span><span class="n">stop</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="Int"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.types.Int">[docs]</a><span class="k">class</span> <span class="nc">Int</span><span class="p">(</span><span class="n">StackItem</span><span class="p">,</span> <span class="n">prim</span><span class="o">=</span><span class="s1">&#39;int&#39;</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">val_expr</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">type_expr</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">assert_type</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Int</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">val</span><span class="o">=</span><span class="n">val</span> <span class="k">if</span> <span class="n">val_expr</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">parse_expression</span><span class="p">(</span><span class="n">val_expr</span><span class="p">,</span> <span class="n">type_expr</span><span class="p">),</span>
+                                  <span class="n">val_expr</span><span class="o">=</span><span class="n">val_expr</span> <span class="ow">or</span> <span class="p">{</span><span class="s1">&#39;int&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">val</span><span class="p">)},</span>
+                                  <span class="n">type_expr</span><span class="o">=</span><span class="n">type_expr</span> <span class="ow">or</span> <span class="p">{</span><span class="s1">&#39;prim&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">prim</span><span class="p">},</span>
+                                  <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Bytes"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.types.Bytes">[docs]</a><span class="k">class</span> <span class="nc">Bytes</span><span class="p">(</span><span class="n">StackItem</span><span class="p">,</span> <span class="n">prim</span><span class="o">=</span><span class="s1">&#39;bytes&#39;</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="sa">b</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">type_expr</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">val_expr</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">assert_type</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Bytes</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">val</span><span class="o">=</span><span class="n">val</span> <span class="k">if</span> <span class="n">val_expr</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">parse_expression</span><span class="p">(</span><span class="n">val_expr</span><span class="p">,</span> <span class="n">type_expr</span><span class="p">),</span>
+                                    <span class="n">val_expr</span><span class="o">=</span><span class="n">val_expr</span> <span class="ow">or</span> <span class="p">{</span><span class="s1">&#39;bytes&#39;</span><span class="p">:</span> <span class="n">val</span><span class="o">.</span><span class="n">hex</span><span class="p">()},</span>
+                                    <span class="n">type_expr</span><span class="o">=</span><span class="n">type_expr</span> <span class="ow">or</span> <span class="p">{</span><span class="s1">&#39;prim&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">prim</span><span class="p">},</span>
+                                    <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+        <span class="n">assert_type</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="nb">slice</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)(</span><span class="bp">self</span><span class="o">.</span><span class="n">_val</span><span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">start</span><span class="p">:</span><span class="n">item</span><span class="o">.</span><span class="n">stop</span><span class="p">])</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_val</span><span class="o">.</span><span class="n">hex</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="Nat"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.types.Nat">[docs]</a><span class="k">class</span> <span class="nc">Nat</span><span class="p">(</span><span class="n">Int</span><span class="p">,</span> <span class="n">prim</span><span class="o">=</span><span class="s1">&#39;nat&#39;</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">val_expr</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">type_expr</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">assert_type</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">val</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;expected non-negative val&#39;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Nat</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">val</span><span class="o">=</span><span class="n">val</span><span class="p">,</span> <span class="n">val_expr</span><span class="o">=</span><span class="n">val_expr</span><span class="p">,</span> <span class="n">type_expr</span><span class="o">=</span><span class="n">type_expr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Bool"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.types.Bool">[docs]</a><span class="k">class</span> <span class="nc">Bool</span><span class="p">(</span><span class="n">StackItem</span><span class="p">,</span> <span class="n">prim</span><span class="o">=</span><span class="s1">&#39;bool&#39;</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">val_expr</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">type_expr</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">assert_type</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Bool</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">val</span><span class="o">=</span><span class="n">val</span> <span class="k">if</span> <span class="n">val_expr</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">parse_expression</span><span class="p">(</span><span class="n">val_expr</span><span class="p">,</span> <span class="n">type_expr</span><span class="p">),</span>
+                                   <span class="n">val_expr</span><span class="o">=</span><span class="n">val_expr</span> <span class="ow">or</span> <span class="p">{</span><span class="s1">&#39;prim&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">val</span><span class="p">)},</span>
+                                   <span class="n">type_expr</span><span class="o">=</span><span class="n">type_expr</span> <span class="ow">or</span> <span class="p">{</span><span class="s1">&#39;prim&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">prim</span><span class="p">},</span>
+                                   <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Unit"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.types.Unit">[docs]</a><span class="k">class</span> <span class="nc">Unit</span><span class="p">(</span><span class="n">StackItem</span><span class="p">,</span> <span class="n">prim</span><span class="o">=</span><span class="s1">&#39;unit&#39;</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="n">UnitNone</span><span class="p">(),</span> <span class="n">val_expr</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">type_expr</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Unit</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">val</span><span class="o">=</span><span class="n">val</span> <span class="k">if</span> <span class="n">val_expr</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">parse_expression</span><span class="p">(</span><span class="n">val_expr</span><span class="p">,</span> <span class="n">type_expr</span><span class="p">),</span>
+                                   <span class="n">val_expr</span><span class="o">=</span><span class="n">val_expr</span> <span class="ow">or</span> <span class="p">{</span><span class="s1">&#39;prim&#39;</span><span class="p">:</span> <span class="s1">&#39;Unit&#39;</span><span class="p">},</span>
+                                   <span class="n">type_expr</span><span class="o">=</span><span class="n">type_expr</span> <span class="ow">or</span> <span class="p">{</span><span class="s1">&#39;prim&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">prim</span><span class="p">},</span>
+                                   <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="List"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.types.List">[docs]</a><span class="k">class</span> <span class="nc">List</span><span class="p">(</span><span class="n">StackItem</span><span class="p">,</span> <span class="n">prim</span><span class="o">=</span><span class="s1">&#39;list&#39;</span><span class="p">,</span> <span class="n">args_len</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">val_expr</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">val_expr</span><span class="o">=</span><span class="n">item</span><span class="p">,</span> <span class="n">type_expr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">type_expr</span><span class="p">[</span><span class="s1">&#39;args&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+        <span class="n">assert_type</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">val_expr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">val_expr</span><span class="p">[</span><span class="n">item</span><span class="p">],</span> <span class="n">type_expr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">type_expr</span><span class="p">[</span><span class="s1">&#39;args&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+
+<div class="viewcode-block" id="List.prepend"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.types.List.prepend">[docs]</a>    <span class="k">def</span> <span class="nf">prepend</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">StackItem</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;List&#39;</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assert_val_type</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_modify</span><span class="p">(</span><span class="n">val_expr</span><span class="o">=</span><span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">val_expr</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">val_expr</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="List.cut_head"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.types.List.cut_head">[docs]</a>    <span class="k">def</span> <span class="nf">cut_head</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_val</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;must be non-empty list&#39;</span>
+        <span class="n">head</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">val_expr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">val_expr</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">type_expr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">type_expr</span><span class="p">[</span><span class="s1">&#39;args&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">tail</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_modify</span><span class="p">(</span><span class="n">val_expr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">val_expr</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+        <span class="k">return</span> <span class="n">head</span><span class="p">,</span> <span class="n">tail</span></div>
+
+<div class="viewcode-block" id="List.empty"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.types.List.empty">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">empty</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">v_type_expr</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">val</span><span class="o">=</span><span class="p">[],</span> <span class="n">val_expr</span><span class="o">=</span><span class="p">[],</span> <span class="n">type_expr</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;prim&#39;</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">prim</span><span class="p">,</span> <span class="s1">&#39;args&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">v_type_expr</span><span class="p">]})</span></div>
+
+<div class="viewcode-block" id="List.new"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.types.List.new">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">new</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">items</span><span class="p">:</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">items</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">items</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;expected non-empty list&#39;</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">val_expr</span><span class="o">=</span><span class="p">[</span><span class="n">assert_stack_item</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="ow">or</span> <span class="n">x</span><span class="o">.</span><span class="n">val_expr</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">items</span><span class="p">],</span>
+                        <span class="n">type_expr</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;prim&#39;</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">prim</span><span class="p">,</span> <span class="s1">&#39;args&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">items</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">type_expr</span><span class="p">]})</span></div>
+
+<div class="viewcode-block" id="List.assert_val_type"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.types.List.assert_val_type">[docs]</a>    <span class="k">def</span> <span class="nf">assert_val_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">StackItem</span><span class="p">):</span>
+        <span class="n">assert_stack_item</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+        <span class="n">assert_expr_equal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">type_expr</span><span class="p">[</span><span class="s1">&#39;args&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">item</span><span class="o">.</span><span class="n">type_expr</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="List.val_type"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.types.List.val_type">[docs]</a>    <span class="k">def</span> <span class="nf">val_type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">type_expr</span><span class="p">[</span><span class="s1">&#39;args&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span></div></div>
+
+
+<div class="viewcode-block" id="Pair"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.types.Pair">[docs]</a><span class="k">class</span> <span class="nc">Pair</span><span class="p">(</span><span class="n">StackItem</span><span class="p">,</span> <span class="n">prim</span><span class="o">=</span><span class="s1">&#39;pair&#39;</span><span class="p">,</span> <span class="n">args_len</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+
+<div class="viewcode-block" id="Pair.new"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.types.Pair.new">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">new</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">left</span><span class="p">:</span> <span class="n">StackItem</span><span class="p">,</span> <span class="n">right</span><span class="p">:</span> <span class="n">StackItem</span><span class="p">):</span>
+        <span class="n">assert_stack_item</span><span class="p">(</span><span class="n">left</span><span class="p">)</span>
+        <span class="n">assert_stack_item</span><span class="p">(</span><span class="n">right</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">val_expr</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;prim&#39;</span><span class="p">:</span> <span class="s1">&#39;Pair&#39;</span><span class="p">,</span> <span class="s1">&#39;args&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">left</span><span class="o">.</span><span class="n">val_expr</span><span class="p">,</span> <span class="n">right</span><span class="o">.</span><span class="n">val_expr</span><span class="p">]},</span>
+                        <span class="n">type_expr</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;prim&#39;</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">prim</span><span class="p">,</span> <span class="s1">&#39;args&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">left</span><span class="o">.</span><span class="n">type_expr</span><span class="p">,</span> <span class="n">right</span><span class="o">.</span><span class="n">type_expr</span><span class="p">]})</span></div>
+
+<div class="viewcode-block" id="Pair.get_element"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.types.Pair.get_element">[docs]</a>    <span class="k">def</span> <span class="nf">get_element</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">idx</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="sa">f</span><span class="s1">&#39;unexpected element index </span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="n">type_expr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">type_expr</span><span class="p">[</span><span class="s1">&#39;args&#39;</span><span class="p">][</span><span class="n">idx</span><span class="p">]</span>
+        <span class="n">inferred_name</span> <span class="o">=</span> <span class="n">get_name</span><span class="p">(</span><span class="n">type_expr</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;annots&#39;</span><span class="p">),</span> <span class="s1">&#39;%&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;car&#39;</span><span class="p">,</span> <span class="s1">&#39;cdr&#39;</span><span class="p">][</span><span class="n">idx</span><span class="p">])</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">:</span>
+            <span class="n">inferred_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">.</span><span class="si">{</span><span class="n">inferred_name</span><span class="si">}</span><span class="s1">&#39;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">val_expr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">val_expr</span><span class="p">[</span><span class="s1">&#39;args&#39;</span><span class="p">][</span><span class="n">idx</span><span class="p">],</span>
+                          <span class="n">type_expr</span><span class="o">=</span><span class="n">type_expr</span><span class="p">,</span>
+                          <span class="n">name</span><span class="o">=</span><span class="n">inferred_name</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="Option"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.types.Option">[docs]</a><span class="k">class</span> <span class="nc">Option</span><span class="p">(</span><span class="n">StackItem</span><span class="p">,</span> <span class="n">prim</span><span class="o">=</span><span class="s1">&#39;option&#39;</span><span class="p">,</span> <span class="n">args_len</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+
+<div class="viewcode-block" id="Option.some"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.types.Option.some">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">some</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">StackItem</span><span class="p">):</span>
+        <span class="n">assert_stack_item</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">val_expr</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;prim&#39;</span><span class="p">:</span> <span class="s1">&#39;Some&#39;</span><span class="p">,</span> <span class="s1">&#39;args&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">val_expr</span><span class="p">]},</span>
+                        <span class="n">type_expr</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;prim&#39;</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">prim</span><span class="p">,</span> <span class="s1">&#39;args&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">type_expr</span><span class="p">]})</span></div>
+
+<div class="viewcode-block" id="Option.none"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.types.Option.none">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">none</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">type_expr</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">val</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                   <span class="n">val_expr</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;prim&#39;</span><span class="p">:</span> <span class="s1">&#39;None&#39;</span><span class="p">},</span>
+                   <span class="n">type_expr</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;prim&#39;</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">prim</span><span class="p">,</span> <span class="s1">&#39;args&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">type_expr</span><span class="p">]})</span></div>
+
+<div class="viewcode-block" id="Option.is_none"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.types.Option.is_none">[docs]</a>    <span class="k">def</span> <span class="nf">is_none</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_val</span> <span class="ow">is</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="Option.get_some"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.types.Option.get_some">[docs]</a>    <span class="k">def</span> <span class="nf">get_some</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">val_expr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">val_expr</span><span class="p">[</span><span class="s1">&#39;args&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+                          <span class="n">type_expr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">type_expr</span><span class="p">[</span><span class="s1">&#39;args&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span></div></div>
+
+
+<div class="viewcode-block" id="Or"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.types.Or">[docs]</a><span class="k">class</span> <span class="nc">Or</span><span class="p">(</span><span class="n">StackItem</span><span class="p">,</span> <span class="n">prim</span><span class="o">=</span><span class="s1">&#39;or&#39;</span><span class="p">,</span> <span class="n">args_len</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+
+<div class="viewcode-block" id="Or.left"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.types.Or.left">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">left</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">r_type_expr</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">StackItem</span><span class="p">):</span>
+        <span class="n">assert_stack_item</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">val_expr</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;prim&#39;</span><span class="p">:</span> <span class="s1">&#39;Left&#39;</span><span class="p">,</span> <span class="s1">&#39;args&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">val_expr</span><span class="p">]},</span>
+                        <span class="n">type_expr</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;prim&#39;</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">prim</span><span class="p">,</span> <span class="s1">&#39;args&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">type_expr</span><span class="p">,</span> <span class="n">r_type_expr</span><span class="p">]})</span></div>
+
+<div class="viewcode-block" id="Or.right"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.types.Or.right">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">right</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">l_type_expr</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">StackItem</span><span class="p">):</span>
+        <span class="n">assert_stack_item</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">val_expr</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;prim&#39;</span><span class="p">:</span> <span class="s1">&#39;Right&#39;</span><span class="p">,</span> <span class="s1">&#39;args&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">val_expr</span><span class="p">]},</span>
+                        <span class="n">type_expr</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;prim&#39;</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">prim</span><span class="p">,</span> <span class="s1">&#39;args&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">l_type_expr</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">type_expr</span><span class="p">]})</span></div>
+
+<div class="viewcode-block" id="Or.is_left"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.types.Or.is_left">[docs]</a>    <span class="k">def</span> <span class="nf">is_left</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">prim</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">parse_prim_expr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">val_expr</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">prim</span> <span class="o">==</span> <span class="s1">&#39;Left&#39;</span></div>
+
+<div class="viewcode-block" id="Or.get_some"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.types.Or.get_some">[docs]</a>    <span class="k">def</span> <span class="nf">get_some</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_left</span><span class="p">()</span> <span class="k">else</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">val_expr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">val_expr</span><span class="p">[</span><span class="s1">&#39;args&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+                          <span class="n">type_expr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">type_expr</span><span class="p">[</span><span class="s1">&#39;args&#39;</span><span class="p">][</span><span class="n">idx</span><span class="p">])</span></div></div>
+
+
+<div class="viewcode-block" id="Set"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.types.Set">[docs]</a><span class="k">class</span> <span class="nc">Set</span><span class="p">(</span><span class="n">StackItem</span><span class="p">,</span> <span class="n">prim</span><span class="o">=</span><span class="s1">&#39;set&#39;</span><span class="p">,</span> <span class="n">args_len</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">val_expr</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">val_expr</span><span class="o">=</span><span class="n">item</span><span class="p">,</span> <span class="n">type_expr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">type_expr</span><span class="p">[</span><span class="s1">&#39;args&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+
+<div class="viewcode-block" id="Set.empty"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.types.Set.empty">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">empty</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">k_type_expr</span><span class="p">):</span>
+        <span class="n">assert_comparable</span><span class="p">(</span><span class="n">k_type_expr</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">val</span><span class="o">=</span><span class="p">[],</span> <span class="n">val_expr</span><span class="o">=</span><span class="p">[],</span> <span class="n">type_expr</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;prim&#39;</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">prim</span><span class="p">,</span> <span class="s1">&#39;args&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">k_type_expr</span><span class="p">]})</span></div>
+
+<div class="viewcode-block" id="Set.new"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.types.Set.new">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">new</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">items</span><span class="p">:</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">items</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">items</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;expected non-empty list&#39;</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">items</span><span class="p">))</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">items</span><span class="p">),</span> <span class="sa">f</span><span class="s1">&#39;duplicate keys found&#39;</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">val_expr</span><span class="o">=</span><span class="p">[</span><span class="n">assert_stack_item</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="ow">or</span> <span class="n">x</span><span class="o">.</span><span class="n">val_expr</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">items</span><span class="p">],</span>
+                        <span class="n">type_expr</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;prim&#39;</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">prim</span><span class="p">,</span> <span class="s1">&#39;args&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">items</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">type_expr</span><span class="p">]})</span></div>
+
+    <span class="k">def</span> <span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">StackItem</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assert_key_type</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">item</span><span class="o">.</span><span class="n">_val</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_val</span>
+
+<div class="viewcode-block" id="Set.add"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.types.Set.add">[docs]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">StackItem</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;Set&#39;</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assert_key_type</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">_val</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_val</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_modify</span><span class="p">(</span><span class="n">val_expr</span><span class="o">=</span><span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">val_expr</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">val_expr</span><span class="p">)</span>  <span class="c1"># TODO: sort</span></div>
+
+<div class="viewcode-block" id="Set.remove"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.types.Set.remove">[docs]</a>    <span class="k">def</span> <span class="nf">remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">StackItem</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;Set&#39;</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assert_key_type</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">_val</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_val</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_modify</span><span class="p">(</span><span class="n">val_expr</span><span class="o">=</span><span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">val_expr</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">expr_equal</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">val_expr</span><span class="p">)])</span></div>
+
+<div class="viewcode-block" id="Set.assert_key_type"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.types.Set.assert_key_type">[docs]</a>    <span class="k">def</span> <span class="nf">assert_key_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">StackItem</span><span class="p">):</span>
+        <span class="n">assert_stack_item</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+        <span class="n">assert_expr_equal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">type_expr</span><span class="p">[</span><span class="s1">&#39;args&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">item</span><span class="o">.</span><span class="n">type_expr</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="Map"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.types.Map">[docs]</a><span class="k">class</span> <span class="nc">Map</span><span class="p">(</span><span class="n">StackItem</span><span class="p">,</span> <span class="n">prim</span><span class="o">=</span><span class="s1">&#39;map&#39;</span><span class="p">,</span> <span class="n">args_len</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">elt</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">val_expr</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">val_expr</span><span class="o">=</span><span class="n">elt</span><span class="p">[</span><span class="s1">&#39;args&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">],</span> <span class="n">type_expr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">type_expr</span><span class="p">[</span><span class="s1">&#39;args&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+
+<div class="viewcode-block" id="Map.empty"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.types.Map.empty">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">empty</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">k_type_expr</span><span class="p">,</span> <span class="n">v_type_expr</span><span class="p">):</span>
+        <span class="n">assert_comparable</span><span class="p">(</span><span class="n">k_type_expr</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">val</span><span class="o">=</span><span class="p">{},</span> <span class="n">val_expr</span><span class="o">=</span><span class="p">[],</span> <span class="n">type_expr</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;prim&#39;</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">prim</span><span class="p">,</span> <span class="s1">&#39;args&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">k_type_expr</span><span class="p">,</span> <span class="n">v_type_expr</span><span class="p">]})</span></div>
+
+<div class="viewcode-block" id="Map.new"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.types.Map.new">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">new</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">items</span><span class="p">:</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">items</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">items</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;expected non-empty list&#39;</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="p">[</span><span class="n">assert_stack_item</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">kv</span> <span class="ow">in</span> <span class="n">items</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">kv</span><span class="p">]</span>
+        <span class="n">k0</span><span class="p">,</span> <span class="n">v0</span> <span class="o">=</span> <span class="n">items</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">val_expr</span><span class="o">=</span><span class="p">[{</span><span class="s1">&#39;prim&#39;</span><span class="p">:</span> <span class="s1">&#39;Elt&#39;</span><span class="p">,</span> <span class="s1">&#39;args&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">k</span><span class="o">.</span><span class="n">val_expr</span><span class="p">,</span> <span class="n">v</span><span class="o">.</span><span class="n">val_expr</span><span class="p">]}</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">items</span><span class="p">],</span>
+                        <span class="n">type_expr</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;prim&#39;</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">prim</span><span class="p">,</span> <span class="s1">&#39;args&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">k0</span><span class="o">.</span><span class="n">type_expr</span><span class="p">,</span> <span class="n">v0</span><span class="o">.</span><span class="n">type_expr</span><span class="p">]})</span></div>
+
+    <span class="k">def</span> <span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">StackItem</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assert_key_type</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">key</span><span class="o">.</span><span class="n">_val</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_val</span>
+
+<div class="viewcode-block" id="Map.update"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.types.Map.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">StackItem</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="n">StackItem</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;Map&#39;</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assert_key_type</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assert_val_type</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+        <span class="n">upd</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;prim&#39;</span><span class="p">:</span> <span class="s1">&#39;Elt&#39;</span><span class="p">,</span> <span class="s1">&#39;args&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">key</span><span class="o">.</span><span class="n">val_expr</span><span class="p">,</span> <span class="n">val</span><span class="o">.</span><span class="n">val_expr</span><span class="p">]}</span>
+        <span class="k">if</span> <span class="n">key</span><span class="o">.</span><span class="n">_val</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_val</span><span class="p">:</span>
+            <span class="n">val_expr</span> <span class="o">=</span> <span class="p">[</span><span class="n">upd</span> <span class="k">if</span> <span class="n">expr_equal</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="s1">&#39;args&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">key</span><span class="o">.</span><span class="n">val_expr</span><span class="p">)</span> <span class="k">else</span> <span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">val_expr</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">val_expr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">val_expr</span> <span class="o">+</span> <span class="p">[</span><span class="n">upd</span><span class="p">]</span>  <span class="c1"># TODO: sort</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_modify</span><span class="p">(</span><span class="n">val_expr</span><span class="o">=</span><span class="n">val_expr</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Map.remove"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.types.Map.remove">[docs]</a>    <span class="k">def</span> <span class="nf">remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">StackItem</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;Map&#39;</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assert_key_type</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">key</span><span class="o">.</span><span class="n">_val</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_val</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span>
+        <span class="n">val_expr</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">val_expr</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">expr_equal</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="s1">&#39;args&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">key</span><span class="o">.</span><span class="n">val_expr</span><span class="p">)]</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_modify</span><span class="p">(</span><span class="n">val_expr</span><span class="o">=</span><span class="n">val_expr</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Map.find"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.types.Map.find">[docs]</a>    <span class="k">def</span> <span class="nf">find</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">StackItem</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;StackItem&#39;</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assert_key_type</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">key</span><span class="o">.</span><span class="n">_val</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_val</span><span class="p">:</span>
+            <span class="n">val_expr</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">elt</span><span class="p">[</span><span class="s1">&#39;args&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">elt</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">val_expr</span> <span class="k">if</span> <span class="n">expr_equal</span><span class="p">(</span><span class="n">elt</span><span class="p">[</span><span class="s1">&#39;args&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">key</span><span class="o">.</span><span class="n">val_expr</span><span class="p">))</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">val_expr</span><span class="o">=</span><span class="n">val_expr</span><span class="p">,</span> <span class="n">type_expr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">type_expr</span><span class="p">[</span><span class="s1">&#39;args&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="Map.assert_key_type"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.types.Map.assert_key_type">[docs]</a>    <span class="k">def</span> <span class="nf">assert_key_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">StackItem</span><span class="p">):</span>
+        <span class="n">assert_stack_item</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+        <span class="n">assert_expr_equal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">type_expr</span><span class="p">[</span><span class="s1">&#39;args&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">item</span><span class="o">.</span><span class="n">type_expr</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Map.assert_val_type"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.types.Map.assert_val_type">[docs]</a>    <span class="k">def</span> <span class="nf">assert_val_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">StackItem</span><span class="p">):</span>
+        <span class="n">assert_stack_item</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+        <span class="n">assert_expr_equal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">type_expr</span><span class="p">[</span><span class="s1">&#39;args&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="n">item</span><span class="o">.</span><span class="n">type_expr</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Map.val_type_expr"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.types.Map.val_type_expr">[docs]</a>    <span class="k">def</span> <span class="nf">val_type_expr</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">type_expr</span><span class="p">[</span><span class="s1">&#39;args&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="Map.make_key"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.types.Map.make_key">[docs]</a>    <span class="k">def</span> <span class="nf">make_key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k_val_expr</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">k_val_expr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">type_expr</span><span class="p">[</span><span class="s1">&#39;args&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="Map.make_val"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.types.Map.make_val">[docs]</a>    <span class="k">def</span> <span class="nf">make_val</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v_val_expr</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">v_val_expr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">type_expr</span><span class="p">[</span><span class="s1">&#39;args&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span></div></div>
+
+
+<div class="viewcode-block" id="BigMap"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.types.BigMap">[docs]</a><span class="k">class</span> <span class="nc">BigMap</span><span class="p">(</span><span class="n">StackItem</span><span class="p">,</span> <span class="n">prim</span><span class="o">=</span><span class="s1">&#39;big_map&#39;</span><span class="p">,</span> <span class="n">args_len</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">_get_key_hash</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">StackItem</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assert_key_type</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">get_key_hash</span><span class="p">(</span><span class="n">key</span><span class="o">.</span><span class="n">val_expr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">type_expr</span><span class="p">[</span><span class="s1">&#39;args&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="k">def</span> <span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">StackItem</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_key_hash</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">val_expr</span><span class="p">[</span><span class="s1">&#39;_diff&#39;</span><span class="p">]</span>
+
+<div class="viewcode-block" id="BigMap.find"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.types.BigMap.find">[docs]</a>    <span class="k">def</span> <span class="nf">find</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">StackItem</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;StackItem&#39;</span><span class="p">:</span>
+        <span class="n">key_hash</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_key_hash</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+        <span class="n">v_val_expr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">val_expr</span><span class="p">[</span><span class="s1">&#39;_diff&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key_hash</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;value&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">v_val_expr</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">val_expr</span><span class="o">=</span><span class="n">v_val_expr</span><span class="p">,</span> <span class="n">type_expr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">type_expr</span><span class="p">[</span><span class="s1">&#39;args&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span></div>
+
+    <span class="k">def</span> <span class="nf">_update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">StackItem</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">StackItem</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;BigMap&#39;</span><span class="p">:</span>
+        <span class="n">key_hash</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_key_hash</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+        <span class="n">update</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;action&#39;</span><span class="p">:</span> <span class="s1">&#39;update&#39;</span><span class="p">,</span>
+                  <span class="s1">&#39;big_map&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_val</span><span class="p">),</span>
+                  <span class="s1">&#39;key_hash&#39;</span><span class="p">:</span> <span class="n">key_hash</span><span class="p">,</span>
+                  <span class="s1">&#39;key&#39;</span><span class="p">:</span> <span class="n">key</span><span class="o">.</span><span class="n">val_expr</span><span class="p">}</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">assert_val_type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="n">update</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">val_expr</span>
+
+        <span class="n">val_expr</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">val_expr</span><span class="p">)</span>
+        <span class="n">val_expr</span><span class="p">[</span><span class="s1">&#39;_diff&#39;</span><span class="p">][</span><span class="n">key_hash</span><span class="p">]</span> <span class="o">=</span> <span class="n">update</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_modify</span><span class="p">(</span><span class="n">val_expr</span><span class="o">=</span><span class="n">val_expr</span><span class="p">)</span>
+
+<div class="viewcode-block" id="BigMap.update"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.types.BigMap.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">StackItem</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">StackItem</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;BigMap&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_update</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BigMap.remove"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.types.BigMap.remove">[docs]</a>    <span class="k">def</span> <span class="nf">remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">StackItem</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;BigMap&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_update</span><span class="p">(</span><span class="n">key</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BigMap.assert_key_type"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.types.BigMap.assert_key_type">[docs]</a>    <span class="k">def</span> <span class="nf">assert_key_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">StackItem</span><span class="p">):</span>
+        <span class="n">assert_stack_item</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+        <span class="n">assert_expr_equal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">type_expr</span><span class="p">[</span><span class="s1">&#39;args&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">item</span><span class="o">.</span><span class="n">type_expr</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BigMap.assert_val_type"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.types.BigMap.assert_val_type">[docs]</a>    <span class="k">def</span> <span class="nf">assert_val_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">StackItem</span><span class="p">):</span>
+        <span class="n">assert_stack_item</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+        <span class="n">assert_expr_equal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">type_expr</span><span class="p">[</span><span class="s1">&#39;args&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="n">item</span><span class="o">.</span><span class="n">type_expr</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BigMap.val_type_expr"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.types.BigMap.val_type_expr">[docs]</a>    <span class="k">def</span> <span class="nf">val_type_expr</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">type_expr</span><span class="p">[</span><span class="s1">&#39;args&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span></div></div>
+
+
+<div class="viewcode-block" id="Timestamp"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.types.Timestamp">[docs]</a><span class="k">class</span> <span class="nc">Timestamp</span><span class="p">(</span><span class="n">Int</span><span class="p">,</span> <span class="n">prim</span><span class="o">=</span><span class="s1">&#39;timestamp&#39;</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="Mutez"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.types.Mutez">[docs]</a><span class="k">class</span> <span class="nc">Mutez</span><span class="p">(</span><span class="n">Nat</span><span class="p">,</span> <span class="n">prim</span><span class="o">=</span><span class="s1">&#39;mutez&#39;</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">val_expr</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">type_expr</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">assert_type</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">val</span><span class="o">.</span><span class="n">bit_length</span><span class="p">()</span> <span class="o">&lt;=</span> <span class="mi">63</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;mutez overflow, got </span><span class="si">{</span><span class="n">val</span><span class="o">.</span><span class="n">bit_length</span><span class="p">()</span><span class="si">}</span><span class="s1"> bits, should not exceed 63&#39;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Mutez</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">val</span><span class="o">=</span><span class="n">val</span><span class="p">,</span> <span class="n">val_expr</span><span class="o">=</span><span class="n">val_expr</span><span class="p">,</span> <span class="n">type_expr</span><span class="o">=</span><span class="n">type_expr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Address"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.types.Address">[docs]</a><span class="k">class</span> <span class="nc">Address</span><span class="p">(</span><span class="n">String</span><span class="p">,</span> <span class="n">prim</span><span class="o">=</span><span class="s1">&#39;address&#39;</span><span class="p">):</span>
+
+<div class="viewcode-block" id="Address.new"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.types.Address.new">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">new</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">address</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">is_pkh</span><span class="p">(</span><span class="n">address</span><span class="p">)</span> <span class="ow">or</span> <span class="n">is_kt</span><span class="p">(</span><span class="n">address</span><span class="p">),</span> <span class="sa">f</span><span class="s1">&#39;expected address, got </span><span class="si">{</span><span class="n">address</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">val</span><span class="o">=</span><span class="n">address</span><span class="p">,</span>
+                   <span class="n">val_expr</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;string&#39;</span><span class="p">:</span> <span class="n">address</span><span class="p">},</span>
+                   <span class="n">type_expr</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;prim&#39;</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">prim</span><span class="p">})</span></div></div>
+
+
+<div class="viewcode-block" id="Contract"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.types.Contract">[docs]</a><span class="k">class</span> <span class="nc">Contract</span><span class="p">(</span><span class="n">StackItem</span><span class="p">,</span> <span class="n">prim</span><span class="o">=</span><span class="s1">&#39;contract&#39;</span><span class="p">,</span> <span class="n">args_len</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+
+<div class="viewcode-block" id="Contract.new"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.types.Contract.new">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">new</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">contract</span><span class="p">,</span> <span class="n">type_expr</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">is_pkh</span><span class="p">(</span><span class="n">contract</span><span class="p">[:</span><span class="mi">36</span><span class="p">])</span> <span class="ow">or</span> <span class="n">is_kt</span><span class="p">(</span><span class="n">contract</span><span class="p">[:</span><span class="mi">36</span><span class="p">]),</span> <span class="sa">f</span><span class="s1">&#39;expected contract, got </span><span class="si">{</span><span class="n">contract</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">contract</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">36</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">contract</span><span class="p">[</span><span class="mi">36</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;%&#39;</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;expected contract, got </span><span class="si">{</span><span class="n">contract</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">val</span><span class="o">=</span><span class="n">contract</span><span class="p">,</span>
+                   <span class="n">val_expr</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;string&#39;</span><span class="p">:</span> <span class="n">contract</span><span class="p">},</span>
+                   <span class="n">type_expr</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;prim&#39;</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">prim</span><span class="p">,</span> <span class="s1">&#39;args&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">type_expr</span><span class="p">]})</span></div>
+
+<div class="viewcode-block" id="Contract.assert_param_type"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.types.Contract.assert_param_type">[docs]</a>    <span class="k">def</span> <span class="nf">assert_param_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">StackItem</span><span class="p">):</span>
+        <span class="n">assert_stack_item</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+        <span class="n">assert_expr_equal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">type_expr</span><span class="p">[</span><span class="s1">&#39;args&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">item</span><span class="o">.</span><span class="n">type_expr</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Contract.get_address"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.types.Contract.get_address">[docs]</a>    <span class="k">def</span> <span class="nf">get_address</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_val</span><span class="p">[:</span><span class="mi">36</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="Contract.get_entrypoint"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.types.Contract.get_entrypoint">[docs]</a>    <span class="k">def</span> <span class="nf">get_entrypoint</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">annot</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_val</span><span class="p">[</span><span class="mi">36</span><span class="p">:]</span> <span class="ow">or</span> <span class="s1">&#39;</span><span class="si">%d</span><span class="s1">efault&#39;</span>
+        <span class="k">return</span> <span class="n">annot</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span></div></div>
+
+
+<div class="viewcode-block" id="Key"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.types.Key">[docs]</a><span class="k">class</span> <span class="nc">Key</span><span class="p">(</span><span class="n">StackItem</span><span class="p">,</span> <span class="n">prim</span><span class="o">=</span><span class="s1">&#39;key&#39;</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="KeyHash"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.types.KeyHash">[docs]</a><span class="k">class</span> <span class="nc">KeyHash</span><span class="p">(</span><span class="n">String</span><span class="p">,</span> <span class="n">prim</span><span class="o">=</span><span class="s1">&#39;key_hash&#39;</span><span class="p">):</span>
+
+<div class="viewcode-block" id="KeyHash.new"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.types.KeyHash.new">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">new</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">key_hash</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">is_pkh</span><span class="p">(</span><span class="n">key_hash</span><span class="p">),</span> <span class="sa">f</span><span class="s1">&#39;expected key hash, got </span><span class="si">{</span><span class="n">key_hash</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">val</span><span class="o">=</span><span class="n">key_hash</span><span class="p">,</span>
+                   <span class="n">val_expr</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;string&#39;</span><span class="p">:</span> <span class="n">key_hash</span><span class="p">},</span>
+                   <span class="n">type_expr</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;prim&#39;</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">prim</span><span class="p">})</span></div></div>
+
+
+<div class="viewcode-block" id="Signature"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.types.Signature">[docs]</a><span class="k">class</span> <span class="nc">Signature</span><span class="p">(</span><span class="n">StackItem</span><span class="p">,</span> <span class="n">prim</span><span class="o">=</span><span class="s1">&#39;signature&#39;</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="ChainID"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.types.ChainID">[docs]</a><span class="k">class</span> <span class="nc">ChainID</span><span class="p">(</span><span class="n">String</span><span class="p">,</span> <span class="n">prim</span><span class="o">=</span><span class="s1">&#39;chain_id&#39;</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">val_expr</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">type_expr</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">is_chain_id</span><span class="p">(</span><span class="n">val</span><span class="p">),</span> <span class="sa">f</span><span class="s1">&#39;expected chain_id, got </span><span class="si">{</span><span class="n">val</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">ChainID</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">val_expr</span><span class="o">=</span><span class="n">val_expr</span><span class="p">,</span> <span class="n">type_expr</span><span class="o">=</span><span class="n">type_expr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Lambda"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.types.Lambda">[docs]</a><span class="k">class</span> <span class="nc">Lambda</span><span class="p">(</span><span class="n">StackItem</span><span class="p">,</span> <span class="n">prim</span><span class="o">=</span><span class="s1">&#39;lambda&#39;</span><span class="p">,</span> <span class="n">args_len</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+
+<div class="viewcode-block" id="Lambda.new"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.types.Lambda.new">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">new</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">p_type_expr</span><span class="p">,</span> <span class="n">r_type_expr</span><span class="p">,</span> <span class="n">code</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">val</span><span class="o">=</span><span class="n">code</span><span class="p">,</span>
+                   <span class="n">val_expr</span><span class="o">=</span><span class="n">code</span><span class="p">,</span>
+                   <span class="n">type_expr</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;prim&#39;</span><span class="p">:</span> <span class="s1">&#39;lambda&#39;</span><span class="p">,</span> <span class="s1">&#39;args&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">p_type_expr</span><span class="p">,</span> <span class="n">r_type_expr</span><span class="p">]})</span></div>
+
+<div class="viewcode-block" id="Lambda.assert_param_type"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.types.Lambda.assert_param_type">[docs]</a>    <span class="k">def</span> <span class="nf">assert_param_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">StackItem</span><span class="p">):</span>
+        <span class="n">assert_stack_item</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+        <span class="n">assert_expr_equal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">type_expr</span><span class="p">[</span><span class="s1">&#39;args&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">item</span><span class="o">.</span><span class="n">type_expr</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Lambda.assert_ret_type"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.types.Lambda.assert_ret_type">[docs]</a>    <span class="k">def</span> <span class="nf">assert_ret_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">StackItem</span><span class="p">):</span>
+        <span class="n">assert_stack_item</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+        <span class="n">assert_expr_equal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">type_expr</span><span class="p">[</span><span class="s1">&#39;args&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="n">item</span><span class="o">.</span><span class="n">type_expr</span><span class="p">)</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">code</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_val</span>
+
+<div class="viewcode-block" id="Lambda.partial_apply"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.types.Lambda.partial_apply">[docs]</a>    <span class="k">def</span> <span class="nf">partial_apply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">StackItem</span><span class="p">):</span>
+        <span class="n">l_type_expr</span><span class="p">,</span> <span class="n">r_type_expr</span> <span class="o">=</span> <span class="n">get_prim_args</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">type_expr</span><span class="p">[</span><span class="s1">&#39;args&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">prim</span><span class="o">=</span><span class="s1">&#39;pair&#39;</span><span class="p">,</span> <span class="n">args_len</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">assert_equal_types</span><span class="p">(</span><span class="n">l_type_expr</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">type_expr</span><span class="p">)</span>
+        <span class="n">code</span> <span class="o">=</span> <span class="p">[{</span><span class="s1">&#39;prim&#39;</span><span class="p">:</span> <span class="s1">&#39;PUSH&#39;</span><span class="p">,</span> <span class="s1">&#39;args&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">type_expr</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">val_expr</span><span class="p">]},</span> <span class="p">{</span><span class="s1">&#39;prim&#39;</span><span class="p">:</span> <span class="s1">&#39;PAIR&#39;</span><span class="p">}]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">val_expr</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_modify</span><span class="p">(</span><span class="n">val</span><span class="o">=</span><span class="n">code</span><span class="p">,</span>
+                            <span class="n">val_expr</span><span class="o">=</span><span class="n">code</span><span class="p">,</span>
+                            <span class="n">type_expr</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;prim&#39;</span><span class="p">:</span> <span class="s1">&#39;lambda&#39;</span><span class="p">,</span> <span class="s1">&#39;args&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">r_type_expr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">type_expr</span><span class="p">[</span><span class="s1">&#39;args&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]]})</span></div>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">micheline_to_michelson</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_val</span><span class="p">,</span> <span class="n">inline</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Operation"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.types.Operation">[docs]</a><span class="k">class</span> <span class="nc">Operation</span><span class="p">(</span><span class="n">StackItem</span><span class="p">,</span> <span class="n">prim</span><span class="o">=</span><span class="s1">&#39;operation&#39;</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">val_expr</span><span class="p">,</span> <span class="n">type_expr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Operation</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">val_expr</span><span class="p">,</span> <span class="n">type_expr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Operation.format_content"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.types.Operation.format_content">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">format_content</span><span class="p">(</span><span class="n">content</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">content</span><span class="p">[</span><span class="s1">&#39;kind&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;transaction&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">content</span><span class="p">[</span><span class="s1">&#39;destination&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;tz&#39;</span><span class="p">):</span>
+                <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;&lt;send </span><span class="si">{</span><span class="n">content</span><span class="p">[</span><span class="s2">&quot;amount&quot;</span><span class="p">]</span><span class="si">}</span><span class="s1"> to </span><span class="si">{</span><span class="n">content</span><span class="p">[</span><span class="s2">&quot;destination&quot;</span><span class="p">]</span><span class="si">}</span><span class="s1">&gt;&#39;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;&lt;call </span><span class="si">{</span><span class="n">content</span><span class="p">[</span><span class="s2">&quot;destination&quot;</span><span class="p">]</span><span class="si">}</span><span class="s1">%</span><span class="si">{</span><span class="n">content</span><span class="p">[</span><span class="s2">&quot;parameters&quot;</span><span class="p">][</span><span class="s2">&quot;entrypoint&quot;</span><span class="p">]</span><span class="si">}</span><span class="s1">&gt;&#39;</span>
+        <span class="k">elif</span> <span class="n">content</span><span class="p">[</span><span class="s1">&#39;kind&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;origination&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;&lt;originate </span><span class="si">{</span><span class="n">content</span><span class="p">[</span><span class="s2">&quot;originated_contract&quot;</span><span class="p">]</span><span class="si">}</span><span class="s1">&gt;&#39;</span>
+        <span class="k">elif</span> <span class="n">content</span><span class="p">[</span><span class="s1">&#39;kind&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;delegation&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">content</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;delegate&#39;</span><span class="p">):</span>
+                <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;&lt;delegate to </span><span class="si">{</span><span class="n">content</span><span class="p">[</span><span class="s2">&quot;delegate&quot;</span><span class="p">]</span><span class="si">}</span><span class="s1">&gt;&#39;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;&lt;unset delegate&gt;&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="kc">False</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;unexpected content </span><span class="si">{</span><span class="n">pformat</span><span class="p">(</span><span class="n">content</span><span class="p">,</span> <span class="n">compact</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span></div>
+
+<div class="viewcode-block" id="Operation.new"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.types.Operation.new">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">new</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">content</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">val</span><span class="o">=</span><span class="bp">cls</span><span class="o">.</span><span class="n">format_content</span><span class="p">(</span><span class="n">content</span><span class="p">),</span>
+                   <span class="n">val_expr</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;string&#39;</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">format_content</span><span class="p">(</span><span class="n">content</span><span class="p">),</span> <span class="s1">&#39;_content&#39;</span><span class="p">:</span> <span class="n">content</span><span class="p">},</span>
+                   <span class="n">type_expr</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;prim&#39;</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">prim</span><span class="p">})</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">content</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">val_expr</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;_content&#39;</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Baking Bad
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

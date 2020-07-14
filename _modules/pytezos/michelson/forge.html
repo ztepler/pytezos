@@ -1,0 +1,556 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pytezos.michelson.forge &mdash; PyTezos  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+    <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> PyTezos
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../quick_start.html">Quick start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../integration_tests.html">Michelson integration tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pytezos_cli.html">Pytezos CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../high_level.html">High-level interfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../crypto.html">Cryptography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../operation_groups.html">Building and parsing operations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rpc_queries.html">RPC query engine</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../script_wrappers.html">Michelson script wrappers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pack.html">Michelson type encoding</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../code.html">Working with Michelson code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../repl.html">Michelson REPL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../inspect_proposals.html">Inspecting proposals</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">PyTezos</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>pytezos.michelson.forge</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pytezos.michelson.forge</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">pytezos.encoding</span> <span class="kn">import</span> <span class="n">forge_array</span><span class="p">,</span> <span class="n">parse_array</span>
+
+<span class="n">prim_tags</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;parameter&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x00</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;storage&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x01</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;code&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x02</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;False&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x03</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Elt&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x04</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Left&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x05</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;None&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x06</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Pair&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x07</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Right&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x08</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Some&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x09</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;True&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x0A</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Unit&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x0B</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;PACK&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x0C</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;UNPACK&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x0D</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;BLAKE2B&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x0E</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;SHA256&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x0F</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;SHA512&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x10</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;ABS&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x11</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;ADD&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x12</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;AMOUNT&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x13</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;AND&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x14</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;BALANCE&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x15</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;CAR&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x16</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;CDR&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x17</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;CHECK_SIGNATURE&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x18</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;COMPARE&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x19</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;CONCAT&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x1A</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;CONS&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x1B</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;__CREATE_ACCOUNT__&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x1C</span><span class="s1">&#39;</span><span class="p">,</span>  <span class="c1"># DEPRECATED</span>
+    <span class="s1">&#39;CREATE_CONTRACT&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x1D</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;IMPLICIT_ACCOUNT&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x1E</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;DIP&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x1F</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;DROP&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x20</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;DUP&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x21</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;EDIV&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x22</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;EMPTY_MAP&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x23</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;EMPTY_SET&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x24</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;EQ&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x25</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;EXEC&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x26</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;FAILWITH&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x27</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;GE&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x28</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;GET&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x29</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;GT&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x2A</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;HASH_KEY&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x2B</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;IF&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x2C</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;IF_CONS&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x2D</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;IF_LEFT&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x2E</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;IF_NONE&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x2F</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;INT&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x30</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;LAMBDA&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x31</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;LE&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x32</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;LEFT&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x33</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;LOOP&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x34</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;LSL&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x35</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;LSR&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x36</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;LT&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x37</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;MAP&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x38</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;MEM&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x39</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;MUL&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x3A</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;NEG&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x3B</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;NEQ&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x3C</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;NIL&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x3D</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;NONE&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x3E</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;NOT&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x3F</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;NOW&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x40</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;OR&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x41</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;PAIR&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x42</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;PUSH&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x43</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;RIGHT&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x44</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;SIZE&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x45</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;SOME&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x46</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;SOURCE&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x47</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;SENDER&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x48</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;SELF&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x49</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;STEPS_TO_QUOTA&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x4A</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;SUB&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x4B</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;SWAP&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x4C</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;TRANSFER_TOKENS&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x4D</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;SET_DELEGATE&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x4E</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;UNIT&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x4F</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;UPDATE&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x50</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;XOR&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x51</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;ITER&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x52</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;LOOP_LEFT&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x53</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;ADDRESS&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x54</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;CONTRACT&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x55</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;ISNAT&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x56</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;CAST&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x57</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;RENAME&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x58</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;bool&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x59</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;contract&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x5A</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;int&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x5B</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;key&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x5C</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;key_hash&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x5D</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;lambda&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x5E</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;list&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x5F</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;map&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x60</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;big_map&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x61</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;nat&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x62</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;option&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x63</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;or&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x64</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;pair&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x65</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;set&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x66</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;signature&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x67</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;string&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x68</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;bytes&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x69</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;mutez&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x6A</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;timestamp&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x6B</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;unit&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x6C</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;operation&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x6D</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;address&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x6E</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;SLICE&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x6F</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;DIG&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x70</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;DUG&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x71</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;EMPTY_BIG_MAP&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x72</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;APPLY&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x73</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;chain_id&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x74</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;CHAIN_ID&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x75</span><span class="s1">&#39;</span>
+<span class="p">}</span>
+<span class="n">prim_int</span> <span class="o">=</span> <span class="p">{</span><span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span> <span class="n">k</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">prim_tags</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+
+<span class="n">len_tags</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span>
+        <span class="kc">False</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x03</span><span class="s1">&#39;</span><span class="p">,</span>
+        <span class="kc">True</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x04</span><span class="s1">&#39;</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="kc">False</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x05</span><span class="s1">&#39;</span><span class="p">,</span>
+        <span class="kc">True</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x06</span><span class="s1">&#39;</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="kc">False</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x07</span><span class="s1">&#39;</span><span class="p">,</span>
+        <span class="kc">True</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x08</span><span class="s1">&#39;</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="kc">False</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x09</span><span class="s1">&#39;</span><span class="p">,</span>
+        <span class="kc">True</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x09</span><span class="s1">&#39;</span>
+    <span class="p">}</span>
+<span class="p">]</span>
+
+<span class="n">reserved_entries</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;default&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x00</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;root&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x01</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;do&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x02</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;set_delegate&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x03</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;remove_delegate&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x04</span><span class="s1">&#39;</span>
+<span class="p">}</span>
+
+
+<div class="viewcode-block" id="forge_int"><a class="viewcode-back" href="../../../pack.html#pytezos.michelson.forge.forge_int">[docs]</a><span class="k">def</span> <span class="nf">forge_int</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Encode signed unbounded integer into the byte form.</span>
+
+<span class="sd">    :param value: signed unbounded integer</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="nb">bytearray</span><span class="p">()</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">i</span> <span class="o">&amp;</span> <span class="mb">0b00111111</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="mb">0b11000000</span> <span class="k">if</span> <span class="n">value</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mb">0b10000000</span><span class="p">))</span>
+    <span class="n">i</span> <span class="o">&gt;&gt;=</span> <span class="mi">6</span>
+
+    <span class="k">while</span> <span class="n">i</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">i</span> <span class="o">&amp;</span> <span class="mb">0b01111111</span><span class="p">)</span> <span class="o">|</span> <span class="mb">0b10000000</span><span class="p">)</span>
+        <span class="n">i</span> <span class="o">&gt;&gt;=</span> <span class="mi">7</span>
+
+    <span class="n">res</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">&amp;=</span> <span class="mb">0b01111111</span>
+    <span class="k">return</span> <span class="nb">bytes</span><span class="p">(</span><span class="n">res</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="parse_int"><a class="viewcode-back" href="../../../pack.html#pytezos.michelson.forge.parse_int">[docs]</a><span class="k">def</span> <span class="nf">parse_int</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Decode signed unbounded integer from bytes.</span>
+
+<span class="sd">    :param data: Encoded integer</span>
+<span class="sd">    :returns: tuple(parsed integer, length in bytes)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">value</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">length</span> <span class="o">=</span> <span class="mi">1</span>
+
+    <span class="k">while</span> <span class="n">data</span><span class="p">[</span><span class="n">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">&amp;</span> <span class="mb">0b10000000</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">length</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+        <span class="n">value</span> <span class="o">&lt;&lt;=</span> <span class="mi">7</span>
+        <span class="n">value</span> <span class="o">|=</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&amp;</span> <span class="mb">0b01111111</span>
+
+    <span class="n">value</span> <span class="o">&lt;&lt;=</span> <span class="mi">6</span>
+    <span class="n">value</span> <span class="o">|=</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&amp;</span> <span class="mb">0b00111111</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&amp;</span> <span class="mb">0b01000000</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="o">-</span><span class="n">value</span>
+
+    <span class="k">return</span> <span class="n">value</span><span class="p">,</span> <span class="n">length</span></div>
+
+
+<div class="viewcode-block" id="forge_entrypoint"><a class="viewcode-back" href="../../../pack.html#pytezos.michelson.forge.forge_entrypoint">[docs]</a><span class="k">def</span> <span class="nf">forge_entrypoint</span><span class="p">(</span><span class="n">entrypoint</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot; Encode Michelson contract entrypoint into the byte form.</span>
+
+<span class="sd">    :param entrypoint: string</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">entrypoint</span> <span class="ow">in</span> <span class="n">reserved_entries</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">reserved_entries</span><span class="p">[</span><span class="n">entrypoint</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\xff</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="n">forge_array</span><span class="p">(</span><span class="n">entrypoint</span><span class="o">.</span><span class="n">encode</span><span class="p">(),</span> <span class="n">len_bytes</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="forge_micheline"><a class="viewcode-back" href="../../../pack.html#pytezos.michelson.forge.forge_micheline">[docs]</a><span class="k">def</span> <span class="nf">forge_micheline</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot; Encode a Micheline expression into the byte form.</span>
+
+<span class="sd">    :param data: Micheline expression</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x02</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">forge_array</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">forge_micheline</span><span class="p">,</span> <span class="n">data</span><span class="p">))))</span>
+
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;prim&#39;</span><span class="p">):</span>
+            <span class="n">args_len</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;args&#39;</span><span class="p">,</span> <span class="p">[]))</span>
+            <span class="n">annots_len</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;annots&#39;</span><span class="p">,</span> <span class="p">[]))</span>
+
+            <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">len_tags</span><span class="p">[</span><span class="n">args_len</span><span class="p">][</span><span class="n">annots_len</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">])</span>
+            <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">prim_tags</span><span class="p">[</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;prim&#39;</span><span class="p">]])</span>
+
+            <span class="k">if</span> <span class="n">args_len</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">args</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">forge_micheline</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;args&#39;</span><span class="p">]))</span>
+                <span class="k">if</span> <span class="n">args_len</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
+                    <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">forge_array</span><span class="p">(</span><span class="n">args</span><span class="p">))</span>
+
+            <span class="k">if</span> <span class="n">annots_len</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">forge_array</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;annots&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">encode</span><span class="p">()))</span>
+            <span class="k">elif</span> <span class="n">args_len</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+                <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x00</span><span class="s1">&#39;</span> <span class="o">*</span> <span class="mi">4</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;bytes&#39;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x0A</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">forge_array</span><span class="p">(</span><span class="nb">bytes</span><span class="o">.</span><span class="n">fromhex</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;bytes&#39;</span><span class="p">])))</span>
+
+        <span class="k">elif</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;int&#39;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x00</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">forge_int</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;int&#39;</span><span class="p">])))</span>
+
+        <span class="k">elif</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;string&#39;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x01</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">forge_array</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;string&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">encode</span><span class="p">()))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="kc">False</span><span class="p">,</span> <span class="n">data</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="kc">False</span><span class="p">,</span> <span class="n">data</span>
+
+    <span class="k">return</span> <span class="sa">b</span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">res</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="forge_script"><a class="viewcode-back" href="../../../pack.html#pytezos.michelson.forge.forge_script">[docs]</a><span class="k">def</span> <span class="nf">forge_script</span><span class="p">(</span><span class="n">script</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot; Encode an origination script into the byte form.</span>
+
+<span class="sd">    :param script: {&quot;code&quot;: &quot;$Micheline_expression&quot;, &quot;storage&quot;: &quot;$Micheline_expression&quot;}</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">code</span> <span class="o">=</span> <span class="n">forge_micheline</span><span class="p">(</span><span class="n">script</span><span class="p">[</span><span class="s1">&#39;code&#39;</span><span class="p">])</span>
+    <span class="n">storage</span> <span class="o">=</span> <span class="n">forge_micheline</span><span class="p">(</span><span class="n">script</span><span class="p">[</span><span class="s1">&#39;storage&#39;</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">forge_array</span><span class="p">(</span><span class="n">code</span><span class="p">)</span> <span class="o">+</span> <span class="n">forge_array</span><span class="p">(</span><span class="n">storage</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="unforge_micheline"><a class="viewcode-back" href="../../../pack.html#pytezos.michelson.forge.unforge_micheline">[docs]</a><span class="k">def</span> <span class="nf">unforge_micheline</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Parse Micheline expression from its encoded form (but do not UNPACK).</span>
+
+<span class="sd">    :param data: Encoded Micheline expression</span>
+<span class="sd">    :returns: Object</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ptr</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">def</span> <span class="nf">parse_list</span><span class="p">():</span>
+        <span class="k">nonlocal</span> <span class="n">ptr</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">offset</span> <span class="o">=</span> <span class="n">parse_array</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">ptr</span><span class="p">:])</span>
+        <span class="n">end</span><span class="p">,</span> <span class="n">res</span> <span class="o">=</span> <span class="n">ptr</span> <span class="o">+</span> <span class="n">offset</span><span class="p">,</span> <span class="p">[]</span>
+        <span class="n">ptr</span> <span class="o">+=</span> <span class="mi">4</span>
+        <span class="k">while</span> <span class="n">ptr</span> <span class="o">&lt;</span> <span class="n">end</span><span class="p">:</span>
+            <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">parse</span><span class="p">())</span>
+        <span class="k">assert</span> <span class="n">ptr</span> <span class="o">==</span> <span class="n">end</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;out of array boundaries&#39;</span>
+        <span class="k">return</span> <span class="n">res</span>
+
+    <span class="k">def</span> <span class="nf">parse_prim_expr</span><span class="p">(</span><span class="n">args_len</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">annots</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="k">nonlocal</span> <span class="n">ptr</span>
+        <span class="n">prim_tag</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">ptr</span><span class="p">]</span>
+        <span class="n">ptr</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">expr</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;prim&#39;</span><span class="p">:</span> <span class="n">prim_int</span><span class="p">[</span><span class="n">prim_tag</span><span class="p">]}</span>
+
+        <span class="k">if</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">args_len</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="n">expr</span><span class="p">[</span><span class="s1">&#39;args&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">parse</span><span class="p">()</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">args_len</span><span class="p">)]</span>
+        <span class="k">elif</span> <span class="n">args_len</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="n">expr</span><span class="p">[</span><span class="s1">&#39;args&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">parse_list</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">args_len</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;unexpected args len </span><span class="si">{</span><span class="n">args_len</span><span class="si">}</span><span class="s1">&#39;</span>
+
+        <span class="k">if</span> <span class="n">annots</span><span class="p">:</span>
+            <span class="n">value</span><span class="p">,</span> <span class="n">offset</span> <span class="o">=</span> <span class="n">parse_array</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">ptr</span><span class="p">:])</span>
+            <span class="n">ptr</span> <span class="o">+=</span> <span class="n">offset</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">expr</span><span class="p">[</span><span class="s1">&#39;annots&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">expr</span>
+
+    <span class="k">def</span> <span class="nf">parse</span><span class="p">():</span>
+        <span class="k">nonlocal</span> <span class="n">ptr</span>
+        <span class="n">tag</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">ptr</span><span class="p">]</span>
+        <span class="n">ptr</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">tag</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">value</span><span class="p">,</span> <span class="n">offset</span> <span class="o">=</span> <span class="n">parse_int</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">ptr</span><span class="p">:])</span>
+            <span class="n">ptr</span> <span class="o">+=</span> <span class="n">offset</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;int&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)}</span>
+        <span class="k">elif</span> <span class="n">tag</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">value</span><span class="p">,</span> <span class="n">offset</span> <span class="o">=</span> <span class="n">parse_array</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">ptr</span><span class="p">:])</span>
+            <span class="n">ptr</span> <span class="o">+=</span> <span class="n">offset</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;string&#39;</span><span class="p">:</span> <span class="n">value</span><span class="o">.</span><span class="n">decode</span><span class="p">()}</span>
+        <span class="k">elif</span> <span class="n">tag</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">parse_list</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">tag</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">parse_prim_expr</span><span class="p">(</span><span class="n">args_len</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">annots</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">tag</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">parse_prim_expr</span><span class="p">(</span><span class="n">args_len</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">annots</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">tag</span> <span class="o">==</span> <span class="mi">5</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">parse_prim_expr</span><span class="p">(</span><span class="n">args_len</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">annots</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">tag</span> <span class="o">==</span> <span class="mi">6</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">parse_prim_expr</span><span class="p">(</span><span class="n">args_len</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">annots</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">tag</span> <span class="o">==</span> <span class="mi">7</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">parse_prim_expr</span><span class="p">(</span><span class="n">args_len</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">annots</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">tag</span> <span class="o">==</span> <span class="mi">8</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">parse_prim_expr</span><span class="p">(</span><span class="n">args_len</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">annots</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">tag</span> <span class="o">==</span> <span class="mi">9</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">parse_prim_expr</span><span class="p">(</span><span class="n">args_len</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">annots</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">tag</span> <span class="o">==</span> <span class="mi">10</span><span class="p">:</span>
+            <span class="n">value</span><span class="p">,</span> <span class="n">offset</span> <span class="o">=</span> <span class="n">parse_array</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">ptr</span><span class="p">:])</span>
+            <span class="n">ptr</span> <span class="o">+=</span> <span class="n">offset</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;bytes&#39;</span><span class="p">:</span> <span class="n">value</span><span class="o">.</span><span class="n">hex</span><span class="p">()}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="kc">False</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;unkonwn tag </span><span class="si">{</span><span class="n">tag</span><span class="si">}</span><span class="s1"> at position </span><span class="si">{</span><span class="n">ptr</span><span class="si">}</span><span class="s1">&#39;</span>
+
+    <span class="n">res</span> <span class="o">=</span> <span class="n">parse</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">ptr</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="sa">f</span><span class="s1">&#39;have not reach EOS (pos </span><span class="si">{</span><span class="n">ptr</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="si">}</span><span class="s1">)&#39;</span>
+    <span class="k">return</span> <span class="n">res</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Baking Bad
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -1,0 +1,308 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Pytezos CLI &mdash; PyTezos  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="High-level interfaces" href="high_level.html" />
+    <link rel="prev" title="Michelson integration tests" href="integration_tests.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> PyTezos
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="quick_start.html">Quick start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="integration_tests.html">Michelson integration tests</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Pytezos CLI</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#tutorials">Tutorials</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#examples">Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#reference">Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="high_level.html">High-level interfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="crypto.html">Cryptography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="operation_groups.html">Building and parsing operations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rpc_queries.html">RPC query engine</a></li>
+<li class="toctree-l1"><a class="reference internal" href="script_wrappers.html">Michelson script wrappers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pack.html">Michelson type encoding</a></li>
+<li class="toctree-l1"><a class="reference internal" href="code.html">Working with Michelson code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="repl.html">Michelson REPL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="inspect_proposals.html">Inspecting proposals</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">PyTezos</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Pytezos CLI</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/pytezos_cli.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="pytezos-cli">
+<h1>Pytezos CLI<a class="headerlink" href="#pytezos-cli" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="tutorials">
+<h2>Tutorials<a class="headerlink" href="#tutorials" title="Permalink to this headline">¶</a></h2>
+<p>Check out this guide by Vadim from Airalab: <a class="reference external" href="https://blog.aira.life/tezos-dont-forget-the-mother-console-fd2001261e50?gi=2fe6dfe4fd7f">https://blog.aira.life/tezos-dont-forget-the-mother-console-fd2001261e50?gi=2fe6dfe4fd7f</a></p>
+</div>
+<div class="section" id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<p>See how PyTezos CLI is used in a Travis CI pipeline: <a class="reference external" href="https://github.com/atomex-me/atomex-fa12-ligo/blob/master/.travis.yml">https://github.com/atomex-me/atomex-fa12-ligo/blob/master/.travis.yml</a></p>
+</div>
+<div class="section" id="reference">
+<h2>Reference<a class="headerlink" href="#reference" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="pytezos.cli.PyTezosCli">
+<em class="property">class </em><code class="sig-prename descclassname">pytezos.cli.</code><code class="sig-name descname">PyTezosCli</code><a class="reference internal" href="_modules/pytezos/cli.html#PyTezosCli"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.cli.PyTezosCli" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py method">
+<dt id="pytezos.cli.PyTezosCli.activate">
+<code class="sig-name descname">activate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span></em>, <em class="sig-param"><span class="n">network</span><span class="o">=</span><span class="default_value">'carthagenet'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/cli.html#PyTezosCli.activate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.cli.PyTezosCli.activate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Activates and reveals key from the faucet file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> – Path to the .json file downloaded from <a class="reference external" href="https://faucet.tzalpha.net/">https://faucet.tzalpha.net/</a></p></li>
+<li><p><strong>network</strong> – Default is Babylonnet</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.cli.PyTezosCli.deploy">
+<code class="sig-name descname">deploy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span></em>, <em class="sig-param"><span class="n">storage</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">network</span><span class="o">=</span><span class="default_value">'carthagenet'</span></em>, <em class="sig-param"><span class="n">key</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">github_repo_slug</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">github_oauth_token</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">dry_run</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/cli.html#PyTezosCli.deploy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.cli.PyTezosCli.deploy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deploy contract to the specified network.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> – Path to the .tz file</p></li>
+<li><p><strong>storage</strong> – Storage in JSON format (not Micheline)</p></li>
+<li><p><strong>network</strong> – </p></li>
+<li><p><strong>key</strong> – </p></li>
+<li><p><strong>github_repo_slug</strong> – </p></li>
+<li><p><strong>github_oauth_token</strong> – </p></li>
+<li><p><strong>dry_run</strong> – Set this flag if you just want to see what would happen</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.cli.PyTezosCli.parameter">
+<code class="sig-name descname">parameter</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">action</span></em>, <em class="sig-param"><span class="n">path</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/cli.html#PyTezosCli.parameter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.cli.PyTezosCli.parameter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Manage contract parameter.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>action</strong> – One of <cite>schema</cite></p></li>
+<li><p><strong>path</strong> – Path to the .tz file, or the following uri: &lt;network&gt;:&lt;KT-address&gt;</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.cli.PyTezosCli.storage">
+<code class="sig-name descname">storage</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">action</span></em>, <em class="sig-param"><span class="n">path</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/cli.html#PyTezosCli.storage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.cli.PyTezosCli.storage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Manage contract storage.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>action</strong> – One of <cite>schema</cite>, <cite>default</cite></p></li>
+<li><p><strong>path</strong> – Path to the .tz file, or the following uri: &lt;network&gt;:&lt;KT-address&gt;</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="high_level.html" class="btn btn-neutral float-right" title="High-level interfaces" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="integration_tests.html" class="btn btn-neutral float-left" title="Michelson integration tests" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Baking Bad
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

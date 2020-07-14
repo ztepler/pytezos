@@ -1,0 +1,352 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Inspecting proposals &mdash; PyTezos  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Michelson REPL" href="repl.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> PyTezos
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="quick_start.html">Quick start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="integration_tests.html">Michelson integration tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pytezos_cli.html">Pytezos CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="high_level.html">High-level interfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="crypto.html">Cryptography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="operation_groups.html">Building and parsing operations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rpc_queries.html">RPC query engine</a></li>
+<li class="toctree-l1"><a class="reference internal" href="script_wrappers.html">Michelson script wrappers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pack.html">Michelson type encoding</a></li>
+<li class="toctree-l1"><a class="reference internal" href="code.html">Working with Michelson code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="repl.html">Michelson REPL</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Inspecting proposals</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">PyTezos</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Inspecting proposals</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/inspect_proposals.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-pytezos.proto">
+<span id="inspecting-proposals"></span><h1>Inspecting proposals<a class="headerlink" href="#module-pytezos.proto" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt id="pytezos.proto.Proto">
+<em class="property">class </em><code class="sig-prename descclassname">pytezos.proto.</code><code class="sig-name descname">Proto</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">proto</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/proto.html#Proto"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.proto.Proto" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py method">
+<dt id="pytezos.proto.Proto.diff">
+<code class="sig-name descname">diff</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">proto</span></em>, <em class="sig-param"><span class="n">context_size</span><span class="o">=</span><span class="default_value">3</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/proto.html#Proto.diff"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.proto.Proto.diff" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates file diff between two protocol versions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>proto</strong> – an instance of Protocol</p></li>
+<li><p><strong>context_size</strong> – number of context lines before and after the change</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>patch in proto format</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.proto.Proto.export_html">
+<code class="sig-name descname">export_html</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">output_path</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/proto.html#Proto.export_html"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.proto.Proto.export_html" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates github-like side-by-side diff viewe, powered by diff2html.js</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>output_path</strong> – will write to this file if specified</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>html string if path is not specified</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.proto.Proto.export_tar">
+<code class="sig-name descname">export_tar</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">output_path</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/proto.html#Proto.export_tar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.proto.Proto.export_tar" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a tarball and dumps to a file or returns bytes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>output_path</strong> – Path to the tarball [optional]. You can add .bz2 or .gz extension to make it compressed</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>bytes if path is None or nothing</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.proto.Proto.from_uri">
+<em class="property">classmethod </em><code class="sig-name descname">from_uri</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">uri</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/proto.html#Proto.from_uri"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.proto.Proto.from_uri" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads protocol implementation from various sources and converts it to the RPC-like format.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>uri</strong> – link/path to a tar archive or path to a folder with extracted contents</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Protocol instance</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.proto.Proto.hash">
+<code class="sig-name descname">hash</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/proto.html#Proto.hash"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.proto.Proto.hash" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.proto.Proto.index">
+<code class="sig-name descname">index</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; dict<a class="reference internal" href="_modules/pytezos/proto.html#Proto.index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.proto.Proto.index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates TEZOS_PROTOCOL file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>dict with protocol hash and modules</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.proto.Proto.patch">
+<code class="sig-name descname">patch</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">patch</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/proto.html#Proto.patch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.proto.Proto.patch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Applies unified diff and returns full-fledged protocol.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>patch</strong> – an instance of Protocol containing diff of files</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Protocol instance</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.proto.dir_to_files">
+<code class="sig-prename descclassname">pytezos.proto.</code><code class="sig-name descname">dir_to_files</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span></em><span class="sig-paren">)</span> &#x2192; List<span class="p">[</span>Tuple<span class="p">[</span>str<span class="p">, </span>str<span class="p">]</span><span class="p">]</span><a class="reference internal" href="_modules/pytezos/proto.html#dir_to_files"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.proto.dir_to_files" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.proto.files_to_proto">
+<code class="sig-prename descclassname">pytezos.proto.</code><code class="sig-name descname">files_to_proto</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">files</span><span class="p">:</span> <span class="n">List<span class="p">[</span>Tuple<span class="p">[</span>str<span class="p">, </span>str<span class="p">]</span><span class="p">]</span></span></em><span class="sig-paren">)</span> &#x2192; dict<a class="reference internal" href="_modules/pytezos/proto.html#files_to_proto"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.proto.files_to_proto" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.proto.files_to_tar">
+<code class="sig-prename descclassname">pytezos.proto.</code><code class="sig-name descname">files_to_tar</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">files</span><span class="p">:</span> <span class="n">List<span class="p">[</span>Tuple<span class="p">[</span>str<span class="p">, </span>str<span class="p">]</span><span class="p">]</span></span></em>, <em class="sig-param"><span class="n">output_path</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/proto.html#files_to_tar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.proto.files_to_tar" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.proto.proto_to_bytes">
+<code class="sig-prename descclassname">pytezos.proto.</code><code class="sig-name descname">proto_to_bytes</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">proto</span><span class="p">:</span> <span class="n">dict</span></em><span class="sig-paren">)</span> &#x2192; bytes<a class="reference internal" href="_modules/pytezos/proto.html#proto_to_bytes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.proto.proto_to_bytes" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.proto.proto_to_files">
+<code class="sig-prename descclassname">pytezos.proto.</code><code class="sig-name descname">proto_to_files</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">proto</span><span class="p">:</span> <span class="n">dict</span></em><span class="sig-paren">)</span> &#x2192; List<span class="p">[</span>Tuple<span class="p">[</span>str<span class="p">, </span>str<span class="p">]</span><span class="p">]</span><a class="reference internal" href="_modules/pytezos/proto.html#proto_to_files"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.proto.proto_to_files" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.proto.tar_to_files">
+<code class="sig-prename descclassname">pytezos.proto.</code><code class="sig-name descname">tar_to_files</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">raw</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; List<span class="p">[</span>Tuple<span class="p">[</span>str<span class="p">, </span>str<span class="p">]</span><span class="p">]</span><a class="reference internal" href="_modules/pytezos/proto.html#tar_to_files"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.proto.tar_to_files" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.proto.url_to_files">
+<code class="sig-prename descclassname">pytezos.proto.</code><code class="sig-name descname">url_to_files</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">url</span></em><span class="sig-paren">)</span> &#x2192; List<span class="p">[</span>Tuple<span class="p">[</span>str<span class="p">, </span>str<span class="p">]</span><span class="p">]</span><a class="reference internal" href="_modules/pytezos/proto.html#url_to_files"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.proto.url_to_files" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="repl.html" class="btn btn-neutral float-left" title="Michelson REPL" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Baking Bad
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

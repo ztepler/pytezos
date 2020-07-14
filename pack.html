@@ -1,0 +1,939 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Michelson type encoding &mdash; PyTezos  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Working with Michelson code" href="code.html" />
+    <link rel="prev" title="Michelson script wrappers" href="script_wrappers.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> PyTezos
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="quick_start.html">Quick start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="integration_tests.html">Michelson integration tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pytezos_cli.html">Pytezos CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="high_level.html">High-level interfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="crypto.html">Cryptography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="operation_groups.html">Building and parsing operations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rpc_queries.html">RPC query engine</a></li>
+<li class="toctree-l1"><a class="reference internal" href="script_wrappers.html">Michelson script wrappers</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Michelson type encoding</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-pytezos.michelson.forge">Forging / unforging data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pytezos.michelson.pack">Packing / unpacking data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pytezos.michelson.micheline">Type schema and data encoding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pytezos.michelson.converter">Converting between formats</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pytezos.michelson.docstring">Type docstrings</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="code.html">Working with Michelson code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="repl.html">Michelson REPL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="inspect_proposals.html">Inspecting proposals</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">PyTezos</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Michelson type encoding</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/pack.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="michelson-type-encoding">
+<h1>Michelson type encoding<a class="headerlink" href="#michelson-type-encoding" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-pytezos.michelson.forge">
+<span id="forging-unforging-data"></span><h2>Forging / unforging data<a class="headerlink" href="#module-pytezos.michelson.forge" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="pytezos.michelson.forge.forge_entrypoint">
+<code class="sig-prename descclassname">pytezos.michelson.forge.</code><code class="sig-name descname">forge_entrypoint</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">entrypoint</span></em><span class="sig-paren">)</span> &#x2192; bytes<a class="reference internal" href="_modules/pytezos/michelson/forge.html#forge_entrypoint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.forge.forge_entrypoint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Encode Michelson contract entrypoint into the byte form.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>entrypoint</strong> – string</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.michelson.forge.forge_int">
+<code class="sig-prename descclassname">pytezos.michelson.forge.</code><code class="sig-name descname">forge_int</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span> &#x2192; bytes<a class="reference internal" href="_modules/pytezos/michelson/forge.html#forge_int"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.forge.forge_int" title="Permalink to this definition">¶</a></dt>
+<dd><p>Encode signed unbounded integer into the byte form.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>value</strong> – signed unbounded integer</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.michelson.forge.forge_micheline">
+<code class="sig-prename descclassname">pytezos.michelson.forge.</code><code class="sig-name descname">forge_micheline</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em><span class="sig-paren">)</span> &#x2192; bytes<a class="reference internal" href="_modules/pytezos/michelson/forge.html#forge_micheline"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.forge.forge_micheline" title="Permalink to this definition">¶</a></dt>
+<dd><p>Encode a Micheline expression into the byte form.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> – Micheline expression</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.michelson.forge.forge_script">
+<code class="sig-prename descclassname">pytezos.michelson.forge.</code><code class="sig-name descname">forge_script</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">script</span></em><span class="sig-paren">)</span> &#x2192; bytes<a class="reference internal" href="_modules/pytezos/michelson/forge.html#forge_script"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.forge.forge_script" title="Permalink to this definition">¶</a></dt>
+<dd><p>Encode an origination script into the byte form.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>script</strong> – {“code”: “$Micheline_expression”, “storage”: “$Micheline_expression”}</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.michelson.forge.parse_int">
+<code class="sig-prename descclassname">pytezos.michelson.forge.</code><code class="sig-name descname">parse_int</code><span class="sig-paren">(</span><em class="sig-param">data: bytes) -&gt; (&lt;class 'int'&gt;</em>, <em class="sig-param">&lt;class 'int'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/michelson/forge.html#parse_int"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.forge.parse_int" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decode signed unbounded integer from bytes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> – Encoded integer</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>tuple(parsed integer, length in bytes)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.michelson.forge.unforge_micheline">
+<code class="sig-prename descclassname">pytezos.michelson.forge.</code><code class="sig-name descname">unforge_micheline</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="p">:</span> <span class="n">bytes</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/michelson/forge.html#unforge_micheline"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.forge.unforge_micheline" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse Micheline expression from its encoded form (but do not UNPACK).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> – Encoded Micheline expression</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Object</p>
+</dd>
+</dl>
+</dd></dl>
+
+<span class="target" id="module-pytezos.encoding"></span><dl class="py function">
+<dt id="pytezos.encoding.base58_decode">
+<code class="sig-prename descclassname">pytezos.encoding.</code><code class="sig-name descname">base58_decode</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">v</span><span class="p">:</span> <span class="n">bytes</span></em><span class="sig-paren">)</span> &#x2192; bytes<a class="reference internal" href="_modules/pytezos/encoding.html#base58_decode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.encoding.base58_decode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decode data using Base58 with checksum + validate binary prefix against known kinds and cut in the end.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>v</strong> – Array of bytes (use string.encode())</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>bytes</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.encoding.base58_encode">
+<code class="sig-prename descclassname">pytezos.encoding.</code><code class="sig-name descname">base58_encode</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">v</span><span class="p">:</span> <span class="n">bytes</span></em>, <em class="sig-param"><span class="n">prefix</span><span class="p">:</span> <span class="n">bytes</span></em><span class="sig-paren">)</span> &#x2192; bytes<a class="reference internal" href="_modules/pytezos/encoding.html#base58_encode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.encoding.base58_encode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Encode data using Base58 with checksum and add an according binary prefix in the end.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>v</strong> – Array of bytes</p></li>
+<li><p><strong>prefix</strong> – Human-readable prefix (use b’’) e.g. b’tz’, b’KT’, etc</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>bytes (use string.decode())</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.encoding.forge_address">
+<code class="sig-prename descclassname">pytezos.encoding.</code><code class="sig-name descname">forge_address</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">tz_only</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span> &#x2192; bytes<a class="reference internal" href="_modules/pytezos/encoding.html#forge_address"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.encoding.forge_address" title="Permalink to this definition">¶</a></dt>
+<dd><p>Encode address or key hash into bytes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>value</strong> – base58 encoded address or key_hash</p></li>
+<li><p><strong>tz_only</strong> – True indicates that it’s a key_hash (will be encoded in a more compact form)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.encoding.forge_array">
+<code class="sig-prename descclassname">pytezos.encoding.</code><code class="sig-name descname">forge_array</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">len_bytes</span><span class="o">=</span><span class="default_value">4</span></em><span class="sig-paren">)</span> &#x2192; bytes<a class="reference internal" href="_modules/pytezos/encoding.html#forge_array"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.encoding.forge_array" title="Permalink to this definition">¶</a></dt>
+<dd><p>Encode array of bytes (prepend length).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> – list of bytes</p></li>
+<li><p><strong>len_bytes</strong> – number of bytes to store array length</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.encoding.forge_base58">
+<code class="sig-prename descclassname">pytezos.encoding.</code><code class="sig-name descname">forge_base58</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; bytes<a class="reference internal" href="_modules/pytezos/encoding.html#forge_base58"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.encoding.forge_base58" title="Permalink to this definition">¶</a></dt>
+<dd><p>Encode base58 string into bytes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>value</strong> – base58 encoded value (with checksum)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.encoding.forge_bool">
+<code class="sig-prename descclassname">pytezos.encoding.</code><code class="sig-name descname">forge_bool</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span><span class="p">:</span> <span class="n">bool</span></em><span class="sig-paren">)</span> &#x2192; bytes<a class="reference internal" href="_modules/pytezos/encoding.html#forge_bool"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.encoding.forge_bool" title="Permalink to this definition">¶</a></dt>
+<dd><p>Encode boolean value into bytes.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.encoding.forge_contract">
+<code class="sig-prename descclassname">pytezos.encoding.</code><code class="sig-name descname">forge_contract</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span> &#x2192; bytes<a class="reference internal" href="_modules/pytezos/encoding.html#forge_contract"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.encoding.forge_contract" title="Permalink to this definition">¶</a></dt>
+<dd><p>Encode a value of contract type (address + optional entrypoint) into bytes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>value</strong> – ‘tz12345’ or ‘tz12345%default’</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.encoding.forge_nat">
+<code class="sig-prename descclassname">pytezos.encoding.</code><code class="sig-name descname">forge_nat</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span> &#x2192; bytes<a class="reference internal" href="_modules/pytezos/encoding.html#forge_nat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.encoding.forge_nat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Encode a number using LEB128 encoding (Zarith).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>value</strong> (<em>int</em>) – the value to encode</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>encoded value</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>bytes</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.encoding.forge_public_key">
+<code class="sig-prename descclassname">pytezos.encoding.</code><code class="sig-name descname">forge_public_key</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span> &#x2192; bytes<a class="reference internal" href="_modules/pytezos/encoding.html#forge_public_key"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.encoding.forge_public_key" title="Permalink to this definition">¶</a></dt>
+<dd><p>Encode public key into bytes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>value</strong> – public key in in base58 form</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.encoding.forge_timestamp">
+<code class="sig-prename descclassname">pytezos.encoding.</code><code class="sig-name descname">forge_timestamp</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span> &#x2192; int<a class="reference internal" href="_modules/pytezos/encoding.html#forge_timestamp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.encoding.forge_timestamp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Encode timestamp into bytes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>value</strong> – unix timestamp in seconds (int)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.encoding.is_bh">
+<code class="sig-prename descclassname">pytezos.encoding.</code><code class="sig-name descname">is_bh</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">v</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/pytezos/encoding.html#is_bh"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.encoding.is_bh" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if value is a block hash.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.encoding.is_chain_id">
+<code class="sig-prename descclassname">pytezos.encoding.</code><code class="sig-name descname">is_chain_id</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">v</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/pytezos/encoding.html#is_chain_id"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.encoding.is_chain_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if value is a chain id.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.encoding.is_key">
+<code class="sig-prename descclassname">pytezos.encoding.</code><code class="sig-name descname">is_key</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">v</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/pytezos/encoding.html#is_key"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.encoding.is_key" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if value is a public key.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.encoding.is_kt">
+<code class="sig-prename descclassname">pytezos.encoding.</code><code class="sig-name descname">is_kt</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">v</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/pytezos/encoding.html#is_kt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.encoding.is_kt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if value is a KT address.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.encoding.is_ogh">
+<code class="sig-prename descclassname">pytezos.encoding.</code><code class="sig-name descname">is_ogh</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">v</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/pytezos/encoding.html#is_ogh"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.encoding.is_ogh" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if value is an operation group hash.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.encoding.is_pkh">
+<code class="sig-prename descclassname">pytezos.encoding.</code><code class="sig-name descname">is_pkh</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">v</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/pytezos/encoding.html#is_pkh"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.encoding.is_pkh" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if value is a public key hash.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.encoding.is_sig">
+<code class="sig-prename descclassname">pytezos.encoding.</code><code class="sig-name descname">is_sig</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">v</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/pytezos/encoding.html#is_sig"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.encoding.is_sig" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if value is a signature.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.encoding.parse_address">
+<code class="sig-prename descclassname">pytezos.encoding.</code><code class="sig-name descname">parse_address</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="p">:</span> <span class="n">bytes</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/encoding.html#parse_address"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.encoding.parse_address" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decode address or key_hash from bytes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> – encoded address or key_hash</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>base58 encoded address</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.encoding.parse_array">
+<code class="sig-prename descclassname">pytezos.encoding.</code><code class="sig-name descname">parse_array</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">len_bytes</span><span class="o">=</span><span class="default_value">4</span></em><span class="sig-paren">)</span> &#x2192; tuple<a class="reference internal" href="_modules/pytezos/encoding.html#parse_array"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.encoding.parse_array" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decode array of bytes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> – encoded array</p></li>
+<li><p><strong>len_bytes</strong> – number of bytes to store array length</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Tuple[list of bytes, array length]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.encoding.parse_chain_id">
+<code class="sig-prename descclassname">pytezos.encoding.</code><code class="sig-name descname">parse_chain_id</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="p">:</span> <span class="n">bytes</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/encoding.html#parse_chain_id"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.encoding.parse_chain_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decode chain id from byte form.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> – encoded chain id.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>base58 encoded chain id</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.encoding.parse_contract">
+<code class="sig-prename descclassname">pytezos.encoding.</code><code class="sig-name descname">parse_contract</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="p">:</span> <span class="n">bytes</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/encoding.html#parse_contract"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.encoding.parse_contract" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decode contract (address + optional entrypoint) from bytes</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> – encoded contract</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>base58 encoded address and entrypoint (if exists) separated by <cite>%</cite></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.encoding.parse_public_key">
+<code class="sig-prename descclassname">pytezos.encoding.</code><code class="sig-name descname">parse_public_key</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="p">:</span> <span class="n">bytes</span></em><span class="sig-paren">)</span> &#x2192; str<a class="reference internal" href="_modules/pytezos/encoding.html#parse_public_key"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.encoding.parse_public_key" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decode public key from byte form.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> – encoded public key.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>base58 encoded public key</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.encoding.parse_signature">
+<code class="sig-prename descclassname">pytezos.encoding.</code><code class="sig-name descname">parse_signature</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="p">:</span> <span class="n">bytes</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/encoding.html#parse_signature"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.encoding.parse_signature" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decode signature from byte form.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> – encoded signature.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>base58 encoded signature (generic)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.encoding.validate_pkh">
+<code class="sig-prename descclassname">pytezos.encoding.</code><code class="sig-name descname">validate_pkh</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">v</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/encoding.html#validate_pkh"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.encoding.validate_pkh" title="Permalink to this definition">¶</a></dt>
+<dd><p>Ensure parameter is a public key hash (starts with b’tz1’, b’tz2’, b’tz3’)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>v</strong> – string or bytes</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>ValueError</strong> – if parameter is not a public key hash</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.encoding.validate_sig">
+<code class="sig-prename descclassname">pytezos.encoding.</code><code class="sig-name descname">validate_sig</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">v</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/encoding.html#validate_sig"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.encoding.validate_sig" title="Permalink to this definition">¶</a></dt>
+<dd><p>Ensure parameter is a signature (starts with b’edsig’, b’spsig’, b’p2sig’, b’sig’)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>v</strong> – string or bytes</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>ValueError</strong> – if parameter is not a signature</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-pytezos.michelson.pack">
+<span id="packing-unpacking-data"></span><h2>Packing / unpacking data<a class="headerlink" href="#module-pytezos.michelson.pack" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="pytezos.michelson.pack.get_key_hash">
+<code class="sig-prename descclassname">pytezos.michelson.pack.</code><code class="sig-name descname">get_key_hash</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">val_expr</span></em>, <em class="sig-param"><span class="n">type_expr</span></em>, <em class="sig-param"><span class="n">bin_path</span><span class="o">=</span><span class="default_value">''</span></em><span class="sig-paren">)</span> &#x2192; str<a class="reference internal" href="_modules/pytezos/michelson/pack.html#get_key_hash"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.pack.get_key_hash" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get Big_map key hash from key and its type</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>val_expr</strong> – key expression (Micheline expression)</p></li>
+<li><p><strong>type_expr</strong> – type expression (can be key type or type of the whole storage)</p></li>
+<li><p><strong>bin_path</strong> – binary path to the key (if storage type is passed to the prev argument)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Base58 encoded key hash “expr…”</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.michelson.pack.pack">
+<code class="sig-prename descclassname">pytezos.michelson.pack.</code><code class="sig-name descname">pack</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">val_expr</span></em>, <em class="sig-param"><span class="n">type_expr</span></em><span class="sig-paren">)</span> &#x2192; bytes<a class="reference internal" href="_modules/pytezos/michelson/pack.html#pack"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.pack.pack" title="Permalink to this definition">¶</a></dt>
+<dd><p>Basically prepack (pack domain types) + forge (encode bytes). Resulting value is prefixed with 0x05.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>val_expr</strong> – value expression (Micheline expression)</p></li>
+<li><p><strong>type_expr</strong> – type expression (Micheline expression)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.michelson.pack.prepack_micheline">
+<code class="sig-prename descclassname">pytezos.michelson.pack.</code><code class="sig-name descname">prepack_micheline</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">val_expr</span></em>, <em class="sig-param"><span class="n">type_expr</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/michelson/pack.html#prepack_micheline"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.pack.prepack_micheline" title="Permalink to this definition">¶</a></dt>
+<dd><p>Recursively pack domain types into compact form,
+e.g. {“string”: “tzabcd”} -&gt; {“bytes”: “0001deadbeef”}</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>val_expr</strong> – value expression (Micheline expression)</p></li>
+<li><p><strong>type_expr</strong> – type expression (Micheline expression)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Micheline expression</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.michelson.pack.unpack">
+<code class="sig-prename descclassname">pytezos.michelson.pack.</code><code class="sig-name descname">unpack</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="p">:</span> <span class="n">bytes</span></em>, <em class="sig-param"><span class="n">type_expr</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/michelson/pack.html#unpack"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.pack.unpack" title="Permalink to this definition">¶</a></dt>
+<dd><p>Unpack bytes (currently without unpacking domain types, so it’s unforging + cutting 0x05 prefix).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> – Packed data</p></li>
+<li><p><strong>type_expr</strong> – type of the packed data (currently unused)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Micheline expression</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-pytezos.michelson.micheline">
+<span id="type-schema-and-data-encoding"></span><h2>Type schema and data encoding<a class="headerlink" href="#module-pytezos.michelson.micheline" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="pytezos.michelson.micheline.Nested">
+<em class="property">class </em><code class="sig-prename descclassname">pytezos.michelson.micheline.</code><code class="sig-name descname">Nested</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">prim</span></em>, <em class="sig-param"><span class="n">args</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pytezos.michelson.micheline.Nested" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py method">
+<dt id="pytezos.michelson.micheline.Nested.args">
+<em class="property">property </em><code class="sig-name descname">args</code><a class="headerlink" href="#pytezos.michelson.micheline.Nested.args" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.michelson.micheline.Nested.prim">
+<em class="property">property </em><code class="sig-name descname">prim</code><a class="headerlink" href="#pytezos.michelson.micheline.Nested.prim" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="pytezos.michelson.micheline.Pair">
+<em class="property">class </em><code class="sig-prename descclassname">pytezos.michelson.micheline.</code><code class="sig-name descname">Pair</code><a class="reference internal" href="_modules/pytezos/michelson/micheline.html#Pair"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.micheline.Pair" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt id="pytezos.michelson.micheline.Schema">
+<em class="property">class </em><code class="sig-prename descclassname">pytezos.michelson.micheline.</code><code class="sig-name descname">Schema</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">metadata</span></em>, <em class="sig-param"><span class="n">bin_types</span></em>, <em class="sig-param"><span class="n">bin_names</span></em>, <em class="sig-param"><span class="n">json_to_bin</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pytezos.michelson.micheline.Schema" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py method">
+<dt id="pytezos.michelson.micheline.Schema.bin_names">
+<em class="property">property </em><code class="sig-name descname">bin_names</code><a class="headerlink" href="#pytezos.michelson.micheline.Schema.bin_names" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 2</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.michelson.micheline.Schema.bin_types">
+<em class="property">property </em><code class="sig-name descname">bin_types</code><a class="headerlink" href="#pytezos.michelson.micheline.Schema.bin_types" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.michelson.micheline.Schema.json_to_bin">
+<em class="property">property </em><code class="sig-name descname">json_to_bin</code><a class="headerlink" href="#pytezos.michelson.micheline.Schema.json_to_bin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 3</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.michelson.micheline.Schema.metadata">
+<em class="property">property </em><code class="sig-name descname">metadata</code><a class="headerlink" href="#pytezos.michelson.micheline.Schema.metadata" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.michelson.micheline.build_maps">
+<code class="sig-prename descclassname">pytezos.michelson.micheline.</code><code class="sig-name descname">build_maps</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">metadata</span><span class="p">:</span> <span class="n">dict</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/michelson/micheline.html#build_maps"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.micheline.build_maps" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.michelson.micheline.collapse_micheline">
+<code class="sig-prename descclassname">pytezos.michelson.micheline.</code><code class="sig-name descname">collapse_micheline</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">code</span></em><span class="sig-paren">)</span> &#x2192; dict<a class="reference internal" href="_modules/pytezos/michelson/micheline.html#collapse_micheline"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.micheline.collapse_micheline" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.michelson.micheline.encode_literal">
+<code class="sig-prename descclassname">pytezos.michelson.micheline.</code><code class="sig-name descname">encode_literal</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em>, <em class="sig-param"><span class="n">prim</span></em>, <em class="sig-param"><span class="n">binary</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/michelson/micheline.html#encode_literal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.micheline.encode_literal" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.michelson.micheline.get_flat_nested">
+<code class="sig-prename descclassname">pytezos.michelson.micheline.</code><code class="sig-name descname">get_flat_nested</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">nested</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#pytezos.michelson.micheline.Nested" title="pytezos.michelson.micheline.Nested">pytezos.michelson.micheline.Nested</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/michelson/micheline.html#get_flat_nested"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.micheline.get_flat_nested" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.michelson.micheline.is_optional">
+<code class="sig-prename descclassname">pytezos.michelson.micheline.</code><code class="sig-name descname">is_optional</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">schema</span></em>, <em class="sig-param"><span class="n">bin_path</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/michelson/micheline.html#is_optional"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.micheline.is_optional" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.michelson.micheline.make_default">
+<code class="sig-prename descclassname">pytezos.michelson.micheline.</code><code class="sig-name descname">make_default</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bin_types</span><span class="p">:</span> <span class="n">dict</span></em>, <em class="sig-param"><span class="n">root</span><span class="o">=</span><span class="default_value">'0'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/michelson/micheline.html#make_default"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.micheline.make_default" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.michelson.micheline.make_micheline">
+<code class="sig-prename descclassname">pytezos.michelson.micheline.</code><code class="sig-name descname">make_micheline</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bin_values</span><span class="p">:</span> <span class="n">dict</span></em>, <em class="sig-param"><span class="n">bin_types</span><span class="p">:</span> <span class="n">dict</span></em>, <em class="sig-param"><span class="n">bin_root</span><span class="o">=</span><span class="default_value">'0'</span></em>, <em class="sig-param"><span class="n">binary</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/michelson/micheline.html#make_micheline"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.micheline.make_micheline" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.michelson.micheline.michelson_parser">
+<code class="sig-prename descclassname">pytezos.michelson.micheline.</code><code class="sig-name descname">michelson_parser</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/michelson/micheline.html#michelson_parser"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.micheline.michelson_parser" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.michelson.micheline.michelson_to_micheline">
+<code class="sig-prename descclassname">pytezos.michelson.micheline.</code><code class="sig-name descname">michelson_to_micheline</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">parser</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/michelson/micheline.html#michelson_to_micheline"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.micheline.michelson_to_micheline" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts michelson source text into Micheline expression.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> – Michelson string</p></li>
+<li><p><strong>parser</strong> – custom Michelson parser</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Micheline expression</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.michelson.micheline.parse_json">
+<code class="sig-prename descclassname">pytezos.michelson.micheline.</code><code class="sig-name descname">parse_json</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">schema</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#pytezos.michelson.micheline.Schema" title="pytezos.michelson.micheline.Schema">pytezos.michelson.micheline.Schema</a></span></em>, <em class="sig-param"><span class="n">bin_root</span><span class="o">=</span><span class="default_value">'0'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/michelson/micheline.html#parse_json"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.micheline.parse_json" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.michelson.micheline.parse_micheline">
+<code class="sig-prename descclassname">pytezos.michelson.micheline.</code><code class="sig-name descname">parse_micheline</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">val_expr</span></em>, <em class="sig-param"><span class="n">type_expr</span></em>, <em class="sig-param"><span class="n">schema</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#pytezos.michelson.micheline.Schema" title="pytezos.michelson.micheline.Schema">pytezos.michelson.micheline.Schema</a></span></em>, <em class="sig-param"><span class="n">bin_root</span><span class="o">=</span><span class="default_value">'0'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/michelson/micheline.html#parse_micheline"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.micheline.parse_micheline" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.michelson.micheline.skip_nones">
+<code class="sig-prename descclassname">pytezos.michelson.micheline.</code><code class="sig-name descname">skip_nones</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span> &#x2192; dict<a class="reference internal" href="_modules/pytezos/michelson/micheline.html#skip_nones"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.micheline.skip_nones" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-pytezos.michelson.converter">
+<span id="converting-between-formats"></span><h2>Converting between formats<a class="headerlink" href="#module-pytezos.michelson.converter" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="pytezos.michelson.converter.BigMapSchema">
+<em class="property">class </em><code class="sig-prename descclassname">pytezos.michelson.converter.</code><code class="sig-name descname">BigMapSchema</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bin_to_id</span></em>, <em class="sig-param"><span class="n">id_to_bin</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pytezos.michelson.converter.BigMapSchema" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py method">
+<dt id="pytezos.michelson.converter.BigMapSchema.bin_to_id">
+<em class="property">property </em><code class="sig-name descname">bin_to_id</code><a class="headerlink" href="#pytezos.michelson.converter.BigMapSchema.bin_to_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.michelson.converter.BigMapSchema.id_to_bin">
+<em class="property">property </em><code class="sig-name descname">id_to_bin</code><a class="headerlink" href="#pytezos.michelson.converter.BigMapSchema.id_to_bin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py exception">
+<dt id="pytezos.michelson.converter.MichelineSchemaError">
+<em class="property">exception </em><code class="sig-prename descclassname">pytezos.michelson.converter.</code><code class="sig-name descname">MichelineSchemaError</code><a class="reference internal" href="_modules/pytezos/michelson/converter.html#MichelineSchemaError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.converter.MichelineSchemaError" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.michelson.converter.build_big_map_schema">
+<code class="sig-prename descclassname">pytezos.michelson.converter.</code><code class="sig-name descname">build_big_map_schema</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">schema</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#pytezos.michelson.micheline.Schema" title="pytezos.michelson.micheline.Schema">pytezos.michelson.micheline.Schema</a></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#pytezos.michelson.converter.BigMapSchema" title="pytezos.michelson.converter.BigMapSchema">pytezos.michelson.converter.BigMapSchema</a><a class="reference internal" href="_modules/pytezos/michelson/converter.html#build_big_map_schema"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.converter.build_big_map_schema" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate Big_map schema from the contract storage</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> – Raw storage (Micheline expression)</p></li>
+<li><p><strong>schema</strong> – Storage schema</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Mappings: Big_map id to JSON path and vice versa</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pytezos.michelson.converter.BigMapSchema" title="pytezos.michelson.converter.BigMapSchema">BigMapSchema</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.michelson.converter.build_schema">
+<code class="sig-prename descclassname">pytezos.michelson.converter.</code><code class="sig-name descname">build_schema</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">code</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#pytezos.michelson.micheline.Schema" title="pytezos.michelson.micheline.Schema">pytezos.michelson.micheline.Schema</a><a class="reference internal" href="_modules/pytezos/michelson/converter.html#build_schema"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.converter.build_schema" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates internal structures necessary for decoding/encoding micheline:
+<cite>metadata</cite> -&gt; micheline tree with collapsed <cite>pair</cite>, <cite>or</cite>, and <cite>option</cite> nodes
+<cite>bin_types</cite> -&gt; maps binary path to primitive
+<cite>bin_names</cite> -&gt; binary path to key name mapping
+<cite>json_to_bin</cite> -&gt; json path to binary path mapping</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>code</strong> – parameter or storage section of smart contract source code (in micheline)</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#pytezos.michelson.micheline.Schema" title="pytezos.michelson.micheline.Schema">Schema</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.michelson.converter.convert">
+<code class="sig-prename descclassname">pytezos.michelson.converter.</code><code class="sig-name descname">convert</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">source</span></em>, <em class="sig-param"><span class="n">schema</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#pytezos.michelson.micheline.Schema" title="pytezos.michelson.micheline.Schema">pytezos.michelson.micheline.Schema</a></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">output</span><span class="o">=</span><span class="default_value">'micheline'</span></em>, <em class="sig-param"><span class="n">inline</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/michelson/converter.html#convert"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.converter.convert" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert data between different representations (DO NOT USE FOR STORAGE/PARAMETER, can be ambiguous).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>source</strong> – Data, can be one of Michelson (string), Micheline expression, object</p></li>
+<li><p><strong>schema</strong> – Needed if decoding/encoding objects (optional)</p></li>
+<li><p><strong>output</strong> – Output format, one of ‘micheline’ (default), ‘michelson’, ‘object’</p></li>
+<li><p><strong>inline</strong> – Used for michelson output, whether to omit line breaks</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.michelson.converter.decode_micheline">
+<code class="sig-prename descclassname">pytezos.michelson.converter.</code><code class="sig-name descname">decode_micheline</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">val_expr</span></em>, <em class="sig-param"><span class="n">type_expr</span></em>, <em class="sig-param"><span class="n">schema</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#pytezos.michelson.micheline.Schema" title="pytezos.michelson.micheline.Schema">pytezos.michelson.micheline.Schema</a></span></em>, <em class="sig-param"><span class="n">root</span><span class="o">=</span><span class="default_value">'0'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/michelson/converter.html#decode_micheline"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.converter.decode_micheline" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts Micheline data into Python object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>val_expr</strong> – Micheline value expression</p></li>
+<li><p><strong>type_expr</strong> – Michelson type expression for the entire type</p></li>
+<li><p><strong>schema</strong> – schema built for particular contract/section</p></li>
+<li><p><strong>root</strong> – which binary node to take as root, used to decode BigMap values/diffs</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Object</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.michelson.converter.encode_micheline">
+<code class="sig-prename descclassname">pytezos.michelson.converter.</code><code class="sig-name descname">encode_micheline</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">schema</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#pytezos.michelson.micheline.Schema" title="pytezos.michelson.micheline.Schema">pytezos.michelson.micheline.Schema</a></span></em>, <em class="sig-param"><span class="n">root</span><span class="o">=</span><span class="default_value">'0'</span></em>, <em class="sig-param"><span class="n">binary</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/michelson/converter.html#encode_micheline"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.converter.encode_micheline" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts Python object into Micheline expression.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> – Python object</p></li>
+<li><p><strong>schema</strong> – schema built for particular contract/section</p></li>
+<li><p><strong>root</strong> – which binary node to take as root, used to encode BigMap values</p></li>
+<li><p><strong>binary</strong> – Encode keys and addresses in bytes rather than strings, default is False</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Micheline expression</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.michelson.converter.is_micheline">
+<code class="sig-prename descclassname">pytezos.michelson.converter.</code><code class="sig-name descname">is_micheline</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/pytezos/michelson/converter.html#is_micheline"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.converter.is_micheline" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if value is a Micheline expression (using heuristics, so not 100% accurate).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>value</strong> – Object</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-pytezos.michelson.docstring">
+<span id="type-docstrings"></span><h2>Type docstrings<a class="headerlink" href="#module-pytezos.michelson.docstring" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="pytezos.michelson.docstring.generate_docstring">
+<code class="sig-prename descclassname">pytezos.michelson.docstring.</code><code class="sig-name descname">generate_docstring</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">schema</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#pytezos.michelson.micheline.Schema" title="pytezos.michelson.micheline.Schema">pytezos.michelson.micheline.Schema</a></span></em>, <em class="sig-param"><span class="n">title</span></em>, <em class="sig-param"><span class="n">root</span><span class="o">=</span><span class="default_value">'0'</span></em><span class="sig-paren">)</span> &#x2192; str<a class="reference internal" href="_modules/pytezos/michelson/docstring.html#generate_docstring"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.docstring.generate_docstring" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate Michelson type (of arbitrary complexity) documentation in a more readable form.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>schema</strong> – parameter/storage schema</p></li>
+<li><p><strong>title</strong> – documentation title</p></li>
+<li><p><strong>root</strong> – binary path to the root element (default is ‘0’)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>formatted docstring</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="code.html" class="btn btn-neutral float-right" title="Working with Michelson code" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="script_wrappers.html" class="btn btn-neutral float-left" title="Michelson script wrappers" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Baking Bad
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

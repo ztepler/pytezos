@@ -1,0 +1,1702 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Michelson REPL &mdash; PyTezos  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Inspecting proposals" href="inspect_proposals.html" />
+    <link rel="prev" title="Working with Michelson code" href="code.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> PyTezos
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="quick_start.html">Quick start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="integration_tests.html">Michelson integration tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pytezos_cli.html">Pytezos CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="high_level.html">High-level interfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="crypto.html">Cryptography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="operation_groups.html">Building and parsing operations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rpc_queries.html">RPC query engine</a></li>
+<li class="toctree-l1"><a class="reference internal" href="script_wrappers.html">Michelson script wrappers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pack.html">Michelson type encoding</a></li>
+<li class="toctree-l1"><a class="reference internal" href="code.html">Working with Michelson code</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Michelson REPL</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#builtin-interpreter">Builtin interpreter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pytezos.repl.parser">Extendable parser</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pytezos.repl.context">Interpreter context</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pytezos.repl.types">Michelson type system</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pytezos.repl.big_map">Big_map abstraction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pytezos.repl.helpers">PyTezos helpers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pytezos.repl.arithmetic">Arithmetic operations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#blockchain-specific-operations">Blockchain-specific operations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-0">Control flow operators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pytezos.repl.structures">Operations with structures</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="inspect_proposals.html">Inspecting proposals</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">PyTezos</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Michelson REPL</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/repl.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="michelson-repl">
+<h1>Michelson REPL<a class="headerlink" href="#michelson-repl" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="builtin-interpreter">
+<h2>Builtin interpreter<a class="headerlink" href="#builtin-interpreter" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="pytezos.repl.interpreter.Interpreter">
+<em class="property">class </em><code class="sig-prename descclassname">pytezos.repl.interpreter.</code><code class="sig-name descname">Interpreter</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">debug</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/interpreter.html#Interpreter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.interpreter.Interpreter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Michelson interpreter reimplemented in Python.
+Based on the following reference: <a class="reference external" href="https://michelson.nomadic-labs.com/">https://michelson.nomadic-labs.com/</a></p>
+<dl class="py method">
+<dt id="pytezos.repl.interpreter.Interpreter.execute">
+<code class="sig-name descname">execute</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">code</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/interpreter.html#Interpreter.execute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.interpreter.Interpreter.execute" title="Permalink to this definition">¶</a></dt>
+<dd><p>Execute Michelson instructions (note that stack is not cleared after execution).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>code</strong> – Michelson source (any valid Michelson expression or special helpers)</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>{“success”: True|False, “stdout”: “”, “stderr”: {}, “result”: {“value”: “”, …}}</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-pytezos.repl.parser">
+<span id="extendable-parser"></span><h2>Extendable parser<a class="headerlink" href="#module-pytezos.repl.parser" title="Permalink to this headline">¶</a></h2>
+<dl class="py exception">
+<dt id="pytezos.repl.parser.MichelsonRuntimeError">
+<em class="property">exception </em><code class="sig-prename descclassname">pytezos.repl.parser.</code><code class="sig-name descname">MichelsonRuntimeError</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">message</span></em>, <em class="sig-param"><span class="n">trace</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/parser.html#MichelsonRuntimeError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.parser.MichelsonRuntimeError" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py method">
+<dt id="pytezos.repl.parser.MichelsonRuntimeError.init">
+<em class="property">classmethod </em><code class="sig-name descname">init</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">message</span></em>, <em class="sig-param"><span class="n">prim</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/parser.html#MichelsonRuntimeError.init"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.parser.MichelsonRuntimeError.init" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.repl.parser.MichelsonRuntimeError.wrap">
+<em class="property">classmethod </em><code class="sig-name descname">wrap</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">error</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#pytezos.repl.parser.MichelsonRuntimeError" title="pytezos.repl.parser.MichelsonRuntimeError">pytezos.repl.parser.MichelsonRuntimeError</a></span></em>, <em class="sig-param"><span class="n">prim</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/parser.html#MichelsonRuntimeError.wrap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.parser.MichelsonRuntimeError.wrap" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py exception">
+<dt id="pytezos.repl.parser.MichelsonTypeCheckError">
+<em class="property">exception </em><code class="sig-prename descclassname">pytezos.repl.parser.</code><code class="sig-name descname">MichelsonTypeCheckError</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">message</span></em>, <em class="sig-param"><span class="n">trace</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/parser.html#MichelsonTypeCheckError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.parser.MichelsonTypeCheckError" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt id="pytezos.repl.parser.Unit">
+<em class="property">class </em><code class="sig-prename descclassname">pytezos.repl.parser.</code><code class="sig-name descname">Unit</code><a class="reference internal" href="_modules/pytezos/repl/parser.html#Unit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.parser.Unit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.parser.assert_big_map_val">
+<code class="sig-prename descclassname">pytezos.repl.parser.</code><code class="sig-name descname">assert_big_map_val</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">type_expr</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/parser.html#assert_big_map_val"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.parser.assert_big_map_val" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.parser.assert_comparable">
+<code class="sig-prename descclassname">pytezos.repl.parser.</code><code class="sig-name descname">assert_comparable</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">type_expr</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/parser.html#assert_comparable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.parser.assert_comparable" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.parser.assert_expr_equal">
+<code class="sig-prename descclassname">pytezos.repl.parser.</code><code class="sig-name descname">assert_expr_equal</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">expected</span></em>, <em class="sig-param"><span class="n">actual</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/parser.html#assert_expr_equal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.parser.assert_expr_equal" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.parser.assert_pushable">
+<code class="sig-prename descclassname">pytezos.repl.parser.</code><code class="sig-name descname">assert_pushable</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">type_expr</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/parser.html#assert_pushable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.parser.assert_pushable" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.parser.assert_type">
+<code class="sig-prename descclassname">pytezos.repl.parser.</code><code class="sig-name descname">assert_type</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em>, <em class="sig-param"><span class="n">exp_type</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/parser.html#assert_type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.parser.assert_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.parser.dispatch_core_map">
+<code class="sig-prename descclassname">pytezos.repl.parser.</code><code class="sig-name descname">dispatch_core_map</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">val_expr</span></em>, <em class="sig-param"><span class="n">mapping</span><span class="p">:</span> <span class="n">dict</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/parser.html#dispatch_core_map"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.parser.dispatch_core_map" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.parser.dispatch_prim_map">
+<code class="sig-prename descclassname">pytezos.repl.parser.</code><code class="sig-name descname">dispatch_prim_map</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">val_expr</span></em>, <em class="sig-param"><span class="n">mapping</span><span class="p">:</span> <span class="n">dict</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/parser.html#dispatch_prim_map"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.parser.dispatch_prim_map" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.parser.expr_equal">
+<code class="sig-prename descclassname">pytezos.repl.parser.</code><code class="sig-name descname">expr_equal</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">a</span></em>, <em class="sig-param"><span class="n">b</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/parser.html#expr_equal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.parser.expr_equal" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.parser.get_bool">
+<code class="sig-prename descclassname">pytezos.repl.parser.</code><code class="sig-name descname">get_bool</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">val_expr</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/parser.html#get_bool"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.parser.get_bool" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.parser.get_bytes">
+<code class="sig-prename descclassname">pytezos.repl.parser.</code><code class="sig-name descname">get_bytes</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">val_expr</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/parser.html#get_bytes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.parser.get_bytes" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.parser.get_core_val">
+<code class="sig-prename descclassname">pytezos.repl.parser.</code><code class="sig-name descname">get_core_val</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">val_expr</span></em>, <em class="sig-param"><span class="n">core_type</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/parser.html#get_core_val"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.parser.get_core_val" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.parser.get_entry_expr">
+<code class="sig-prename descclassname">pytezos.repl.parser.</code><code class="sig-name descname">get_entry_expr</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">type_expr</span></em>, <em class="sig-param"><span class="n">field_annot</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/parser.html#get_entry_expr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.parser.get_entry_expr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.parser.get_int">
+<code class="sig-prename descclassname">pytezos.repl.parser.</code><code class="sig-name descname">get_int</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">val_expr</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/parser.html#get_int"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.parser.get_int" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.parser.get_prim_args">
+<code class="sig-prename descclassname">pytezos.repl.parser.</code><code class="sig-name descname">get_prim_args</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">val_expr</span></em>, <em class="sig-param"><span class="n">prim</span></em>, <em class="sig-param"><span class="n">args_len</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/parser.html#get_prim_args"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.parser.get_prim_args" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.parser.get_string">
+<code class="sig-prename descclassname">pytezos.repl.parser.</code><code class="sig-name descname">get_string</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">val_expr</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/parser.html#get_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.parser.get_string" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.parser.is_big_map_val">
+<code class="sig-prename descclassname">pytezos.repl.parser.</code><code class="sig-name descname">is_big_map_val</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">type_expr</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/parser.html#is_big_map_val"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.parser.is_big_map_val" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.parser.is_comparable">
+<code class="sig-prename descclassname">pytezos.repl.parser.</code><code class="sig-name descname">is_comparable</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">type_expr</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/parser.html#is_comparable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.parser.is_comparable" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.parser.is_pushable">
+<code class="sig-prename descclassname">pytezos.repl.parser.</code><code class="sig-name descname">is_pushable</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">type_expr</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/parser.html#is_pushable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.parser.is_pushable" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.parser.parse_address">
+<code class="sig-prename descclassname">pytezos.repl.parser.</code><code class="sig-name descname">parse_address</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/parser.html#parse_address"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.parser.parse_address" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.parser.parse_big_map">
+<code class="sig-prename descclassname">pytezos.repl.parser.</code><code class="sig-name descname">parse_big_map</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/parser.html#parse_big_map"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.parser.parse_big_map" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.parser.parse_bool">
+<code class="sig-prename descclassname">pytezos.repl.parser.</code><code class="sig-name descname">parse_bool</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/parser.html#parse_bool"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.parser.parse_bool" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.parser.parse_bytes">
+<code class="sig-prename descclassname">pytezos.repl.parser.</code><code class="sig-name descname">parse_bytes</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/parser.html#parse_bytes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.parser.parse_bytes" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.parser.parse_chain_id">
+<code class="sig-prename descclassname">pytezos.repl.parser.</code><code class="sig-name descname">parse_chain_id</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/parser.html#parse_chain_id"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.parser.parse_chain_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.parser.parse_contract">
+<code class="sig-prename descclassname">pytezos.repl.parser.</code><code class="sig-name descname">parse_contract</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/parser.html#parse_contract"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.parser.parse_contract" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.parser.parse_core_expr">
+<code class="sig-prename descclassname">pytezos.repl.parser.</code><code class="sig-name descname">parse_core_expr</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">expr</span></em><span class="sig-paren">)</span> &#x2192; tuple<a class="reference internal" href="_modules/pytezos/repl/parser.html#parse_core_expr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.parser.parse_core_expr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.parser.parse_elt">
+<code class="sig-prename descclassname">pytezos.repl.parser.</code><code class="sig-name descname">parse_elt</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">val_expr</span></em>, <em class="sig-param"><span class="n">type_expr</span></em>, <em class="sig-param"><span class="n">selector</span></em>, <em class="sig-param"><span class="n">type_path</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/parser.html#parse_elt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.parser.parse_elt" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.parser.parse_expression">
+<code class="sig-prename descclassname">pytezos.repl.parser.</code><code class="sig-name descname">parse_expression</code><span class="sig-paren">(</span><em class="sig-param">val_expr</em>, <em class="sig-param">type_expr</em>, <em class="sig-param">selector=&lt;function val_selector&gt;</em>, <em class="sig-param">type_path='0'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/parser.html#parse_expression"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.parser.parse_expression" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run an extensible parser for Micheline expressions.
+This function will just do the type checking for you,
+if you want to build a response you’d need to define a selector.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>val_expr</strong> – value expression (Micheline)</p></li>
+<li><p><strong>type_expr</strong> – corresponding type expression (Micheline)</p></li>
+<li><p><strong>selector</strong> – function selector(val_expr, type_expr, val, type_path).     Default selector (val_selector) converts Micheline to Python objects</p></li>
+<li><p><strong>type_path</strong> – starting binary path (default is ‘0’)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.parser.parse_int">
+<code class="sig-prename descclassname">pytezos.repl.parser.</code><code class="sig-name descname">parse_int</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/parser.html#parse_int"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.parser.parse_int" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.parser.parse_key">
+<code class="sig-prename descclassname">pytezos.repl.parser.</code><code class="sig-name descname">parse_key</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/parser.html#parse_key"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.parser.parse_key" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.parser.parse_key_hash">
+<code class="sig-prename descclassname">pytezos.repl.parser.</code><code class="sig-name descname">parse_key_hash</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/parser.html#parse_key_hash"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.parser.parse_key_hash" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.parser.parse_lambda">
+<code class="sig-prename descclassname">pytezos.repl.parser.</code><code class="sig-name descname">parse_lambda</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/parser.html#parse_lambda"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.parser.parse_lambda" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.parser.parse_list">
+<code class="sig-prename descclassname">pytezos.repl.parser.</code><code class="sig-name descname">parse_list</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/parser.html#parse_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.parser.parse_list" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.parser.parse_map">
+<code class="sig-prename descclassname">pytezos.repl.parser.</code><code class="sig-name descname">parse_map</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/parser.html#parse_map"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.parser.parse_map" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.parser.parse_mutez">
+<code class="sig-prename descclassname">pytezos.repl.parser.</code><code class="sig-name descname">parse_mutez</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/parser.html#parse_mutez"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.parser.parse_mutez" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.parser.parse_nat">
+<code class="sig-prename descclassname">pytezos.repl.parser.</code><code class="sig-name descname">parse_nat</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/parser.html#parse_nat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.parser.parse_nat" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.parser.parse_operation">
+<code class="sig-prename descclassname">pytezos.repl.parser.</code><code class="sig-name descname">parse_operation</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/parser.html#parse_operation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.parser.parse_operation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.parser.parse_option">
+<code class="sig-prename descclassname">pytezos.repl.parser.</code><code class="sig-name descname">parse_option</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/parser.html#parse_option"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.parser.parse_option" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.parser.parse_or">
+<code class="sig-prename descclassname">pytezos.repl.parser.</code><code class="sig-name descname">parse_or</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/parser.html#parse_or"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.parser.parse_or" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.parser.parse_pair">
+<code class="sig-prename descclassname">pytezos.repl.parser.</code><code class="sig-name descname">parse_pair</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/parser.html#parse_pair"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.parser.parse_pair" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.parser.parse_prim_expr">
+<code class="sig-prename descclassname">pytezos.repl.parser.</code><code class="sig-name descname">parse_prim_expr</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">expr</span></em><span class="sig-paren">)</span> &#x2192; tuple<a class="reference internal" href="_modules/pytezos/repl/parser.html#parse_prim_expr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.parser.parse_prim_expr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.parser.parse_set">
+<code class="sig-prename descclassname">pytezos.repl.parser.</code><code class="sig-name descname">parse_set</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/parser.html#parse_set"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.parser.parse_set" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.parser.parse_signature">
+<code class="sig-prename descclassname">pytezos.repl.parser.</code><code class="sig-name descname">parse_signature</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/parser.html#parse_signature"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.parser.parse_signature" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.parser.parse_string">
+<code class="sig-prename descclassname">pytezos.repl.parser.</code><code class="sig-name descname">parse_string</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/parser.html#parse_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.parser.parse_string" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.parser.parse_timestamp">
+<code class="sig-prename descclassname">pytezos.repl.parser.</code><code class="sig-name descname">parse_timestamp</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/parser.html#parse_timestamp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.parser.parse_timestamp" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.parser.parse_type">
+<code class="sig-prename descclassname">pytezos.repl.parser.</code><code class="sig-name descname">parse_type</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">type_expr</span></em><span class="sig-paren">)</span> &#x2192; Tuple<span class="p">[</span>str<span class="p">, </span>list<span class="p">, </span>Callable<span class="p">]</span><a class="reference internal" href="_modules/pytezos/repl/parser.html#parse_type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.parser.parse_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.parser.parse_unit">
+<code class="sig-prename descclassname">pytezos.repl.parser.</code><code class="sig-name descname">parse_unit</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/parser.html#parse_unit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.parser.parse_unit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.parser.primitive">
+<code class="sig-prename descclassname">pytezos.repl.parser.</code><code class="sig-name descname">primitive</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">prim</span></em>, <em class="sig-param"><span class="n">args_len</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/parser.html#primitive"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.parser.primitive" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.parser.restore_entry_expr">
+<code class="sig-prename descclassname">pytezos.repl.parser.</code><code class="sig-name descname">restore_entry_expr</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">val_expr</span></em>, <em class="sig-param"><span class="n">type_expr</span></em>, <em class="sig-param"><span class="n">field_annot</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/parser.html#restore_entry_expr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.parser.restore_entry_expr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.parser.val_selector">
+<code class="sig-prename descclassname">pytezos.repl.parser.</code><code class="sig-name descname">val_selector</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">val_expr</span></em>, <em class="sig-param"><span class="n">type_expr</span></em>, <em class="sig-param"><span class="n">val</span></em>, <em class="sig-param"><span class="n">type_path</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/parser.html#val_selector"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.parser.val_selector" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-pytezos.repl.context">
+<span id="interpreter-context"></span><h2>Interpreter context<a class="headerlink" href="#module-pytezos.repl.context" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="pytezos.repl.context.Context">
+<em class="property">class </em><code class="sig-prename descclassname">pytezos.repl.context.</code><code class="sig-name descname">Context</code><a class="reference internal" href="_modules/pytezos/repl/context.html#Context"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.context.Context" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py method">
+<dt id="pytezos.repl.context.Context.begin">
+<code class="sig-name descname">begin</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">prim</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/context.html#Context.begin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.context.Context.begin" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.repl.context.Context.drop_all">
+<code class="sig-name descname">drop_all</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/context.html#Context.drop_all"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.context.Context.drop_all" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.repl.context.Context.dump">
+<code class="sig-name descname">dump</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">count</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/context.html#Context.dump"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.context.Context.dump" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.repl.context.Context.end">
+<code class="sig-name descname">end</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/context.html#Context.end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.context.Context.end" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.repl.context.Context.get">
+<code class="sig-name descname">get</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span></em>, <em class="sig-param"><span class="n">default</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/context.html#Context.get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.context.Context.get" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.repl.context.Context.peek">
+<code class="sig-name descname">peek</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/context.html#Context.peek"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.context.Context.peek" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.repl.context.Context.pop">
+<code class="sig-name descname">pop</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">count</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span> &#x2192; List<span class="p">[</span><a class="reference internal" href="#pytezos.repl.types.StackItem" title="pytezos.repl.types.StackItem">pytezos.repl.types.StackItem</a><span class="p">]</span><a class="reference internal" href="_modules/pytezos/repl/context.html#Context.pop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.context.Context.pop" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.repl.context.Context.pop1">
+<code class="sig-name descname">pop1</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/context.html#Context.pop1"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.context.Context.pop1" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.repl.context.Context.pop2">
+<code class="sig-name descname">pop2</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/context.html#Context.pop2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.context.Context.pop2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.repl.context.Context.pop3">
+<code class="sig-name descname">pop3</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/context.html#Context.pop3"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.context.Context.pop3" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.repl.context.Context.print">
+<code class="sig-name descname">print</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">message</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/context.html#Context.print"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.context.Context.print" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.repl.context.Context.printf">
+<code class="sig-name descname">printf</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">template</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/context.html#Context.printf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.context.Context.printf" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.repl.context.Context.protect">
+<code class="sig-name descname">protect</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">count</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/context.html#Context.protect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.context.Context.protect" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.repl.context.Context.push">
+<code class="sig-name descname">push</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">item</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#pytezos.repl.types.StackItem" title="pytezos.repl.types.StackItem">pytezos.repl.types.StackItem</a></span></em>, <em class="sig-param"><span class="n">annots</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">move</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/context.html#Context.push"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.context.Context.push" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.repl.context.Context.reset">
+<code class="sig-name descname">reset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/context.html#Context.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.context.Context.reset" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.repl.context.Context.restore">
+<code class="sig-name descname">restore</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">count</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/context.html#Context.restore"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.context.Context.restore" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.repl.context.Context.set">
+<code class="sig-name descname">set</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span></em>, <em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/context.html#Context.set"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.context.Context.set" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.repl.context.Context.spawn">
+<code class="sig-name descname">spawn</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">stack</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/context.html#Context.spawn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.context.Context.spawn" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.repl.context.Context.unset">
+<code class="sig-name descname">unset</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/context.html#Context.unset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.context.Context.unset" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="pytezos.repl.context.DummyGen">
+<em class="property">class </em><code class="sig-prename descclassname">pytezos.repl.context.</code><code class="sig-name descname">DummyGen</code><a class="reference internal" href="_modules/pytezos/repl/context.html#DummyGen"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.context.DummyGen" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py method">
+<dt id="pytezos.repl.context.DummyGen.get_fresh_address">
+<code class="sig-name descname">get_fresh_address</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/context.html#DummyGen.get_fresh_address"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.context.DummyGen.get_fresh_address" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-pytezos.repl.types">
+<span id="michelson-type-system"></span><h2>Michelson type system<a class="headerlink" href="#module-pytezos.repl.types" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="pytezos.repl.types.Address">
+<em class="property">class </em><code class="sig-prename descclassname">pytezos.repl.types.</code><code class="sig-name descname">Address</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">val</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">val_expr</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">type_expr</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/types.html#Address"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.types.Address" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py method">
+<dt id="pytezos.repl.types.Address.new">
+<em class="property">classmethod </em><code class="sig-name descname">new</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">address</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/types.html#Address.new"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.types.Address.new" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pytezos.repl.types.Address.prim">
+<code class="sig-name descname">prim</code><em class="property"> = 'address'</em><a class="headerlink" href="#pytezos.repl.types.Address.prim" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="pytezos.repl.types.BigMap">
+<em class="property">class </em><code class="sig-prename descclassname">pytezos.repl.types.</code><code class="sig-name descname">BigMap</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">val</span></em>, <em class="sig-param"><span class="n">val_expr</span></em>, <em class="sig-param"><span class="n">type_expr</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/types.html#BigMap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.types.BigMap" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py method">
+<dt id="pytezos.repl.types.BigMap.assert_key_type">
+<code class="sig-name descname">assert_key_type</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">item</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#pytezos.repl.types.StackItem" title="pytezos.repl.types.StackItem">pytezos.repl.types.StackItem</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/types.html#BigMap.assert_key_type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.types.BigMap.assert_key_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.repl.types.BigMap.assert_val_type">
+<code class="sig-name descname">assert_val_type</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">item</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#pytezos.repl.types.StackItem" title="pytezos.repl.types.StackItem">pytezos.repl.types.StackItem</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/types.html#BigMap.assert_val_type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.types.BigMap.assert_val_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.repl.types.BigMap.find">
+<code class="sig-name descname">find</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#pytezos.repl.types.StackItem" title="pytezos.repl.types.StackItem">pytezos.repl.types.StackItem</a></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#pytezos.repl.types.StackItem" title="pytezos.repl.types.StackItem">pytezos.repl.types.StackItem</a><a class="reference internal" href="_modules/pytezos/repl/types.html#BigMap.find"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.types.BigMap.find" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pytezos.repl.types.BigMap.prim">
+<code class="sig-name descname">prim</code><em class="property"> = 'big_map'</em><a class="headerlink" href="#pytezos.repl.types.BigMap.prim" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.repl.types.BigMap.remove">
+<code class="sig-name descname">remove</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#pytezos.repl.types.StackItem" title="pytezos.repl.types.StackItem">pytezos.repl.types.StackItem</a></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#pytezos.repl.types.BigMap" title="pytezos.repl.types.BigMap">pytezos.repl.types.BigMap</a><a class="reference internal" href="_modules/pytezos/repl/types.html#BigMap.remove"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.types.BigMap.remove" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.repl.types.BigMap.update">
+<code class="sig-name descname">update</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#pytezos.repl.types.StackItem" title="pytezos.repl.types.StackItem">pytezos.repl.types.StackItem</a></span></em>, <em class="sig-param"><span class="n">value</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#pytezos.repl.types.StackItem" title="pytezos.repl.types.StackItem">pytezos.repl.types.StackItem</a></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#pytezos.repl.types.BigMap" title="pytezos.repl.types.BigMap">pytezos.repl.types.BigMap</a><a class="reference internal" href="_modules/pytezos/repl/types.html#BigMap.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.types.BigMap.update" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.repl.types.BigMap.val_type_expr">
+<code class="sig-name descname">val_type_expr</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/types.html#BigMap.val_type_expr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.types.BigMap.val_type_expr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="pytezos.repl.types.Bool">
+<em class="property">class </em><code class="sig-prename descclassname">pytezos.repl.types.</code><code class="sig-name descname">Bool</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">val</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">val_expr</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">type_expr</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/types.html#Bool"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.types.Bool" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py attribute">
+<dt id="pytezos.repl.types.Bool.prim">
+<code class="sig-name descname">prim</code><em class="property"> = 'bool'</em><a class="headerlink" href="#pytezos.repl.types.Bool.prim" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="pytezos.repl.types.Bytes">
+<em class="property">class </em><code class="sig-prename descclassname">pytezos.repl.types.</code><code class="sig-name descname">Bytes</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">val</span><span class="o">=</span><span class="default_value">b''</span></em>, <em class="sig-param"><span class="n">type_expr</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">val_expr</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/types.html#Bytes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.types.Bytes" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py attribute">
+<dt id="pytezos.repl.types.Bytes.prim">
+<code class="sig-name descname">prim</code><em class="property"> = 'bytes'</em><a class="headerlink" href="#pytezos.repl.types.Bytes.prim" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="pytezos.repl.types.ChainID">
+<em class="property">class </em><code class="sig-prename descclassname">pytezos.repl.types.</code><code class="sig-name descname">ChainID</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">val</span></em>, <em class="sig-param"><span class="n">val_expr</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">type_expr</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/types.html#ChainID"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.types.ChainID" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py attribute">
+<dt id="pytezos.repl.types.ChainID.prim">
+<code class="sig-name descname">prim</code><em class="property"> = 'chain_id'</em><a class="headerlink" href="#pytezos.repl.types.ChainID.prim" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="pytezos.repl.types.Contract">
+<em class="property">class </em><code class="sig-prename descclassname">pytezos.repl.types.</code><code class="sig-name descname">Contract</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">val</span></em>, <em class="sig-param"><span class="n">val_expr</span></em>, <em class="sig-param"><span class="n">type_expr</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/types.html#Contract"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.types.Contract" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py method">
+<dt id="pytezos.repl.types.Contract.assert_param_type">
+<code class="sig-name descname">assert_param_type</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">item</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#pytezos.repl.types.StackItem" title="pytezos.repl.types.StackItem">pytezos.repl.types.StackItem</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/types.html#Contract.assert_param_type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.types.Contract.assert_param_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.repl.types.Contract.get_address">
+<code class="sig-name descname">get_address</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/types.html#Contract.get_address"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.types.Contract.get_address" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.repl.types.Contract.get_entrypoint">
+<code class="sig-name descname">get_entrypoint</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/types.html#Contract.get_entrypoint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.types.Contract.get_entrypoint" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.repl.types.Contract.new">
+<em class="property">classmethod </em><code class="sig-name descname">new</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">contract</span></em>, <em class="sig-param"><span class="n">type_expr</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/types.html#Contract.new"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.types.Contract.new" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pytezos.repl.types.Contract.prim">
+<code class="sig-name descname">prim</code><em class="property"> = 'contract'</em><a class="headerlink" href="#pytezos.repl.types.Contract.prim" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="pytezos.repl.types.Int">
+<em class="property">class </em><code class="sig-prename descclassname">pytezos.repl.types.</code><code class="sig-name descname">Int</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">val</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">val_expr</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">type_expr</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/types.html#Int"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.types.Int" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py attribute">
+<dt id="pytezos.repl.types.Int.prim">
+<code class="sig-name descname">prim</code><em class="property"> = 'int'</em><a class="headerlink" href="#pytezos.repl.types.Int.prim" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="pytezos.repl.types.Key">
+<em class="property">class </em><code class="sig-prename descclassname">pytezos.repl.types.</code><code class="sig-name descname">Key</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">val</span></em>, <em class="sig-param"><span class="n">val_expr</span></em>, <em class="sig-param"><span class="n">type_expr</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/types.html#Key"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.types.Key" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py attribute">
+<dt id="pytezos.repl.types.Key.prim">
+<code class="sig-name descname">prim</code><em class="property"> = 'key'</em><a class="headerlink" href="#pytezos.repl.types.Key.prim" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="pytezos.repl.types.KeyHash">
+<em class="property">class </em><code class="sig-prename descclassname">pytezos.repl.types.</code><code class="sig-name descname">KeyHash</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">val</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">val_expr</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">type_expr</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/types.html#KeyHash"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.types.KeyHash" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py method">
+<dt id="pytezos.repl.types.KeyHash.new">
+<em class="property">classmethod </em><code class="sig-name descname">new</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key_hash</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/types.html#KeyHash.new"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.types.KeyHash.new" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pytezos.repl.types.KeyHash.prim">
+<code class="sig-name descname">prim</code><em class="property"> = 'key_hash'</em><a class="headerlink" href="#pytezos.repl.types.KeyHash.prim" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="pytezos.repl.types.Lambda">
+<em class="property">class </em><code class="sig-prename descclassname">pytezos.repl.types.</code><code class="sig-name descname">Lambda</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">val</span></em>, <em class="sig-param"><span class="n">val_expr</span></em>, <em class="sig-param"><span class="n">type_expr</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/types.html#Lambda"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.types.Lambda" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py method">
+<dt id="pytezos.repl.types.Lambda.assert_param_type">
+<code class="sig-name descname">assert_param_type</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">item</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#pytezos.repl.types.StackItem" title="pytezos.repl.types.StackItem">pytezos.repl.types.StackItem</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/types.html#Lambda.assert_param_type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.types.Lambda.assert_param_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.repl.types.Lambda.assert_ret_type">
+<code class="sig-name descname">assert_ret_type</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">item</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#pytezos.repl.types.StackItem" title="pytezos.repl.types.StackItem">pytezos.repl.types.StackItem</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/types.html#Lambda.assert_ret_type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.types.Lambda.assert_ret_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.repl.types.Lambda.code">
+<em class="property">property </em><code class="sig-name descname">code</code><a class="headerlink" href="#pytezos.repl.types.Lambda.code" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.repl.types.Lambda.new">
+<em class="property">classmethod </em><code class="sig-name descname">new</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">p_type_expr</span></em>, <em class="sig-param"><span class="n">r_type_expr</span></em>, <em class="sig-param"><span class="n">code</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/types.html#Lambda.new"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.types.Lambda.new" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.repl.types.Lambda.partial_apply">
+<code class="sig-name descname">partial_apply</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">item</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#pytezos.repl.types.StackItem" title="pytezos.repl.types.StackItem">pytezos.repl.types.StackItem</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/types.html#Lambda.partial_apply"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.types.Lambda.partial_apply" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pytezos.repl.types.Lambda.prim">
+<code class="sig-name descname">prim</code><em class="property"> = 'lambda'</em><a class="headerlink" href="#pytezos.repl.types.Lambda.prim" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="pytezos.repl.types.List">
+<em class="property">class </em><code class="sig-prename descclassname">pytezos.repl.types.</code><code class="sig-name descname">List</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">val</span></em>, <em class="sig-param"><span class="n">val_expr</span></em>, <em class="sig-param"><span class="n">type_expr</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/types.html#List"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.types.List" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py method">
+<dt id="pytezos.repl.types.List.assert_val_type">
+<code class="sig-name descname">assert_val_type</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">item</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#pytezos.repl.types.StackItem" title="pytezos.repl.types.StackItem">pytezos.repl.types.StackItem</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/types.html#List.assert_val_type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.types.List.assert_val_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.repl.types.List.cut_head">
+<code class="sig-name descname">cut_head</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/types.html#List.cut_head"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.types.List.cut_head" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.repl.types.List.empty">
+<em class="property">classmethod </em><code class="sig-name descname">empty</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">v_type_expr</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/types.html#List.empty"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.types.List.empty" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.repl.types.List.new">
+<em class="property">classmethod </em><code class="sig-name descname">new</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">items</span><span class="p">:</span> <span class="n">list</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/types.html#List.new"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.types.List.new" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.repl.types.List.prepend">
+<code class="sig-name descname">prepend</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">item</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#pytezos.repl.types.StackItem" title="pytezos.repl.types.StackItem">pytezos.repl.types.StackItem</a></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#pytezos.repl.types.List" title="pytezos.repl.types.List">pytezos.repl.types.List</a><a class="reference internal" href="_modules/pytezos/repl/types.html#List.prepend"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.types.List.prepend" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pytezos.repl.types.List.prim">
+<code class="sig-name descname">prim</code><em class="property"> = 'list'</em><a class="headerlink" href="#pytezos.repl.types.List.prim" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.repl.types.List.val_type">
+<code class="sig-name descname">val_type</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/types.html#List.val_type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.types.List.val_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="pytezos.repl.types.Map">
+<em class="property">class </em><code class="sig-prename descclassname">pytezos.repl.types.</code><code class="sig-name descname">Map</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">val</span></em>, <em class="sig-param"><span class="n">val_expr</span></em>, <em class="sig-param"><span class="n">type_expr</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/types.html#Map"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.types.Map" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py method">
+<dt id="pytezos.repl.types.Map.assert_key_type">
+<code class="sig-name descname">assert_key_type</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">item</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#pytezos.repl.types.StackItem" title="pytezos.repl.types.StackItem">pytezos.repl.types.StackItem</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/types.html#Map.assert_key_type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.types.Map.assert_key_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.repl.types.Map.assert_val_type">
+<code class="sig-name descname">assert_val_type</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">item</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#pytezos.repl.types.StackItem" title="pytezos.repl.types.StackItem">pytezos.repl.types.StackItem</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/types.html#Map.assert_val_type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.types.Map.assert_val_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.repl.types.Map.empty">
+<em class="property">classmethod </em><code class="sig-name descname">empty</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">k_type_expr</span></em>, <em class="sig-param"><span class="n">v_type_expr</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/types.html#Map.empty"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.types.Map.empty" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.repl.types.Map.find">
+<code class="sig-name descname">find</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#pytezos.repl.types.StackItem" title="pytezos.repl.types.StackItem">pytezos.repl.types.StackItem</a></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#pytezos.repl.types.StackItem" title="pytezos.repl.types.StackItem">pytezos.repl.types.StackItem</a><a class="reference internal" href="_modules/pytezos/repl/types.html#Map.find"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.types.Map.find" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.repl.types.Map.make_key">
+<code class="sig-name descname">make_key</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">k_val_expr</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/types.html#Map.make_key"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.types.Map.make_key" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.repl.types.Map.make_val">
+<code class="sig-name descname">make_val</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">v_val_expr</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/types.html#Map.make_val"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.types.Map.make_val" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.repl.types.Map.new">
+<em class="property">classmethod </em><code class="sig-name descname">new</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">items</span><span class="p">:</span> <span class="n">list</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/types.html#Map.new"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.types.Map.new" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pytezos.repl.types.Map.prim">
+<code class="sig-name descname">prim</code><em class="property"> = 'map'</em><a class="headerlink" href="#pytezos.repl.types.Map.prim" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.repl.types.Map.remove">
+<code class="sig-name descname">remove</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#pytezos.repl.types.StackItem" title="pytezos.repl.types.StackItem">pytezos.repl.types.StackItem</a></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#pytezos.repl.types.Map" title="pytezos.repl.types.Map">pytezos.repl.types.Map</a><a class="reference internal" href="_modules/pytezos/repl/types.html#Map.remove"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.types.Map.remove" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.repl.types.Map.update">
+<code class="sig-name descname">update</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#pytezos.repl.types.StackItem" title="pytezos.repl.types.StackItem">pytezos.repl.types.StackItem</a></span></em>, <em class="sig-param"><span class="n">val</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#pytezos.repl.types.StackItem" title="pytezos.repl.types.StackItem">pytezos.repl.types.StackItem</a></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#pytezos.repl.types.Map" title="pytezos.repl.types.Map">pytezos.repl.types.Map</a><a class="reference internal" href="_modules/pytezos/repl/types.html#Map.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.types.Map.update" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.repl.types.Map.val_type_expr">
+<code class="sig-name descname">val_type_expr</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/types.html#Map.val_type_expr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.types.Map.val_type_expr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="pytezos.repl.types.Mutez">
+<em class="property">class </em><code class="sig-prename descclassname">pytezos.repl.types.</code><code class="sig-name descname">Mutez</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">val</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">val_expr</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">type_expr</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/types.html#Mutez"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.types.Mutez" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py attribute">
+<dt id="pytezos.repl.types.Mutez.prim">
+<code class="sig-name descname">prim</code><em class="property"> = 'mutez'</em><a class="headerlink" href="#pytezos.repl.types.Mutez.prim" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="pytezos.repl.types.Nat">
+<em class="property">class </em><code class="sig-prename descclassname">pytezos.repl.types.</code><code class="sig-name descname">Nat</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">val</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">val_expr</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">type_expr</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/types.html#Nat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.types.Nat" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py attribute">
+<dt id="pytezos.repl.types.Nat.prim">
+<code class="sig-name descname">prim</code><em class="property"> = 'nat'</em><a class="headerlink" href="#pytezos.repl.types.Nat.prim" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="pytezos.repl.types.Operation">
+<em class="property">class </em><code class="sig-prename descclassname">pytezos.repl.types.</code><code class="sig-name descname">Operation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">val</span></em>, <em class="sig-param"><span class="n">val_expr</span></em>, <em class="sig-param"><span class="n">type_expr</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/types.html#Operation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.types.Operation" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py method">
+<dt id="pytezos.repl.types.Operation.content">
+<em class="property">property </em><code class="sig-name descname">content</code><a class="headerlink" href="#pytezos.repl.types.Operation.content" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.repl.types.Operation.format_content">
+<em class="property">static </em><code class="sig-name descname">format_content</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">content</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/types.html#Operation.format_content"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.types.Operation.format_content" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.repl.types.Operation.new">
+<em class="property">classmethod </em><code class="sig-name descname">new</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">content</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/types.html#Operation.new"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.types.Operation.new" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pytezos.repl.types.Operation.prim">
+<code class="sig-name descname">prim</code><em class="property"> = 'operation'</em><a class="headerlink" href="#pytezos.repl.types.Operation.prim" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="pytezos.repl.types.Option">
+<em class="property">class </em><code class="sig-prename descclassname">pytezos.repl.types.</code><code class="sig-name descname">Option</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">val</span></em>, <em class="sig-param"><span class="n">val_expr</span></em>, <em class="sig-param"><span class="n">type_expr</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/types.html#Option"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.types.Option" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py method">
+<dt id="pytezos.repl.types.Option.get_some">
+<code class="sig-name descname">get_some</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/types.html#Option.get_some"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.types.Option.get_some" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.repl.types.Option.is_none">
+<code class="sig-name descname">is_none</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/types.html#Option.is_none"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.types.Option.is_none" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.repl.types.Option.none">
+<em class="property">classmethod </em><code class="sig-name descname">none</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">type_expr</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/types.html#Option.none"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.types.Option.none" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pytezos.repl.types.Option.prim">
+<code class="sig-name descname">prim</code><em class="property"> = 'option'</em><a class="headerlink" href="#pytezos.repl.types.Option.prim" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.repl.types.Option.some">
+<em class="property">classmethod </em><code class="sig-name descname">some</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">item</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#pytezos.repl.types.StackItem" title="pytezos.repl.types.StackItem">pytezos.repl.types.StackItem</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/types.html#Option.some"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.types.Option.some" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="pytezos.repl.types.Or">
+<em class="property">class </em><code class="sig-prename descclassname">pytezos.repl.types.</code><code class="sig-name descname">Or</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">val</span></em>, <em class="sig-param"><span class="n">val_expr</span></em>, <em class="sig-param"><span class="n">type_expr</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/types.html#Or"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.types.Or" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py method">
+<dt id="pytezos.repl.types.Or.get_some">
+<code class="sig-name descname">get_some</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/types.html#Or.get_some"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.types.Or.get_some" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.repl.types.Or.is_left">
+<code class="sig-name descname">is_left</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/types.html#Or.is_left"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.types.Or.is_left" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.repl.types.Or.left">
+<em class="property">classmethod </em><code class="sig-name descname">left</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">r_type_expr</span></em>, <em class="sig-param"><span class="n">item</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#pytezos.repl.types.StackItem" title="pytezos.repl.types.StackItem">pytezos.repl.types.StackItem</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/types.html#Or.left"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.types.Or.left" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pytezos.repl.types.Or.prim">
+<code class="sig-name descname">prim</code><em class="property"> = 'or'</em><a class="headerlink" href="#pytezos.repl.types.Or.prim" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.repl.types.Or.right">
+<em class="property">classmethod </em><code class="sig-name descname">right</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">l_type_expr</span></em>, <em class="sig-param"><span class="n">item</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#pytezos.repl.types.StackItem" title="pytezos.repl.types.StackItem">pytezos.repl.types.StackItem</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/types.html#Or.right"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.types.Or.right" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="pytezos.repl.types.Pair">
+<em class="property">class </em><code class="sig-prename descclassname">pytezos.repl.types.</code><code class="sig-name descname">Pair</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">val</span></em>, <em class="sig-param"><span class="n">val_expr</span></em>, <em class="sig-param"><span class="n">type_expr</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/types.html#Pair"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.types.Pair" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py method">
+<dt id="pytezos.repl.types.Pair.get_element">
+<code class="sig-name descname">get_element</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">idx</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/types.html#Pair.get_element"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.types.Pair.get_element" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.repl.types.Pair.new">
+<em class="property">classmethod </em><code class="sig-name descname">new</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">left</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#pytezos.repl.types.StackItem" title="pytezos.repl.types.StackItem">pytezos.repl.types.StackItem</a></span></em>, <em class="sig-param"><span class="n">right</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#pytezos.repl.types.StackItem" title="pytezos.repl.types.StackItem">pytezos.repl.types.StackItem</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/types.html#Pair.new"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.types.Pair.new" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pytezos.repl.types.Pair.prim">
+<code class="sig-name descname">prim</code><em class="property"> = 'pair'</em><a class="headerlink" href="#pytezos.repl.types.Pair.prim" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="pytezos.repl.types.Set">
+<em class="property">class </em><code class="sig-prename descclassname">pytezos.repl.types.</code><code class="sig-name descname">Set</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">val</span></em>, <em class="sig-param"><span class="n">val_expr</span></em>, <em class="sig-param"><span class="n">type_expr</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/types.html#Set"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.types.Set" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py method">
+<dt id="pytezos.repl.types.Set.add">
+<code class="sig-name descname">add</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">item</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#pytezos.repl.types.StackItem" title="pytezos.repl.types.StackItem">pytezos.repl.types.StackItem</a></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#pytezos.repl.types.Set" title="pytezos.repl.types.Set">pytezos.repl.types.Set</a><a class="reference internal" href="_modules/pytezos/repl/types.html#Set.add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.types.Set.add" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.repl.types.Set.assert_key_type">
+<code class="sig-name descname">assert_key_type</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">item</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#pytezos.repl.types.StackItem" title="pytezos.repl.types.StackItem">pytezos.repl.types.StackItem</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/types.html#Set.assert_key_type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.types.Set.assert_key_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.repl.types.Set.empty">
+<em class="property">classmethod </em><code class="sig-name descname">empty</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">k_type_expr</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/types.html#Set.empty"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.types.Set.empty" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.repl.types.Set.new">
+<em class="property">classmethod </em><code class="sig-name descname">new</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">items</span><span class="p">:</span> <span class="n">list</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/types.html#Set.new"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.types.Set.new" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pytezos.repl.types.Set.prim">
+<code class="sig-name descname">prim</code><em class="property"> = 'set'</em><a class="headerlink" href="#pytezos.repl.types.Set.prim" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.repl.types.Set.remove">
+<code class="sig-name descname">remove</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">item</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#pytezos.repl.types.StackItem" title="pytezos.repl.types.StackItem">pytezos.repl.types.StackItem</a></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#pytezos.repl.types.Set" title="pytezos.repl.types.Set">pytezos.repl.types.Set</a><a class="reference internal" href="_modules/pytezos/repl/types.html#Set.remove"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.types.Set.remove" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="pytezos.repl.types.Signature">
+<em class="property">class </em><code class="sig-prename descclassname">pytezos.repl.types.</code><code class="sig-name descname">Signature</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">val</span></em>, <em class="sig-param"><span class="n">val_expr</span></em>, <em class="sig-param"><span class="n">type_expr</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/types.html#Signature"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.types.Signature" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py attribute">
+<dt id="pytezos.repl.types.Signature.prim">
+<code class="sig-name descname">prim</code><em class="property"> = 'signature'</em><a class="headerlink" href="#pytezos.repl.types.Signature.prim" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="pytezos.repl.types.StackItem">
+<em class="property">class </em><code class="sig-prename descclassname">pytezos.repl.types.</code><code class="sig-name descname">StackItem</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">val</span></em>, <em class="sig-param"><span class="n">val_expr</span></em>, <em class="sig-param"><span class="n">type_expr</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/types.html#StackItem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.types.StackItem" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py method">
+<dt id="pytezos.repl.types.StackItem.init">
+<em class="property">classmethod </em><code class="sig-name descname">init</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">val_expr</span></em>, <em class="sig-param"><span class="n">type_expr</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/types.html#StackItem.init"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.types.StackItem.init" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.repl.types.StackItem.parse">
+<em class="property">static </em><code class="sig-name descname">parse</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">val_expr</span></em>, <em class="sig-param"><span class="n">type_expr</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/types.html#StackItem.parse"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.types.StackItem.parse" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pytezos.repl.types.StackItem.prim">
+<code class="sig-name descname">prim</code><em class="property"> = ''</em><a class="headerlink" href="#pytezos.repl.types.StackItem.prim" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.repl.types.StackItem.rename">
+<code class="sig-name descname">rename</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">annots</span><span class="p">:</span> <span class="n">list</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/types.html#StackItem.rename"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.types.StackItem.rename" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="pytezos.repl.types.String">
+<em class="property">class </em><code class="sig-prename descclassname">pytezos.repl.types.</code><code class="sig-name descname">String</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">val</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">val_expr</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">type_expr</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/types.html#String"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.types.String" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py attribute">
+<dt id="pytezos.repl.types.String.prim">
+<code class="sig-name descname">prim</code><em class="property"> = 'string'</em><a class="headerlink" href="#pytezos.repl.types.String.prim" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="pytezos.repl.types.Timestamp">
+<em class="property">class </em><code class="sig-prename descclassname">pytezos.repl.types.</code><code class="sig-name descname">Timestamp</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">val</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">val_expr</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">type_expr</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/types.html#Timestamp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.types.Timestamp" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py attribute">
+<dt id="pytezos.repl.types.Timestamp.prim">
+<code class="sig-name descname">prim</code><em class="property"> = 'timestamp'</em><a class="headerlink" href="#pytezos.repl.types.Timestamp.prim" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="pytezos.repl.types.Unit">
+<em class="property">class </em><code class="sig-prename descclassname">pytezos.repl.types.</code><code class="sig-name descname">Unit</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">val</span><span class="o">=</span><span class="default_value">Unit</span></em>, <em class="sig-param"><span class="n">val_expr</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">type_expr</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/types.html#Unit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.types.Unit" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py attribute">
+<dt id="pytezos.repl.types.Unit.prim">
+<code class="sig-name descname">prim</code><em class="property"> = 'unit'</em><a class="headerlink" href="#pytezos.repl.types.Unit.prim" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.types.assert_equal_types">
+<code class="sig-prename descclassname">pytezos.repl.types.</code><code class="sig-name descname">assert_equal_types</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">a</span></em>, <em class="sig-param"><span class="n">b</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/types.html#assert_equal_types"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.types.assert_equal_types" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.types.assert_stack_item">
+<code class="sig-prename descclassname">pytezos.repl.types.</code><code class="sig-name descname">assert_stack_item</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">item</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#pytezos.repl.types.StackItem" title="pytezos.repl.types.StackItem">pytezos.repl.types.StackItem</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/types.html#assert_stack_item"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.types.assert_stack_item" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.types.assert_stack_type">
+<code class="sig-prename descclassname">pytezos.repl.types.</code><code class="sig-name descname">assert_stack_type</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">item</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#pytezos.repl.types.StackItem" title="pytezos.repl.types.StackItem">pytezos.repl.types.StackItem</a></span></em>, <em class="sig-param"><span class="n">item_type</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/types.html#assert_stack_type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.types.assert_stack_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.types.dispatch_type_map">
+<code class="sig-prename descclassname">pytezos.repl.types.</code><code class="sig-name descname">dispatch_type_map</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">a</span></em>, <em class="sig-param"><span class="n">b</span></em>, <em class="sig-param"><span class="n">mapping</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/types.html#dispatch_type_map"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.types.dispatch_type_map" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.types.get_name">
+<code class="sig-prename descclassname">pytezos.repl.types.</code><code class="sig-name descname">get_name</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">annots</span><span class="p">:</span> <span class="n">list</span></em>, <em class="sig-param"><span class="n">prefix</span></em>, <em class="sig-param"><span class="n">default</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/types.html#get_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.types.get_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-pytezos.repl.big_map">
+<span id="big-map-abstraction"></span><h2>Big_map abstraction<a class="headerlink" href="#module-pytezos.repl.big_map" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="pytezos.repl.big_map.BigMapPool">
+<em class="property">class </em><code class="sig-prename descclassname">pytezos.repl.big_map.</code><code class="sig-name descname">BigMapPool</code><a class="reference internal" href="_modules/pytezos/repl/big_map.html#BigMapPool"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.big_map.BigMapPool" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py method">
+<dt id="pytezos.repl.big_map.BigMapPool.commit">
+<code class="sig-name descname">commit</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">big_map_diff</span><span class="p">:</span> <span class="n">list</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/big_map.html#BigMapPool.commit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.big_map.BigMapPool.commit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.repl.big_map.BigMapPool.contains">
+<code class="sig-name descname">contains</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">big_map</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#pytezos.repl.types.BigMap" title="pytezos.repl.types.BigMap">pytezos.repl.types.BigMap</a></span></em>, <em class="sig-param"><span class="n">key</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#pytezos.repl.types.StackItem" title="pytezos.repl.types.StackItem">pytezos.repl.types.StackItem</a></span></em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/pytezos/repl/big_map.html#BigMapPool.contains"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.big_map.BigMapPool.contains" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.repl.big_map.BigMapPool.diff">
+<code class="sig-name descname">diff</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">storage</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#pytezos.repl.types.StackItem" title="pytezos.repl.types.StackItem">pytezos.repl.types.StackItem</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/big_map.html#BigMapPool.diff"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.big_map.BigMapPool.diff" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.repl.big_map.BigMapPool.empty">
+<code class="sig-name descname">empty</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">k_type_expr</span></em>, <em class="sig-param"><span class="n">v_type_expr</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#pytezos.repl.types.BigMap" title="pytezos.repl.types.BigMap">pytezos.repl.types.BigMap</a><a class="reference internal" href="_modules/pytezos/repl/big_map.html#BigMapPool.empty"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.big_map.BigMapPool.empty" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.repl.big_map.BigMapPool.find">
+<code class="sig-name descname">find</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">big_map</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#pytezos.repl.types.BigMap" title="pytezos.repl.types.BigMap">pytezos.repl.types.BigMap</a></span></em>, <em class="sig-param"><span class="n">key</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#pytezos.repl.types.StackItem" title="pytezos.repl.types.StackItem">pytezos.repl.types.StackItem</a></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#pytezos.repl.types.StackItem" title="pytezos.repl.types.StackItem">pytezos.repl.types.StackItem</a><a class="reference internal" href="_modules/pytezos/repl/big_map.html#BigMapPool.find"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.big_map.BigMapPool.find" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.repl.big_map.BigMapPool.pre_alloc">
+<code class="sig-name descname">pre_alloc</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">val_expr</span></em>, <em class="sig-param"><span class="n">type_expr</span></em>, <em class="sig-param"><span class="n">copy</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">network</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/big_map.html#BigMapPool.pre_alloc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.big_map.BigMapPool.pre_alloc" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.repl.big_map.BigMapPool.reset">
+<code class="sig-name descname">reset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/big_map.html#BigMapPool.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.big_map.BigMapPool.reset" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.big_map.elt_to_update">
+<code class="sig-prename descclassname">pytezos.repl.big_map.</code><code class="sig-name descname">elt_to_update</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">elt</span></em>, <em class="sig-param"><span class="n">type_expr</span></em>, <em class="sig-param"><span class="n">big_map_id</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/big_map.html#elt_to_update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.big_map.elt_to_update" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.big_map.make_elt">
+<code class="sig-prename descclassname">pytezos.repl.big_map.</code><code class="sig-name descname">make_elt</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">args</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/big_map.html#make_elt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.big_map.make_elt" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-pytezos.repl.helpers">
+<span id="pytezos-helpers"></span><h2>PyTezos helpers<a class="headerlink" href="#module-pytezos.repl.helpers" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="pytezos.repl.helpers.do_begin">
+<code class="sig-prename descclassname">pytezos.repl.helpers.</code><code class="sig-name descname">do_begin</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/helpers.html#do_begin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.helpers.do_begin" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.helpers.do_big_map_diff">
+<code class="sig-prename descclassname">pytezos.repl.helpers.</code><code class="sig-name descname">do_big_map_diff</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/helpers.html#do_big_map_diff"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.helpers.do_big_map_diff" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.helpers.do_commit">
+<code class="sig-prename descclassname">pytezos.repl.helpers.</code><code class="sig-name descname">do_commit</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/helpers.html#do_commit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.helpers.do_commit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.helpers.do_debug">
+<code class="sig-prename descclassname">pytezos.repl.helpers.</code><code class="sig-name descname">do_debug</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/helpers.html#do_debug"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.helpers.do_debug" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.helpers.do_drop_all">
+<code class="sig-prename descclassname">pytezos.repl.helpers.</code><code class="sig-name descname">do_drop_all</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/helpers.html#do_drop_all"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.helpers.do_drop_all" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.helpers.do_dump">
+<code class="sig-prename descclassname">pytezos.repl.helpers.</code><code class="sig-name descname">do_dump</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/helpers.html#do_dump"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.helpers.do_dump" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.helpers.do_dump_all">
+<code class="sig-prename descclassname">pytezos.repl.helpers.</code><code class="sig-name descname">do_dump_all</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/helpers.html#do_dump_all"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.helpers.do_dump_all" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.helpers.do_expand">
+<code class="sig-prename descclassname">pytezos.repl.helpers.</code><code class="sig-name descname">do_expand</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/helpers.html#do_expand"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.helpers.do_expand" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.helpers.do_include">
+<code class="sig-prename descclassname">pytezos.repl.helpers.</code><code class="sig-name descname">do_include</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/helpers.html#do_include"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.helpers.do_include" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.helpers.do_patch">
+<code class="sig-prename descclassname">pytezos.repl.helpers.</code><code class="sig-name descname">do_patch</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/helpers.html#do_patch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.helpers.do_patch" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.helpers.do_print">
+<code class="sig-prename descclassname">pytezos.repl.helpers.</code><code class="sig-name descname">do_print</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/helpers.html#do_print"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.helpers.do_print" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.helpers.do_reset">
+<code class="sig-prename descclassname">pytezos.repl.helpers.</code><code class="sig-name descname">do_reset</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/helpers.html#do_reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.helpers.do_reset" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.helpers.do_reset_none">
+<code class="sig-prename descclassname">pytezos.repl.helpers.</code><code class="sig-name descname">do_reset_none</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/helpers.html#do_reset_none"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.helpers.do_reset_none" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.helpers.do_run">
+<code class="sig-prename descclassname">pytezos.repl.helpers.</code><code class="sig-name descname">do_run</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/helpers.html#do_run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.helpers.do_run" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.helpers.do_unset">
+<code class="sig-prename descclassname">pytezos.repl.helpers.</code><code class="sig-name descname">do_unset</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/helpers.html#do_unset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.helpers.do_unset" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.helpers.is_prim">
+<code class="sig-prename descclassname">pytezos.repl.helpers.</code><code class="sig-name descname">is_prim</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">val_expr</span></em>, <em class="sig-param"><span class="n">prim</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/helpers.html#is_prim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.helpers.is_prim" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-pytezos.repl.arithmetic">
+<span id="arithmetic-operations"></span><h2>Arithmetic operations<a class="headerlink" href="#module-pytezos.repl.arithmetic" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="pytezos.repl.arithmetic.do_abs">
+<code class="sig-prename descclassname">pytezos.repl.arithmetic.</code><code class="sig-name descname">do_abs</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/arithmetic.html#do_abs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.arithmetic.do_abs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.arithmetic.do_add">
+<code class="sig-prename descclassname">pytezos.repl.arithmetic.</code><code class="sig-name descname">do_add</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/arithmetic.html#do_add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.arithmetic.do_add" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.arithmetic.do_and">
+<code class="sig-prename descclassname">pytezos.repl.arithmetic.</code><code class="sig-name descname">do_and</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/arithmetic.html#do_and"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.arithmetic.do_and" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.arithmetic.do_blake2b">
+<code class="sig-prename descclassname">pytezos.repl.arithmetic.</code><code class="sig-name descname">do_blake2b</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/arithmetic.html#do_blake2b"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.arithmetic.do_blake2b" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.arithmetic.do_check_sig">
+<code class="sig-prename descclassname">pytezos.repl.arithmetic.</code><code class="sig-name descname">do_check_sig</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/arithmetic.html#do_check_sig"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.arithmetic.do_check_sig" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.arithmetic.do_compare">
+<code class="sig-prename descclassname">pytezos.repl.arithmetic.</code><code class="sig-name descname">do_compare</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/arithmetic.html#do_compare"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.arithmetic.do_compare" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.arithmetic.do_ediv">
+<code class="sig-prename descclassname">pytezos.repl.arithmetic.</code><code class="sig-name descname">do_ediv</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/arithmetic.html#do_ediv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.arithmetic.do_ediv" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.arithmetic.do_eq">
+<code class="sig-prename descclassname">pytezos.repl.arithmetic.</code><code class="sig-name descname">do_eq</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/arithmetic.html#do_eq"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.arithmetic.do_eq" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.arithmetic.do_hash_key">
+<code class="sig-prename descclassname">pytezos.repl.arithmetic.</code><code class="sig-name descname">do_hash_key</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/arithmetic.html#do_hash_key"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.arithmetic.do_hash_key" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.arithmetic.do_int">
+<code class="sig-prename descclassname">pytezos.repl.arithmetic.</code><code class="sig-name descname">do_int</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/arithmetic.html#do_int"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.arithmetic.do_int" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.arithmetic.do_is_nat">
+<code class="sig-prename descclassname">pytezos.repl.arithmetic.</code><code class="sig-name descname">do_is_nat</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/arithmetic.html#do_is_nat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.arithmetic.do_is_nat" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.arithmetic.do_lsl">
+<code class="sig-prename descclassname">pytezos.repl.arithmetic.</code><code class="sig-name descname">do_lsl</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/arithmetic.html#do_lsl"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.arithmetic.do_lsl" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.arithmetic.do_mul">
+<code class="sig-prename descclassname">pytezos.repl.arithmetic.</code><code class="sig-name descname">do_mul</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/arithmetic.html#do_mul"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.arithmetic.do_mul" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.arithmetic.do_neg">
+<code class="sig-prename descclassname">pytezos.repl.arithmetic.</code><code class="sig-name descname">do_neg</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/arithmetic.html#do_neg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.arithmetic.do_neg" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.arithmetic.do_not">
+<code class="sig-prename descclassname">pytezos.repl.arithmetic.</code><code class="sig-name descname">do_not</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/arithmetic.html#do_not"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.arithmetic.do_not" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.arithmetic.do_or_xor">
+<code class="sig-prename descclassname">pytezos.repl.arithmetic.</code><code class="sig-name descname">do_or_xor</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/arithmetic.html#do_or_xor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.arithmetic.do_or_xor" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.arithmetic.do_sha">
+<code class="sig-prename descclassname">pytezos.repl.arithmetic.</code><code class="sig-name descname">do_sha</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/arithmetic.html#do_sha"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.arithmetic.do_sha" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.arithmetic.do_sub">
+<code class="sig-prename descclassname">pytezos.repl.arithmetic.</code><code class="sig-name descname">do_sub</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/arithmetic.html#do_sub"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.arithmetic.do_sub" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="blockchain-specific-operations">
+<h2>Blockchain-specific operations<a class="headerlink" href="#blockchain-specific-operations" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="module-pytezos.repl.blockchain"></span><dl class="py function">
+<dt id="pytezos.repl.blockchain.check_contract">
+<code class="sig-prename descclassname">pytezos.repl.blockchain.</code><code class="sig-name descname">check_contract</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ctx</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#pytezos.repl.context.Context" title="pytezos.repl.context.Context">pytezos.repl.context.Context</a></span></em>, <em class="sig-param"><span class="n">address</span></em>, <em class="sig-param"><span class="n">entry_annot</span></em>, <em class="sig-param"><span class="n">type_expr</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/blockchain.html#check_contract"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.blockchain.check_contract" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.blockchain.decrease_balance">
+<code class="sig-prename descclassname">pytezos.repl.blockchain.</code><code class="sig-name descname">decrease_balance</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ctx</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#pytezos.repl.context.Context" title="pytezos.repl.context.Context">pytezos.repl.context.Context</a></span></em>, <em class="sig-param"><span class="n">amount</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#pytezos.repl.types.Mutez" title="pytezos.repl.types.Mutez">pytezos.repl.types.Mutez</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/blockchain.html#decrease_balance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.blockchain.decrease_balance" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.blockchain.do_address">
+<code class="sig-prename descclassname">pytezos.repl.blockchain.</code><code class="sig-name descname">do_address</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/blockchain.html#do_address"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.blockchain.do_address" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.blockchain.do_amount">
+<code class="sig-prename descclassname">pytezos.repl.blockchain.</code><code class="sig-name descname">do_amount</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/blockchain.html#do_amount"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.blockchain.do_amount" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.blockchain.do_balance">
+<code class="sig-prename descclassname">pytezos.repl.blockchain.</code><code class="sig-name descname">do_balance</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/blockchain.html#do_balance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.blockchain.do_balance" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.blockchain.do_chain_id">
+<code class="sig-prename descclassname">pytezos.repl.blockchain.</code><code class="sig-name descname">do_chain_id</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/blockchain.html#do_chain_id"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.blockchain.do_chain_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.blockchain.do_contract">
+<code class="sig-prename descclassname">pytezos.repl.blockchain.</code><code class="sig-name descname">do_contract</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/blockchain.html#do_contract"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.blockchain.do_contract" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.blockchain.do_create_contract">
+<code class="sig-prename descclassname">pytezos.repl.blockchain.</code><code class="sig-name descname">do_create_contract</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/blockchain.html#do_create_contract"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.blockchain.do_create_contract" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.blockchain.do_implicit_account">
+<code class="sig-prename descclassname">pytezos.repl.blockchain.</code><code class="sig-name descname">do_implicit_account</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/blockchain.html#do_implicit_account"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.blockchain.do_implicit_account" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.blockchain.do_now">
+<code class="sig-prename descclassname">pytezos.repl.blockchain.</code><code class="sig-name descname">do_now</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/blockchain.html#do_now"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.blockchain.do_now" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.blockchain.do_parameter">
+<code class="sig-prename descclassname">pytezos.repl.blockchain.</code><code class="sig-name descname">do_parameter</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/blockchain.html#do_parameter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.blockchain.do_parameter" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.blockchain.do_self">
+<code class="sig-prename descclassname">pytezos.repl.blockchain.</code><code class="sig-name descname">do_self</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/blockchain.html#do_self"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.blockchain.do_self" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.blockchain.do_sender">
+<code class="sig-prename descclassname">pytezos.repl.blockchain.</code><code class="sig-name descname">do_sender</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/blockchain.html#do_sender"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.blockchain.do_sender" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.blockchain.do_set_delegate">
+<code class="sig-prename descclassname">pytezos.repl.blockchain.</code><code class="sig-name descname">do_set_delegate</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/blockchain.html#do_set_delegate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.blockchain.do_set_delegate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.blockchain.do_source">
+<code class="sig-prename descclassname">pytezos.repl.blockchain.</code><code class="sig-name descname">do_source</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/blockchain.html#do_source"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.blockchain.do_source" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.blockchain.do_transfer_tokens">
+<code class="sig-prename descclassname">pytezos.repl.blockchain.</code><code class="sig-name descname">do_transfer_tokens</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/blockchain.html#do_transfer_tokens"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.blockchain.do_transfer_tokens" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.blockchain.get_balance">
+<code class="sig-prename descclassname">pytezos.repl.blockchain.</code><code class="sig-name descname">get_balance</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ctx</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#pytezos.repl.context.Context" title="pytezos.repl.context.Context">pytezos.repl.context.Context</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/blockchain.html#get_balance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.blockchain.get_balance" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-0">
+<span id="control-flow-operators"></span><h2>Control flow operators<a class="headerlink" href="#module-0" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="id0">
+<code class="sig-prename descclassname">pytezos.repl.blockchain.</code><code class="sig-name descname">check_contract</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ctx</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#pytezos.repl.context.Context" title="pytezos.repl.context.Context">pytezos.repl.context.Context</a></span></em>, <em class="sig-param"><span class="n">address</span></em>, <em class="sig-param"><span class="n">entry_annot</span></em>, <em class="sig-param"><span class="n">type_expr</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/blockchain.html#check_contract"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#id0" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="id1">
+<code class="sig-prename descclassname">pytezos.repl.blockchain.</code><code class="sig-name descname">decrease_balance</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ctx</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#pytezos.repl.context.Context" title="pytezos.repl.context.Context">pytezos.repl.context.Context</a></span></em>, <em class="sig-param"><span class="n">amount</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#pytezos.repl.types.Mutez" title="pytezos.repl.types.Mutez">pytezos.repl.types.Mutez</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/blockchain.html#decrease_balance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#id1" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="id2">
+<code class="sig-prename descclassname">pytezos.repl.blockchain.</code><code class="sig-name descname">do_address</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/blockchain.html#do_address"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#id2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="id3">
+<code class="sig-prename descclassname">pytezos.repl.blockchain.</code><code class="sig-name descname">do_amount</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/blockchain.html#do_amount"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#id3" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="id4">
+<code class="sig-prename descclassname">pytezos.repl.blockchain.</code><code class="sig-name descname">do_balance</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/blockchain.html#do_balance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#id4" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="id5">
+<code class="sig-prename descclassname">pytezos.repl.blockchain.</code><code class="sig-name descname">do_chain_id</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/blockchain.html#do_chain_id"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#id5" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="id6">
+<code class="sig-prename descclassname">pytezos.repl.blockchain.</code><code class="sig-name descname">do_contract</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/blockchain.html#do_contract"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#id6" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="id7">
+<code class="sig-prename descclassname">pytezos.repl.blockchain.</code><code class="sig-name descname">do_create_contract</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/blockchain.html#do_create_contract"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#id7" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="id8">
+<code class="sig-prename descclassname">pytezos.repl.blockchain.</code><code class="sig-name descname">do_implicit_account</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/blockchain.html#do_implicit_account"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#id8" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="id9">
+<code class="sig-prename descclassname">pytezos.repl.blockchain.</code><code class="sig-name descname">do_now</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/blockchain.html#do_now"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#id9" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="id10">
+<code class="sig-prename descclassname">pytezos.repl.blockchain.</code><code class="sig-name descname">do_parameter</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/blockchain.html#do_parameter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#id10" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="id11">
+<code class="sig-prename descclassname">pytezos.repl.blockchain.</code><code class="sig-name descname">do_self</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/blockchain.html#do_self"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#id11" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="id12">
+<code class="sig-prename descclassname">pytezos.repl.blockchain.</code><code class="sig-name descname">do_sender</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/blockchain.html#do_sender"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#id12" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="id13">
+<code class="sig-prename descclassname">pytezos.repl.blockchain.</code><code class="sig-name descname">do_set_delegate</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/blockchain.html#do_set_delegate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#id13" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="id14">
+<code class="sig-prename descclassname">pytezos.repl.blockchain.</code><code class="sig-name descname">do_source</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/blockchain.html#do_source"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#id14" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="id15">
+<code class="sig-prename descclassname">pytezos.repl.blockchain.</code><code class="sig-name descname">do_transfer_tokens</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/blockchain.html#do_transfer_tokens"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#id15" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="id16">
+<code class="sig-prename descclassname">pytezos.repl.blockchain.</code><code class="sig-name descname">get_balance</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ctx</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#pytezos.repl.context.Context" title="pytezos.repl.context.Context">pytezos.repl.context.Context</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/blockchain.html#get_balance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#id16" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-pytezos.repl.structures">
+<span id="operations-with-structures"></span><h2>Operations with structures<a class="headerlink" href="#module-pytezos.repl.structures" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="pytezos.repl.structures.do_car">
+<code class="sig-prename descclassname">pytezos.repl.structures.</code><code class="sig-name descname">do_car</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/structures.html#do_car"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.structures.do_car" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.structures.do_concat">
+<code class="sig-prename descclassname">pytezos.repl.structures.</code><code class="sig-name descname">do_concat</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/structures.html#do_concat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.structures.do_concat" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.structures.do_cons">
+<code class="sig-prename descclassname">pytezos.repl.structures.</code><code class="sig-name descname">do_cons</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/structures.html#do_cons"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.structures.do_cons" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.structures.do_empty_big_map">
+<code class="sig-prename descclassname">pytezos.repl.structures.</code><code class="sig-name descname">do_empty_big_map</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/structures.html#do_empty_big_map"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.structures.do_empty_big_map" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.structures.do_empty_map">
+<code class="sig-prename descclassname">pytezos.repl.structures.</code><code class="sig-name descname">do_empty_map</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/structures.html#do_empty_map"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.structures.do_empty_map" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.structures.do_empty_set">
+<code class="sig-prename descclassname">pytezos.repl.structures.</code><code class="sig-name descname">do_empty_set</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/structures.html#do_empty_set"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.structures.do_empty_set" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.structures.do_get">
+<code class="sig-prename descclassname">pytezos.repl.structures.</code><code class="sig-name descname">do_get</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/structures.html#do_get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.structures.do_get" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.structures.do_left">
+<code class="sig-prename descclassname">pytezos.repl.structures.</code><code class="sig-name descname">do_left</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/structures.html#do_left"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.structures.do_left" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.structures.do_mem">
+<code class="sig-prename descclassname">pytezos.repl.structures.</code><code class="sig-name descname">do_mem</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/structures.html#do_mem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.structures.do_mem" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.structures.do_nil">
+<code class="sig-prename descclassname">pytezos.repl.structures.</code><code class="sig-name descname">do_nil</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/structures.html#do_nil"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.structures.do_nil" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.structures.do_none">
+<code class="sig-prename descclassname">pytezos.repl.structures.</code><code class="sig-name descname">do_none</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/structures.html#do_none"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.structures.do_none" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.structures.do_pack">
+<code class="sig-prename descclassname">pytezos.repl.structures.</code><code class="sig-name descname">do_pack</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/structures.html#do_pack"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.structures.do_pack" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.structures.do_pair">
+<code class="sig-prename descclassname">pytezos.repl.structures.</code><code class="sig-name descname">do_pair</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/structures.html#do_pair"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.structures.do_pair" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.structures.do_size">
+<code class="sig-prename descclassname">pytezos.repl.structures.</code><code class="sig-name descname">do_size</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/structures.html#do_size"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.structures.do_size" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.structures.do_slice">
+<code class="sig-prename descclassname">pytezos.repl.structures.</code><code class="sig-name descname">do_slice</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/structures.html#do_slice"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.structures.do_slice" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.structures.do_some">
+<code class="sig-prename descclassname">pytezos.repl.structures.</code><code class="sig-name descname">do_some</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/structures.html#do_some"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.structures.do_some" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.structures.do_unit">
+<code class="sig-prename descclassname">pytezos.repl.structures.</code><code class="sig-name descname">do_unit</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/structures.html#do_unit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.structures.do_unit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.structures.do_unpack">
+<code class="sig-prename descclassname">pytezos.repl.structures.</code><code class="sig-name descname">do_unpack</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/structures.html#do_unpack"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.structures.do_unpack" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.structures.do_update">
+<code class="sig-prename descclassname">pytezos.repl.structures.</code><code class="sig-name descname">do_update</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/structures.html#do_update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.structures.do_update" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="inspect_proposals.html" class="btn btn-neutral float-right" title="Inspecting proposals" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="code.html" class="btn btn-neutral float-left" title="Working with Michelson code" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Baking Bad
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

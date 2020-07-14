@@ -1,0 +1,614 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pytezos.michelson.contract &mdash; PyTezos  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+    <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> PyTezos
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../quick_start.html">Quick start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../integration_tests.html">Michelson integration tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pytezos_cli.html">Pytezos CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../high_level.html">High-level interfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../crypto.html">Cryptography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../operation_groups.html">Building and parsing operations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rpc_queries.html">RPC query engine</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../script_wrappers.html">Michelson script wrappers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pack.html">Michelson type encoding</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../code.html">Working with Michelson code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../repl.html">Michelson REPL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../inspect_proposals.html">Inspecting proposals</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">PyTezos</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>pytezos.michelson.contract</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pytezos.michelson.contract</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">lru_cache</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
+<span class="kn">from</span> <span class="nn">os.path</span> <span class="kn">import</span> <span class="n">basename</span><span class="p">,</span> <span class="n">exists</span><span class="p">,</span> <span class="n">expanduser</span><span class="p">,</span> <span class="n">dirname</span><span class="p">,</span> <span class="n">join</span>
+
+<span class="kn">from</span> <span class="nn">pytezos.tools.docstring</span> <span class="kn">import</span> <span class="n">get_class_docstring</span><span class="p">,</span> <span class="n">InlineDocstring</span>
+<span class="kn">from</span> <span class="nn">pytezos.michelson.docstring</span> <span class="kn">import</span> <span class="n">generate_docstring</span>
+<span class="kn">from</span> <span class="nn">pytezos.michelson.micheline</span> <span class="kn">import</span> <span class="n">make_default</span><span class="p">,</span> <span class="n">michelson_to_micheline</span><span class="p">,</span> <span class="n">is_optional</span>
+<span class="kn">from</span> <span class="nn">pytezos.michelson.formatter</span> <span class="kn">import</span> <span class="n">micheline_to_michelson</span>
+<span class="kn">from</span> <span class="nn">pytezos.michelson.converter</span> <span class="kn">import</span> <span class="n">build_schema</span><span class="p">,</span> <span class="n">decode_micheline</span><span class="p">,</span> <span class="n">encode_micheline</span><span class="p">,</span> <span class="n">build_big_map_schema</span>
+<span class="kn">from</span> <span class="nn">pytezos.michelson.pack</span> <span class="kn">import</span> <span class="n">get_key_hash</span>
+
+
+<div class="viewcode-block" id="ContractParameter"><a class="viewcode-back" href="../../../script_wrappers.html#pytezos.michelson.contract.ContractParameter">[docs]</a><span class="k">class</span> <span class="nc">ContractParameter</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">InlineDocstring</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Encapsulates the `parameter` section of a Michelson script.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">=</span> <span class="n">section</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">schema</span> <span class="o">=</span> <span class="n">build_schema</span><span class="p">(</span><span class="n">section</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">=</span> <span class="n">generate_docstring</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">schema</span><span class="p">,</span> <span class="s1">&#39;parameter&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="nb">super</span><span class="p">(</span><span class="n">ContractParameter</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">(),</span>
+            <span class="sa">f</span><span class="s1">&#39;</span><span class="se">\n</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__doc__</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Helpers&#39;</span><span class="p">,</span>
+            <span class="n">get_class_docstring</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">)</span>
+        <span class="p">]</span>
+        <span class="k">return</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_get_entry_root</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">entrypoint</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">entrypoint</span> <span class="ow">in</span> <span class="p">{</span><span class="s1">&#39;default&#39;</span><span class="p">,</span> <span class="s1">&#39;root&#39;</span><span class="p">}:</span>
+            <span class="k">return</span> <span class="s1">&#39;0&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">bin_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">schema</span><span class="o">.</span><span class="n">json_to_bin</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;/</span><span class="si">{</span><span class="n">entrypoint</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">is_optional</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">schema</span><span class="p">,</span> <span class="n">bin_path</span><span class="p">):</span>
+                <span class="n">bin_path</span> <span class="o">=</span> <span class="n">bin_path</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">return</span> <span class="n">bin_path</span>
+
+<div class="viewcode-block" id="ContractParameter.decode"><a class="viewcode-back" href="../../../script_wrappers.html#pytezos.michelson.contract.ContractParameter.decode">[docs]</a>    <span class="k">def</span> <span class="nf">decode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Convert Micheline data into Python object using internal schema.</span>
+
+<span class="sd">        :param data: Micheline expression or Michelson string or {entrypoint: &quot;string&quot;, value: &quot;expression&quot;}</span>
+<span class="sd">        :returns: Python object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">set</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">==</span> <span class="p">{</span><span class="s1">&#39;entrypoint&#39;</span><span class="p">,</span> <span class="s1">&#39;value&#39;</span><span class="p">}:</span>
+            <span class="k">if</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;entrypoint&#39;</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">{</span><span class="s1">&#39;root&#39;</span><span class="p">,</span> <span class="s1">&#39;default&#39;</span><span class="p">}:</span>
+                <span class="n">res</span> <span class="o">=</span> <span class="n">decode_micheline</span><span class="p">(</span><span class="n">val_expr</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">],</span>
+                                       <span class="n">type_expr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">code</span><span class="p">,</span>
+                                       <span class="n">schema</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">schema</span><span class="p">,</span>
+                                       <span class="n">root</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_entry_root</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;entrypoint&#39;</span><span class="p">]))</span>
+                <span class="k">return</span> <span class="p">{</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;entrypoint&#39;</span><span class="p">]:</span> <span class="n">res</span><span class="p">}</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">decode_micheline</span><span class="p">(</span><span class="n">val_expr</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">],</span>
+                                        <span class="n">type_expr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">code</span><span class="p">,</span>
+                                        <span class="n">schema</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">schema</span><span class="p">)</span>  <span class="c1"># TODO: default subpath (see BCD issue)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">michelson_to_micheline</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">decode_micheline</span><span class="p">(</span><span class="n">val_expr</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">type_expr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">code</span><span class="p">,</span> <span class="n">schema</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">schema</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ContractParameter.encode"><a class="viewcode-back" href="../../../script_wrappers.html#pytezos.michelson.contract.ContractParameter.encode">[docs]</a>    <span class="k">def</span> <span class="nf">encode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">entrypoint</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Convert Python object to Micheline expression using internal schema.</span>
+
+<span class="sd">        :param data: Python object</span>
+<span class="sd">        :param entrypoint: Force entrypoint</span>
+<span class="sd">        :returns: object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">entrypoint</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">entrypoint</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;fieldname&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="n">entrypoint</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">schema</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">values</span><span class="p">())):</span>
+                    <span class="n">entrypoint</span> <span class="o">=</span> <span class="s1">&#39;default&#39;</span>  <span class="c1"># prevent auto-generated entrypoint names, like `entrypoint_1`</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">entrypoint</span> <span class="o">=</span> <span class="s1">&#39;default&#39;</span>
+
+            <span class="k">if</span> <span class="n">entrypoint</span> <span class="o">==</span> <span class="s1">&#39;default&#39;</span><span class="p">:</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="n">encode_micheline</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">schema</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="n">encode_micheline</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">entrypoint</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">schema</span><span class="p">,</span> <span class="n">root</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_entry_root</span><span class="p">(</span><span class="n">entrypoint</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">encode_micheline</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">schema</span><span class="p">,</span> <span class="n">root</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_entry_root</span><span class="p">(</span><span class="n">entrypoint</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">entrypoint</span><span class="o">=</span><span class="n">entrypoint</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ContractParameter.entries"><a class="viewcode-back" href="../../../script_wrappers.html#pytezos.michelson.contract.ContractParameter.entries">[docs]</a>    <span class="k">def</span> <span class="nf">entries</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s1">&#39;call&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Get list of entrypoints: names and docstrings.</span>
+
+<span class="sd">        :param default: Name of the single entrypoint</span>
+<span class="sd">        :returns: [(&quot;name&quot;, &quot;docstring&quot;), ...]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">schema</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;0&#39;</span><span class="p">][</span><span class="s1">&#39;prim&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;or&#39;</span><span class="p">:</span>
+            <span class="n">entries</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">schema</span><span class="o">.</span><span class="n">bin_names</span><span class="p">[</span><span class="n">bin_path</span><span class="p">],</span> <span class="n">bin_path</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">bin_path</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">schema</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;0&#39;</span><span class="p">][</span><span class="s1">&#39;args&#39;</span><span class="p">]</span>
+            <span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">entries</span> <span class="o">=</span> <span class="p">[(</span><span class="n">default</span><span class="p">,</span> <span class="s1">&#39;0&#39;</span><span class="p">)]</span>
+
+        <span class="k">def</span> <span class="nf">make_docs</span><span class="p">(</span><span class="n">bin_path</span><span class="p">):</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">schema</span><span class="o">.</span><span class="n">bin_types</span><span class="p">[</span><span class="n">bin_path</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;namedtuple&#39;</span><span class="p">,</span> <span class="s1">&#39;router&#39;</span><span class="p">]:</span>
+                <span class="n">title</span> <span class="o">=</span> <span class="s1">&#39;kwargs&#39;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">title</span> <span class="o">=</span> <span class="s1">&#39;args&#39;</span>
+            <span class="k">return</span> <span class="n">generate_docstring</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">schema</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">bin_path</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">make_docs</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">])),</span> <span class="n">entries</span><span class="p">))</span></div></div>
+
+
+<div class="viewcode-block" id="ContractStorage"><a class="viewcode-back" href="../../../script_wrappers.html#pytezos.michelson.contract.ContractStorage">[docs]</a><span class="k">class</span> <span class="nc">ContractStorage</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">InlineDocstring</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Encapsulates the `storage` section of a Michelson script.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">=</span> <span class="n">section</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">schema</span> <span class="o">=</span> <span class="n">build_schema</span><span class="p">(</span><span class="n">section</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">big_map_schema</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">=</span> <span class="n">generate_docstring</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">schema</span><span class="p">,</span> <span class="s1">&#39;storage&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="nb">super</span><span class="p">(</span><span class="n">ContractStorage</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">(),</span>
+            <span class="sa">f</span><span class="s1">&#39;</span><span class="se">\n</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__doc__</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Helpers&#39;</span><span class="p">,</span>
+            <span class="n">get_class_docstring</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">)</span>
+        <span class="p">]</span>
+        <span class="k">return</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ContractStorage.decode"><a class="viewcode-back" href="../../../script_wrappers.html#pytezos.michelson.contract.ContractStorage.decode">[docs]</a>    <span class="k">def</span> <span class="nf">decode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Convert Micheline data into Python object using internal schema.</span>
+
+<span class="sd">        :param data: Micheline expression or Michelson string</span>
+<span class="sd">        :returns: object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">michelson_to_micheline</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">decode_micheline</span><span class="p">(</span><span class="n">val_expr</span><span class="o">=</span><span class="n">data</span><span class="p">,</span>
+                                <span class="n">type_expr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">code</span><span class="p">,</span>
+                                <span class="n">schema</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">schema</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ContractStorage.encode"><a class="viewcode-back" href="../../../script_wrappers.html#pytezos.michelson.contract.ContractStorage.encode">[docs]</a>    <span class="k">def</span> <span class="nf">encode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Convert Python object to Micheline expression using internal schema.</span>
+
+<span class="sd">        :param data: Python object</span>
+<span class="sd">        :returns: object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">encode_micheline</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">schema</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ContractStorage.default"><a class="viewcode-back" href="../../../script_wrappers.html#pytezos.michelson.contract.ContractStorage.default">[docs]</a>    <span class="k">def</span> <span class="nf">default</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root</span><span class="o">=</span><span class="s1">&#39;0&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Try to generate empty storage, returns Micheline expression.</span>
+
+<span class="sd">        :param root: binary path to start from, default is &#39;0&#39;</span>
+<span class="sd">        :returns: object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">make_default</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">schema</span><span class="o">.</span><span class="n">bin_types</span><span class="p">,</span> <span class="n">root</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ContractStorage.big_map_init"><a class="viewcode-back" href="../../../script_wrappers.html#pytezos.michelson.contract.ContractStorage.big_map_init">[docs]</a>    <span class="k">def</span> <span class="nf">big_map_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Initialize big_map_id &lt;-&gt; JSON path mapping (since Babylon).</span>
+
+<span class="sd">        :param data: Micheline expression (raw contract storage)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">big_map_schema</span> <span class="o">=</span> <span class="n">build_big_map_schema</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">schema</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_locate_big_map</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">big_map_id</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">get_json_path</span><span class="p">(</span><span class="n">bp</span><span class="p">):</span>
+            <span class="k">return</span> <span class="nb">next</span><span class="p">((</span><span class="n">k</span><span class="o">.</span><span class="n">lstrip</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">schema</span><span class="o">.</span><span class="n">json_to_bin</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">v</span> <span class="o">==</span> <span class="n">bp</span><span class="p">),</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">schema</span><span class="o">.</span><span class="n">bin_names</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">bp</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="n">big_map_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># Default Big Map location (prior to Babylon https://blog.nomadic-labs.com/michelson-updates-in-005.html)</span>
+            <span class="k">return</span> <span class="s1">&#39;000&#39;</span><span class="p">,</span> <span class="s1">&#39;001&#39;</span><span class="p">,</span> <span class="n">get_json_path</span><span class="p">(</span><span class="s1">&#39;00&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">big_map_schema</span><span class="p">,</span> <span class="s2">&quot;Please call `big_map_init` first&quot;</span>
+            <span class="n">bin_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">big_map_schema</span><span class="o">.</span><span class="n">id_to_bin</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">big_map_id</span><span class="p">)]</span>
+            <span class="k">return</span> <span class="n">bin_path</span> <span class="o">+</span> <span class="s1">&#39;0&#39;</span><span class="p">,</span> <span class="n">bin_path</span> <span class="o">+</span> <span class="s1">&#39;1&#39;</span><span class="p">,</span> <span class="n">get_json_path</span><span class="p">(</span><span class="n">bin_path</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ContractStorage.big_map_id"><a class="viewcode-back" href="../../../script_wrappers.html#pytezos.michelson.contract.ContractStorage.big_map_id">[docs]</a>    <span class="k">def</span> <span class="nf">big_map_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">big_map_path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot; Get Big_map id by JSON path</span>
+
+<span class="sd">        :param big_map_path: JSON path</span>
+<span class="sd">        :rtype: int</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">big_map_schema</span><span class="p">,</span> <span class="s2">&quot;Please call `big_map_init` first&quot;</span>
+        <span class="n">bin_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">schema</span><span class="o">.</span><span class="n">json_to_bin</span><span class="p">[</span><span class="n">big_map_path</span><span class="p">]</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">big_map_schema</span><span class="o">.</span><span class="n">bin_to_id</span><span class="p">[</span><span class="n">bin_path</span><span class="p">]</span></div>
+
+    <span class="k">def</span> <span class="nf">_is_old_style_big_map</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">big_map_schema</span><span class="o">.</span><span class="n">bin_to_id</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> \
+               <span class="ow">and</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">big_map_schema</span><span class="o">.</span><span class="n">bin_to_id</span><span class="p">))</span> <span class="o">==</span> <span class="s1">&#39;00&#39;</span>
+
+<div class="viewcode-block" id="ContractStorage.big_map_query"><a class="viewcode-back" href="../../../script_wrappers.html#pytezos.michelson.contract.ContractStorage.big_map_query">[docs]</a>    <span class="k">def</span> <span class="nf">big_map_query</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Construct a query for big_map_get request.</span>
+
+<span class="sd">        :param path: BigMap key, string, int, or hex-string \</span>
+<span class="sd">        (since Babylon you can have more than one BigMap at arbitrary position)</span>
+<span class="sd">        :rtype: dict</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">key</span> <span class="o">=</span> <span class="n">basename</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+        <span class="n">big_map_path</span> <span class="o">=</span> <span class="n">dirname</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+        <span class="n">big_map_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">big_map_id</span><span class="p">(</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="n">big_map_path</span><span class="p">))</span> <span class="k">if</span> <span class="n">big_map_path</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="n">key_root</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_locate_big_map</span><span class="p">(</span><span class="n">big_map_id</span><span class="p">)</span>
+        <span class="n">encoded_key</span> <span class="o">=</span> <span class="n">encode_micheline</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">key</span><span class="p">,</span> <span class="n">schema</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">schema</span><span class="p">,</span> <span class="n">root</span><span class="o">=</span><span class="n">key_root</span><span class="p">)</span>
+        <span class="n">key_hash</span> <span class="o">=</span> <span class="n">get_key_hash</span><span class="p">(</span><span class="n">encoded_key</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span><span class="p">,</span> <span class="n">bin_path</span><span class="o">=</span><span class="n">key_root</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">big_map_id</span><span class="p">:</span>
+            <span class="n">query</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+                <span class="n">big_map_id</span><span class="o">=</span><span class="n">big_map_id</span><span class="p">,</span>
+                <span class="n">script_expr</span><span class="o">=</span><span class="n">key_hash</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">query</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+                <span class="n">key</span><span class="o">=</span><span class="n">encoded_key</span><span class="p">,</span>
+                <span class="nb">type</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;prim&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">schema</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="n">key_root</span><span class="p">][</span><span class="s1">&#39;prim&#39;</span><span class="p">]})</span>
+
+        <span class="k">return</span> <span class="n">query</span></div>
+
+<div class="viewcode-block" id="ContractStorage.big_map_decode"><a class="viewcode-back" href="../../../script_wrappers.html#pytezos.michelson.contract.ContractStorage.big_map_decode">[docs]</a>    <span class="k">def</span> <span class="nf">big_map_decode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">big_map_id</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Convert big_map_get result into a Python object.</span>
+
+<span class="sd">        :param value: Micheline expression for a BigMap entry \</span>
+<span class="sd">        (since Babylon you can have more than one BigMap at arbitrary position)</span>
+<span class="sd">        :param big_map_id: BigMap pointer (integer)</span>
+<span class="sd">        :returns: object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">value_root</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_locate_big_map</span><span class="p">(</span><span class="n">big_map_id</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">decode_micheline</span><span class="p">(</span><span class="n">val_expr</span><span class="o">=</span><span class="n">value</span><span class="p">,</span>
+                                <span class="n">type_expr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">code</span><span class="p">,</span>
+                                <span class="n">schema</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">schema</span><span class="p">,</span>
+                                <span class="n">root</span><span class="o">=</span><span class="n">value_root</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ContractStorage.big_map_diff_decode"><a class="viewcode-back" href="../../../script_wrappers.html#pytezos.michelson.contract.ContractStorage.big_map_diff_decode">[docs]</a>    <span class="k">def</span> <span class="nf">big_map_diff_decode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">diff</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot; Convert big_map_diff from operation_result section into Python objects.</span>
+
+<span class="sd">        :param diff: [{&quot;key&quot;: $micheline, &quot;value&quot;: $micheline}, ...]</span>
+<span class="sd">        :returns: {&quot;path/to/big/map&quot;: {&quot;key&quot;: &quot;value&quot;}} for Babylon; {&quot;key&quot;: &quot;value&quot;} for old contracts</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">diff</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">return</span> <span class="p">{}</span>
+
+        <span class="n">res</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">dict</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">diff</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;action&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;alloc&#39;</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="n">big_map_id</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;big_map&#39;</span><span class="p">)</span>
+            <span class="n">key_root</span><span class="p">,</span> <span class="n">value_root</span><span class="p">,</span> <span class="n">json_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_locate_big_map</span><span class="p">(</span><span class="n">big_map_id</span><span class="p">)</span>
+
+            <span class="n">key</span> <span class="o">=</span> <span class="n">decode_micheline</span><span class="p">(</span><span class="n">val_expr</span><span class="o">=</span><span class="n">item</span><span class="p">[</span><span class="s1">&#39;key&#39;</span><span class="p">],</span>
+                                   <span class="n">type_expr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">code</span><span class="p">,</span>
+                                   <span class="n">schema</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">schema</span><span class="p">,</span>
+                                   <span class="n">root</span><span class="o">=</span><span class="n">key_root</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;value&#39;</span><span class="p">):</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="n">decode_micheline</span><span class="p">(</span><span class="n">val_expr</span><span class="o">=</span><span class="n">item</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">],</span>
+                                         <span class="n">type_expr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">code</span><span class="p">,</span>
+                                         <span class="n">schema</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">schema</span><span class="p">,</span>
+                                         <span class="n">root</span><span class="o">=</span><span class="n">value_root</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="kc">None</span>
+
+            <span class="k">if</span> <span class="n">big_map_id</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_old_style_big_map</span><span class="p">()</span> <span class="ow">and</span> <span class="n">json_path</span><span class="p">:</span>
+                <span class="n">res</span><span class="p">[</span><span class="n">json_path</span><span class="p">][</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">res</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>  <span class="c1"># Backward compatibility</span>
+
+        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">res</span><span class="p">)</span></div>
+
+    <span class="c1"># DEPRECATED (For old contracts only)</span>
+<div class="viewcode-block" id="ContractStorage.big_map_diff_encode"><a class="viewcode-back" href="../../../script_wrappers.html#pytezos.michelson.contract.ContractStorage.big_map_diff_encode">[docs]</a>    <span class="k">def</span> <span class="nf">big_map_diff_encode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">big_map</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot; Convert Python representation of BigMap (dict) into big_map_diff.</span>
+
+<span class="sd">        :param big_map: { $key: $micheline, ... }</span>
+<span class="sd">        :returns: [{&quot;key&quot;: $micheline, &quot;value&quot;: $micheline}, ... ]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">key_root</span><span class="p">,</span> <span class="n">value_root</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_locate_big_map</span><span class="p">()</span>
+
+        <span class="k">def</span> <span class="nf">make_item</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+            <span class="n">key</span> <span class="o">=</span> <span class="n">encode_micheline</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                                   <span class="n">schema</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">schema</span><span class="p">,</span>
+                                   <span class="n">root</span><span class="o">=</span><span class="n">key_root</span><span class="p">,</span>
+                                   <span class="n">binary</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="n">encode_micheline</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                                         <span class="n">schema</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">schema</span><span class="p">,</span>
+                                         <span class="n">root</span><span class="o">=</span><span class="n">value_root</span><span class="p">,</span>
+                                         <span class="n">binary</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;key&quot;</span><span class="p">:</span> <span class="n">key</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="n">value</span><span class="p">}</span>
+
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">make_item</span><span class="p">,</span> <span class="n">big_map</span><span class="o">.</span><span class="n">items</span><span class="p">()))</span></div></div>
+
+
+<div class="viewcode-block" id="Contract"><a class="viewcode-back" href="../../../script_wrappers.html#pytezos.michelson.contract.Contract">[docs]</a><span class="k">class</span> <span class="nc">Contract</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">InlineDocstring</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Represents a Michelson script.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">code</span><span class="p">:</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">=</span> <span class="n">code</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="nb">super</span><span class="p">(</span><span class="n">Contract</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">(),</span>
+            <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Helpers&#39;</span><span class="p">,</span>
+            <span class="n">get_class_docstring</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">)</span>
+        <span class="p">]</span>
+        <span class="k">return</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">text</span>
+
+    <span class="nd">@property</span>
+    <span class="nd">@lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">parameter</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ContractParameter</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot; Returns `parameter` section wrapper.</span>
+
+<span class="sd">        :rtype: ContractParameter</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">ContractParameter</span><span class="p">(</span><span class="nb">next</span><span class="p">(</span><span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="k">if</span> <span class="n">s</span><span class="p">[</span><span class="s1">&#39;prim&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;parameter&#39;</span><span class="p">))</span>
+
+    <span class="nd">@property</span>
+    <span class="nd">@lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">storage</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ContractStorage</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot; Returns `storage` section wrapper.</span>
+
+<span class="sd">        :rtype: ContractStorage</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">ContractStorage</span><span class="p">(</span><span class="nb">next</span><span class="p">(</span><span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="k">if</span> <span class="n">s</span><span class="p">[</span><span class="s1">&#39;prim&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;storage&#39;</span><span class="p">))</span>
+
+    <span class="nd">@property</span>
+    <span class="nd">@lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">text</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Get Michelson formatted code.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">micheline_to_michelson</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">code</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Contract.from_micheline"><a class="viewcode-back" href="../../../script_wrappers.html#pytezos.michelson.contract.Contract.from_micheline">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_micheline</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">code</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Create contract from micheline expression.</span>
+
+<span class="sd">        :param code: [{&#39;prim&#39;: &#39;parameter&#39;}, {&#39;prim&#39;: &#39;storage&#39;}, {&#39;prim&#39;: &#39;code&#39;}]</span>
+<span class="sd">        :rtype: Contract</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">code</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Contract.from_michelson"><a class="viewcode-back" href="../../../script_wrappers.html#pytezos.michelson.contract.Contract.from_michelson">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_michelson</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Create contract from michelson source code.</span>
+
+<span class="sd">        :param text: Michelson source code.</span>
+<span class="sd">        :rtype: Contract</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">michelson_to_micheline</span><span class="p">(</span><span class="n">text</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="Contract.from_file"><a class="viewcode-back" href="../../../script_wrappers.html#pytezos.michelson.contract.Contract.from_file">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_file</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Create contract from michelson source code stored in file.</span>
+
+<span class="sd">        :param path: Path to the `.tz` file</span>
+<span class="sd">        :rtype: Contract</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">expanduser</span><span class="p">(</span><span class="n">path</span><span class="p">))</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_michelson</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">())</span></div>
+
+<div class="viewcode-block" id="Contract.save_file"><a class="viewcode-back" href="../../../script_wrappers.html#pytezos.michelson.contract.Contract.save_file">[docs]</a>    <span class="k">def</span> <span class="nf">save_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Save Michelson code to file.</span>
+
+<span class="sd">        :param path: Output path</span>
+<span class="sd">        :param overwrite: Default is False</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">expanduser</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">exists</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">overwrite</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">FileExistsError</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;w+&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Contract.script"><a class="viewcode-back" href="../../../script_wrappers.html#pytezos.michelson.contract.Contract.script">[docs]</a>    <span class="k">def</span> <span class="nf">script</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">storage</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">original</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot; Generate script for contract origination.</span>
+
+<span class="sd">        :param storage: Python object, leave None to generate empty</span>
+<span class="sd">        :param original: Keep the original code (initialized), which is default. \</span>
+<span class="sd">        Otherwise factory-specific changes may applied, e.g. different annotations</span>
+<span class="sd">        :returns: {&quot;code&quot;: $Micheline, &quot;storage&quot;: $Micheline}</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">storage</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">storage</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">storage</span><span class="o">.</span><span class="n">default</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">storage</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">storage</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">storage</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">original</span><span class="p">:</span>
+            <span class="n">code</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">code</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">parameter</span><span class="o">.</span><span class="n">code</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">storage</span><span class="o">.</span><span class="n">code</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">code</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="p">]</span>
+
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;code&quot;</span><span class="p">:</span> <span class="n">code</span><span class="p">,</span>
+            <span class="s2">&quot;storage&quot;</span><span class="p">:</span> <span class="n">storage</span>
+        <span class="p">}</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Baking Bad
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -1,0 +1,441 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pytezos.repl.blockchain &mdash; PyTezos  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+    <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> PyTezos
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../quick_start.html">Quick start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../integration_tests.html">Michelson integration tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pytezos_cli.html">Pytezos CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../high_level.html">High-level interfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../crypto.html">Cryptography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../operation_groups.html">Building and parsing operations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rpc_queries.html">RPC query engine</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../script_wrappers.html">Michelson script wrappers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pack.html">Michelson type encoding</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../code.html">Working with Michelson code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../repl.html">Michelson REPL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../inspect_proposals.html">Inspecting proposals</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">PyTezos</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>pytezos.repl.blockchain</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pytezos.repl.blockchain</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+
+<span class="kn">from</span> <span class="nn">pytezos.interop</span> <span class="kn">import</span> <span class="n">Interop</span>
+<span class="kn">from</span> <span class="nn">pytezos.repl.control</span> <span class="kn">import</span> <span class="n">instruction</span>
+<span class="kn">from</span> <span class="nn">pytezos.repl.context</span> <span class="kn">import</span> <span class="n">Context</span>
+<span class="kn">from</span> <span class="nn">pytezos.repl.types</span> <span class="kn">import</span> <span class="n">assert_stack_type</span><span class="p">,</span> <span class="n">Mutez</span><span class="p">,</span> <span class="n">ChainID</span><span class="p">,</span> <span class="n">Address</span><span class="p">,</span> <span class="n">Contract</span><span class="p">,</span> <span class="n">Option</span><span class="p">,</span> <span class="n">assert_equal_types</span><span class="p">,</span> \
+    <span class="n">KeyHash</span><span class="p">,</span> <span class="n">Timestamp</span><span class="p">,</span> <span class="n">expr_equal</span><span class="p">,</span> <span class="n">Operation</span>
+<span class="kn">from</span> <span class="nn">pytezos.repl.parser</span> <span class="kn">import</span> <span class="n">get_entry_expr</span>
+
+<span class="n">INITIAL_BALANCE</span> <span class="o">=</span> <span class="mi">257000000</span>
+<span class="n">MAINNET_CHAIN_ID</span> <span class="o">=</span> <span class="s1">&#39;NetXdQprcVkpaWU&#39;</span>
+<span class="n">UNIT_TYPE_EXPR</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;prim&#39;</span><span class="p">:</span> <span class="s1">&#39;unit&#39;</span><span class="p">}</span>
+
+
+<span class="nd">@instruction</span><span class="p">(</span><span class="s1">&#39;parameter&#39;</span><span class="p">,</span> <span class="n">args_len</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">do_parameter</span><span class="p">(</span><span class="n">ctx</span><span class="p">:</span> <span class="n">Context</span><span class="p">,</span> <span class="n">prim</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">annots</span><span class="p">):</span>
+    <span class="n">ctx</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s1">&#39;parameter&#39;</span><span class="p">,</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+
+<span class="nd">@instruction</span><span class="p">(</span><span class="s1">&#39;storage&#39;</span><span class="p">,</span> <span class="n">args_len</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">do_parameter</span><span class="p">(</span><span class="n">ctx</span><span class="p">:</span> <span class="n">Context</span><span class="p">,</span> <span class="n">prim</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">annots</span><span class="p">):</span>
+    <span class="n">ctx</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s1">&#39;storage&#39;</span><span class="p">,</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+
+<div class="viewcode-block" id="do_parameter"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.blockchain.do_parameter">[docs]</a><span class="nd">@instruction</span><span class="p">(</span><span class="s1">&#39;code&#39;</span><span class="p">,</span> <span class="n">args_len</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">do_parameter</span><span class="p">(</span><span class="n">ctx</span><span class="p">:</span> <span class="n">Context</span><span class="p">,</span> <span class="n">prim</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">annots</span><span class="p">):</span>
+    <span class="n">ctx</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s1">&#39;code&#39;</span><span class="p">,</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="do_amount"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.blockchain.do_amount">[docs]</a><span class="nd">@instruction</span><span class="p">(</span><span class="s1">&#39;AMOUNT&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">do_amount</span><span class="p">(</span><span class="n">ctx</span><span class="p">:</span> <span class="n">Context</span><span class="p">,</span> <span class="n">prim</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">annots</span><span class="p">):</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;AMOUNT&#39;</span><span class="p">,</span> <span class="n">Mutez</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+    <span class="n">ctx</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">annots</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;@amount&#39;</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="get_balance"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.blockchain.get_balance">[docs]</a><span class="k">def</span> <span class="nf">get_balance</span><span class="p">(</span><span class="n">ctx</span><span class="p">:</span> <span class="n">Context</span><span class="p">):</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;BALANCE&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">res</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">Mutez</span><span class="p">(</span><span class="n">INITIAL_BALANCE</span><span class="p">)</span>
+        <span class="n">ctx</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s1">&#39;BALANCE&#39;</span><span class="p">,</span> <span class="n">res</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">res</span></div>
+
+
+<div class="viewcode-block" id="do_balance"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.blockchain.do_balance">[docs]</a><span class="nd">@instruction</span><span class="p">(</span><span class="s1">&#39;BALANCE&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">do_balance</span><span class="p">(</span><span class="n">ctx</span><span class="p">:</span> <span class="n">Context</span><span class="p">,</span> <span class="n">prim</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">annots</span><span class="p">):</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">get_balance</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span>
+    <span class="n">ctx</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">annots</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;@balance&#39;</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="do_chain_id"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.blockchain.do_chain_id">[docs]</a><span class="nd">@instruction</span><span class="p">(</span><span class="s1">&#39;CHAIN_ID&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">do_chain_id</span><span class="p">(</span><span class="n">ctx</span><span class="p">:</span> <span class="n">Context</span><span class="p">,</span> <span class="n">prim</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">annots</span><span class="p">):</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;CHAIN_ID&#39;</span><span class="p">,</span> <span class="n">ChainID</span><span class="p">(</span><span class="n">MAINNET_CHAIN_ID</span><span class="p">))</span>
+    <span class="n">ctx</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">annots</span><span class="o">=</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;@</span><span class="si">{</span><span class="n">ctx</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;NETWORK&quot;</span><span class="p">,</span> <span class="s2">&quot;mainnet&quot;</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="do_self"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.blockchain.do_self">[docs]</a><span class="nd">@instruction</span><span class="p">(</span><span class="s1">&#39;SELF&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">do_self</span><span class="p">(</span><span class="n">ctx</span><span class="p">:</span> <span class="n">Context</span><span class="p">,</span> <span class="n">prim</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">annots</span><span class="p">):</span>
+    <span class="n">p_type_expr</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;parameter&#39;</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">p_type_expr</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;parameter type is not initialized&#39;</span>
+
+    <span class="n">entry_annot</span> <span class="o">=</span> <span class="nb">next</span><span class="p">((</span><span class="n">a</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">annots</span> <span class="k">if</span> <span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;%&#39;</span><span class="p">),</span> <span class="s1">&#39;</span><span class="si">%d</span><span class="s1">efault&#39;</span><span class="p">)</span>
+    <span class="n">ctx</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;use </span><span class="si">{</span><span class="n">entry_annot</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="n">p_type_expr</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">get_entry_expr</span><span class="p">(</span><span class="n">p_type_expr</span><span class="p">,</span> <span class="n">entry_annot</span><span class="p">)</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">Contract</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">dummy_gen</span><span class="o">.</span><span class="n">self</span> <span class="o">+</span> <span class="n">entry_annot</span><span class="p">,</span> <span class="n">type_expr</span><span class="o">=</span><span class="n">p_type_expr</span><span class="p">)</span>
+    <span class="n">ctx</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">annots</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;@self&#39;</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="do_sender"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.blockchain.do_sender">[docs]</a><span class="nd">@instruction</span><span class="p">(</span><span class="s1">&#39;SENDER&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">do_sender</span><span class="p">(</span><span class="n">ctx</span><span class="p">:</span> <span class="n">Context</span><span class="p">,</span> <span class="n">prim</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">annots</span><span class="p">):</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;SENDER&#39;</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">res</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;SENDER is not initialized&#39;</span>
+    <span class="n">ctx</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">annots</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;@sender&#39;</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="do_source"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.blockchain.do_source">[docs]</a><span class="nd">@instruction</span><span class="p">(</span><span class="s1">&#39;SOURCE&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">do_source</span><span class="p">(</span><span class="n">ctx</span><span class="p">:</span> <span class="n">Context</span><span class="p">,</span> <span class="n">prim</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">annots</span><span class="p">):</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;SOURCE&#39;</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">res</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;SOURCE is not initialized&#39;</span>
+    <span class="n">ctx</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">annots</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;@source&#39;</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="do_now"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.blockchain.do_now">[docs]</a><span class="nd">@instruction</span><span class="p">(</span><span class="s1">&#39;NOW&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">do_now</span><span class="p">(</span><span class="n">ctx</span><span class="p">:</span> <span class="n">Context</span><span class="p">,</span> <span class="n">prim</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">annots</span><span class="p">):</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;NOW&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">res</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">network</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;NETWORK&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">network</span><span class="p">:</span>
+            <span class="n">interop</span> <span class="o">=</span> <span class="n">Interop</span><span class="p">()</span><span class="o">.</span><span class="n">using</span><span class="p">(</span><span class="n">network</span><span class="p">)</span>
+            <span class="n">constants</span> <span class="o">=</span> <span class="n">interop</span><span class="o">.</span><span class="n">shell</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">constants</span><span class="p">()</span>  <span class="c1"># cached</span>
+            <span class="n">ts</span> <span class="o">=</span> <span class="n">interop</span><span class="o">.</span><span class="n">shell</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">header</span><span class="p">()[</span><span class="s1">&#39;timestamp&#39;</span><span class="p">]</span>
+            <span class="n">dt</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">ts</span><span class="p">,</span> <span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">T%H:%M:%SZ&#39;</span><span class="p">)</span>
+            <span class="n">first_delay</span> <span class="o">=</span> <span class="n">constants</span><span class="p">[</span><span class="s1">&#39;time_between_blocks&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">return</span> <span class="nb">int</span><span class="p">((</span><span class="n">dt</span> <span class="o">-</span> <span class="n">datetime</span><span class="p">(</span><span class="mi">1970</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">())</span> <span class="o">+</span> <span class="nb">int</span><span class="p">(</span><span class="n">first_delay</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">now</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">()</span><span class="o">.</span><span class="n">timestamp</span><span class="p">())</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">Timestamp</span><span class="p">(</span><span class="n">now</span><span class="p">)</span>
+    <span class="n">ctx</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">annots</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;@now&#39;</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="check_contract"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.blockchain.check_contract">[docs]</a><span class="k">def</span> <span class="nf">check_contract</span><span class="p">(</span><span class="n">ctx</span><span class="p">:</span> <span class="n">Context</span><span class="p">,</span> <span class="n">address</span><span class="p">,</span> <span class="n">entry_annot</span><span class="p">,</span> <span class="n">type_expr</span><span class="p">):</span>
+    <span class="n">network</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;NETWORK&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">network</span><span class="p">:</span>
+        <span class="n">ctx</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s1">&#39;skip check&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">script</span> <span class="o">=</span> <span class="n">Interop</span><span class="p">()</span><span class="o">.</span><span class="n">using</span><span class="p">(</span><span class="n">network</span><span class="p">)</span><span class="o">.</span><span class="n">shell</span><span class="o">.</span><span class="n">contracts</span><span class="p">[</span><span class="n">address</span><span class="p">]</span><span class="o">.</span><span class="n">script</span><span class="p">()</span>
+        <span class="n">p_type_expr</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">script</span><span class="p">[</span><span class="s1">&#39;code&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="n">s</span><span class="p">[</span><span class="s1">&#39;prim&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;parameter&#39;</span><span class="p">)</span>
+        <span class="n">actual</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">get_entry_expr</span><span class="p">(</span><span class="n">p_type_expr</span><span class="p">,</span> <span class="n">entry_annot</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">expr_equal</span><span class="p">(</span><span class="n">type_expr</span><span class="p">,</span> <span class="n">actual</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ctx</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s1">&#39;entry type mismatch&#39;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="n">ctx</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s1">&#39;not found&#39;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="do_address"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.blockchain.do_address">[docs]</a><span class="nd">@instruction</span><span class="p">(</span><span class="s1">&#39;ADDRESS&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">do_address</span><span class="p">(</span><span class="n">ctx</span><span class="p">:</span> <span class="n">Context</span><span class="p">,</span> <span class="n">prim</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">annots</span><span class="p">):</span>
+    <span class="n">top</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">pop1</span><span class="p">()</span>
+    <span class="n">assert_stack_type</span><span class="p">(</span><span class="n">top</span><span class="p">,</span> <span class="n">Contract</span><span class="p">)</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">Address</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">top</span><span class="o">.</span><span class="n">get_address</span><span class="p">())</span>
+    <span class="k">if</span> <span class="n">top</span><span class="o">.</span><span class="n">name</span><span class="p">:</span>
+        <span class="n">annots</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;@</span><span class="si">{</span><span class="n">top</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">.address&#39;</span><span class="p">)</span>
+    <span class="n">ctx</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">annots</span><span class="o">=</span><span class="n">annots</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="do_contract"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.blockchain.do_contract">[docs]</a><span class="nd">@instruction</span><span class="p">(</span><span class="s1">&#39;CONTRACT&#39;</span><span class="p">,</span> <span class="n">args_len</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">do_contract</span><span class="p">(</span><span class="n">ctx</span><span class="p">:</span> <span class="n">Context</span><span class="p">,</span> <span class="n">prim</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">annots</span><span class="p">):</span>
+    <span class="n">top</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">pop1</span><span class="p">()</span>
+    <span class="n">assert_stack_type</span><span class="p">(</span><span class="n">top</span><span class="p">,</span> <span class="n">Address</span><span class="p">)</span>
+
+    <span class="n">entry_annot</span> <span class="o">=</span> <span class="nb">next</span><span class="p">((</span><span class="n">a</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">annots</span> <span class="k">if</span> <span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;%&#39;</span><span class="p">),</span> <span class="s1">&#39;</span><span class="si">%d</span><span class="s1">efault&#39;</span><span class="p">)</span>
+    <span class="n">contract</span> <span class="o">=</span> <span class="n">Contract</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">top</span><span class="p">)</span> <span class="o">+</span> <span class="n">entry_annot</span><span class="p">,</span> <span class="n">type_expr</span><span class="o">=</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="k">if</span> <span class="n">check_contract</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">address</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">top</span><span class="p">),</span> <span class="n">entry_annot</span><span class="o">=</span><span class="n">entry_annot</span><span class="p">,</span> <span class="n">type_expr</span><span class="o">=</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">Option</span><span class="o">.</span><span class="n">some</span><span class="p">(</span><span class="n">contract</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">Option</span><span class="o">.</span><span class="n">none</span><span class="p">(</span><span class="n">contract</span><span class="o">.</span><span class="n">type_expr</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">top</span><span class="o">.</span><span class="n">name</span><span class="p">:</span>
+        <span class="n">annots</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;@</span><span class="si">{</span><span class="n">top</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">.contract&#39;</span><span class="p">)</span>
+    <span class="n">ctx</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">annots</span><span class="o">=</span><span class="p">[</span><span class="n">a</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">annots</span> <span class="k">if</span> <span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;%&#39;</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="do_implicit_account"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.blockchain.do_implicit_account">[docs]</a><span class="nd">@instruction</span><span class="p">(</span><span class="s1">&#39;IMPLICIT_ACCOUNT&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">do_implicit_account</span><span class="p">(</span><span class="n">ctx</span><span class="p">:</span> <span class="n">Context</span><span class="p">,</span> <span class="n">prim</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">annots</span><span class="p">):</span>
+    <span class="n">top</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">pop1</span><span class="p">()</span>
+    <span class="n">assert_stack_type</span><span class="p">(</span><span class="n">top</span><span class="p">,</span> <span class="n">KeyHash</span><span class="p">)</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">Contract</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">top</span><span class="p">),</span> <span class="n">type_expr</span><span class="o">=</span><span class="n">UNIT_TYPE_EXPR</span><span class="p">)</span>
+    <span class="n">ctx</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">annots</span><span class="o">=</span><span class="n">annots</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="decrease_balance"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.blockchain.decrease_balance">[docs]</a><span class="k">def</span> <span class="nf">decrease_balance</span><span class="p">(</span><span class="n">ctx</span><span class="p">:</span> <span class="n">Context</span><span class="p">,</span> <span class="n">amount</span><span class="p">:</span> <span class="n">Mutez</span><span class="p">):</span>
+    <span class="n">balance</span> <span class="o">=</span> <span class="n">get_balance</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">balance</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="nb">int</span><span class="p">(</span><span class="n">amount</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="nb">int</span><span class="p">(</span><span class="n">balance</span><span class="p">),</span> <span class="sa">f</span><span class="s1">&#39;needed </span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">amount</span><span class="p">)</span><span class="si">}</span><span class="s1"> utz, got only </span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">balance</span><span class="p">)</span><span class="si">}</span><span class="s1"> utz&#39;</span>
+        <span class="n">ctx</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s1">&#39;BALANCE&#39;</span><span class="p">,</span> <span class="n">Mutez</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">balance</span><span class="p">)</span> <span class="o">-</span> <span class="nb">int</span><span class="p">(</span><span class="n">amount</span><span class="p">)))</span></div>
+
+
+<div class="viewcode-block" id="do_create_contract"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.blockchain.do_create_contract">[docs]</a><span class="nd">@instruction</span><span class="p">(</span><span class="s1">&#39;CREATE_CONTRACT&#39;</span><span class="p">,</span> <span class="n">args_len</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">do_create_contract</span><span class="p">(</span><span class="n">ctx</span><span class="p">:</span> <span class="n">Context</span><span class="p">,</span> <span class="n">prim</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">annots</span><span class="p">):</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">==</span> <span class="mi">3</span><span class="p">,</span> <span class="s1">&#39;expected { parameter ; storage ; code }&#39;</span>
+    <span class="n">parameter_type</span><span class="p">,</span> <span class="n">storage_type</span><span class="p">,</span> <span class="n">code</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">delegate</span><span class="p">,</span> <span class="n">amount</span><span class="p">,</span> <span class="n">storage</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">pop3</span><span class="p">()</span>
+
+    <span class="n">assert_stack_type</span><span class="p">(</span><span class="n">amount</span><span class="p">,</span> <span class="n">Mutez</span><span class="p">)</span>
+    <span class="n">decrease_balance</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">amount</span><span class="p">)</span>
+
+    <span class="n">assert_stack_type</span><span class="p">(</span><span class="n">delegate</span><span class="p">,</span> <span class="n">Option</span><span class="p">)</span>
+    <span class="n">assert_equal_types</span><span class="p">(</span><span class="n">storage_type</span><span class="p">,</span> <span class="n">storage</span><span class="o">.</span><span class="n">type_expr</span><span class="p">)</span>
+
+    <span class="n">originated_address</span> <span class="o">=</span> <span class="n">Address</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">dummy_gen</span><span class="o">.</span><span class="n">get_fresh_address</span><span class="p">())</span>
+    <span class="n">content</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;kind&#39;</span><span class="p">:</span> <span class="s1">&#39;origination&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;source&#39;</span><span class="p">:</span> <span class="n">ctx</span><span class="o">.</span><span class="n">dummy_gen</span><span class="o">.</span><span class="n">self</span><span class="p">,</span>
+        <span class="s1">&#39;balance&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">amount</span><span class="p">)),</span>
+        <span class="s1">&#39;script&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;storage&#39;</span><span class="p">:</span> <span class="n">storage</span><span class="o">.</span><span class="n">val_expr</span><span class="p">,</span>
+            <span class="s1">&#39;code&#39;</span><span class="p">:</span> <span class="n">code</span>
+        <span class="p">},</span>
+        <span class="s1">&#39;originated_contract&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">originated_address</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">delegate</span><span class="o">.</span><span class="n">is_none</span><span class="p">():</span>
+        <span class="n">content</span><span class="p">[</span><span class="s1">&#39;delegate&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">delegate</span><span class="o">.</span><span class="n">get_some</span><span class="p">())</span>
+
+    <span class="n">orig</span> <span class="o">=</span> <span class="n">Operation</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
+    <span class="n">ctx</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">originated_address</span><span class="p">)</span>
+    <span class="n">ctx</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">orig</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="do_set_delegate"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.blockchain.do_set_delegate">[docs]</a><span class="nd">@instruction</span><span class="p">(</span><span class="s1">&#39;SET_DELEGATE&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">do_set_delegate</span><span class="p">(</span><span class="n">ctx</span><span class="p">:</span> <span class="n">Context</span><span class="p">,</span> <span class="n">prim</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">annots</span><span class="p">):</span>
+    <span class="n">delegate</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">pop1</span><span class="p">()</span>
+    <span class="n">assert_stack_type</span><span class="p">(</span><span class="n">delegate</span><span class="p">,</span> <span class="n">Option</span><span class="p">)</span>
+
+    <span class="n">content</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;kind&#39;</span><span class="p">:</span> <span class="s1">&#39;delegation&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;source&#39;</span><span class="p">:</span> <span class="n">ctx</span><span class="o">.</span><span class="n">dummy_gen</span><span class="o">.</span><span class="n">self</span><span class="p">,</span>
+        <span class="s1">&#39;delegate&#39;</span><span class="p">:</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">delegate</span><span class="o">.</span><span class="n">is_none</span><span class="p">()</span> <span class="k">else</span> <span class="nb">str</span><span class="p">(</span><span class="n">delegate</span><span class="o">.</span><span class="n">get_some</span><span class="p">())</span>
+    <span class="p">}</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">Operation</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
+    <span class="n">ctx</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">res</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="do_transfer_tokens"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.blockchain.do_transfer_tokens">[docs]</a><span class="nd">@instruction</span><span class="p">(</span><span class="s1">&#39;TRANSFER_TOKENS&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">do_transfer_tokens</span><span class="p">(</span><span class="n">ctx</span><span class="p">:</span> <span class="n">Context</span><span class="p">,</span> <span class="n">prim</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">annots</span><span class="p">):</span>
+    <span class="n">param</span><span class="p">,</span> <span class="n">amount</span><span class="p">,</span> <span class="n">dest</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">pop3</span><span class="p">()</span>
+
+    <span class="n">assert_stack_type</span><span class="p">(</span><span class="n">amount</span><span class="p">,</span> <span class="n">Mutez</span><span class="p">)</span>
+    <span class="n">decrease_balance</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">amount</span><span class="p">)</span>
+
+    <span class="n">assert_stack_type</span><span class="p">(</span><span class="n">dest</span><span class="p">,</span> <span class="n">Contract</span><span class="p">)</span>
+    <span class="n">dest</span><span class="o">.</span><span class="n">assert_param_type</span><span class="p">(</span><span class="n">param</span><span class="p">)</span>
+
+    <span class="n">content</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;kind&#39;</span><span class="p">:</span> <span class="s1">&#39;transaction&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;source&#39;</span><span class="p">:</span> <span class="n">ctx</span><span class="o">.</span><span class="n">dummy_gen</span><span class="o">.</span><span class="n">self</span><span class="p">,</span>
+        <span class="s1">&#39;amount&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">amount</span><span class="p">)),</span>
+        <span class="s1">&#39;destination&#39;</span><span class="p">:</span> <span class="n">dest</span><span class="o">.</span><span class="n">get_address</span><span class="p">(),</span>
+        <span class="s1">&#39;parameters&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;entrypoint&#39;</span><span class="p">:</span> <span class="n">dest</span><span class="o">.</span><span class="n">get_entrypoint</span><span class="p">(),</span>
+            <span class="s1">&#39;value&#39;</span><span class="p">:</span> <span class="n">param</span><span class="o">.</span><span class="n">val_expr</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">Operation</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
+    <span class="n">ctx</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">res</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Baking Bad
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

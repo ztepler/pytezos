@@ -1,0 +1,627 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pytezos.michelson.interface &mdash; PyTezos  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+    <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> PyTezos
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../quick_start.html">Quick start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../integration_tests.html">Michelson integration tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pytezos_cli.html">Pytezos CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../high_level.html">High-level interfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../crypto.html">Cryptography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../operation_groups.html">Building and parsing operations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rpc_queries.html">RPC query engine</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../script_wrappers.html">Michelson script wrappers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pack.html">Michelson type encoding</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../code.html">Working with Michelson code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../repl.html">Michelson REPL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../inspect_proposals.html">Inspecting proposals</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">PyTezos</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>pytezos.michelson.interface</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pytezos.michelson.interface</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">os.path</span> <span class="kn">import</span> <span class="n">exists</span><span class="p">,</span> <span class="n">expanduser</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
+<span class="kn">from</span> <span class="nn">pprint</span> <span class="kn">import</span> <span class="n">pformat</span>
+
+<span class="kn">from</span> <span class="nn">pytezos.operation.result</span> <span class="kn">import</span> <span class="n">OperationResult</span>
+<span class="kn">from</span> <span class="nn">pytezos.michelson.contract</span> <span class="kn">import</span> <span class="n">Contract</span>
+<span class="kn">from</span> <span class="nn">pytezos.michelson.converter</span> <span class="kn">import</span> <span class="n">convert</span>
+<span class="kn">from</span> <span class="nn">pytezos.michelson.micheline</span> <span class="kn">import</span> <span class="n">skip_nones</span>
+<span class="kn">from</span> <span class="nn">pytezos.michelson.formatter</span> <span class="kn">import</span> <span class="n">micheline_to_michelson</span>
+<span class="kn">from</span> <span class="nn">pytezos.operation.group</span> <span class="kn">import</span> <span class="n">OperationGroup</span>
+<span class="kn">from</span> <span class="nn">pytezos.operation.content</span> <span class="kn">import</span> <span class="n">format_mutez</span><span class="p">,</span> <span class="n">format_tez</span>
+<span class="kn">from</span> <span class="nn">pytezos.interop</span> <span class="kn">import</span> <span class="n">Interop</span>
+<span class="kn">from</span> <span class="nn">pytezos.tools.docstring</span> <span class="kn">import</span> <span class="n">get_class_docstring</span>
+<span class="kn">from</span> <span class="nn">pytezos.repl.interpreter</span> <span class="kn">import</span> <span class="n">Interpreter</span>
+
+
+<div class="viewcode-block" id="ContractCallResult"><a class="viewcode-back" href="../../../high_level.html#pytezos.michelson.interface.ContractCallResult">[docs]</a><span class="k">class</span> <span class="nc">ContractCallResult</span><span class="p">(</span><span class="n">OperationResult</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Encapsulates the result of a contract invocation.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="ContractCallResult.from_contract_call"><a class="viewcode-back" href="../../../high_level.html#pytezos.michelson.interface.ContractCallResult.from_contract_call">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_contract_call</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">operation_group</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">address</span><span class="p">,</span> <span class="n">contract</span><span class="p">:</span> <span class="n">Contract</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot; Get a list of results from an operation group content with metadata.</span>
+
+<span class="sd">        :param operation_group: {..., &quot;contents&quot;: [{..., kind: &quot;transaction&quot;, ...}]}</span>
+<span class="sd">        :param address: address of the invoked contract</span>
+<span class="sd">        :param contract: invoked contract</span>
+<span class="sd">        :rtype: List[ContractCallResult]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">content</span> <span class="ow">in</span> <span class="n">OperationResult</span><span class="o">.</span><span class="n">iter_contents</span><span class="p">(</span><span class="n">operation_group</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">content</span><span class="p">[</span><span class="s1">&#39;kind&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;transaction&#39;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">content</span><span class="p">[</span><span class="s1">&#39;destination&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">address</span><span class="p">:</span>
+                    <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">from_transaction</span><span class="p">(</span><span class="n">content</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="n">content</span><span class="p">[</span><span class="s1">&#39;kind&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;origination&#39;</span><span class="p">:</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">get_result</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">address</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;originated_contracts&#39;</span><span class="p">,</span> <span class="p">[]):</span>
+                    <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">from_origination</span><span class="p">(</span><span class="n">content</span><span class="p">))</span>
+
+        <span class="k">def</span> <span class="nf">decode_result</span><span class="p">(</span><span class="n">res</span><span class="p">):</span>
+            <span class="n">kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">storage</span><span class="o">=</span><span class="n">contract</span><span class="o">.</span><span class="n">storage</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">storage</span><span class="p">))</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="s1">&#39;big_map_diff&#39;</span><span class="p">):</span>
+                <span class="n">contract</span><span class="o">.</span><span class="n">storage</span><span class="o">.</span><span class="n">big_map_init</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">storage</span><span class="p">)</span>
+                <span class="n">kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">big_map_diff</span><span class="o">=</span><span class="n">contract</span><span class="o">.</span><span class="n">storage</span><span class="o">.</span><span class="n">big_map_diff_decode</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">big_map_diff</span><span class="p">))</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="s1">&#39;parameters&#39;</span><span class="p">):</span>
+                <span class="n">kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">parameters</span><span class="o">=</span><span class="n">contract</span><span class="o">.</span><span class="n">parameter</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">res</span><span class="o">.</span><span class="n">parameters</span><span class="p">))</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="s1">&#39;operations&#39;</span><span class="p">):</span>
+                <span class="n">kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">operations</span><span class="o">=</span><span class="n">res</span><span class="o">.</span><span class="n">operations</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">decode_result</span><span class="p">,</span> <span class="n">results</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="ContractCallResult.from_code_run"><a class="viewcode-back" href="../../../high_level.html#pytezos.michelson.interface.ContractCallResult.from_code_run">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_code_run</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">code_run</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">contract</span><span class="p">:</span> <span class="n">Contract</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Parse a result of `run_code` execution.</span>
+
+<span class="sd">        :param code_run: RPC response (json)</span>
+<span class="sd">        :param parameters: Micheline expression</span>
+<span class="sd">        :param contract: invoked contract</span>
+<span class="sd">        :rtype: ContractCallResult</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">contract</span><span class="o">.</span><span class="n">storage</span><span class="o">.</span><span class="n">big_map_init</span><span class="p">(</span><span class="n">code_run</span><span class="p">[</span><span class="s1">&#39;storage&#39;</span><span class="p">])</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
+            <span class="n">parameters</span><span class="o">=</span><span class="n">contract</span><span class="o">.</span><span class="n">parameter</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">parameters</span><span class="p">),</span>
+            <span class="n">storage</span><span class="o">=</span><span class="n">contract</span><span class="o">.</span><span class="n">storage</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">code_run</span><span class="p">[</span><span class="s1">&#39;storage&#39;</span><span class="p">]),</span>
+            <span class="n">big_map_diff</span><span class="o">=</span><span class="n">contract</span><span class="o">.</span><span class="n">storage</span><span class="o">.</span><span class="n">big_map_diff_decode</span><span class="p">(</span><span class="n">code_run</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;big_map_diff&#39;</span><span class="p">,</span> <span class="p">[])),</span>
+            <span class="n">operations</span><span class="o">=</span><span class="n">code_run</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;operations&#39;</span><span class="p">,</span> <span class="p">[])</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="ContractCallResult.from_repl_result"><a class="viewcode-back" href="../../../high_level.html#pytezos.michelson.interface.ContractCallResult.from_repl_result">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_repl_result</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">res</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">contract</span><span class="p">:</span> <span class="n">Contract</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Parse an output of the builtin interpreter.</span>
+
+<span class="sd">        :param res: Interpreter output</span>
+<span class="sd">        :param parameters: Micheline expression</span>
+<span class="sd">        :param contract: invoked contract</span>
+<span class="sd">        :returns: ContractCallResult</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">contract</span><span class="o">.</span><span class="n">storage</span><span class="o">.</span><span class="n">big_map_init</span><span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="s1">&#39;result&#39;</span><span class="p">][</span><span class="s1">&#39;storage&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">val_expr</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
+            <span class="n">parameters</span><span class="o">=</span><span class="n">contract</span><span class="o">.</span><span class="n">parameter</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">parameters</span><span class="p">),</span>
+            <span class="n">storage</span><span class="o">=</span><span class="n">contract</span><span class="o">.</span><span class="n">storage</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="s1">&#39;result&#39;</span><span class="p">][</span><span class="s1">&#39;storage&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">val_expr</span><span class="p">),</span>
+            <span class="n">big_map_diff</span><span class="o">=</span><span class="n">contract</span><span class="o">.</span><span class="n">storage</span><span class="o">.</span><span class="n">big_map_diff_decode</span><span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="s1">&#39;result&#39;</span><span class="p">][</span><span class="s1">&#39;big_map_diff&#39;</span><span class="p">]),</span>
+            <span class="n">operations</span><span class="o">=</span><span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">content</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">res</span><span class="p">[</span><span class="s1">&#39;result&#39;</span><span class="p">][</span><span class="s1">&#39;operations&#39;</span><span class="p">]]</span>
+        <span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="ContractCall"><a class="viewcode-back" href="../../../high_level.html#pytezos.michelson.interface.ContractCall">[docs]</a><span class="k">class</span> <span class="nc">ContractCall</span><span class="p">(</span><span class="n">Interop</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Proxy class encapsulating a contract call: contract type scheme, contract address, parameters, and amount</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span>
+                 <span class="n">address</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">contract</span><span class="p">:</span> <span class="n">Contract</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">factory</span><span class="o">=</span><span class="n">Contract</span><span class="p">,</span> <span class="n">amount</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">ContractCall</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">shell</span><span class="o">=</span><span class="n">shell</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">key</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="n">parameters</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">address</span> <span class="o">=</span> <span class="n">address</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">amount</span> <span class="o">=</span> <span class="n">amount</span>
+
+        <span class="k">if</span> <span class="n">contract</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">address</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="n">contract</span> <span class="o">=</span> <span class="n">factory</span><span class="o">.</span><span class="n">from_micheline</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shell</span><span class="o">.</span><span class="n">contracts</span><span class="p">[</span><span class="n">address</span><span class="p">]</span><span class="o">.</span><span class="n">code</span><span class="p">())</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">contract</span> <span class="o">=</span> <span class="n">contract</span>
+
+    <span class="k">def</span> <span class="nf">_spawn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">ContractCall</span><span class="p">(</span>
+            <span class="n">parameters</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">,</span>
+            <span class="n">address</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">address</span><span class="p">,</span>
+            <span class="n">contract</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">contract</span><span class="p">,</span>
+            <span class="n">amount</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;amount&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">amount</span><span class="p">),</span>
+            <span class="n">shell</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;shell&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell</span><span class="p">),</span>
+            <span class="n">key</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;key&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">key</span><span class="p">)</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="nb">super</span><span class="p">(</span><span class="n">ContractCall</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">(),</span>
+            <span class="sa">f</span><span class="s1">&#39;.address  # </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">address</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s1">&#39;.amount  # </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">amount</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Parameters&#39;</span><span class="p">,</span>
+            <span class="n">pformat</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">),</span>
+            <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Helpers&#39;</span><span class="p">,</span>
+            <span class="n">get_class_docstring</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">)</span>
+        <span class="p">]</span>
+        <span class="k">return</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ContractCall.with_amount"><a class="viewcode-back" href="../../../high_level.html#pytezos.michelson.interface.ContractCall.with_amount">[docs]</a>    <span class="k">def</span> <span class="nf">with_amount</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">amount</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Send funds to the contract too.</span>
+
+<span class="sd">        :param amount: amount in microtez (int) or tez (Decimal)</span>
+<span class="sd">        :rtype: ContractCall</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_spawn</span><span class="p">(</span><span class="n">amount</span><span class="o">=</span><span class="n">amount</span><span class="p">)</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">operation_group</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OperationGroup</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot; Show generated operation group.</span>
+
+<span class="sd">        :rtype: OperationGroup</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">OperationGroup</span><span class="p">(</span><span class="n">shell</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">shell</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">key</span><span class="p">)</span> \
+            <span class="o">.</span><span class="n">transaction</span><span class="p">(</span><span class="n">destination</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">address</span><span class="p">,</span>
+                         <span class="n">amount</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">amount</span><span class="p">,</span>
+                         <span class="n">parameters</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">)</span> \
+            <span class="o">.</span><span class="n">fill</span><span class="p">()</span>
+
+<div class="viewcode-block" id="ContractCall.inject"><a class="viewcode-back" href="../../../high_level.html#pytezos.michelson.interface.ContractCall.inject">[docs]</a>    <span class="k">def</span> <span class="nf">inject</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Autofill, sign and inject resulting operation group.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">operation_group</span><span class="o">.</span><span class="n">autofill</span><span class="p">()</span><span class="o">.</span><span class="n">sign</span><span class="p">()</span><span class="o">.</span><span class="n">inject</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="ContractCall.cmdline"><a class="viewcode-back" href="../../../high_level.html#pytezos.michelson.interface.ContractCall.cmdline">[docs]</a>    <span class="k">def</span> <span class="nf">cmdline</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Generate command line for tezos client.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">arg</span> <span class="o">=</span> <span class="n">micheline_to_michelson</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">],</span> <span class="n">inline</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">source</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">key</span><span class="o">.</span><span class="n">public_key_hash</span><span class="p">()</span>
+        <span class="n">amount</span> <span class="o">=</span> <span class="n">format_tez</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">amount</span><span class="p">)</span>
+        <span class="n">entrypoint</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s1">&#39;entrypoint&#39;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;transfer </span><span class="si">{</span><span class="n">amount</span><span class="si">}</span><span class="s1"> from </span><span class="si">{</span><span class="n">source</span><span class="si">}</span><span class="s1"> to </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">address</span><span class="si">}</span><span class="s1"> &#39;</span> \
+               <span class="sa">f</span><span class="s1">&#39;--entrypoint </span><span class="se">\&#39;</span><span class="si">{</span><span class="n">entrypoint</span><span class="si">}</span><span class="se">\&#39;</span><span class="s1"> --arg </span><span class="se">\&#39;</span><span class="si">{</span><span class="n">arg</span><span class="si">}</span><span class="se">\&#39;</span><span class="s1">&#39;</span></div>
+
+<div class="viewcode-block" id="ContractCall.interpret"><a class="viewcode-back" href="../../../high_level.html#pytezos.michelson.interface.ContractCall.interpret">[docs]</a>    <span class="k">def</span> <span class="nf">interpret</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">storage</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sender</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">amount</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">balance</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">chain_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">now</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Run code in the builtin REPL (WARNING! Not recommended for critical tasks).</span>
+
+<span class="sd">        :param storage: Python object</span>
+<span class="sd">        :param source: patch SOURCE</span>
+<span class="sd">        :param sender: patch SENDER</span>
+<span class="sd">        :param amount: patch AMOUNT</span>
+<span class="sd">        :param balance: patch BALANCE</span>
+<span class="sd">        :param chain_id: patch CHAIN_ID</span>
+<span class="sd">        :param now: patch NOW</span>
+<span class="sd">        :rtype: ContractCallResult</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="n">Interpreter</span><span class="p">()</span>
+        <span class="n">i</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">contract</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">source</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">source</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">key</span><span class="o">.</span><span class="n">public_key_hash</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">sender</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">sender</span> <span class="o">=</span> <span class="n">source</span>
+        <span class="k">if</span> <span class="n">amount</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">amount</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="n">balance</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">balance</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="n">patch_map</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;SOURCE&#39;</span><span class="p">:</span> <span class="n">source</span><span class="p">,</span>
+            <span class="s1">&#39;SENDER&#39;</span><span class="p">:</span> <span class="n">sender</span><span class="p">,</span>
+            <span class="s1">&#39;AMOUNT&#39;</span><span class="p">:</span> <span class="n">amount</span><span class="p">,</span>
+            <span class="s1">&#39;BALANCE&#39;</span><span class="p">:</span> <span class="n">balance</span><span class="p">,</span>
+            <span class="s1">&#39;CHAIN_ID&#39;</span><span class="p">:</span> <span class="n">chain_id</span><span class="p">,</span>
+            <span class="s1">&#39;NOW&#39;</span><span class="p">:</span> <span class="n">now</span>
+        <span class="p">}</span>
+        <span class="k">for</span> <span class="n">instr</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">patch_map</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;&quot;</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s1">&quot;&#39;</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="n">value</span>
+                <span class="n">i</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;PATCH </span><span class="si">{</span><span class="n">instr</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+        <span class="n">s_expr</span> <span class="o">=</span> <span class="n">micheline_to_michelson</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">contract</span><span class="o">.</span><span class="n">storage</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">storage</span><span class="p">),</span> <span class="n">inline</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">wrap</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">p_expr</span> <span class="o">=</span> <span class="n">micheline_to_michelson</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">],</span> <span class="n">inline</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">wrap</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">i</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;RUN %</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;entrypoint&quot;</span><span class="p">]</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="n">p_expr</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="n">s_expr</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">ContractCallResult</span><span class="o">.</span><span class="n">from_repl_result</span><span class="p">(</span>
+            <span class="n">res</span><span class="p">,</span> <span class="n">parameters</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">,</span> <span class="n">contract</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">contract</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ContractCall.result"><a class="viewcode-back" href="../../../high_level.html#pytezos.michelson.interface.ContractCall.result">[docs]</a>    <span class="k">def</span> <span class="nf">result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">storage</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sender</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">gas_limit</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Simulate operation and parse the result.</span>
+
+<span class="sd">        :param storage: Python object only. If storage is specified, `run_code` is called instead of `run_operation`.</span>
+<span class="sd">        :param source: Can be specified for unit testing purposes</span>
+<span class="sd">        :param sender: Can be specified for unit testing purposes, \</span>
+<span class="sd">        see https://tezos.gitlab.io/whitedoc/michelson.html#operations-on-contracts for the difference</span>
+<span class="sd">        :param gas_limit: Specify gas limit (default is gas hard limit)</span>
+<span class="sd">        :rtype: ContractCallResult</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">chain_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell</span><span class="o">.</span><span class="n">chains</span><span class="o">.</span><span class="n">main</span><span class="o">.</span><span class="n">chain_id</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">storage</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">source</span> <span class="ow">or</span> <span class="n">sender</span> <span class="ow">or</span> <span class="n">gas_limit</span><span class="p">:</span>
+            <span class="n">query</span> <span class="o">=</span> <span class="n">skip_nones</span><span class="p">(</span>
+                <span class="n">script</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">contract</span><span class="o">.</span><span class="n">code</span><span class="p">,</span>
+                <span class="n">storage</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">contract</span><span class="o">.</span><span class="n">storage</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">storage</span><span class="p">),</span>
+                <span class="n">entrypoint</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s1">&#39;entrypoint&#39;</span><span class="p">],</span>
+                <span class="nb">input</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">],</span>
+                <span class="n">amount</span><span class="o">=</span><span class="n">format_mutez</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">amount</span><span class="p">),</span>
+                <span class="n">chain_id</span><span class="o">=</span><span class="n">chain_id</span><span class="p">,</span>
+                <span class="n">source</span><span class="o">=</span><span class="n">sender</span><span class="p">,</span>
+                <span class="n">payer</span><span class="o">=</span><span class="n">source</span><span class="p">,</span>
+                <span class="n">gas</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">gas_limit</span><span class="p">)</span> <span class="k">if</span> <span class="n">gas_limit</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
+            <span class="p">)</span>
+            <span class="n">code_run_res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">helpers</span><span class="o">.</span><span class="n">scripts</span><span class="o">.</span><span class="n">run_code</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">ContractCallResult</span><span class="o">.</span><span class="n">from_code_run</span><span class="p">(</span>
+                <span class="n">code_run_res</span><span class="p">,</span> <span class="n">parameters</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">,</span> <span class="n">contract</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">contract</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">opg_with_metadata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">operation_group</span><span class="o">.</span><span class="n">fill</span><span class="p">()</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">ContractCallResult</span><span class="o">.</span><span class="n">from_contract_call</span><span class="p">(</span>
+                <span class="n">opg_with_metadata</span><span class="p">,</span> <span class="n">address</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">address</span><span class="p">,</span> <span class="n">contract</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">contract</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">res</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">res</span> <span class="k">else</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="ContractCall.view"><a class="viewcode-back" href="../../../high_level.html#pytezos.michelson.interface.ContractCall.view">[docs]</a>    <span class="k">def</span> <span class="nf">view</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Get return value of a view method.</span>
+
+<span class="sd">        :returns: object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">opg_with_metadata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">operation_group</span><span class="o">.</span><span class="n">fill</span><span class="p">()</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+        <span class="n">view_operation</span> <span class="o">=</span> <span class="n">OperationResult</span><span class="o">.</span><span class="n">get_contents</span><span class="p">(</span><span class="n">opg_with_metadata</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">address</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">view_contract</span> <span class="o">=</span> <span class="n">Contract</span><span class="o">.</span><span class="n">from_micheline</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shell</span><span class="o">.</span><span class="n">contracts</span><span class="p">[</span><span class="n">view_operation</span><span class="p">[</span><span class="s1">&#39;destination&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">code</span><span class="p">())</span>
+        <span class="k">return</span> <span class="n">view_contract</span><span class="o">.</span><span class="n">parameter</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">view_operation</span><span class="p">[</span><span class="s1">&#39;parameters&#39;</span><span class="p">])</span></div></div>
+
+
+<div class="viewcode-block" id="ContractEntrypoint"><a class="viewcode-back" href="../../../high_level.html#pytezos.michelson.interface.ContractEntrypoint">[docs]</a><span class="k">class</span> <span class="nc">ContractEntrypoint</span><span class="p">(</span><span class="n">Interop</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Proxy class for spawning ContractCall instances.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">address</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">contract</span><span class="p">:</span> <span class="n">Contract</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">factory</span><span class="o">=</span><span class="n">Contract</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">ContractEntrypoint</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">shell</span><span class="o">=</span><span class="n">shell</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">key</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">contract</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">address</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="n">code</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell</span><span class="o">.</span><span class="n">contracts</span><span class="p">[</span><span class="n">address</span><span class="p">]</span><span class="o">.</span><span class="n">code</span><span class="p">()</span>
+            <span class="n">contract</span> <span class="o">=</span> <span class="n">factory</span><span class="o">.</span><span class="n">from_micheline</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">contract</span> <span class="o">=</span> <span class="n">contract</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">address</span> <span class="o">=</span> <span class="n">address</span>
+
+    <span class="k">def</span> <span class="nf">_spawn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">ContractEntrypoint</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">contract</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">contract</span><span class="p">,</span>
+            <span class="n">address</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">address</span><span class="p">,</span>
+            <span class="n">shell</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;shell&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell</span><span class="p">),</span>
+            <span class="n">key</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;key&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">key</span><span class="p">),</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="nb">super</span><span class="p">(</span><span class="n">ContractEntrypoint</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">(),</span>
+            <span class="sa">f</span><span class="s1">&#39;.address  # </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">address</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s1">&#39;</span><span class="se">\n</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__doc__</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="p">]</span>
+        <span class="k">return</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ContractEntrypoint.__call__"><a class="viewcode-back" href="../../../high_level.html#pytezos.michelson.interface.ContractEntrypoint.__call__">[docs]</a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Spawn a contract call proxy initialized with the entrypoint name</span>
+
+<span class="sd">        :param args: entrypoint args</span>
+<span class="sd">        :param kwargs: entrypoint key-value args</span>
+<span class="sd">        :rtype: ContractCall</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">args</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">is_single</span><span class="p">)</span> <span class="o">=</span> <span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="kc">True</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">is_single</span><span class="p">)</span> <span class="o">=</span> <span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">args</span><span class="p">),</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">is_single</span><span class="p">)</span> <span class="o">=</span> <span class="p">(</span><span class="n">kwargs</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">is_single</span><span class="p">)</span> <span class="o">=</span> <span class="p">([],</span> <span class="kc">False</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">data</span><span class="p">}</span> <span class="k">if</span> <span class="n">data</span> <span class="ow">or</span> <span class="n">is_single</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
+
+        <span class="n">parameters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">contract</span><span class="o">.</span><span class="n">parameter</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ContractCall</span><span class="p">(</span>
+            <span class="n">parameters</span><span class="o">=</span><span class="n">parameters</span><span class="p">,</span>
+            <span class="n">address</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">address</span><span class="p">,</span>
+            <span class="n">contract</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">contract</span><span class="p">,</span>
+            <span class="n">shell</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">shell</span><span class="p">,</span>
+            <span class="n">key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">key</span><span class="p">,</span>
+        <span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="ContractInterface"><a class="viewcode-back" href="../../../high_level.html#pytezos.michelson.interface.ContractInterface">[docs]</a><span class="k">class</span> <span class="nc">ContractInterface</span><span class="p">(</span><span class="n">Interop</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Proxy class for interacting with a contract.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">__default_entry__</span> <span class="o">=</span> <span class="s1">&#39;call&#39;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">address</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">contract</span><span class="p">:</span> <span class="n">Contract</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">factory</span><span class="o">=</span><span class="n">Contract</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">ContractInterface</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">shell</span><span class="o">=</span><span class="n">shell</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">key</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">contract</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">address</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="n">code</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell</span><span class="o">.</span><span class="n">contracts</span><span class="p">[</span><span class="n">address</span><span class="p">]</span><span class="o">.</span><span class="n">code</span><span class="p">()</span>
+            <span class="n">contract</span> <span class="o">=</span> <span class="n">factory</span><span class="o">.</span><span class="n">from_micheline</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">contract</span> <span class="o">=</span> <span class="n">contract</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">address</span> <span class="o">=</span> <span class="n">address</span>
+
+        <span class="k">for</span> <span class="n">entry_name</span><span class="p">,</span> <span class="n">docstring</span> <span class="ow">in</span> <span class="n">contract</span><span class="o">.</span><span class="n">parameter</span><span class="o">.</span><span class="n">entries</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__default_entry__</span><span class="p">):</span>
+            <span class="n">entry_point</span> <span class="o">=</span> <span class="n">ContractEntrypoint</span><span class="p">(</span>
+                <span class="n">name</span><span class="o">=</span><span class="n">entry_name</span> <span class="k">if</span> <span class="n">entry_name</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__default_entry__</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="n">address</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">address</span><span class="p">,</span>
+                <span class="n">contract</span><span class="o">=</span><span class="n">contract</span><span class="p">,</span>
+                <span class="n">shell</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">shell</span><span class="p">,</span>
+                <span class="n">key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">key</span>
+            <span class="p">)</span>
+            <span class="n">entry_point</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">=</span> <span class="n">docstring</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">entry_name</span><span class="p">,</span> <span class="n">entry_point</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_spawn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">ContractInterface</span><span class="p">(</span>
+            <span class="n">address</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">address</span><span class="p">,</span>
+            <span class="n">contract</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">contract</span><span class="p">,</span>
+            <span class="n">shell</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;shell&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell</span><span class="p">),</span>
+            <span class="n">key</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;key&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">key</span><span class="p">)</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">entrypoints</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">contract</span><span class="o">.</span><span class="n">parameter</span><span class="o">.</span><span class="n">entries</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__default_entry__</span><span class="p">))</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="nb">super</span><span class="p">(</span><span class="n">ContractInterface</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">(),</span>
+            <span class="sa">f</span><span class="s1">&#39;.address  # </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">address</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Entrypoints&#39;</span><span class="p">,</span>
+            <span class="o">*</span><span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="sa">f</span><span class="s1">&#39;.</span><span class="si">{</span><span class="n">x</span><span class="si">}</span><span class="s1">()&#39;</span><span class="p">,</span> <span class="n">entrypoints</span><span class="p">)),</span>
+            <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Helpers&#39;</span><span class="p">,</span>
+            <span class="n">get_class_docstring</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">,</span>
+                                <span class="n">attr_filter</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="ow">not</span> <span class="n">x</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">x</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">entrypoints</span><span class="p">)</span>
+        <span class="p">]</span>
+        <span class="k">return</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ContractInterface.create_from"><a class="viewcode-back" href="../../../high_level.html#pytezos.michelson.interface.ContractInterface.create_from">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">create_from</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">factory</span><span class="o">=</span><span class="n">Contract</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Initialize from contract code.</span>
+
+<span class="sd">        :param source: Michelson code</span>
+<span class="sd">        :param shell: A `Shell` instance (optional)</span>
+<span class="sd">        :param factory: An optional contract factory if you need to force interface (forced annotations)</span>
+<span class="sd">        :rtype: ContractInterface</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="n">exists</span><span class="p">(</span><span class="n">expanduser</span><span class="p">(</span><span class="n">source</span><span class="p">)):</span>
+            <span class="n">contract</span> <span class="o">=</span> <span class="n">factory</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">contract</span> <span class="o">=</span> <span class="n">factory</span><span class="p">(</span><span class="n">convert</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="s1">&#39;micheline&#39;</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">ContractInterface</span><span class="p">(</span><span class="n">contract</span><span class="o">=</span><span class="n">contract</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="n">shell</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ContractInterface.big_map_get"><a class="viewcode-back" href="../../../high_level.html#pytezos.michelson.interface.ContractInterface.big_map_get">[docs]</a>    <span class="k">def</span> <span class="nf">big_map_get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">block_id</span><span class="o">=</span><span class="s1">&#39;head&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Get BigMap entry as Python object by plain key and block height.</span>
+
+<span class="sd">        :param path: Json path to the key (or just key to access default BigMap location). \</span>
+<span class="sd">            Use `/` to separate nodes and `:` to separate tuple args. \</span>
+<span class="sd">            In any other case you&#39;d need to escape those symbols.</span>
+<span class="sd">        :param block_id: Block height / hash / offset to use, default is `head`</span>
+<span class="sd">        :returns: object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">contract</span><span class="o">.</span><span class="n">storage</span><span class="o">.</span><span class="n">big_map_schema</span><span class="p">:</span>
+            <span class="n">storage</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell</span><span class="o">.</span><span class="n">blocks</span><span class="p">[</span><span class="n">block_id</span><span class="p">]</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">contracts</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">address</span><span class="p">]</span><span class="o">.</span><span class="n">storage</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">contract</span><span class="o">.</span><span class="n">storage</span><span class="o">.</span><span class="n">big_map_init</span><span class="p">(</span><span class="n">storage</span><span class="p">)</span>
+
+        <span class="n">query</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">contract</span><span class="o">.</span><span class="n">storage</span><span class="o">.</span><span class="n">big_map_query</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">query</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;big_map_id&#39;</span><span class="p">):</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell</span><span class="o">.</span><span class="n">blocks</span><span class="p">[</span><span class="n">block_id</span><span class="p">]</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">big_maps</span><span class="p">[</span><span class="n">query</span><span class="p">[</span><span class="s1">&#39;big_map_id&#39;</span><span class="p">]][</span><span class="n">query</span><span class="p">[</span><span class="s1">&#39;script_expr&#39;</span><span class="p">]]()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell</span><span class="o">.</span><span class="n">blocks</span><span class="p">[</span><span class="n">block_id</span><span class="p">]</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">contracts</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">address</span><span class="p">]</span><span class="o">.</span><span class="n">big_map_get</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">contract</span><span class="o">.</span><span class="n">storage</span><span class="o">.</span><span class="n">big_map_decode</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">query</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;big_map_id&#39;</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="ContractInterface.storage"><a class="viewcode-back" href="../../../high_level.html#pytezos.michelson.interface.ContractInterface.storage">[docs]</a>    <span class="k">def</span> <span class="nf">storage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">block_id</span><span class="o">=</span><span class="s1">&#39;head&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Get storage as Pythons object at specified block height.</span>
+
+<span class="sd">        :param block_id: Block height / hash / offset to use, default is `head`</span>
+<span class="sd">        :returns: object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">storage</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell</span><span class="o">.</span><span class="n">blocks</span><span class="p">[</span><span class="n">block_id</span><span class="p">]</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">contracts</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">address</span><span class="p">]</span><span class="o">.</span><span class="n">storage</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">contract</span><span class="o">.</span><span class="n">storage</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">storage</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ContractInterface.operation_result"><a class="viewcode-back" href="../../../high_level.html#pytezos.michelson.interface.ContractInterface.operation_result">[docs]</a>    <span class="k">def</span> <span class="nf">operation_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">operation_group</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">ContractCallResult</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot; Get operation parameters, storage and big_map_diff as Python objects.</span>
+<span class="sd">        Can locate operation inside operation groups with multiple contents and/or internal operations.</span>
+
+<span class="sd">        :param operation_group: {&#39;branch&#39;, &#39;protocol&#39;, &#39;contents&#39;, &#39;signature&#39;}</span>
+<span class="sd">        :rtype: ContractCallResult</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">ContractCallResult</span><span class="o">.</span><span class="n">from_contract_call</span><span class="p">(</span>
+            <span class="n">operation_group</span><span class="p">,</span> <span class="n">address</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">address</span><span class="p">,</span> <span class="n">contract</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">contract</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ContractInterface.manager"><a class="viewcode-back" href="../../../high_level.html#pytezos.michelson.interface.ContractInterface.manager">[docs]</a>    <span class="k">def</span> <span class="nf">manager</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Get contract manager address (tz).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">contracts</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">address</span><span class="p">]</span><span class="o">.</span><span class="n">manager</span><span class="p">()</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Baking Bad
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

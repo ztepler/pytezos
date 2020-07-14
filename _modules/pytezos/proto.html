@@ -1,0 +1,450 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pytezos.proto &mdash; PyTezos  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+
+  
+  
+    <link rel="shortcut icon" href="../../_static/favicon.ico"/>
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> PyTezos
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../quick_start.html">Quick start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../integration_tests.html">Michelson integration tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../pytezos_cli.html">Pytezos CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../high_level.html">High-level interfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../crypto.html">Cryptography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../operation_groups.html">Building and parsing operations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../rpc_queries.html">RPC query engine</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../script_wrappers.html">Michelson script wrappers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../pack.html">Michelson type encoding</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../code.html">Working with Michelson code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../repl.html">Michelson REPL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../inspect_proposals.html">Inspecting proposals</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">PyTezos</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>pytezos.proto</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pytezos.proto</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">io</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">tarfile</span>
+<span class="kn">import</span> <span class="nn">netstruct</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">import</span> <span class="nn">simplejson</span> <span class="k">as</span> <span class="nn">json</span>
+<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
+<span class="kn">from</span> <span class="nn">binascii</span> <span class="kn">import</span> <span class="n">hexlify</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
+<span class="kn">from</span> <span class="nn">tempfile</span> <span class="kn">import</span> <span class="n">TemporaryDirectory</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span>
+
+<span class="kn">from</span> <span class="nn">pytezos.crypto</span> <span class="kn">import</span> <span class="n">blake2b_32</span>
+<span class="kn">from</span> <span class="nn">pytezos.encoding</span> <span class="kn">import</span> <span class="n">base58_encode</span>
+<span class="kn">from</span> <span class="nn">pytezos.tools.diff</span> <span class="kn">import</span> <span class="n">make_patch</span><span class="p">,</span> <span class="n">apply_patch</span><span class="p">,</span> <span class="n">generate_unidiff_html</span>
+<span class="kn">from</span> <span class="nn">pytezos.tools.docstring</span> <span class="kn">import</span> <span class="n">get_class_docstring</span><span class="p">,</span> <span class="n">InlineDocstring</span>
+
+
+<div class="viewcode-block" id="dir_to_files"><a class="viewcode-back" href="../../inspect_proposals.html#pytezos.proto.dir_to_files">[docs]</a><span class="k">def</span> <span class="nf">dir_to_files</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]:</span>
+    <span class="n">files</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;TEZOS_PROTOCOL&#39;</span><span class="p">))</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">module</span> <span class="ow">in</span> <span class="n">index</span><span class="p">[</span><span class="s1">&#39;modules&#39;</span><span class="p">]:</span>
+        <span class="k">for</span> <span class="n">ext</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;mli&#39;</span><span class="p">,</span> <span class="s1">&#39;ml&#39;</span><span class="p">]:</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">module</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="si">}</span><span class="s1">.</span><span class="si">{</span><span class="n">ext</span><span class="si">}</span><span class="s1">&#39;</span>
+
+            <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+                <span class="k">continue</span>
+
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+                <span class="n">text</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+                <span class="n">files</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">name</span><span class="p">,</span> <span class="n">text</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">files</span></div>
+
+
+<div class="viewcode-block" id="tar_to_files"><a class="viewcode-back" href="../../inspect_proposals.html#pytezos.proto.tar_to_files">[docs]</a><span class="k">def</span> <span class="nf">tar_to_files</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">raw</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]:</span>
+    <span class="k">assert</span> <span class="n">path</span> <span class="ow">or</span> <span class="n">raw</span>
+
+    <span class="n">fileobj</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">(</span><span class="n">raw</span><span class="p">)</span> <span class="k">if</span> <span class="n">raw</span> <span class="k">else</span> <span class="kc">None</span>
+    <span class="k">with</span> <span class="n">tarfile</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">path</span><span class="p">,</span> <span class="n">fileobj</span><span class="o">=</span><span class="n">fileobj</span><span class="p">)</span> <span class="k">as</span> <span class="n">tar</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">TemporaryDirectory</span><span class="p">()</span> <span class="k">as</span> <span class="n">tmp_dir</span><span class="p">:</span>
+            <span class="n">tar</span><span class="o">.</span><span class="n">extractall</span><span class="p">(</span><span class="n">tmp_dir</span><span class="p">)</span>
+            <span class="n">files</span> <span class="o">=</span> <span class="n">dir_to_files</span><span class="p">(</span><span class="n">tmp_dir</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">files</span></div>
+
+
+<div class="viewcode-block" id="url_to_files"><a class="viewcode-back" href="../../inspect_proposals.html#pytezos.proto.url_to_files">[docs]</a><span class="k">def</span> <span class="nf">url_to_files</span><span class="p">(</span><span class="n">url</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]:</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">stream</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">raw</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;&#39;</span>
+
+    <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">iter_content</span><span class="p">()):</span>
+        <span class="n">raw</span> <span class="o">+=</span> <span class="n">data</span>
+
+    <span class="k">return</span> <span class="n">tar_to_files</span><span class="p">(</span><span class="n">raw</span><span class="o">=</span><span class="n">raw</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="files_to_proto"><a class="viewcode-back" href="../../inspect_proposals.html#pytezos.proto.files_to_proto">[docs]</a><span class="k">def</span> <span class="nf">files_to_proto</span><span class="p">(</span><span class="n">files</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="n">components</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">filename</span><span class="p">,</span> <span class="n">text</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+        <span class="n">name</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)</span>
+        <span class="n">key</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;mli&#39;</span><span class="p">:</span> <span class="s1">&#39;interface&#39;</span><span class="p">,</span> <span class="s1">&#39;ml&#39;</span><span class="p">:</span> <span class="s1">&#39;implementation&#39;</span><span class="p">}[</span><span class="n">ext</span><span class="p">]</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">hexlify</span><span class="p">(</span><span class="n">text</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">components</span><span class="p">:</span>
+            <span class="n">components</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">components</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">name</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">data</span><span class="p">}</span>
+
+    <span class="n">proto</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;expected_env_version&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>  <span class="c1"># TODO: this is V1</span>
+        <span class="s1">&#39;components&#39;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">components</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">proto</span></div>
+
+
+<div class="viewcode-block" id="files_to_tar"><a class="viewcode-back" href="../../inspect_proposals.html#pytezos.proto.files_to_tar">[docs]</a><span class="k">def</span> <span class="nf">files_to_tar</span><span class="p">(</span><span class="n">files</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]],</span> <span class="n">output_path</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="n">fileobj</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">()</span> <span class="k">if</span> <span class="n">output_path</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
+    <span class="n">nameparts</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">output_path</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)</span>
+    <span class="n">mode</span> <span class="o">=</span> <span class="s1">&#39;w&#39;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">nameparts</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="n">mode</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;w:</span><span class="si">{</span><span class="n">nameparts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span>
+
+    <span class="k">with</span> <span class="n">tarfile</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">output_path</span><span class="p">,</span> <span class="n">fileobj</span><span class="o">=</span><span class="n">fileobj</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">)</span> <span class="k">as</span> <span class="n">tar</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">filename</span><span class="p">,</span> <span class="n">text</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+            <span class="n">file</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">(</span><span class="n">text</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
+            <span class="n">ti</span> <span class="o">=</span> <span class="n">tarfile</span><span class="o">.</span><span class="n">TarInfo</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+            <span class="n">ti</span><span class="o">.</span><span class="n">size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">file</span><span class="o">.</span><span class="n">getvalue</span><span class="p">())</span>
+            <span class="n">tar</span><span class="o">.</span><span class="n">addfile</span><span class="p">(</span><span class="n">ti</span><span class="p">,</span> <span class="n">file</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">fileobj</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">fileobj</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="proto_to_files"><a class="viewcode-back" href="../../inspect_proposals.html#pytezos.proto.proto_to_files">[docs]</a><span class="k">def</span> <span class="nf">proto_to_files</span><span class="p">(</span><span class="n">proto</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]:</span>
+    <span class="n">files</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">extensions</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;interface&#39;</span><span class="p">:</span> <span class="s1">&#39;mli&#39;</span><span class="p">,</span> <span class="s1">&#39;implementation&#39;</span><span class="p">:</span> <span class="s1">&#39;ml&#39;</span><span class="p">}</span>
+
+    <span class="k">for</span> <span class="n">component</span> <span class="ow">in</span> <span class="n">proto</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;components&#39;</span><span class="p">,</span> <span class="p">[]):</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">ext</span> <span class="ow">in</span> <span class="n">extensions</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">component</span><span class="p">:</span>
+                <span class="n">filename</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">component</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="si">}</span><span class="s1">.</span><span class="si">{</span><span class="n">ext</span><span class="si">}</span><span class="s1">&#39;</span>
+                <span class="n">text</span> <span class="o">=</span> <span class="nb">bytes</span><span class="o">.</span><span class="n">fromhex</span><span class="p">(</span><span class="n">component</span><span class="p">[</span><span class="n">key</span><span class="p">])</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
+                <span class="n">files</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">filename</span><span class="p">,</span> <span class="n">text</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">files</span></div>
+
+
+<div class="viewcode-block" id="proto_to_bytes"><a class="viewcode-back" href="../../inspect_proposals.html#pytezos.proto.proto_to_bytes">[docs]</a><span class="k">def</span> <span class="nf">proto_to_bytes</span><span class="p">(</span><span class="n">proto</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;&#39;</span>
+
+    <span class="k">for</span> <span class="n">component</span> <span class="ow">in</span> <span class="n">proto</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;components&#39;</span><span class="p">,</span> <span class="p">[]):</span>
+        <span class="n">res</span> <span class="o">+=</span> <span class="n">netstruct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;I$&#39;</span><span class="p">,</span> <span class="n">component</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
+
+        <span class="k">if</span> <span class="n">component</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;interface&#39;</span><span class="p">):</span>
+            <span class="n">res</span> <span class="o">+=</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\xff</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="n">netstruct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;I$&#39;</span><span class="p">,</span> <span class="nb">bytes</span><span class="o">.</span><span class="n">fromhex</span><span class="p">(</span><span class="n">component</span><span class="p">[</span><span class="s1">&#39;interface&#39;</span><span class="p">]))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">+=</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x00</span><span class="s1">&#39;</span>
+
+        <span class="c1"># we should also handle patch case</span>
+        <span class="n">res</span> <span class="o">+=</span> <span class="n">netstruct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;I$&#39;</span><span class="p">,</span> <span class="nb">bytes</span><span class="o">.</span><span class="n">fromhex</span><span class="p">(</span><span class="n">component</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;implementation&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)))</span>
+
+    <span class="n">res</span> <span class="o">=</span> <span class="n">netstruct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;hI$&#39;</span><span class="p">,</span> <span class="n">proto</span><span class="p">[</span><span class="s1">&#39;expected_env_version&#39;</span><span class="p">],</span> <span class="n">res</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">res</span></div>
+
+
+<div class="viewcode-block" id="Proto"><a class="viewcode-back" href="../../inspect_proposals.html#pytezos.proto.Proto">[docs]</a><span class="k">class</span> <span class="nc">Proto</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">InlineDocstring</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">proto</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_proto</span> <span class="o">=</span> <span class="n">proto</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="nb">super</span><span class="p">(</span><span class="n">Proto</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">(),</span>
+            <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Helpers&#39;</span><span class="p">,</span>
+            <span class="n">get_class_docstring</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">)</span>
+        <span class="p">]</span>
+        <span class="k">return</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="n">proto_to_files</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_proto</span><span class="p">))</span>
+
+<div class="viewcode-block" id="Proto.from_uri"><a class="viewcode-back" href="../../inspect_proposals.html#pytezos.proto.Proto.from_uri">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_uri</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">uri</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Loads protocol implementation from various sources and converts it to the RPC-like format.</span>
+
+<span class="sd">        :param uri: link/path to a tar archive or path to a folder with extracted contents</span>
+<span class="sd">        :returns: Protocol instance</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">uri</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;http&#39;</span><span class="p">):</span>
+            <span class="n">files</span> <span class="o">=</span> <span class="n">url_to_files</span><span class="p">(</span><span class="n">uri</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="n">uri</span><span class="p">)):</span>
+            <span class="n">files</span> <span class="o">=</span> <span class="n">tar_to_files</span><span class="p">(</span><span class="n">uri</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">uri</span><span class="p">):</span>
+            <span class="n">files</span> <span class="o">=</span> <span class="n">dir_to_files</span><span class="p">(</span><span class="n">uri</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">uri</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">Proto</span><span class="p">(</span><span class="n">files_to_proto</span><span class="p">(</span><span class="n">files</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="Proto.index"><a class="viewcode-back" href="../../inspect_proposals.html#pytezos.proto.Proto.index">[docs]</a>    <span class="k">def</span> <span class="nf">index</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot; Generates TEZOS_PROTOCOL file.</span>
+
+<span class="sd">        :returns: dict with protocol hash and modules</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;hash&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">hash</span><span class="p">(),</span>
+            <span class="s1">&#39;modules&#39;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_proto</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;components&#39;</span><span class="p">,</span> <span class="p">[])))</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="n">data</span></div>
+
+<div class="viewcode-block" id="Proto.export_tar"><a class="viewcode-back" href="../../inspect_proposals.html#pytezos.proto.Proto.export_tar">[docs]</a>    <span class="k">def</span> <span class="nf">export_tar</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_path</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Creates a tarball and dumps to a file or returns bytes.</span>
+
+<span class="sd">        :param output_path: Path to the tarball [optional]. You can add .bz2 or .gz extension to make it compressed</span>
+<span class="sd">        :returns: bytes if path is None or nothing</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">files</span> <span class="o">=</span> <span class="n">proto_to_files</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_proto</span><span class="p">)</span>
+        <span class="n">files</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s1">&#39;TEZOS_PROTOCOL&#39;</span><span class="p">,</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="p">())))</span>
+        <span class="k">return</span> <span class="n">files_to_tar</span><span class="p">(</span><span class="n">files</span><span class="p">,</span> <span class="n">output_path</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Proto.export_html"><a class="viewcode-back" href="../../inspect_proposals.html#pytezos.proto.Proto.export_html">[docs]</a>    <span class="k">def</span> <span class="nf">export_html</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_path</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Generates github-like side-by-side diff viewe, powered by diff2html.js</span>
+
+<span class="sd">        :param output_path: will write to this file if specified</span>
+<span class="sd">        :returns: html string if path is not specified</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">diffs</span> <span class="o">=</span> <span class="p">[</span><span class="n">text</span> <span class="k">for</span> <span class="n">filename</span><span class="p">,</span> <span class="n">text</span> <span class="ow">in</span> <span class="bp">self</span> <span class="k">if</span> <span class="n">text</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">generate_unidiff_html</span><span class="p">(</span><span class="n">diffs</span><span class="p">,</span> <span class="n">output_path</span><span class="o">=</span><span class="n">output_path</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Proto.diff"><a class="viewcode-back" href="../../inspect_proposals.html#pytezos.proto.Proto.diff">[docs]</a>    <span class="k">def</span> <span class="nf">diff</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">proto</span><span class="p">,</span> <span class="n">context_size</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Calculates file diff between two protocol versions.</span>
+
+<span class="sd">        :param proto: an instance of Protocol</span>
+<span class="sd">        :param context_size: number of context lines before and after the change</span>
+<span class="sd">        :returns: patch in proto format</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">files</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="n">yours</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+        <span class="n">theirs</span> <span class="o">=</span> <span class="n">proto_to_files</span><span class="p">(</span><span class="n">proto</span><span class="p">())</span>
+
+        <span class="k">for</span> <span class="n">filename</span><span class="p">,</span> <span class="n">their_text</span> <span class="ow">in</span> <span class="n">theirs</span><span class="p">:</span>
+            <span class="n">patch</span> <span class="o">=</span> <span class="n">make_patch</span><span class="p">(</span>
+                <span class="n">a</span><span class="o">=</span><span class="n">yours</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">),</span>
+                <span class="n">b</span><span class="o">=</span><span class="n">their_text</span><span class="p">,</span>
+                <span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span>
+                <span class="n">context_size</span><span class="o">=</span><span class="n">context_size</span>
+            <span class="p">)</span>
+            <span class="n">files</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">filename</span><span class="p">,</span> <span class="n">patch</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">Proto</span><span class="p">(</span><span class="n">files_to_proto</span><span class="p">(</span><span class="n">files</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="Proto.patch"><a class="viewcode-back" href="../../inspect_proposals.html#pytezos.proto.Proto.patch">[docs]</a>    <span class="k">def</span> <span class="nf">patch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">patch</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Applies unified diff and returns full-fledged protocol.</span>
+
+<span class="sd">        :param patch: an instance of Protocol containing diff of files</span>
+<span class="sd">        :returns: Protocol instance</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">files</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="n">yours</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+        <span class="n">diff</span> <span class="o">=</span> <span class="n">proto_to_files</span><span class="p">(</span><span class="n">patch</span><span class="p">())</span>
+
+        <span class="k">for</span> <span class="n">filename</span><span class="p">,</span> <span class="n">diff_text</span> <span class="ow">in</span> <span class="n">diff</span><span class="p">:</span>
+            <span class="n">text</span> <span class="o">=</span> <span class="n">yours</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">diff_text</span><span class="p">:</span>
+                <span class="n">text</span> <span class="o">=</span> <span class="n">apply_patch</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">diff_text</span><span class="p">)</span>
+            <span class="n">files</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">filename</span><span class="p">,</span> <span class="n">text</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">Proto</span><span class="p">(</span><span class="n">files_to_proto</span><span class="p">(</span><span class="n">files</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="Proto.hash"><a class="viewcode-back" href="../../inspect_proposals.html#pytezos.proto.Proto.hash">[docs]</a>    <span class="k">def</span> <span class="nf">hash</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">hash_digest</span> <span class="o">=</span> <span class="n">blake2b_32</span><span class="p">(</span><span class="n">proto_to_bytes</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_proto</span><span class="p">))</span><span class="o">.</span><span class="n">digest</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">base58_encode</span><span class="p">(</span><span class="n">hash_digest</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;P&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Baking Bad
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

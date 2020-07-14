@@ -1,0 +1,757 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Working with Michelson code &mdash; PyTezos  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Michelson REPL" href="repl.html" />
+    <link rel="prev" title="Michelson type encoding" href="pack.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> PyTezos
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="quick_start.html">Quick start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="integration_tests.html">Michelson integration tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pytezos_cli.html">Pytezos CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="high_level.html">High-level interfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="crypto.html">Cryptography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="operation_groups.html">Building and parsing operations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rpc_queries.html">RPC query engine</a></li>
+<li class="toctree-l1"><a class="reference internal" href="script_wrappers.html">Michelson script wrappers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pack.html">Michelson type encoding</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Working with Michelson code</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-pytezos.michelson.macros">Expanding macros</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pytezos.michelson.grammar">Parsing AST</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pytezos.michelson.formatter">Code formatter</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="repl.html">Michelson REPL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="inspect_proposals.html">Inspecting proposals</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">PyTezos</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Working with Michelson code</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/code.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="working-with-michelson-code">
+<h1>Working with Michelson code<a class="headerlink" href="#working-with-michelson-code" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-pytezos.michelson.macros">
+<span id="expanding-macros"></span><h2>Expanding macros<a class="headerlink" href="#module-pytezos.michelson.macros" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="pytezos.michelson.macros.PxrNode">
+<em class="property">class </em><code class="sig-prename descclassname">pytezos.michelson.macros.</code><code class="sig-name descname">PxrNode</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">depth</span></em>, <em class="sig-param"><span class="n">annots</span></em>, <em class="sig-param"><span class="n">args</span></em>, <em class="sig-param"><span class="n">is_root</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pytezos.michelson.macros.PxrNode" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py method">
+<dt id="pytezos.michelson.macros.PxrNode.annots">
+<em class="property">property </em><code class="sig-name descname">annots</code><a class="headerlink" href="#pytezos.michelson.macros.PxrNode.annots" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.michelson.macros.PxrNode.args">
+<em class="property">property </em><code class="sig-name descname">args</code><a class="headerlink" href="#pytezos.michelson.macros.PxrNode.args" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 2</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.michelson.macros.PxrNode.depth">
+<em class="property">property </em><code class="sig-name descname">depth</code><a class="headerlink" href="#pytezos.michelson.macros.PxrNode.depth" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.michelson.macros.PxrNode.is_root">
+<em class="property">property </em><code class="sig-name descname">is_root</code><a class="headerlink" href="#pytezos.michelson.macros.PxrNode.is_root" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 3</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.michelson.macros.build_pxr_tree">
+<code class="sig-prename descclassname">pytezos.michelson.macros.</code><code class="sig-name descname">build_pxr_tree</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pxr_macro</span></em>, <em class="sig-param"><span class="n">pxr_annots</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#pytezos.michelson.macros.PxrNode" title="pytezos.michelson.macros.PxrNode">pytezos.michelson.macros.PxrNode</a><a class="reference internal" href="_modules/pytezos/michelson/macros.html#build_pxr_tree"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.macros.build_pxr_tree" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.michelson.macros.dip_n">
+<code class="sig-prename descclassname">pytezos.michelson.macros.</code><code class="sig-name descname">dip_n</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">instr</span></em>, <em class="sig-param"><span class="n">depth</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/michelson/macros.html#dip_n"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.macros.dip_n" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.michelson.macros.expand_assert">
+<code class="sig-prename descclassname">pytezos.michelson.macros.</code><code class="sig-name descname">expand_assert</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span> &#x2192; dict<a class="reference internal" href="_modules/pytezos/michelson/macros.html#expand_assert"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.macros.expand_assert" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.michelson.macros.expand_assert_cmpx">
+<code class="sig-prename descclassname">pytezos.michelson.macros.</code><code class="sig-name descname">expand_assert_cmpx</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span> &#x2192; list<a class="reference internal" href="_modules/pytezos/michelson/macros.html#expand_assert_cmpx"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.macros.expand_assert_cmpx" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.michelson.macros.expand_assert_left">
+<code class="sig-prename descclassname">pytezos.michelson.macros.</code><code class="sig-name descname">expand_assert_left</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span> &#x2192; dict<a class="reference internal" href="_modules/pytezos/michelson/macros.html#expand_assert_left"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.macros.expand_assert_left" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.michelson.macros.expand_assert_none">
+<code class="sig-prename descclassname">pytezos.michelson.macros.</code><code class="sig-name descname">expand_assert_none</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span> &#x2192; dict<a class="reference internal" href="_modules/pytezos/michelson/macros.html#expand_assert_none"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.macros.expand_assert_none" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.michelson.macros.expand_assert_right">
+<code class="sig-prename descclassname">pytezos.michelson.macros.</code><code class="sig-name descname">expand_assert_right</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span> &#x2192; dict<a class="reference internal" href="_modules/pytezos/michelson/macros.html#expand_assert_right"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.macros.expand_assert_right" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.michelson.macros.expand_assert_some">
+<code class="sig-prename descclassname">pytezos.michelson.macros.</code><code class="sig-name descname">expand_assert_some</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span> &#x2192; dict<a class="reference internal" href="_modules/pytezos/michelson/macros.html#expand_assert_some"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.macros.expand_assert_some" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.michelson.macros.expand_assert_x">
+<code class="sig-prename descclassname">pytezos.michelson.macros.</code><code class="sig-name descname">expand_assert_x</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span> &#x2192; list<a class="reference internal" href="_modules/pytezos/michelson/macros.html#expand_assert_x"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.macros.expand_assert_x" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.michelson.macros.expand_caxr">
+<code class="sig-prename descclassname">pytezos.michelson.macros.</code><code class="sig-name descname">expand_caxr</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span> &#x2192; list<a class="reference internal" href="_modules/pytezos/michelson/macros.html#expand_caxr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.macros.expand_caxr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.michelson.macros.expand_cdxr">
+<code class="sig-prename descclassname">pytezos.michelson.macros.</code><code class="sig-name descname">expand_cdxr</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span> &#x2192; list<a class="reference internal" href="_modules/pytezos/michelson/macros.html#expand_cdxr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.macros.expand_cdxr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.michelson.macros.expand_cmpx">
+<code class="sig-prename descclassname">pytezos.michelson.macros.</code><code class="sig-name descname">expand_cmpx</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span> &#x2192; list<a class="reference internal" href="_modules/pytezos/michelson/macros.html#expand_cmpx"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.macros.expand_cmpx" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.michelson.macros.expand_cxr">
+<code class="sig-prename descclassname">pytezos.michelson.macros.</code><code class="sig-name descname">expand_cxr</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">prim</span></em>, <em class="sig-param"><span class="n">annots</span></em><span class="sig-paren">)</span> &#x2192; list<a class="reference internal" href="_modules/pytezos/michelson/macros.html#expand_cxr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.macros.expand_cxr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.michelson.macros.expand_dixp">
+<code class="sig-prename descclassname">pytezos.michelson.macros.</code><code class="sig-name descname">expand_dixp</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span> &#x2192; dict<a class="reference internal" href="_modules/pytezos/michelson/macros.html#expand_dixp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.macros.expand_dixp" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.michelson.macros.expand_duxp">
+<code class="sig-prename descclassname">pytezos.michelson.macros.</code><code class="sig-name descname">expand_duxp</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span> &#x2192; list<a class="reference internal" href="_modules/pytezos/michelson/macros.html#expand_duxp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.macros.expand_duxp" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.michelson.macros.expand_fail">
+<code class="sig-prename descclassname">pytezos.michelson.macros.</code><code class="sig-name descname">expand_fail</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span> &#x2192; list<a class="reference internal" href="_modules/pytezos/michelson/macros.html#expand_fail"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.macros.expand_fail" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.michelson.macros.expand_if_some">
+<code class="sig-prename descclassname">pytezos.michelson.macros.</code><code class="sig-name descname">expand_if_some</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span> &#x2192; dict<a class="reference internal" href="_modules/pytezos/michelson/macros.html#expand_if_some"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.macros.expand_if_some" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.michelson.macros.expand_ifcmpx">
+<code class="sig-prename descclassname">pytezos.michelson.macros.</code><code class="sig-name descname">expand_ifcmpx</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span> &#x2192; list<a class="reference internal" href="_modules/pytezos/michelson/macros.html#expand_ifcmpx"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.macros.expand_ifcmpx" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.michelson.macros.expand_ifx">
+<code class="sig-prename descclassname">pytezos.michelson.macros.</code><code class="sig-name descname">expand_ifx</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span> &#x2192; list<a class="reference internal" href="_modules/pytezos/michelson/macros.html#expand_ifx"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.macros.expand_ifx" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.michelson.macros.expand_macro">
+<code class="sig-prename descclassname">pytezos.michelson.macros.</code><code class="sig-name descname">expand_macro</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">prim</span></em>, <em class="sig-param"><span class="n">annots</span></em>, <em class="sig-param"><span class="n">args</span></em>, <em class="sig-param"><span class="n">internal</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">extra</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/michelson/macros.html#expand_macro"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.macros.expand_macro" title="Permalink to this definition">¶</a></dt>
+<dd><p>Expands Michelson macro.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>prim</strong> – macro name</p></li>
+<li><p><strong>annots</strong> – annotations (optional)</p></li>
+<li><p><strong>args</strong> – arguments (optional)</p></li>
+<li><p><strong>internal</strong> – this function is called during another mocro expansion</p></li>
+<li><p><strong>extra</strong> – list of ignored primitives</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Code sequence (Micheline expression)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.michelson.macros.expand_map_car">
+<code class="sig-prename descclassname">pytezos.michelson.macros.</code><code class="sig-name descname">expand_map_car</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span> &#x2192; list<a class="reference internal" href="_modules/pytezos/michelson/macros.html#expand_map_car"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.macros.expand_map_car" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.michelson.macros.expand_map_caxr">
+<code class="sig-prename descclassname">pytezos.michelson.macros.</code><code class="sig-name descname">expand_map_caxr</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span> &#x2192; list<a class="reference internal" href="_modules/pytezos/michelson/macros.html#expand_map_caxr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.macros.expand_map_caxr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.michelson.macros.expand_map_cdr">
+<code class="sig-prename descclassname">pytezos.michelson.macros.</code><code class="sig-name descname">expand_map_cdr</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span> &#x2192; list<a class="reference internal" href="_modules/pytezos/michelson/macros.html#expand_map_cdr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.macros.expand_map_cdr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.michelson.macros.expand_map_cdxr">
+<code class="sig-prename descclassname">pytezos.michelson.macros.</code><code class="sig-name descname">expand_map_cdxr</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span> &#x2192; list<a class="reference internal" href="_modules/pytezos/michelson/macros.html#expand_map_cdxr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.macros.expand_map_cdxr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.michelson.macros.expand_map_cxr">
+<code class="sig-prename descclassname">pytezos.michelson.macros.</code><code class="sig-name descname">expand_map_cxr</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">prim</span></em>, <em class="sig-param"><span class="n">annots</span></em>, <em class="sig-param"><span class="n">args</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/michelson/macros.html#expand_map_cxr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.macros.expand_map_cxr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.michelson.macros.expand_pxr">
+<code class="sig-prename descclassname">pytezos.michelson.macros.</code><code class="sig-name descname">expand_pxr</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span> &#x2192; list<a class="reference internal" href="_modules/pytezos/michelson/macros.html#expand_pxr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.macros.expand_pxr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.michelson.macros.expand_set_car">
+<code class="sig-prename descclassname">pytezos.michelson.macros.</code><code class="sig-name descname">expand_set_car</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span> &#x2192; list<a class="reference internal" href="_modules/pytezos/michelson/macros.html#expand_set_car"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.macros.expand_set_car" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.michelson.macros.expand_set_caxr">
+<code class="sig-prename descclassname">pytezos.michelson.macros.</code><code class="sig-name descname">expand_set_caxr</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span> &#x2192; list<a class="reference internal" href="_modules/pytezos/michelson/macros.html#expand_set_caxr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.macros.expand_set_caxr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.michelson.macros.expand_set_cdr">
+<code class="sig-prename descclassname">pytezos.michelson.macros.</code><code class="sig-name descname">expand_set_cdr</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span> &#x2192; list<a class="reference internal" href="_modules/pytezos/michelson/macros.html#expand_set_cdr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.macros.expand_set_cdr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.michelson.macros.expand_set_cdxr">
+<code class="sig-prename descclassname">pytezos.michelson.macros.</code><code class="sig-name descname">expand_set_cdxr</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span> &#x2192; list<a class="reference internal" href="_modules/pytezos/michelson/macros.html#expand_set_cdxr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.macros.expand_set_cdxr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.michelson.macros.expand_set_cxr">
+<code class="sig-prename descclassname">pytezos.michelson.macros.</code><code class="sig-name descname">expand_set_cxr</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">prim</span></em>, <em class="sig-param"><span class="n">annots</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/michelson/macros.html#expand_set_cxr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.macros.expand_set_cxr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.michelson.macros.expand_unpair">
+<code class="sig-prename descclassname">pytezos.michelson.macros.</code><code class="sig-name descname">expand_unpair</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span> &#x2192; list<a class="reference internal" href="_modules/pytezos/michelson/macros.html#expand_unpair"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.macros.expand_unpair" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.michelson.macros.expand_unpxr">
+<code class="sig-prename descclassname">pytezos.michelson.macros.</code><code class="sig-name descname">expand_unpxr</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span> &#x2192; list<a class="reference internal" href="_modules/pytezos/michelson/macros.html#expand_unpxr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.macros.expand_unpxr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.michelson.macros.expr">
+<code class="sig-prename descclassname">pytezos.michelson.macros.</code><code class="sig-name descname">expr</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span> &#x2192; dict<a class="reference internal" href="_modules/pytezos/michelson/macros.html#expr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.macros.expr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.michelson.macros.get_field_annots">
+<code class="sig-prename descclassname">pytezos.michelson.macros.</code><code class="sig-name descname">get_field_annots</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">annots</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/michelson/macros.html#get_field_annots"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.macros.get_field_annots" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.michelson.macros.get_map_cxr_annots">
+<code class="sig-prename descclassname">pytezos.michelson.macros.</code><code class="sig-name descname">get_map_cxr_annots</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">annots</span></em><span class="sig-paren">)</span> &#x2192; Tuple<span class="p">[</span>str<span class="p">, </span>list<span class="p">]</span><a class="reference internal" href="_modules/pytezos/michelson/macros.html#get_map_cxr_annots"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.macros.get_map_cxr_annots" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.michelson.macros.get_var_annots">
+<code class="sig-prename descclassname">pytezos.michelson.macros.</code><code class="sig-name descname">get_var_annots</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">annots</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/michelson/macros.html#get_var_annots"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.macros.get_var_annots" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.michelson.macros.macro">
+<code class="sig-prename descclassname">pytezos.michelson.macros.</code><code class="sig-name descname">macro</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">regexp</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/michelson/macros.html#macro"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.macros.macro" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.michelson.macros.seq">
+<code class="sig-prename descclassname">pytezos.michelson.macros.</code><code class="sig-name descname">seq</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">instr</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; list<a class="reference internal" href="_modules/pytezos/michelson/macros.html#seq"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.macros.seq" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.michelson.macros.skip_nones">
+<code class="sig-prename descclassname">pytezos.michelson.macros.</code><code class="sig-name descname">skip_nones</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">array</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/michelson/macros.html#skip_nones"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.macros.skip_nones" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.michelson.macros.traverse_pxr_tree">
+<code class="sig-prename descclassname">pytezos.michelson.macros.</code><code class="sig-name descname">traverse_pxr_tree</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">prim</span></em>, <em class="sig-param"><span class="n">annots</span></em>, <em class="sig-param"><span class="n">produce</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/michelson/macros.html#traverse_pxr_tree"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.macros.traverse_pxr_tree" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-pytezos.michelson.grammar">
+<span id="parsing-ast"></span><h2>Parsing AST<a class="headerlink" href="#module-pytezos.michelson.grammar" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="pytezos.michelson.grammar.MichelsonParser">
+<em class="property">class </em><code class="sig-prename descclassname">pytezos.michelson.grammar.</code><code class="sig-name descname">MichelsonParser</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">debug</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">write_tables</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">extra_primitives</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/michelson/grammar.html#MichelsonParser"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.grammar.MichelsonParser" title="Permalink to this definition">¶</a></dt>
+<dd><p>Customizable Michelson parser</p>
+<dl class="py method">
+<dt id="pytezos.michelson.grammar.MichelsonParser.p_annot">
+<code class="sig-name descname">p_annot</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">p</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/michelson/grammar.html#MichelsonParser.p_annot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.grammar.MichelsonParser.p_annot" title="Permalink to this definition">¶</a></dt>
+<dd><p>annot : ANNOT</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.michelson.grammar.MichelsonParser.p_annots">
+<code class="sig-name descname">p_annots</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">p</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/michelson/grammar.html#MichelsonParser.p_annots"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.grammar.MichelsonParser.p_annots" title="Permalink to this definition">¶</a></dt>
+<dd><p>annots : annot
+| empty</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.michelson.grammar.MichelsonParser.p_annots_list">
+<code class="sig-name descname">p_annots_list</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">p</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/michelson/grammar.html#MichelsonParser.p_annots_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.grammar.MichelsonParser.p_annots_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>annots : annots annot</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.michelson.grammar.MichelsonParser.p_arg_byte">
+<code class="sig-name descname">p_arg_byte</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">p</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/michelson/grammar.html#MichelsonParser.p_arg_byte"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.grammar.MichelsonParser.p_arg_byte" title="Permalink to this definition">¶</a></dt>
+<dd><p>arg : BYTE</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.michelson.grammar.MichelsonParser.p_arg_group">
+<code class="sig-name descname">p_arg_group</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">p</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/michelson/grammar.html#MichelsonParser.p_arg_group"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.grammar.MichelsonParser.p_arg_group" title="Permalink to this definition">¶</a></dt>
+<dd><p>arg : LEFT_PAREN expr RIGHT_PAREN</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.michelson.grammar.MichelsonParser.p_arg_int">
+<code class="sig-name descname">p_arg_int</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">p</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/michelson/grammar.html#MichelsonParser.p_arg_int"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.grammar.MichelsonParser.p_arg_int" title="Permalink to this definition">¶</a></dt>
+<dd><p>arg : INT</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.michelson.grammar.MichelsonParser.p_arg_prim">
+<code class="sig-name descname">p_arg_prim</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">p</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/michelson/grammar.html#MichelsonParser.p_arg_prim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.grammar.MichelsonParser.p_arg_prim" title="Permalink to this definition">¶</a></dt>
+<dd><p>arg : PRIM</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.michelson.grammar.MichelsonParser.p_arg_str">
+<code class="sig-name descname">p_arg_str</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">p</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/michelson/grammar.html#MichelsonParser.p_arg_str"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.grammar.MichelsonParser.p_arg_str" title="Permalink to this definition">¶</a></dt>
+<dd><p>arg : STR</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.michelson.grammar.MichelsonParser.p_arg_subseq">
+<code class="sig-name descname">p_arg_subseq</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">p</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/michelson/grammar.html#MichelsonParser.p_arg_subseq"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.grammar.MichelsonParser.p_arg_subseq" title="Permalink to this definition">¶</a></dt>
+<dd><p>arg : LEFT_CURLY instr RIGHT_CURLY</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.michelson.grammar.MichelsonParser.p_args">
+<code class="sig-name descname">p_args</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">p</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/michelson/grammar.html#MichelsonParser.p_args"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.grammar.MichelsonParser.p_args" title="Permalink to this definition">¶</a></dt>
+<dd><p>args : arg
+| empty</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.michelson.grammar.MichelsonParser.p_args_list">
+<code class="sig-name descname">p_args_list</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">p</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/michelson/grammar.html#MichelsonParser.p_args_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.grammar.MichelsonParser.p_args_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>args : args arg</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.michelson.grammar.MichelsonParser.p_empty">
+<code class="sig-name descname">p_empty</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">p</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/michelson/grammar.html#MichelsonParser.p_empty"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.grammar.MichelsonParser.p_empty" title="Permalink to this definition">¶</a></dt>
+<dd><p>empty :</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.michelson.grammar.MichelsonParser.p_error">
+<code class="sig-name descname">p_error</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">p</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/michelson/grammar.html#MichelsonParser.p_error"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.grammar.MichelsonParser.p_error" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.michelson.grammar.MichelsonParser.p_expr">
+<code class="sig-name descname">p_expr</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">p</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/michelson/grammar.html#MichelsonParser.p_expr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.grammar.MichelsonParser.p_expr" title="Permalink to this definition">¶</a></dt>
+<dd><p>expr : PRIM annots args</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.michelson.grammar.MichelsonParser.p_instr">
+<code class="sig-name descname">p_instr</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">p</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/michelson/grammar.html#MichelsonParser.p_instr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.grammar.MichelsonParser.p_instr" title="Permalink to this definition">¶</a></dt>
+<dd><p>instr : expr
+| empty</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.michelson.grammar.MichelsonParser.p_instr_byte">
+<code class="sig-name descname">p_instr_byte</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">p</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/michelson/grammar.html#MichelsonParser.p_instr_byte"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.grammar.MichelsonParser.p_instr_byte" title="Permalink to this definition">¶</a></dt>
+<dd><p>instr : BYTE</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.michelson.grammar.MichelsonParser.p_instr_int">
+<code class="sig-name descname">p_instr_int</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">p</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/michelson/grammar.html#MichelsonParser.p_instr_int"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.grammar.MichelsonParser.p_instr_int" title="Permalink to this definition">¶</a></dt>
+<dd><p>instr : INT</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.michelson.grammar.MichelsonParser.p_instr_list">
+<code class="sig-name descname">p_instr_list</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">p</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/michelson/grammar.html#MichelsonParser.p_instr_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.grammar.MichelsonParser.p_instr_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>instr : instr SEMI instr</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.michelson.grammar.MichelsonParser.p_instr_str">
+<code class="sig-name descname">p_instr_str</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">p</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/michelson/grammar.html#MichelsonParser.p_instr_str"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.grammar.MichelsonParser.p_instr_str" title="Permalink to this definition">¶</a></dt>
+<dd><p>instr : STR</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.michelson.grammar.MichelsonParser.p_instr_subseq">
+<code class="sig-name descname">p_instr_subseq</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">p</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/michelson/grammar.html#MichelsonParser.p_instr_subseq"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.grammar.MichelsonParser.p_instr_subseq" title="Permalink to this definition">¶</a></dt>
+<dd><p>instr : LEFT_CURLY instr RIGHT_CURLY</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.michelson.grammar.MichelsonParser.parse">
+<code class="sig-name descname">parse</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">code</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/michelson/grammar.html#MichelsonParser.parse"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.grammar.MichelsonParser.parse" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse Michelson source.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>code</strong> – Michelson source</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Micheline expression</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="pytezos.michelson.grammar.MichelsonParser.tokens">
+<code class="sig-name descname">tokens</code><em class="property"> = ('INT', 'BYTE', 'STR', 'ANNOT', 'PRIM', 'LEFT_CURLY', 'RIGHT_CURLY', 'LEFT_PAREN', 'RIGHT_PAREN', 'SEMI')</em><a class="headerlink" href="#pytezos.michelson.grammar.MichelsonParser.tokens" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py exception">
+<dt id="pytezos.michelson.grammar.MichelsonParserError">
+<em class="property">exception </em><code class="sig-prename descclassname">pytezos.michelson.grammar.</code><code class="sig-name descname">MichelsonParserError</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">token</span><span class="p">:</span> <span class="n">ply.lex.LexToken</span></em>, <em class="sig-param"><span class="n">message</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/michelson/grammar.html#MichelsonParserError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.grammar.MichelsonParserError" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt id="pytezos.michelson.grammar.Sequence">
+<em class="property">class </em><code class="sig-prename descclassname">pytezos.michelson.grammar.</code><code class="sig-name descname">Sequence</code><a class="reference internal" href="_modules/pytezos/michelson/grammar.html#Sequence"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.grammar.Sequence" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt id="pytezos.michelson.grammar.SimpleMichelsonLexer">
+<em class="property">class </em><code class="sig-prename descclassname">pytezos.michelson.grammar.</code><code class="sig-name descname">SimpleMichelsonLexer</code><a class="reference internal" href="_modules/pytezos/michelson/grammar.html#SimpleMichelsonLexer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.grammar.SimpleMichelsonLexer" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py attribute">
+<dt id="pytezos.michelson.grammar.SimpleMichelsonLexer.t_ANNOT">
+<code class="sig-name descname">t_ANNOT</code><em class="property"> = '[:&#64;%]+([_0-9a-zA-Z\\.]*)?'</em><a class="headerlink" href="#pytezos.michelson.grammar.SimpleMichelsonLexer.t_ANNOT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pytezos.michelson.grammar.SimpleMichelsonLexer.t_BYTE">
+<code class="sig-name descname">t_BYTE</code><em class="property"> = '0x[A-Fa-f0-9]*'</em><a class="headerlink" href="#pytezos.michelson.grammar.SimpleMichelsonLexer.t_BYTE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pytezos.michelson.grammar.SimpleMichelsonLexer.t_INT">
+<code class="sig-name descname">t_INT</code><em class="property"> = '-?[0-9]+'</em><a class="headerlink" href="#pytezos.michelson.grammar.SimpleMichelsonLexer.t_INT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pytezos.michelson.grammar.SimpleMichelsonLexer.t_LEFT_CURLY">
+<code class="sig-name descname">t_LEFT_CURLY</code><em class="property"> = '\\{'</em><a class="headerlink" href="#pytezos.michelson.grammar.SimpleMichelsonLexer.t_LEFT_CURLY" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pytezos.michelson.grammar.SimpleMichelsonLexer.t_LEFT_PAREN">
+<code class="sig-name descname">t_LEFT_PAREN</code><em class="property"> = '\\('</em><a class="headerlink" href="#pytezos.michelson.grammar.SimpleMichelsonLexer.t_LEFT_PAREN" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pytezos.michelson.grammar.SimpleMichelsonLexer.t_PRIM">
+<code class="sig-name descname">t_PRIM</code><em class="property"> = '[A-Za-z][A-Za-z0-9_]+'</em><a class="headerlink" href="#pytezos.michelson.grammar.SimpleMichelsonLexer.t_PRIM" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pytezos.michelson.grammar.SimpleMichelsonLexer.t_RIGHT_CURLY">
+<code class="sig-name descname">t_RIGHT_CURLY</code><em class="property"> = '\\}'</em><a class="headerlink" href="#pytezos.michelson.grammar.SimpleMichelsonLexer.t_RIGHT_CURLY" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pytezos.michelson.grammar.SimpleMichelsonLexer.t_RIGHT_PAREN">
+<code class="sig-name descname">t_RIGHT_PAREN</code><em class="property"> = '\\)'</em><a class="headerlink" href="#pytezos.michelson.grammar.SimpleMichelsonLexer.t_RIGHT_PAREN" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pytezos.michelson.grammar.SimpleMichelsonLexer.t_SEMI">
+<code class="sig-name descname">t_SEMI</code><em class="property"> = ';'</em><a class="headerlink" href="#pytezos.michelson.grammar.SimpleMichelsonLexer.t_SEMI" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pytezos.michelson.grammar.SimpleMichelsonLexer.t_STR">
+<code class="sig-name descname">t_STR</code><em class="property"> = '\\&quot;(\\\\.|[^\\&quot;])*\\&quot;'</em><a class="headerlink" href="#pytezos.michelson.grammar.SimpleMichelsonLexer.t_STR" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.michelson.grammar.SimpleMichelsonLexer.t_error">
+<code class="sig-name descname">t_error</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">t</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/michelson/grammar.html#SimpleMichelsonLexer.t_error"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.grammar.SimpleMichelsonLexer.t_error" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pytezos.michelson.grammar.SimpleMichelsonLexer.t_ignore">
+<code class="sig-name descname">t_ignore</code><em class="property"> = ' \t\r\n\x0c'</em><a class="headerlink" href="#pytezos.michelson.grammar.SimpleMichelsonLexer.t_ignore" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pytezos.michelson.grammar.SimpleMichelsonLexer.t_ignore_COMMENT">
+<code class="sig-name descname">t_ignore_COMMENT</code><em class="property"> = '#[^\\n]*'</em><a class="headerlink" href="#pytezos.michelson.grammar.SimpleMichelsonLexer.t_ignore_COMMENT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pytezos.michelson.grammar.SimpleMichelsonLexer.t_ignore_MULTI_COMMENT">
+<code class="sig-name descname">t_ignore_MULTI_COMMENT</code><em class="property"> = '/\\*.*?\\*/'</em><a class="headerlink" href="#pytezos.michelson.grammar.SimpleMichelsonLexer.t_ignore_MULTI_COMMENT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pytezos.michelson.grammar.SimpleMichelsonLexer.tokens">
+<code class="sig-name descname">tokens</code><em class="property"> = ('INT', 'BYTE', 'STR', 'ANNOT', 'PRIM', 'LEFT_CURLY', 'RIGHT_CURLY', 'LEFT_PAREN', 'RIGHT_PAREN', 'SEMI')</em><a class="headerlink" href="#pytezos.michelson.grammar.SimpleMichelsonLexer.tokens" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-pytezos.michelson.formatter">
+<span id="code-formatter"></span><h2>Code formatter<a class="headerlink" href="#module-pytezos.michelson.formatter" title="Permalink to this headline">¶</a></h2>
+<dl class="py exception">
+<dt id="pytezos.michelson.formatter.MichelsonFormatterError">
+<em class="property">exception </em><code class="sig-prename descclassname">pytezos.michelson.formatter.</code><code class="sig-name descname">MichelsonFormatterError</code><a class="reference internal" href="_modules/pytezos/michelson/formatter.html#MichelsonFormatterError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.formatter.MichelsonFormatterError" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.michelson.formatter.format_timestamp">
+<code class="sig-prename descclassname">pytezos.michelson.formatter.</code><code class="sig-name descname">format_timestamp</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">timestamp</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span> &#x2192; str<a class="reference internal" href="_modules/pytezos/michelson/formatter.html#format_timestamp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.formatter.format_timestamp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Format unix timestamp.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>timestamp</strong> – Unix timestamp (seconds)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.michelson.formatter.micheline_to_michelson">
+<code class="sig-prename descclassname">pytezos.michelson.formatter.</code><code class="sig-name descname">micheline_to_michelson</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">inline</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">wrap</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span> &#x2192; str<a class="reference internal" href="_modules/pytezos/michelson/formatter.html#micheline_to_michelson"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.michelson.formatter.micheline_to_michelson" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts micheline expression into formatted Michelson source.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> – Micheline expression</p></li>
+<li><p><strong>inline</strong> – produce single line, used for tezos-client arguments (False by default)</p></li>
+<li><p><strong>wrap</strong> – ensure expression is wrapped in brackets</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="repl.html" class="btn btn-neutral float-right" title="Michelson REPL" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="pack.html" class="btn btn-neutral float-left" title="Michelson type encoding" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Baking Bad
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

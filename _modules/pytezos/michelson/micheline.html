@@ -1,0 +1,638 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pytezos.michelson.micheline &mdash; PyTezos  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+    <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> PyTezos
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../quick_start.html">Quick start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../integration_tests.html">Michelson integration tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pytezos_cli.html">Pytezos CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../high_level.html">High-level interfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../crypto.html">Cryptography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../operation_groups.html">Building and parsing operations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rpc_queries.html">RPC query engine</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../script_wrappers.html">Michelson script wrappers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pack.html">Michelson type encoding</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../code.html">Working with Michelson code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../repl.html">Michelson REPL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../inspect_proposals.html">Inspecting proposals</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">PyTezos</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>pytezos.michelson.micheline</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pytezos.michelson.micheline</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">from</span> <span class="nn">os.path</span> <span class="kn">import</span> <span class="n">join</span>
+<span class="kn">from</span> <span class="nn">decimal</span> <span class="kn">import</span> <span class="n">Decimal</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">namedtuple</span><span class="p">,</span> <span class="n">defaultdict</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">lru_cache</span>
+
+<span class="kn">from</span> <span class="nn">pytezos.encoding</span> <span class="kn">import</span> <span class="n">forge_public_key</span><span class="p">,</span> <span class="n">forge_address</span><span class="p">,</span> <span class="n">forge_base58</span>
+<span class="kn">from</span> <span class="nn">pytezos.michelson.formatter</span> <span class="kn">import</span> <span class="n">micheline_to_michelson</span>
+<span class="kn">from</span> <span class="nn">pytezos.michelson.grammar</span> <span class="kn">import</span> <span class="n">MichelsonParser</span>
+<span class="kn">from</span> <span class="nn">pytezos.repl.parser</span> <span class="kn">import</span> <span class="n">parse_expression</span><span class="p">,</span> <span class="n">dispatch_core_map</span>
+
+<span class="n">Nested</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s1">&#39;Nested&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;prim&#39;</span><span class="p">,</span> <span class="s1">&#39;args&#39;</span><span class="p">])</span>
+<span class="n">Schema</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s1">&#39;Schema&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;metadata&#39;</span><span class="p">,</span> <span class="s1">&#39;bin_types&#39;</span><span class="p">,</span> <span class="s1">&#39;bin_names&#39;</span><span class="p">,</span> <span class="s1">&#39;json_to_bin&#39;</span><span class="p">])</span>
+<span class="n">Unit</span> <span class="o">=</span> <span class="kc">None</span>
+
+
+<div class="viewcode-block" id="Pair"><a class="viewcode-back" href="../../../pack.html#pytezos.michelson.micheline.Pair">[docs]</a><span class="k">class</span> <span class="nc">Pair</span><span class="p">(</span><span class="nb">tuple</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="michelson_parser"><a class="viewcode-back" href="../../../pack.html#pytezos.michelson.micheline.michelson_parser">[docs]</a><span class="nd">@lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">michelson_parser</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">MichelsonParser</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="skip_nones"><a class="viewcode-back" href="../../../pack.html#pytezos.michelson.micheline.skip_nones">[docs]</a><span class="k">def</span> <span class="nf">skip_nones</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">v</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">}</span></div>
+
+
+<div class="viewcode-block" id="encode_literal"><a class="viewcode-back" href="../../../pack.html#pytezos.michelson.micheline.encode_literal">[docs]</a><span class="k">def</span> <span class="nf">encode_literal</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">prim</span><span class="p">,</span> <span class="n">binary</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="n">core_type</span> <span class="o">=</span> <span class="s1">&#39;string&#39;</span>
+    <span class="k">if</span> <span class="n">prim</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;int&#39;</span><span class="p">,</span> <span class="s1">&#39;nat&#39;</span><span class="p">,</span> <span class="s1">&#39;big_map&#39;</span><span class="p">]:</span>
+        <span class="n">core_type</span> <span class="o">=</span> <span class="s1">&#39;int&#39;</span>
+    <span class="k">elif</span> <span class="n">prim</span> <span class="o">==</span> <span class="s1">&#39;timestamp&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="n">core_type</span> <span class="o">=</span> <span class="s1">&#39;int&#39;</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">datetime</span><span class="p">):</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">T%H:%M:%SZ&#39;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">prim</span> <span class="o">==</span> <span class="s1">&#39;mutez&#39;</span><span class="p">:</span>
+        <span class="n">core_type</span> <span class="o">=</span> <span class="s1">&#39;int&#39;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">Decimal</span><span class="p">):</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span> <span class="o">*</span> <span class="mi">10</span> <span class="o">**</span> <span class="mi">6</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">prim</span> <span class="o">==</span> <span class="s1">&#39;bool&#39;</span><span class="p">:</span>
+        <span class="n">core_type</span> <span class="o">=</span> <span class="s1">&#39;prim&#39;</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="s1">&#39;True&#39;</span> <span class="k">if</span> <span class="n">value</span> <span class="k">else</span> <span class="s1">&#39;False&#39;</span>
+    <span class="k">elif</span> <span class="n">prim</span> <span class="o">==</span> <span class="s1">&#39;bytes&#39;</span><span class="p">:</span>
+        <span class="n">core_type</span> <span class="o">=</span> <span class="s1">&#39;bytes&#39;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">hex</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="n">prim</span> <span class="o">==</span> <span class="s1">&#39;key&#39;</span> <span class="ow">and</span> <span class="n">binary</span><span class="p">:</span>
+        <span class="n">core_type</span> <span class="o">=</span> <span class="s1">&#39;bytes&#39;</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">forge_public_key</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">hex</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="n">prim</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;address&#39;</span><span class="p">,</span> <span class="s1">&#39;contract&#39;</span><span class="p">,</span> <span class="s1">&#39;key_hash&#39;</span><span class="p">]</span> <span class="ow">and</span> <span class="n">binary</span><span class="p">:</span>
+        <span class="n">core_type</span> <span class="o">=</span> <span class="s1">&#39;bytes&#39;</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">forge_address</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">tz_only</span><span class="o">=</span><span class="n">prim</span> <span class="o">==</span> <span class="s1">&#39;key_hash&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">hex</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="n">prim</span> <span class="o">==</span> <span class="s1">&#39;chain_id&#39;</span><span class="p">:</span>  <span class="c1"># and binary ?</span>
+        <span class="n">core_type</span> <span class="o">=</span> <span class="s1">&#39;bytes&#39;</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">forge_base58</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">hex</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="p">{</span><span class="n">core_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)}</span></div>
+
+
+<div class="viewcode-block" id="get_flat_nested"><a class="viewcode-back" href="../../../pack.html#pytezos.michelson.micheline.get_flat_nested">[docs]</a><span class="k">def</span> <span class="nf">get_flat_nested</span><span class="p">(</span><span class="n">nested</span><span class="p">:</span> <span class="n">Nested</span><span class="p">):</span>
+    <span class="n">flat_args</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">nested</span><span class="o">.</span><span class="n">args</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">Nested</span><span class="p">)</span> <span class="ow">and</span> <span class="n">arg</span><span class="o">.</span><span class="n">prim</span> <span class="o">==</span> <span class="n">nested</span><span class="o">.</span><span class="n">prim</span><span class="p">:</span>
+            <span class="n">flat_args</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">get_flat_nested</span><span class="p">(</span><span class="n">arg</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">flat_args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">flat_args</span></div>
+
+
+<div class="viewcode-block" id="collapse_micheline"><a class="viewcode-back" href="../../../pack.html#pytezos.michelson.micheline.collapse_micheline">[docs]</a><span class="k">def</span> <span class="nf">collapse_micheline</span><span class="p">(</span><span class="n">code</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="n">metadata</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">get_annotation</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">prefix</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">next</span><span class="p">((</span><span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">x</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;annots&#39;</span><span class="p">,</span> <span class="p">[])</span> <span class="k">if</span> <span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">prefix</span><span class="p">),</span> <span class="n">default</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">parse_node</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s1">&#39;0&#39;</span><span class="p">,</span> <span class="n">parent_prim</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">inherited_name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">node</span><span class="p">[</span><span class="s1">&#39;prim&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;storage&#39;</span><span class="p">,</span> <span class="s1">&#39;parameter&#39;</span><span class="p">]:</span>
+            <span class="k">return</span> <span class="n">parse_node</span><span class="p">(</span><span class="n">node</span><span class="p">[</span><span class="s1">&#39;args&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+
+        <span class="n">fieldname</span> <span class="o">=</span> <span class="n">get_annotation</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="s1">&#39;%&#39;</span><span class="p">)</span>
+        <span class="n">typename</span> <span class="o">=</span> <span class="n">get_annotation</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="s1">&#39;:&#39;</span><span class="p">)</span>
+
+        <span class="n">metadata</span><span class="p">[</span><span class="n">path</span><span class="p">]</span> <span class="o">=</span> <span class="n">skip_nones</span><span class="p">(</span>
+            <span class="n">prim</span><span class="o">=</span><span class="n">node</span><span class="p">[</span><span class="s1">&#39;prim&#39;</span><span class="p">],</span>
+            <span class="n">typename</span><span class="o">=</span><span class="n">typename</span><span class="p">,</span>
+            <span class="n">fieldname</span><span class="o">=</span><span class="n">fieldname</span><span class="p">,</span>
+            <span class="n">inherited_name</span><span class="o">=</span><span class="n">inherited_name</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">node</span><span class="p">[</span><span class="s1">&#39;prim&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;option&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">parse_node</span><span class="p">(</span>
+                <span class="n">node</span><span class="o">=</span><span class="n">node</span><span class="p">[</span><span class="s1">&#39;args&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+                <span class="n">path</span><span class="o">=</span><span class="n">path</span> <span class="o">+</span> <span class="s1">&#39;0&#39;</span><span class="p">,</span>
+                <span class="n">parent_prim</span><span class="o">=</span><span class="n">parent_prim</span><span class="p">,</span>
+                <span class="n">inherited_name</span><span class="o">=</span><span class="n">fieldname</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="n">node</span><span class="p">[</span><span class="s1">&#39;prim&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;lambda&#39;</span><span class="p">,</span> <span class="s1">&#39;contract&#39;</span><span class="p">]:</span>
+            <span class="n">metadata</span><span class="p">[</span><span class="n">path</span><span class="p">][</span><span class="s1">&#39;parameter&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">micheline_to_michelson</span><span class="p">(</span><span class="n">node</span><span class="p">[</span><span class="s1">&#39;args&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">inline</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">[])</span>  <span class="c1"># stop there</span>
+
+        <span class="n">args</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">parse_node</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">path</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">),</span> <span class="n">parent_prim</span><span class="o">=</span><span class="n">node</span><span class="p">[</span><span class="s1">&#39;prim&#39;</span><span class="p">])</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">arg</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;args&#39;</span><span class="p">,</span> <span class="p">[]))</span>
+        <span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">node</span><span class="p">[</span><span class="s1">&#39;prim&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;pair&#39;</span><span class="p">,</span> <span class="s1">&#39;or&#39;</span><span class="p">]:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">Nested</span><span class="p">(</span><span class="n">node</span><span class="p">[</span><span class="s1">&#39;prim&#39;</span><span class="p">],</span> <span class="n">args</span><span class="p">)</span>
+            <span class="n">is_struct</span> <span class="o">=</span> <span class="n">node</span><span class="p">[</span><span class="s1">&#39;prim&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;pair&#39;</span> <span class="ow">and</span> <span class="p">(</span><span class="n">typename</span> <span class="ow">or</span> <span class="n">fieldname</span> <span class="ow">or</span> <span class="n">inherited_name</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">is_struct</span> <span class="ow">or</span> <span class="n">parent_prim</span> <span class="o">!=</span> <span class="n">node</span><span class="p">[</span><span class="s1">&#39;prim&#39;</span><span class="p">]:</span>
+                <span class="n">args</span> <span class="o">=</span> <span class="n">get_flat_nested</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">res</span>
+
+        <span class="k">if</span> <span class="n">args</span><span class="p">:</span>
+            <span class="n">metadata</span><span class="p">[</span><span class="n">path</span><span class="p">][</span><span class="s1">&#39;args&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="s1">&#39;path&#39;</span><span class="p">],</span> <span class="n">args</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="n">args</span><span class="p">)</span>
+
+    <span class="n">parse_node</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">metadata</span></div>
+
+
+<div class="viewcode-block" id="build_maps"><a class="viewcode-back" href="../../../pack.html#pytezos.michelson.micheline.build_maps">[docs]</a><span class="k">def</span> <span class="nf">build_maps</span><span class="p">(</span><span class="n">metadata</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+    <span class="n">bin_types</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span><span class="p">[</span><span class="s1">&#39;prim&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">metadata</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+    <span class="n">bin_names</span><span class="p">,</span> <span class="n">json_to_bin</span> <span class="o">=</span> <span class="p">{},</span> <span class="p">{}</span>
+
+    <span class="k">def</span> <span class="nf">is_unit</span><span class="p">(</span><span class="n">bin_path</span><span class="p">):</span>
+        <span class="n">node</span> <span class="o">=</span> <span class="n">metadata</span><span class="p">[</span><span class="n">bin_path</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">node</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;prim&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;unit&#39;</span>
+
+    <span class="k">def</span> <span class="nf">get_union_names</span><span class="p">(</span><span class="n">node</span><span class="p">):</span>
+        <span class="n">names</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">arg_path</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">node</span><span class="p">[</span><span class="s1">&#39;args&#39;</span><span class="p">]):</span>
+            <span class="n">arg</span> <span class="o">=</span> <span class="n">metadata</span><span class="p">[</span><span class="n">arg_path</span><span class="p">]</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="n">arg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;inherited_name&#39;</span><span class="p">,</span> <span class="n">arg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;fieldname&#39;</span><span class="p">,</span> <span class="n">arg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;typename&#39;</span><span class="p">)))</span>
+            <span class="k">if</span> <span class="n">name</span><span class="p">:</span>
+                <span class="n">name</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;_Liq_entry_&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;entrypoint_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="n">names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">names</span>
+
+    <span class="k">def</span> <span class="nf">get_tuple_names</span><span class="p">(</span><span class="n">node</span><span class="p">):</span>
+        <span class="n">names</span><span class="p">,</span> <span class="n">unnamed</span> <span class="o">=</span> <span class="p">[],</span> <span class="kc">True</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">arg_path</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">node</span><span class="p">[</span><span class="s1">&#39;args&#39;</span><span class="p">]):</span>
+            <span class="n">arg</span> <span class="o">=</span> <span class="n">metadata</span><span class="p">[</span><span class="n">arg_path</span><span class="p">]</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="n">arg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;typename&#39;</span><span class="p">,</span> <span class="n">arg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;fieldname&#39;</span><span class="p">,</span> <span class="n">arg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;inherited_name&#39;</span><span class="p">)))</span>
+            <span class="k">if</span> <span class="n">name</span> <span class="ow">and</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">names</span><span class="p">:</span>
+                <span class="n">unnamed</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">arg</span><span class="p">[</span><span class="s2">&quot;prim&quot;</span><span class="p">]</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="n">names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">names</span><span class="p">,</span> <span class="n">unnamed</span>
+
+    <span class="k">def</span> <span class="nf">parse_node</span><span class="p">(</span><span class="n">bin_path</span><span class="o">=</span><span class="s1">&#39;0&#39;</span><span class="p">,</span> <span class="n">json_path</span><span class="o">=</span><span class="s1">&#39;/&#39;</span><span class="p">):</span>
+        <span class="n">node</span> <span class="o">=</span> <span class="n">metadata</span><span class="p">[</span><span class="n">bin_path</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">node</span><span class="p">[</span><span class="s1">&#39;prim&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;list&#39;</span><span class="p">,</span> <span class="s1">&#39;set&#39;</span><span class="p">]:</span>
+            <span class="n">parse_node</span><span class="p">(</span><span class="n">node</span><span class="p">[</span><span class="s1">&#39;args&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">join</span><span class="p">(</span><span class="n">json_path</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">&#39;</span><span class="p">))</span>
+
+        <span class="k">elif</span> <span class="n">node</span><span class="p">[</span><span class="s1">&#39;prim&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;map&#39;</span><span class="p">,</span> <span class="s1">&#39;big_map&#39;</span><span class="p">]:</span>
+            <span class="n">key_node</span> <span class="o">=</span> <span class="n">metadata</span><span class="p">[</span><span class="n">bin_path</span> <span class="o">+</span> <span class="s1">&#39;0&#39;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">key_node</span><span class="p">[</span><span class="s1">&#39;prim&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;pair&#39;</span><span class="p">:</span>
+                <span class="n">bin_types</span><span class="p">[</span><span class="n">bin_path</span> <span class="o">+</span> <span class="s1">&#39;0&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;keypair&#39;</span>
+            <span class="n">parse_node</span><span class="p">(</span><span class="n">node</span><span class="p">[</span><span class="s1">&#39;args&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="n">join</span><span class="p">(</span><span class="n">json_path</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">&#39;</span><span class="p">))</span>
+
+        <span class="k">elif</span> <span class="n">node</span><span class="p">[</span><span class="s1">&#39;prim&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;or&#39;</span><span class="p">:</span>
+            <span class="n">names</span> <span class="o">=</span> <span class="n">get_union_names</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">is_unit</span><span class="p">,</span> <span class="n">node</span><span class="p">[</span><span class="s1">&#39;args&#39;</span><span class="p">])):</span>
+                <span class="n">bin_types</span><span class="p">[</span><span class="n">bin_path</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;enum&#39;</span>
+                <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">arg_path</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">node</span><span class="p">[</span><span class="s1">&#39;args&#39;</span><span class="p">]):</span>
+                    <span class="n">parse_node</span><span class="p">(</span><span class="n">arg_path</span><span class="p">,</span> <span class="n">join</span><span class="p">(</span><span class="n">json_path</span><span class="p">,</span> <span class="n">names</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
+                    <span class="n">bin_types</span><span class="p">[</span><span class="n">arg_path</span><span class="p">]</span> <span class="o">=</span> <span class="n">names</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                    <span class="n">bin_names</span><span class="p">[</span><span class="n">arg_path</span><span class="p">]</span> <span class="o">=</span> <span class="n">names</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">bin_types</span><span class="p">[</span><span class="n">bin_path</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;router&#39;</span>
+                <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">arg_path</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">node</span><span class="p">[</span><span class="s1">&#39;args&#39;</span><span class="p">]):</span>
+                    <span class="n">parse_node</span><span class="p">(</span><span class="n">arg_path</span><span class="p">,</span> <span class="n">join</span><span class="p">(</span><span class="n">json_path</span><span class="p">,</span> <span class="n">names</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
+                    <span class="n">bin_names</span><span class="p">[</span><span class="n">arg_path</span><span class="p">]</span> <span class="o">=</span> <span class="n">names</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+        <span class="k">elif</span> <span class="n">node</span><span class="p">[</span><span class="s1">&#39;prim&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;pair&#39;</span><span class="p">:</span>
+            <span class="n">names</span><span class="p">,</span> <span class="n">unnamed</span> <span class="o">=</span> <span class="n">get_tuple_names</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+            <span class="n">bin_types</span><span class="p">[</span><span class="n">bin_path</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;tuple&#39;</span> <span class="k">if</span> <span class="n">unnamed</span> <span class="k">else</span> <span class="s1">&#39;namedtuple&#39;</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">arg_path</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">node</span><span class="p">[</span><span class="s1">&#39;args&#39;</span><span class="p">]):</span>
+                <span class="n">parse_node</span><span class="p">(</span><span class="n">arg_path</span><span class="p">,</span> <span class="n">join</span><span class="p">(</span><span class="n">json_path</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">if</span> <span class="n">unnamed</span> <span class="k">else</span> <span class="n">names</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
+                <span class="n">bin_names</span><span class="p">[</span><span class="n">arg_path</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">unnamed</span> <span class="k">else</span> <span class="n">names</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+        <span class="n">json_to_bin</span><span class="p">[</span><span class="n">json_path</span><span class="p">]</span> <span class="o">=</span> <span class="n">bin_path</span>
+
+    <span class="n">parse_node</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">bin_types</span><span class="p">,</span> <span class="n">bin_names</span><span class="p">,</span> <span class="n">json_to_bin</span></div>
+
+
+<div class="viewcode-block" id="parse_micheline"><a class="viewcode-back" href="../../../pack.html#pytezos.michelson.micheline.parse_micheline">[docs]</a><span class="k">def</span> <span class="nf">parse_micheline</span><span class="p">(</span><span class="n">val_expr</span><span class="p">,</span> <span class="n">type_expr</span><span class="p">,</span> <span class="n">schema</span><span class="p">:</span> <span class="n">Schema</span><span class="p">,</span> <span class="n">bin_root</span><span class="o">=</span><span class="s1">&#39;0&#39;</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">flatten_pair</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Pair</span><span class="p">:</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">Pair</span><span class="p">):</span>
+                <span class="n">res</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">flatten_pair</span><span class="p">(</span><span class="n">arg</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Pair</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">decode_selector</span><span class="p">(</span><span class="n">val_node</span><span class="p">,</span> <span class="n">type_node</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">type_path</span><span class="p">):</span>
+        <span class="n">bin_type</span> <span class="o">=</span> <span class="n">schema</span><span class="o">.</span><span class="n">bin_types</span><span class="p">[</span><span class="n">type_path</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">bin_type</span> <span class="o">==</span> <span class="s1">&#39;map&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">bin_type</span> <span class="o">==</span> <span class="s1">&#39;big_map&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">val</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val_node</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="k">else</span> <span class="n">val</span>
+        <span class="k">elif</span> <span class="n">bin_type</span> <span class="o">==</span> <span class="s1">&#39;option&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">val</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">val</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="k">elif</span> <span class="n">bin_type</span> <span class="o">==</span> <span class="s1">&#39;pair&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">flatten_pair</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">bin_type</span> <span class="o">==</span> <span class="s1">&#39;tuple&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">flatten_pair</span><span class="p">(</span><span class="n">val</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="n">bin_type</span> <span class="o">==</span> <span class="s1">&#39;keypair&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">flatten_pair</span><span class="p">(</span><span class="n">val</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="n">bin_type</span> <span class="o">==</span> <span class="s1">&#39;namedtuple&#39;</span><span class="p">:</span>
+            <span class="n">names</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">schema</span><span class="o">.</span><span class="n">bin_names</span><span class="p">[</span><span class="n">x</span><span class="p">],</span> <span class="n">schema</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="n">type_path</span><span class="p">][</span><span class="s1">&#39;args&#39;</span><span class="p">]))</span>
+            <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">names</span><span class="p">,</span> <span class="n">flatten_pair</span><span class="p">(</span><span class="n">val</span><span class="p">)))</span>
+        <span class="k">elif</span> <span class="n">bin_type</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;or&#39;</span><span class="p">,</span> <span class="s1">&#39;router&#39;</span><span class="p">,</span> <span class="s1">&#39;enum&#39;</span><span class="p">]:</span>
+            <span class="n">arg_path</span> <span class="o">=</span> <span class="n">type_path</span> <span class="o">+</span> <span class="p">{</span><span class="s1">&#39;Left&#39;</span><span class="p">:</span> <span class="s1">&#39;0&#39;</span><span class="p">,</span> <span class="s1">&#39;Right&#39;</span><span class="p">:</span> <span class="s1">&#39;1&#39;</span><span class="p">}[</span><span class="n">val_node</span><span class="p">[</span><span class="s1">&#39;prim&#39;</span><span class="p">]]</span>
+            <span class="k">if</span> <span class="n">schema</span><span class="o">.</span><span class="n">bin_types</span><span class="p">[</span><span class="n">arg_path</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;option&#39;</span><span class="p">:</span>
+                <span class="n">arg_path</span> <span class="o">+=</span> <span class="s1">&#39;0&#39;</span>
+            <span class="n">is_leaf</span> <span class="o">=</span> <span class="n">schema</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="n">arg_path</span><span class="p">][</span><span class="s1">&#39;prim&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;or&#39;</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="p">{</span><span class="n">schema</span><span class="o">.</span><span class="n">bin_names</span><span class="p">[</span><span class="n">arg_path</span><span class="p">]:</span> <span class="n">val</span><span class="p">[</span><span class="mi">0</span><span class="p">]}</span> <span class="k">if</span> <span class="n">is_leaf</span> <span class="k">else</span> <span class="n">val</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">return</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">res</span><span class="p">))</span> <span class="k">if</span> <span class="n">bin_type</span> <span class="o">==</span> <span class="s1">&#39;enum&#39;</span> <span class="k">else</span> <span class="n">res</span>
+        <span class="k">elif</span> <span class="n">bin_type</span> <span class="o">==</span> <span class="s1">&#39;unit&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Unit</span>
+        <span class="k">elif</span> <span class="n">bin_type</span> <span class="o">==</span> <span class="s1">&#39;lambda&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">micheline_to_michelson</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">bin_type</span> <span class="o">==</span> <span class="s1">&#39;timestamp&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">dispatch_core_map</span><span class="p">(</span><span class="n">val_node</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;string&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="s1">&#39;int&#39;</span><span class="p">:</span> <span class="nb">int</span><span class="p">})</span>
+        <span class="k">elif</span> <span class="n">bin_type</span> <span class="o">==</span> <span class="s1">&#39;bytes&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">val</span><span class="o">.</span><span class="n">hex</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">bin_type</span> <span class="o">==</span> <span class="s1">&#39;mutez&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Decimal</span><span class="p">(</span><span class="n">val</span><span class="p">)</span> <span class="o">/</span> <span class="mi">10</span> <span class="o">**</span> <span class="mi">6</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">val</span>
+
+    <span class="k">if</span> <span class="n">type_expr</span><span class="p">[</span><span class="s1">&#39;prim&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;storage&#39;</span><span class="p">,</span> <span class="s1">&#39;parameter&#39;</span><span class="p">]:</span>
+        <span class="n">type_expr</span> <span class="o">=</span> <span class="n">type_expr</span><span class="p">[</span><span class="s1">&#39;args&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">bin_root</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+        <span class="n">type_expr</span> <span class="o">=</span> <span class="n">type_expr</span><span class="p">[</span><span class="s1">&#39;args&#39;</span><span class="p">][</span><span class="nb">int</span><span class="p">(</span><span class="n">idx</span><span class="p">)]</span>
+
+    <span class="k">return</span> <span class="n">parse_expression</span><span class="p">(</span><span class="n">val_expr</span><span class="p">,</span> <span class="n">type_expr</span><span class="p">,</span> <span class="n">decode_selector</span><span class="p">,</span> <span class="n">bin_root</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="parse_json"><a class="viewcode-back" href="../../../pack.html#pytezos.michelson.micheline.parse_json">[docs]</a><span class="k">def</span> <span class="nf">parse_json</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">schema</span><span class="p">:</span> <span class="n">Schema</span><span class="p">,</span> <span class="n">bin_root</span><span class="o">=</span><span class="s1">&#39;0&#39;</span><span class="p">):</span>
+    <span class="n">bin_values</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">dict</span><span class="p">)</span>  <span class="c1"># type: Dict[str, dict]</span>
+
+    <span class="k">def</span> <span class="nf">parse_entry</span><span class="p">(</span><span class="n">bin_path</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">bin_path</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+            <span class="n">lpath</span> <span class="o">=</span> <span class="n">bin_path</span><span class="p">[:</span><span class="n">i</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">schema</span><span class="o">.</span><span class="n">bin_types</span><span class="p">[</span><span class="n">lpath</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;or&#39;</span><span class="p">,</span> <span class="s1">&#39;router&#39;</span><span class="p">,</span> <span class="s1">&#39;enum&#39;</span><span class="p">]:</span>
+                <span class="n">bin_values</span><span class="p">[</span><span class="n">lpath</span><span class="p">][</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="n">bin_path</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="k">elif</span> <span class="n">schema</span><span class="o">.</span><span class="n">bin_types</span><span class="p">[</span><span class="n">lpath</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;list&#39;</span><span class="p">,</span> <span class="s1">&#39;set&#39;</span><span class="p">,</span> <span class="s1">&#39;map&#39;</span><span class="p">,</span> <span class="s1">&#39;big_map&#39;</span><span class="p">]:</span>
+                <span class="k">return</span>
+
+    <span class="k">def</span> <span class="nf">parse_comparable</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">bin_path</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">schema</span><span class="o">.</span><span class="n">bin_types</span><span class="p">[</span><span class="n">bin_path</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;keypair&#39;</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">),</span> <span class="sa">f</span><span class="s1">&#39;tuple expected, got </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">arg_path</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">schema</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="n">bin_path</span><span class="p">][</span><span class="s1">&#39;args&#39;</span><span class="p">]):</span>
+                <span class="k">assert</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">key</span><span class="p">),</span> <span class="sa">f</span><span class="s1">&#39;not enough elements in tuple </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1">&#39;</span>
+                <span class="n">bin_values</span><span class="p">[</span><span class="n">arg_path</span><span class="p">][</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="n">key</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">bin_values</span><span class="p">[</span><span class="n">bin_path</span><span class="p">][</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="n">key</span>
+
+    <span class="k">def</span> <span class="nf">parse_node</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">json_path</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="s1">&#39;0&#39;</span><span class="p">):</span>
+        <span class="n">bin_path</span> <span class="o">=</span> <span class="n">schema</span><span class="o">.</span><span class="n">json_to_bin</span><span class="p">[</span><span class="n">json_path</span><span class="p">]</span>
+        <span class="n">bin_type</span> <span class="o">=</span> <span class="n">schema</span><span class="o">.</span><span class="n">bin_types</span><span class="p">[</span><span class="n">bin_path</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">bin_type</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;map&#39;</span><span class="p">,</span> <span class="s1">&#39;big_map&#39;</span><span class="p">]:</span>
+                <span class="n">bin_values</span><span class="p">[</span><span class="n">bin_path</span><span class="p">][</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">node</span><span class="p">))</span>
+                <span class="n">parse_entry</span><span class="p">(</span><span class="n">bin_path</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
+                    <span class="n">parse_comparable</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">bin_path</span><span class="o">=</span><span class="n">bin_path</span> <span class="o">+</span> <span class="s1">&#39;0&#39;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s1">:</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+                    <span class="n">parse_node</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">json_path</span><span class="o">=</span><span class="n">join</span><span class="p">(</span><span class="n">json_path</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">&#39;</span><span class="p">),</span> <span class="n">index</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s1">:</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+            <span class="k">elif</span> <span class="n">bin_type</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;pair&#39;</span><span class="p">,</span> <span class="s1">&#39;or&#39;</span><span class="p">,</span> <span class="s1">&#39;namedtuple&#39;</span><span class="p">,</span> <span class="s1">&#39;router&#39;</span><span class="p">]:</span>
+                <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="n">parse_node</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">json_path</span><span class="o">=</span><span class="n">join</span><span class="p">(</span><span class="n">json_path</span><span class="p">,</span> <span class="n">key</span><span class="p">),</span> <span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="kc">False</span><span class="p">,</span> <span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">bin_type</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">bin_type</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;list&#39;</span><span class="p">,</span> <span class="s1">&#39;set&#39;</span><span class="p">]:</span>
+                <span class="n">bin_values</span><span class="p">[</span><span class="n">bin_path</span><span class="p">][</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">node</span><span class="p">))</span>
+                <span class="n">parse_entry</span><span class="p">(</span><span class="n">bin_path</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">node</span><span class="p">):</span>
+                    <span class="n">parse_node</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">json_path</span><span class="o">=</span><span class="n">join</span><span class="p">(</span><span class="n">json_path</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">&#39;</span><span class="p">),</span> <span class="n">index</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s1">:</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+            <span class="k">elif</span> <span class="n">bin_type</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;pair&#39;</span><span class="p">,</span> <span class="s1">&#39;tuple&#39;</span><span class="p">]:</span>
+                <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">node</span><span class="p">):</span>
+                    <span class="n">parse_node</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">json_path</span><span class="o">=</span><span class="n">join</span><span class="p">(</span><span class="n">json_path</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)),</span> <span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">)</span>
+
+            <span class="k">elif</span> <span class="n">bin_type</span> <span class="o">==</span> <span class="s1">&#39;lambda&#39;</span><span class="p">:</span>
+                <span class="n">bin_values</span><span class="p">[</span><span class="n">bin_path</span><span class="p">][</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="n">node</span>
+
+            <span class="k">elif</span> <span class="n">bin_type</span> <span class="o">==</span> <span class="s1">&#39;or&#39;</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="kc">False</span><span class="p">,</span> <span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">bin_path</span><span class="p">)</span>  <span class="c1"># must be at least lr encoded</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">bin_type</span> <span class="o">==</span> <span class="s1">&#39;enum&#39;</span><span class="p">:</span>
+                <span class="n">parse_node</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">json_path</span><span class="o">=</span><span class="n">join</span><span class="p">(</span><span class="n">json_path</span><span class="p">,</span> <span class="n">node</span><span class="p">),</span> <span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">bin_values</span><span class="p">[</span><span class="n">bin_path</span><span class="p">][</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="n">node</span>
+                <span class="n">parse_entry</span><span class="p">(</span><span class="n">bin_path</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">schema</span><span class="o">.</span><span class="n">bin_types</span><span class="p">[</span><span class="n">bin_root</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;option&#39;</span><span class="p">:</span>
+        <span class="n">bin_root</span> <span class="o">+=</span> <span class="s1">&#39;0&#39;</span>
+
+    <span class="n">json_root</span> <span class="o">=</span> <span class="nb">next</span><span class="p">((</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">schema</span><span class="o">.</span><span class="n">json_to_bin</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">v</span> <span class="o">==</span> <span class="n">bin_root</span><span class="p">),</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">json_root</span><span class="p">:</span>
+        <span class="n">parse_node</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">json_root</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">parse_comparable</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">bin_root</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="s1">&#39;0&#39;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">bin_values</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="make_micheline"><a class="viewcode-back" href="../../../pack.html#pytezos.michelson.micheline.make_micheline">[docs]</a><span class="k">def</span> <span class="nf">make_micheline</span><span class="p">(</span><span class="n">bin_values</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">bin_types</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">bin_root</span><span class="o">=</span><span class="s1">&#39;0&#39;</span><span class="p">,</span> <span class="n">binary</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">encode_node</span><span class="p">(</span><span class="n">bin_path</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="s1">&#39;0&#39;</span><span class="p">):</span>
+        <span class="n">bin_type</span> <span class="o">=</span> <span class="n">bin_types</span><span class="p">[</span><span class="n">bin_path</span><span class="p">]</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">bin_values</span><span class="p">[</span><span class="n">bin_path</span><span class="p">][</span><span class="n">index</span><span class="p">]</span> <span class="k">if</span> <span class="n">bin_path</span> <span class="ow">in</span> <span class="n">bin_values</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="n">optional</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">bin_path</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">bin_types</span><span class="p">[</span><span class="n">bin_path</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span> <span class="o">==</span> <span class="s1">&#39;option&#39;</span>
+
+        <span class="k">if</span> <span class="n">optional</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span>
+                <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">bin_path</span><span class="p">)</span> <span class="ow">and</span> <span class="n">bin_values</span><span class="p">[</span><span class="n">x</span><span class="p">][</span><span class="n">index</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="n">bin_values</span><span class="p">)):</span>
+            <span class="c1"># TODO: unit???</span>
+            <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">prim</span><span class="o">=</span><span class="s1">&#39;None&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">bin_type</span> <span class="o">==</span> <span class="s1">&#39;option&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">encode_node</span><span class="p">(</span><span class="n">bin_path</span> <span class="o">+</span> <span class="s1">&#39;0&#39;</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">bin_type</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;pair&#39;</span><span class="p">,</span> <span class="s1">&#39;tuple&#39;</span><span class="p">,</span> <span class="s1">&#39;keypair&#39;</span><span class="p">,</span> <span class="s1">&#39;namedtuple&#39;</span><span class="p">]:</span>
+            <span class="k">assert</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+                <span class="n">prim</span><span class="o">=</span><span class="s1">&#39;Pair&#39;</span><span class="p">,</span>
+                <span class="n">args</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">encode_node</span><span class="p">(</span><span class="n">bin_path</span> <span class="o">+</span> <span class="n">x</span><span class="p">,</span> <span class="n">index</span><span class="p">),</span> <span class="s1">&#39;01&#39;</span><span class="p">))</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="n">bin_type</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;map&#39;</span><span class="p">,</span> <span class="s1">&#39;big_map&#39;</span><span class="p">]:</span>
+            <span class="k">assert</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+                <span class="k">assert</span> <span class="n">bin_type</span> <span class="o">==</span> <span class="s1">&#39;big_map&#39;</span>
+                <span class="n">res</span> <span class="o">=</span> <span class="n">encode_literal</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">bin_type</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">res</span> <span class="o">=</span> <span class="p">[</span><span class="nb">dict</span><span class="p">(</span><span class="n">prim</span><span class="o">=</span><span class="s1">&#39;Elt&#39;</span><span class="p">,</span>
+                            <span class="n">args</span><span class="o">=</span><span class="p">[</span><span class="n">encode_node</span><span class="p">(</span><span class="n">bin_path</span> <span class="o">+</span> <span class="s1">&#39;0&#39;</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s1">:</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">),</span>
+                                  <span class="n">encode_node</span><span class="p">(</span><span class="n">bin_path</span> <span class="o">+</span> <span class="s1">&#39;1&#39;</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s1">:</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)])</span>
+                       <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">value</span> <span class="ow">or</span> <span class="s1">&#39;0&#39;</span><span class="p">))]</span>
+        <span class="k">elif</span> <span class="n">bin_type</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;set&#39;</span><span class="p">,</span> <span class="s1">&#39;list&#39;</span><span class="p">]:</span>
+            <span class="k">assert</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="p">[</span><span class="n">encode_node</span><span class="p">(</span><span class="n">bin_path</span> <span class="o">+</span> <span class="s1">&#39;0&#39;</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s1">:</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+                   <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">value</span> <span class="ow">or</span> <span class="s1">&#39;0&#39;</span><span class="p">))]</span>
+        <span class="k">elif</span> <span class="n">bin_type</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;or&#39;</span><span class="p">,</span> <span class="s1">&#39;router&#39;</span><span class="p">,</span> <span class="s1">&#39;enum&#39;</span><span class="p">]:</span>
+            <span class="k">assert</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">prim</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;0&#39;</span><span class="p">:</span> <span class="s1">&#39;Left&#39;</span><span class="p">,</span> <span class="s1">&#39;1&#39;</span><span class="p">:</span> <span class="s1">&#39;Right&#39;</span><span class="p">}[</span><span class="n">value</span><span class="p">],</span>
+                       <span class="n">args</span><span class="o">=</span><span class="p">[</span><span class="n">encode_node</span><span class="p">(</span><span class="n">bin_path</span> <span class="o">+</span> <span class="n">value</span><span class="p">,</span> <span class="n">index</span><span class="p">)])</span>
+        <span class="k">elif</span> <span class="n">bin_type</span> <span class="o">==</span> <span class="s1">&#39;lambda&#39;</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">michelson_to_micheline</span><span class="p">(</span><span class="n">bin_values</span><span class="p">[</span><span class="n">bin_path</span><span class="p">][</span><span class="n">index</span><span class="p">])</span>
+        <span class="k">elif</span> <span class="n">bin_type</span> <span class="o">==</span> <span class="s1">&#39;unit&#39;</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">prim</span><span class="o">=</span><span class="s1">&#39;Unit&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="k">if</span> <span class="n">value</span> <span class="o">==</span> <span class="n">bin_type</span><span class="p">:</span>
+                <span class="n">res</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">prim</span><span class="o">=</span><span class="s1">&#39;Unit&#39;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">res</span> <span class="o">=</span> <span class="n">encode_literal</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">bin_type</span><span class="p">,</span> <span class="n">binary</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">optional</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">prim</span><span class="o">=</span><span class="s1">&#39;Some&#39;</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">[</span><span class="n">res</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">res</span>
+
+    <span class="k">return</span> <span class="n">encode_node</span><span class="p">(</span><span class="n">bin_root</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="make_default"><a class="viewcode-back" href="../../../pack.html#pytezos.michelson.micheline.make_default">[docs]</a><span class="k">def</span> <span class="nf">make_default</span><span class="p">(</span><span class="n">bin_types</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">root</span><span class="o">=</span><span class="s1">&#39;0&#39;</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">encode_node</span><span class="p">(</span><span class="n">bin_path</span><span class="p">):</span>
+        <span class="n">bin_type</span> <span class="o">=</span> <span class="n">bin_types</span><span class="p">[</span><span class="n">bin_path</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">bin_type</span> <span class="o">==</span> <span class="s1">&#39;option&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">prim</span><span class="o">=</span><span class="s1">&#39;None&#39;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">bin_type</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;pair&#39;</span><span class="p">,</span> <span class="s1">&#39;tuple&#39;</span><span class="p">,</span> <span class="s1">&#39;namedtuple&#39;</span><span class="p">]:</span>
+            <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span>
+                <span class="n">prim</span><span class="o">=</span><span class="s1">&#39;Pair&#39;</span><span class="p">,</span>
+                <span class="n">args</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">encode_node</span><span class="p">(</span><span class="n">bin_path</span> <span class="o">+</span> <span class="n">x</span><span class="p">),</span> <span class="s1">&#39;01&#39;</span><span class="p">))</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="n">bin_type</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;map&#39;</span><span class="p">,</span> <span class="s1">&#39;big_map&#39;</span><span class="p">,</span> <span class="s1">&#39;set&#39;</span><span class="p">,</span> <span class="s1">&#39;list&#39;</span><span class="p">]:</span>
+            <span class="k">return</span> <span class="p">[]</span>
+        <span class="k">elif</span> <span class="n">bin_type</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;int&#39;</span><span class="p">,</span> <span class="s1">&#39;nat&#39;</span><span class="p">,</span> <span class="s1">&#39;mutez&#39;</span><span class="p">,</span> <span class="s1">&#39;timestamp&#39;</span><span class="p">]:</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;int&#39;</span><span class="p">:</span> <span class="s1">&#39;0&#39;</span><span class="p">}</span>
+        <span class="k">elif</span> <span class="n">bin_type</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;string&#39;</span><span class="p">,</span> <span class="s1">&#39;bytes&#39;</span><span class="p">]:</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;string&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">}</span>
+        <span class="k">elif</span> <span class="n">bin_type</span> <span class="o">==</span> <span class="s1">&#39;bool&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;prim&#39;</span><span class="p">:</span> <span class="s1">&#39;False&#39;</span><span class="p">}</span>
+        <span class="k">elif</span> <span class="n">bin_type</span> <span class="o">==</span> <span class="s1">&#39;unit&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;prim&#39;</span><span class="p">:</span> <span class="s1">&#39;Unit&#39;</span><span class="p">}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Cannot create default value for `</span><span class="si">{</span><span class="n">bin_type</span><span class="si">}</span><span class="s1">` at `</span><span class="si">{</span><span class="n">bin_path</span><span class="si">}</span><span class="s1">`&#39;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">encode_node</span><span class="p">(</span><span class="n">root</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="michelson_to_micheline"><a class="viewcode-back" href="../../../pack.html#pytezos.michelson.micheline.michelson_to_micheline">[docs]</a><span class="k">def</span> <span class="nf">michelson_to_micheline</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">parser</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Converts michelson source text into Micheline expression.</span>
+
+<span class="sd">    :param data: Michelson string</span>
+<span class="sd">    :param parser: custom Michelson parser</span>
+<span class="sd">    :returns: Micheline expression</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">parser</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">parser</span> <span class="o">=</span> <span class="n">michelson_parser</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">data</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="is_optional"><a class="viewcode-back" href="../../../pack.html#pytezos.michelson.micheline.is_optional">[docs]</a><span class="k">def</span> <span class="nf">is_optional</span><span class="p">(</span><span class="n">schema</span><span class="p">,</span> <span class="n">bin_path</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">bin_path</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">schema</span><span class="o">.</span><span class="n">bin_types</span><span class="p">[</span><span class="n">bin_path</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span> <span class="o">==</span> <span class="s1">&#39;option&#39;</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Baking Bad
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

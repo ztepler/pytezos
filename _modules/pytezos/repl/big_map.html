@@ -1,0 +1,409 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pytezos.repl.big_map &mdash; PyTezos  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+    <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> PyTezos
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../quick_start.html">Quick start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../integration_tests.html">Michelson integration tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pytezos_cli.html">Pytezos CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../high_level.html">High-level interfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../crypto.html">Cryptography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../operation_groups.html">Building and parsing operations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rpc_queries.html">RPC query engine</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../script_wrappers.html">Michelson script wrappers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pack.html">Michelson type encoding</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../code.html">Working with Michelson code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../repl.html">Michelson REPL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../inspect_proposals.html">Inspecting proposals</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">PyTezos</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>pytezos.repl.big_map</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pytezos.repl.big_map</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span>
+<span class="kn">from</span> <span class="nn">simplejson</span> <span class="kn">import</span> <span class="n">JSONDecodeError</span>
+
+<span class="kn">from</span> <span class="nn">pytezos.interop</span> <span class="kn">import</span> <span class="n">Interop</span>
+<span class="kn">from</span> <span class="nn">pytezos.repl.types</span> <span class="kn">import</span> <span class="n">StackItem</span><span class="p">,</span> <span class="n">Map</span><span class="p">,</span> <span class="n">BigMap</span>
+<span class="kn">from</span> <span class="nn">pytezos.repl.parser</span> <span class="kn">import</span> <span class="n">parse_expression</span><span class="p">,</span> <span class="n">assert_expr_equal</span><span class="p">,</span> <span class="n">get_int</span><span class="p">,</span> <span class="n">assert_comparable</span><span class="p">,</span> <span class="n">assert_big_map_val</span>
+<span class="kn">from</span> <span class="nn">pytezos.michelson.pack</span> <span class="kn">import</span> <span class="n">get_key_hash</span>
+
+
+<div class="viewcode-block" id="make_elt"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.big_map.make_elt">[docs]</a><span class="k">def</span> <span class="nf">make_elt</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;prim&#39;</span><span class="p">:</span> <span class="s1">&#39;Elt&#39;</span><span class="p">,</span> <span class="s1">&#39;args&#39;</span><span class="p">:</span> <span class="n">args</span><span class="p">}</span></div>
+
+
+<div class="viewcode-block" id="elt_to_update"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.big_map.elt_to_update">[docs]</a><span class="k">def</span> <span class="nf">elt_to_update</span><span class="p">(</span><span class="n">elt</span><span class="p">,</span> <span class="n">type_expr</span><span class="p">,</span> <span class="n">big_map_id</span><span class="p">):</span>
+    <span class="n">key_hash</span> <span class="o">=</span> <span class="n">get_key_hash</span><span class="p">(</span><span class="n">elt</span><span class="p">[</span><span class="s1">&#39;args&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">type_expr</span><span class="p">[</span><span class="s1">&#39;args&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">update</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;action&#39;</span><span class="p">:</span> <span class="s1">&#39;update&#39;</span><span class="p">,</span>
+              <span class="s1">&#39;big_map&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">big_map_id</span><span class="p">),</span>
+              <span class="s1">&#39;key_hash&#39;</span><span class="p">:</span> <span class="n">key_hash</span><span class="p">,</span>
+              <span class="s1">&#39;key&#39;</span><span class="p">:</span> <span class="n">elt</span><span class="p">[</span><span class="s1">&#39;args&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+              <span class="s1">&#39;value&#39;</span><span class="p">:</span> <span class="n">elt</span><span class="p">[</span><span class="s1">&#39;args&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]}</span>
+    <span class="k">return</span> <span class="n">key_hash</span><span class="p">,</span> <span class="n">update</span></div>
+
+
+<div class="viewcode-block" id="BigMapPool"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.big_map.BigMapPool">[docs]</a><span class="k">class</span> <span class="nc">BigMapPool</span><span class="p">:</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">maps</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># type: Dict[int, Map]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tmp_id</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alloc_id</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">maybe_remove</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+
+<div class="viewcode-block" id="BigMapPool.reset"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.big_map.BigMapPool.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">maps</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tmp_id</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alloc_id</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">maybe_remove</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="BigMapPool.empty"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.big_map.BigMapPool.empty">[docs]</a>    <span class="k">def</span> <span class="nf">empty</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k_type_expr</span><span class="p">,</span> <span class="n">v_type_expr</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BigMap</span><span class="p">:</span>
+        <span class="n">assert_comparable</span><span class="p">(</span><span class="n">k_type_expr</span><span class="p">)</span>
+        <span class="n">assert_big_map_val</span><span class="p">(</span><span class="n">v_type_expr</span><span class="p">)</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">BigMap</span><span class="p">(</span><span class="n">val</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tmp_id</span><span class="p">,</span>
+                     <span class="n">val_expr</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;int&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tmp_id</span><span class="p">),</span> <span class="s1">&#39;_diff&#39;</span><span class="p">:</span> <span class="p">{}},</span>
+                     <span class="n">type_expr</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;prim&#39;</span><span class="p">:</span> <span class="s1">&#39;big_map&#39;</span><span class="p">,</span> <span class="s1">&#39;args&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">k_type_expr</span><span class="p">,</span> <span class="n">v_type_expr</span><span class="p">]})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tmp_id</span> <span class="o">-=</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="n">res</span></div>
+
+    <span class="k">def</span> <span class="nf">_pre_alloc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val_expr</span><span class="p">,</span> <span class="n">type_expr</span><span class="p">):</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;int&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tmp_id</span><span class="p">),</span>
+               <span class="s1">&#39;_diff&#39;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(</span><span class="n">elt_to_update</span><span class="p">(</span><span class="n">elt</span><span class="p">,</span> <span class="n">type_expr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tmp_id</span><span class="p">)</span> <span class="k">for</span> <span class="n">elt</span> <span class="ow">in</span> <span class="n">val_expr</span><span class="p">)}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tmp_id</span> <span class="o">-=</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="n">res</span>
+
+    <span class="k">def</span> <span class="nf">_check_allocated</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val_expr</span><span class="p">,</span> <span class="n">type_expr</span><span class="p">,</span> <span class="n">network</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="n">big_map_id</span> <span class="o">=</span> <span class="n">get_int</span><span class="p">(</span><span class="n">val_expr</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">big_map_id</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;expected an allocated big map (&gt;=0), got </span><span class="si">{</span><span class="n">big_map_id</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="k">if</span> <span class="n">big_map_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">maps</span><span class="p">:</span>
+            <span class="n">big_map</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">maps</span><span class="p">[</span><span class="n">big_map_id</span><span class="p">]</span>
+            <span class="n">_</span> <span class="o">=</span> <span class="p">[</span><span class="n">assert_expr_equal</span><span class="p">(</span><span class="n">type_expr</span><span class="p">[</span><span class="s1">&#39;args&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">],</span> <span class="n">big_map</span><span class="o">.</span><span class="n">type_expr</span><span class="p">[</span><span class="s1">&#39;args&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]</span>
+            <span class="k">return</span> <span class="n">big_map_id</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;_diff&#39;</span><span class="p">:</span> <span class="p">{}}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">network</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;big map #</span><span class="si">{</span><span class="n">big_map_id</span><span class="si">}</span><span class="s1"> is not allocated&#39;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">alloc_id</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">alloc_id</span><span class="p">,</span> <span class="n">big_map_id</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">big_map_id</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;_diff&#39;</span><span class="p">:</span> <span class="p">{},</span> <span class="s1">&#39;_network&#39;</span><span class="p">:</span> <span class="n">network</span><span class="p">}</span>
+
+    <span class="k">def</span> <span class="nf">_pre_copy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val_expr</span><span class="p">,</span> <span class="n">type_expr</span><span class="p">,</span> <span class="n">network</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="n">big_map_id</span><span class="p">,</span> <span class="n">kw</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_allocated</span><span class="p">(</span><span class="n">val_expr</span><span class="p">,</span> <span class="n">type_expr</span><span class="p">,</span> <span class="n">network</span><span class="p">)</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;int&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tmp_id</span><span class="p">),</span> <span class="s1">&#39;_copy&#39;</span><span class="p">:</span> <span class="n">big_map_id</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tmp_id</span> <span class="o">-=</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="n">res</span>
+
+    <span class="k">def</span> <span class="nf">_pre_remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val_expr</span><span class="p">,</span> <span class="n">type_expr</span><span class="p">,</span> <span class="n">network</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="n">big_map_id</span><span class="p">,</span> <span class="n">kw</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_allocated</span><span class="p">(</span><span class="n">val_expr</span><span class="p">,</span> <span class="n">type_expr</span><span class="p">,</span> <span class="n">network</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">maybe_remove</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">big_map_id</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;int&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">big_map_id</span><span class="p">),</span> <span class="o">**</span><span class="n">kw</span><span class="p">}</span>
+
+<div class="viewcode-block" id="BigMapPool.pre_alloc"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.big_map.BigMapPool.pre_alloc">[docs]</a>    <span class="k">def</span> <span class="nf">pre_alloc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val_expr</span><span class="p">,</span> <span class="n">type_expr</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">network</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">alloc_selector</span><span class="p">(</span><span class="n">val_node</span><span class="p">,</span> <span class="n">type_node</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="n">type_path</span><span class="p">):</span>
+            <span class="n">prim</span> <span class="o">=</span> <span class="n">type_node</span><span class="p">[</span><span class="s1">&#39;prim&#39;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">prim</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;list&#39;</span><span class="p">,</span> <span class="s1">&#39;set&#39;</span><span class="p">]:</span>
+                <span class="k">return</span> <span class="n">res</span>
+            <span class="k">if</span> <span class="n">prim</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;pair&#39;</span><span class="p">,</span> <span class="s1">&#39;or&#39;</span><span class="p">]:</span>
+                <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;prim&#39;</span><span class="p">:</span> <span class="n">val_node</span><span class="p">[</span><span class="s1">&#39;prim&#39;</span><span class="p">],</span> <span class="s1">&#39;args&#39;</span><span class="p">:</span> <span class="n">res</span><span class="p">}</span>
+            <span class="k">elif</span> <span class="n">prim</span> <span class="o">==</span> <span class="s1">&#39;option&#39;</span> <span class="ow">and</span> <span class="n">val_node</span><span class="p">[</span><span class="s1">&#39;prim&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;Some&#39;</span><span class="p">:</span>
+                <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;prim&#39;</span><span class="p">:</span> <span class="n">val_node</span><span class="p">[</span><span class="s1">&#39;prim&#39;</span><span class="p">],</span> <span class="s1">&#39;args&#39;</span><span class="p">:</span> <span class="n">res</span><span class="p">}</span>
+            <span class="k">elif</span> <span class="n">prim</span> <span class="o">==</span> <span class="s1">&#39;map&#39;</span><span class="p">:</span>
+                <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">make_elt</span><span class="p">,</span> <span class="n">res</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="n">prim</span> <span class="o">==</span> <span class="s1">&#39;big_map&#39;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val_node</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pre_alloc</span><span class="p">(</span><span class="n">val_node</span><span class="p">,</span> <span class="n">type_node</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">copy</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pre_copy</span><span class="p">(</span><span class="n">val_node</span><span class="p">,</span> <span class="n">type_node</span><span class="p">,</span> <span class="n">network</span><span class="o">=</span><span class="n">network</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pre_remove</span><span class="p">(</span><span class="n">val_node</span><span class="p">,</span> <span class="n">type_node</span><span class="p">,</span> <span class="n">network</span><span class="o">=</span><span class="n">network</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">val_node</span>
+
+        <span class="n">val_expr</span> <span class="o">=</span> <span class="n">parse_expression</span><span class="p">(</span><span class="n">val_expr</span><span class="p">,</span> <span class="n">type_expr</span><span class="p">,</span> <span class="n">alloc_selector</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">StackItem</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">val_expr</span><span class="o">=</span><span class="n">val_expr</span><span class="p">,</span> <span class="n">type_expr</span><span class="o">=</span><span class="n">type_expr</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BigMapPool.diff"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.big_map.BigMapPool.diff">[docs]</a>    <span class="k">def</span> <span class="nf">diff</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">storage</span><span class="p">:</span> <span class="n">StackItem</span><span class="p">):</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">alloc_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">alloc_id</span>
+        <span class="n">maybe_remove</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">maybe_remove</span>
+
+        <span class="k">def</span> <span class="nf">diff_selector</span><span class="p">(</span><span class="n">val_node</span><span class="p">,</span> <span class="n">type_node</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">type_path</span><span class="p">):</span>
+            <span class="k">nonlocal</span> <span class="n">res</span><span class="p">,</span> <span class="n">alloc_id</span><span class="p">,</span> <span class="n">maybe_remove</span>
+            <span class="n">prim</span> <span class="o">=</span> <span class="n">type_node</span><span class="p">[</span><span class="s1">&#39;prim&#39;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">prim</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;list&#39;</span><span class="p">,</span> <span class="s1">&#39;set&#39;</span><span class="p">]:</span>
+                <span class="k">return</span> <span class="n">val</span>
+            <span class="k">if</span> <span class="n">prim</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;pair&#39;</span><span class="p">,</span> <span class="s1">&#39;or&#39;</span><span class="p">]:</span>
+                <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;prim&#39;</span><span class="p">:</span> <span class="n">val_node</span><span class="p">[</span><span class="s1">&#39;prim&#39;</span><span class="p">],</span> <span class="s1">&#39;args&#39;</span><span class="p">:</span> <span class="n">val</span><span class="p">}</span>
+            <span class="k">elif</span> <span class="n">prim</span> <span class="o">==</span> <span class="s1">&#39;option&#39;</span> <span class="ow">and</span> <span class="n">val_node</span><span class="p">[</span><span class="s1">&#39;prim&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;Some&#39;</span><span class="p">:</span>
+                <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;prim&#39;</span><span class="p">:</span> <span class="n">val_node</span><span class="p">[</span><span class="s1">&#39;prim&#39;</span><span class="p">],</span> <span class="s1">&#39;args&#39;</span><span class="p">:</span> <span class="n">val</span><span class="p">}</span>
+            <span class="k">elif</span> <span class="n">prim</span> <span class="o">==</span> <span class="s1">&#39;map&#39;</span><span class="p">:</span>
+                <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">make_elt</span><span class="p">,</span> <span class="n">val</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="n">prim</span> <span class="o">==</span> <span class="s1">&#39;big_map&#39;</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="nb">int</span><span class="p">),</span> <span class="sa">f</span><span class="s1">&#39;expected big map pointer&#39;</span>
+                <span class="k">if</span> <span class="n">val</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">big_map_id</span> <span class="o">=</span> <span class="n">alloc_id</span>
+                    <span class="k">if</span> <span class="n">val_node</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;_copy&#39;</span><span class="p">):</span>
+                        <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s1">&#39;action&#39;</span><span class="p">:</span> <span class="s1">&#39;copy&#39;</span><span class="p">,</span>
+                                    <span class="s1">&#39;source_big_map&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">val_node</span><span class="p">[</span><span class="s1">&#39;_copy&#39;</span><span class="p">]),</span>
+                                    <span class="s1">&#39;destination_big_map&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">big_map_id</span><span class="p">)})</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s1">&#39;action&#39;</span><span class="p">:</span> <span class="s1">&#39;alloc&#39;</span><span class="p">,</span>
+                                    <span class="s1">&#39;big_map&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">big_map_id</span><span class="p">),</span>
+                                    <span class="s1">&#39;key_type&#39;</span><span class="p">:</span> <span class="n">type_node</span><span class="p">[</span><span class="s1">&#39;args&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+                                    <span class="s1">&#39;value_type&#39;</span><span class="p">:</span> <span class="n">type_node</span><span class="p">[</span><span class="s1">&#39;args&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]})</span>
+                    <span class="n">alloc_id</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">big_map_id</span> <span class="o">=</span> <span class="n">val</span>
+                    <span class="n">maybe_remove</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">big_map_id</span><span class="p">)</span>
+
+                <span class="n">res</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">{</span><span class="o">**</span><span class="n">x</span><span class="p">,</span> <span class="s1">&#39;big_map&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">big_map_id</span><span class="p">)},</span> <span class="n">val_node</span><span class="p">[</span><span class="s1">&#39;_diff&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+                <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;int&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">big_map_id</span><span class="p">)}</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">val_node</span>
+
+        <span class="n">val_expr</span> <span class="o">=</span> <span class="n">parse_expression</span><span class="p">(</span><span class="n">storage</span><span class="o">.</span><span class="n">val_expr</span><span class="p">,</span> <span class="n">storage</span><span class="o">.</span><span class="n">type_expr</span><span class="p">,</span> <span class="n">diff_selector</span><span class="p">)</span>
+        <span class="n">res</span><span class="o">.</span><span class="n">extend</span><span class="p">([{</span><span class="s1">&#39;action&#39;</span><span class="p">:</span> <span class="s1">&#39;remove&#39;</span><span class="p">,</span> <span class="s1">&#39;big_map&#39;</span><span class="p">:</span> <span class="n">x</span><span class="p">}</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">maybe_remove</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">StackItem</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">val_expr</span><span class="p">,</span> <span class="n">storage</span><span class="o">.</span><span class="n">type_expr</span><span class="p">),</span> <span class="n">res</span></div>
+
+<div class="viewcode-block" id="BigMapPool.commit"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.big_map.BigMapPool.commit">[docs]</a>    <span class="k">def</span> <span class="nf">commit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">big_map_diff</span><span class="p">:</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">diff</span> <span class="ow">in</span> <span class="n">big_map_diff</span><span class="p">:</span>
+            <span class="n">big_map_id</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">diff</span><span class="p">[</span><span class="s1">&#39;big_map&#39;</span><span class="p">])</span>
+            <span class="n">raw_map</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">maps</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">big_map_id</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">diff</span><span class="p">[</span><span class="s1">&#39;action&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;alloc&#39;</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="n">raw_map</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;#</span><span class="si">{</span><span class="n">big_map_id</span><span class="si">}</span><span class="s1"> already allocated&#39;</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">maps</span><span class="p">[</span><span class="n">big_map_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">Map</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">k_type_expr</span><span class="o">=</span><span class="n">diff</span><span class="p">[</span><span class="s1">&#39;key_type&#39;</span><span class="p">],</span> <span class="n">v_type_expr</span><span class="o">=</span><span class="n">diff</span><span class="p">[</span><span class="s1">&#39;value_type&#39;</span><span class="p">])</span>
+            <span class="k">elif</span> <span class="n">diff</span><span class="p">[</span><span class="s1">&#39;action&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;remove&#39;</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="n">raw_map</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;#</span><span class="si">{</span><span class="n">big_map_id</span><span class="si">}</span><span class="s1"> is not allocated&#39;</span>
+                <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">maps</span><span class="p">[</span><span class="n">big_map_id</span><span class="p">]</span>
+            <span class="k">elif</span> <span class="n">diff</span><span class="p">[</span><span class="s1">&#39;action&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;update&#39;</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="n">raw_map</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;#</span><span class="si">{</span><span class="n">big_map_id</span><span class="si">}</span><span class="s1"> is not allocated&#39;</span>
+                <span class="n">key</span> <span class="o">=</span> <span class="n">raw_map</span><span class="o">.</span><span class="n">make_key</span><span class="p">(</span><span class="n">diff</span><span class="p">[</span><span class="s1">&#39;key&#39;</span><span class="p">])</span>
+                <span class="k">if</span> <span class="n">diff</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;value&#39;</span><span class="p">):</span>
+                    <span class="n">val</span> <span class="o">=</span> <span class="n">raw_map</span><span class="o">.</span><span class="n">make_val</span><span class="p">(</span><span class="n">diff</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">])</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">maps</span><span class="p">[</span><span class="n">big_map_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">raw_map</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">maps</span><span class="p">[</span><span class="n">big_map_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">raw_map</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">big_map_diff</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">alloc_id</span> <span class="o">=</span> <span class="nb">max</span><span class="p">([</span><span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="s1">&#39;big_map&#39;</span><span class="p">])</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">big_map_diff</span><span class="p">])</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">maybe_remove</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span></div>
+
+    <span class="k">def</span> <span class="nf">_get_big_map_val</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">big_map</span><span class="p">:</span> <span class="n">BigMap</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">StackItem</span><span class="p">):</span>
+        <span class="n">key_hash</span> <span class="o">=</span> <span class="n">get_key_hash</span><span class="p">(</span><span class="n">key</span><span class="o">.</span><span class="n">val_expr</span><span class="p">,</span> <span class="n">key</span><span class="o">.</span><span class="n">type_expr</span><span class="p">)</span>
+        <span class="n">network</span> <span class="o">=</span> <span class="n">big_map</span><span class="o">.</span><span class="n">val_expr</span><span class="p">[</span><span class="s1">&#39;_network&#39;</span><span class="p">]</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">Interop</span><span class="p">()</span><span class="o">.</span><span class="n">using</span><span class="p">(</span><span class="n">network</span><span class="p">)</span><span class="o">.</span><span class="n">shell</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">big_maps</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">big_map</span><span class="p">)][</span><span class="n">key_hash</span><span class="p">]()</span>
+        <span class="k">except</span> <span class="n">JSONDecodeError</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="n">res</span>
+
+<div class="viewcode-block" id="BigMapPool.contains"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.big_map.BigMapPool.contains">[docs]</a>    <span class="k">def</span> <span class="nf">contains</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">big_map</span><span class="p">:</span> <span class="n">BigMap</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">StackItem</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">big_map</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">big_map</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">big_map</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">big_map</span><span class="o">.</span><span class="n">val_expr</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;_network&#39;</span><span class="p">):</span>
+                <span class="n">v_val_expr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_big_map_val</span><span class="p">(</span><span class="n">big_map</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">v_val_expr</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="nb">int</span><span class="p">(</span><span class="n">big_map</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">maps</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;#</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">big_map</span><span class="p">)</span><span class="si">}</span><span class="s1"> is not allocated&#39;</span>
+                <span class="k">return</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">maps</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">big_map</span><span class="p">)]</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="BigMapPool.find"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.big_map.BigMapPool.find">[docs]</a>    <span class="k">def</span> <span class="nf">find</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">big_map</span><span class="p">:</span> <span class="n">BigMap</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">StackItem</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;StackItem&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">big_map</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">big_map</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">big_map</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">big_map</span><span class="o">.</span><span class="n">val_expr</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;_network&#39;</span><span class="p">):</span>
+                <span class="n">v_val_expr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_big_map_val</span><span class="p">(</span><span class="n">big_map</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">v_val_expr</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">StackItem</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">val_expr</span><span class="o">=</span><span class="n">v_val_expr</span><span class="p">,</span> <span class="n">type_expr</span><span class="o">=</span><span class="n">big_map</span><span class="o">.</span><span class="n">type_expr</span><span class="p">[</span><span class="s1">&#39;args&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="nb">int</span><span class="p">(</span><span class="n">big_map</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">maps</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;#</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">big_map</span><span class="p">)</span><span class="si">}</span><span class="s1"> is not allocated&#39;</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">maps</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">big_map</span><span class="p">)]</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">key</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Baking Bad
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
