@@ -447,6 +447,13 @@
     <span class="k">return</span> <span class="n">expr</span><span class="p">(</span><span class="n">prim</span><span class="o">=</span><span class="s1">&#39;IF_NONE&#39;</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="nb">reversed</span><span class="p">(</span><span class="n">args</span><span class="p">)))</span></div>
 
 
+<div class="viewcode-block" id="expand_if_right"><a class="viewcode-back" href="../../../code.html#pytezos.michelson.macros.expand_if_right">[docs]</a><span class="nd">@macro</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^IF_RIGHT$&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">expand_if_right</span><span class="p">(</span><span class="n">prim</span><span class="p">,</span> <span class="n">annots</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="k">assert</span> <span class="ow">not</span> <span class="n">annots</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span>
+    <span class="k">return</span> <span class="n">expr</span><span class="p">(</span><span class="n">prim</span><span class="o">=</span><span class="s1">&#39;IF_LEFT&#39;</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="nb">reversed</span><span class="p">(</span><span class="n">args</span><span class="p">)))</span></div>
+
+
 <div class="viewcode-block" id="expand_set_car"><a class="viewcode-back" href="../../../code.html#pytezos.michelson.macros.expand_set_car">[docs]</a><span class="nd">@macro</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^SET_CAR$&#39;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">expand_set_car</span><span class="p">(</span><span class="n">prim</span><span class="p">,</span> <span class="n">annots</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
     <span class="k">assert</span> <span class="ow">not</span> <span class="n">args</span>

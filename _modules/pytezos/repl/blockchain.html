@@ -167,7 +167,7 @@
 <span class="kn">from</span> <span class="nn">pytezos.repl.context</span> <span class="kn">import</span> <span class="n">Context</span>
 <span class="kn">from</span> <span class="nn">pytezos.repl.types</span> <span class="kn">import</span> <span class="n">assert_stack_type</span><span class="p">,</span> <span class="n">Mutez</span><span class="p">,</span> <span class="n">ChainID</span><span class="p">,</span> <span class="n">Address</span><span class="p">,</span> <span class="n">Contract</span><span class="p">,</span> <span class="n">Option</span><span class="p">,</span> <span class="n">assert_equal_types</span><span class="p">,</span> \
     <span class="n">KeyHash</span><span class="p">,</span> <span class="n">Timestamp</span><span class="p">,</span> <span class="n">expr_equal</span><span class="p">,</span> <span class="n">Operation</span>
-<span class="kn">from</span> <span class="nn">pytezos.repl.parser</span> <span class="kn">import</span> <span class="n">get_entry_expr</span>
+<span class="kn">from</span> <span class="nn">pytezos.repl.parser</span> <span class="kn">import</span> <span class="n">get_entry_expr</span><span class="p">,</span> <span class="n">parse_type</span>
 
 <span class="n">INITIAL_BALANCE</span> <span class="o">=</span> <span class="mi">257000000</span>
 <span class="n">MAINNET_CHAIN_ID</span> <span class="o">=</span> <span class="s1">&#39;NetXdQprcVkpaWU&#39;</span>
@@ -176,11 +176,14 @@
 
 <span class="nd">@instruction</span><span class="p">(</span><span class="s1">&#39;parameter&#39;</span><span class="p">,</span> <span class="n">args_len</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">do_parameter</span><span class="p">(</span><span class="n">ctx</span><span class="p">:</span> <span class="n">Context</span><span class="p">,</span> <span class="n">prim</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">annots</span><span class="p">):</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="n">parse_type</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
     <span class="n">ctx</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s1">&#39;parameter&#39;</span><span class="p">,</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 
 
 <span class="nd">@instruction</span><span class="p">(</span><span class="s1">&#39;storage&#39;</span><span class="p">,</span> <span class="n">args_len</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">do_parameter</span><span class="p">(</span><span class="n">ctx</span><span class="p">:</span> <span class="n">Context</span><span class="p">,</span> <span class="n">prim</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">annots</span><span class="p">):</span>
+    <span class="k">assert</span> <span class="ow">not</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;annots&#39;</span><span class="p">),</span> <span class="s1">&#39;top-level storage annotations are not allowed&#39;</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="n">parse_type</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
     <span class="n">ctx</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s1">&#39;storage&#39;</span><span class="p">,</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 
 

@@ -209,6 +209,24 @@
     <span class="k">pass</span></div>
 
 
+<div class="viewcode-block" id="assert_no_field_annots"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.parser.assert_no_field_annots">[docs]</a><span class="k">def</span> <span class="nf">assert_no_field_annots</span><span class="p">(</span><span class="n">annots</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">annots</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="ow">not</span> <span class="n">x</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;%&#39;</span><span class="p">),</span> <span class="n">annots</span><span class="p">)),</span> \
+            <span class="sa">f</span><span class="s1">&#39;field annotations are not allowed here&#39;</span></div>
+
+
+<div class="viewcode-block" id="assert_single_type_annot"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.parser.assert_single_type_annot">[docs]</a><span class="k">def</span> <span class="nf">assert_single_type_annot</span><span class="p">(</span><span class="n">annots</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">annots</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">),</span> <span class="n">annots</span><span class="p">)))</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">,</span> \
+            <span class="sa">f</span><span class="s1">&#39;multiple type annotations are not allowed&#39;</span></div>
+
+
+<div class="viewcode-block" id="assert_single_var_annot"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.parser.assert_single_var_annot">[docs]</a><span class="k">def</span> <span class="nf">assert_single_var_annot</span><span class="p">(</span><span class="n">annots</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">annots</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;@&#39;</span><span class="p">),</span> <span class="n">annots</span><span class="p">)))</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">,</span> \
+            <span class="sa">f</span><span class="s1">&#39;multiple variable annotations are not allowed&#39;</span></div>
+
+
 <div class="viewcode-block" id="assert_type"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.parser.assert_type">[docs]</a><span class="k">def</span> <span class="nf">assert_type</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">exp_type</span><span class="p">):</span>
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">exp_type</span><span class="p">),</span> <span class="sa">f</span><span class="s1">&#39;expected </span><span class="si">{</span><span class="n">exp_type</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1">, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1">&#39;</span></div>
 
@@ -383,9 +401,16 @@
     <span class="n">prim</span><span class="p">,</span> <span class="n">args</span> <span class="o">=</span> <span class="n">parse_prim_expr</span><span class="p">(</span><span class="n">type_expr</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">prim</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">parsers</span><span class="p">:</span>
         <span class="k">raise</span> <span class="n">MichelsonRuntimeError</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="s1">&#39;unknown primitive&#39;</span><span class="p">,</span> <span class="n">prim</span><span class="p">)</span>
+
     <span class="n">args_len</span><span class="p">,</span> <span class="n">func</span> <span class="o">=</span> <span class="n">parsers</span><span class="p">[</span><span class="n">prim</span><span class="p">]</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">!=</span> <span class="n">args_len</span><span class="p">:</span>
         <span class="k">raise</span> <span class="n">MichelsonRuntimeError</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;expected </span><span class="si">{</span><span class="n">args_len</span><span class="si">}</span><span class="s1"> arg(s), got </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">prim</span><span class="p">)</span>
+
+    <span class="n">assert_single_type_annot</span><span class="p">(</span><span class="n">type_expr</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;annots&#39;</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">prim</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;list&#39;</span><span class="p">,</span> <span class="s1">&#39;set&#39;</span><span class="p">,</span> <span class="s1">&#39;map&#39;</span><span class="p">,</span> <span class="s1">&#39;big_map&#39;</span><span class="p">,</span> <span class="s1">&#39;option&#39;</span><span class="p">,</span> <span class="s1">&#39;contract&#39;</span><span class="p">,</span> <span class="s1">&#39;lambda&#39;</span><span class="p">]:</span>
+        <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
+            <span class="n">assert_no_field_annots</span><span class="p">(</span><span class="n">arg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;annots&#39;</span><span class="p">))</span>
+
     <span class="k">return</span> <span class="n">prim</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">func</span></div>
 
 
