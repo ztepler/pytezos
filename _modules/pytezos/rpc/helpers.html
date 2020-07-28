@@ -381,7 +381,9 @@
 <span class="sd">            {</span>
 <span class="sd">                &quot;script&quot;: &lt;michelson expression&gt;,</span>
 <span class="sd">                &quot;storage&quot;: &lt;michelson expression&gt;,</span>
+<span class="sd">                &quot;entrypoint&quot;: &lt;string&gt;,</span>
 <span class="sd">                &quot;input&quot;: &lt;michelson expression&gt;,</span>
+<span class="sd">                &quot;chain_id&quot;: &lt;base58 encoded&gt;,</span>
 <span class="sd">                &quot;amount&quot;: &lt;mutez&gt;,</span>
 <span class="sd">                &quot;source&quot;: &lt;account address&gt;,  // optional</span>
 <span class="sd">                &quot;payer&quot;: &lt;account address&gt;,  // optional</span>
@@ -417,7 +419,9 @@
 <span class="sd">            {</span>
 <span class="sd">                &quot;script&quot;: &lt;michelson expression&gt;,</span>
 <span class="sd">                &quot;storage&quot;: &lt;michelson expression&gt;,</span>
+<span class="sd">                &quot;entrypoint&quot;: &lt;string&gt;,</span>
 <span class="sd">                &quot;input&quot;: &lt;michelson expression&gt;,</span>
+<span class="sd">                &quot;chain_id&quot;: &lt;base58 encoded&gt;,</span>
 <span class="sd">                &quot;amount&quot;: &lt;mutez&gt;,</span>
 <span class="sd">                &quot;source&quot;: &lt;account address&gt;,  // optional</span>
 <span class="sd">                &quot;payer&quot;: &lt;account address&gt;,  // optional</span>
@@ -431,6 +435,21 @@
 <div class="viewcode-block" id="ScriptsTypecheckCodeQuery"><a class="viewcode-back" href="../../../rpc_queries.html#pytezos.rpc.helpers.ScriptsTypecheckCodeQuery">[docs]</a><span class="k">class</span> <span class="nc">ScriptsTypecheckCodeQuery</span><span class="p">(</span><span class="n">RpcQuery</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s1">&#39;/chains/</span><span class="si">{}</span><span class="s1">/blocks/</span><span class="si">{}</span><span class="s1">/helpers/scripts/typecheck_code&#39;</span><span class="p">):</span>
 
 <div class="viewcode-block" id="ScriptsTypecheckCodeQuery.post"><a class="viewcode-back" href="../../../rpc_queries.html#pytezos.rpc.helpers.ScriptsTypecheckCodeQuery.post">[docs]</a>    <span class="k">def</span> <span class="nf">post</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expression</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Check that some data expression is well formed and of a given type in the current context.</span>
+
+<span class="sd">        :param expression: Json input</span>
+<span class="sd">            {</span>
+<span class="sd">                &quot;program&quot;: &lt;michelson expression&gt;,</span>
+<span class="sd">                &quot;gas&quot;: &lt;bignum&gt;  // optional</span>
+<span class="sd">            }</span>
+<span class="sd">        :returns: Json object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_post</span><span class="p">(</span><span class="n">json</span><span class="o">=</span><span class="n">expression</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="ScriptsTypecheckDataQuery"><a class="viewcode-back" href="../../../rpc_queries.html#pytezos.rpc.helpers.ScriptsTypecheckDataQuery">[docs]</a><span class="k">class</span> <span class="nc">ScriptsTypecheckDataQuery</span><span class="p">(</span><span class="n">RpcQuery</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s1">&#39;/chains/</span><span class="si">{}</span><span class="s1">/blocks/</span><span class="si">{}</span><span class="s1">/helpers/scripts/typecheck_data&#39;</span><span class="p">):</span>
+
+<div class="viewcode-block" id="ScriptsTypecheckDataQuery.post"><a class="viewcode-back" href="../../../rpc_queries.html#pytezos.rpc.helpers.ScriptsTypecheckDataQuery.post">[docs]</a>    <span class="k">def</span> <span class="nf">post</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expression</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Check that some data expression is well formed and of a given type in the current context.</span>
 
 <span class="sd">        :param expression: Json input</span>

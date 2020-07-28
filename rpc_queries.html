@@ -1474,7 +1474,9 @@ and return the resulting fitness and context hash.</p>
 <blockquote>
 <div><p>”script”: &lt;michelson expression&gt;,
 “storage”: &lt;michelson expression&gt;,
+“entrypoint”: &lt;string&gt;,
 “input”: &lt;michelson expression&gt;,
+“chain_id”: &lt;base58 encoded&gt;,
 “amount”: &lt;mutez&gt;,
 “source”: &lt;account address&gt;,  // optional
 “payer”: &lt;account address&gt;,  // optional
@@ -1554,7 +1556,9 @@ and return the resulting fitness and context hash.</p>
 <blockquote>
 <div><p>”script”: &lt;michelson expression&gt;,
 “storage”: &lt;michelson expression&gt;,
+“entrypoint”: &lt;string&gt;,
 “input”: &lt;michelson expression&gt;,
+“chain_id”: &lt;base58 encoded&gt;,
 “amount”: &lt;mutez&gt;,
 “source”: &lt;account address&gt;,  // optional
 “payer”: &lt;account address&gt;,  // optional
@@ -1588,6 +1592,43 @@ and return the resulting fitness and context hash.</p>
 <dl class="py method">
 <dt id="pytezos.rpc.helpers.ScriptsTypecheckCodeQuery.post">
 <code class="sig-name descname">post</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">expression</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/rpc/helpers.html#ScriptsTypecheckCodeQuery.post"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.rpc.helpers.ScriptsTypecheckCodeQuery.post" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check that some data expression is well formed and of a given type in the current context.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>expression</strong> – <p>Json input
+{</p>
+<blockquote>
+<div><p>”program”: &lt;michelson expression&gt;,
+“gas”: &lt;bignum&gt;  // optional</p>
+</div></blockquote>
+<p>}</p>
+</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Json object</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="pytezos.rpc.helpers.ScriptsTypecheckDataQuery">
+<em class="property">class </em><code class="sig-prename descclassname">pytezos.rpc.helpers.</code><code class="sig-name descname">ScriptsTypecheckDataQuery</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">node</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#pytezos.rpc.node.RpcNode" title="pytezos.rpc.node.RpcNode">pytezos.rpc.node.RpcNode</a></span></em>, <em class="sig-param"><span class="n">path</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">caching</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">params</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">timeout</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/rpc/helpers.html#ScriptsTypecheckDataQuery"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.rpc.helpers.ScriptsTypecheckDataQuery" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py method">
+<dt id="pytezos.rpc.helpers.ScriptsTypecheckDataQuery.__call__">
+<code class="sig-name descname">__call__</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">params</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pytezos.rpc.helpers.ScriptsTypecheckDataQuery.__call__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Call self as a function.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.rpc.helpers.ScriptsTypecheckDataQuery.path">
+<em class="property">property </em><code class="sig-name descname">path</code><a class="headerlink" href="#pytezos.rpc.helpers.ScriptsTypecheckDataQuery.path" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.rpc.helpers.ScriptsTypecheckDataQuery.post">
+<code class="sig-name descname">post</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">expression</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/rpc/helpers.html#ScriptsTypecheckDataQuery.post"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.rpc.helpers.ScriptsTypecheckDataQuery.post" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check that some data expression is well formed and of a given type in the current context.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
