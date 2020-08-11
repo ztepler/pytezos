@@ -205,10 +205,10 @@ Based on the following reference: <a class="reference external" href="https://mi
 <span id="extendable-parser"></span><h2>Extendable parser<a class="headerlink" href="#module-pytezos.repl.parser" title="Permalink to this headline">¶</a></h2>
 <dl class="py exception">
 <dt id="pytezos.repl.parser.MichelsonRuntimeError">
-<em class="property">exception </em><code class="sig-prename descclassname">pytezos.repl.parser.</code><code class="sig-name descname">MichelsonRuntimeError</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">message</span></em>, <em class="sig-param"><span class="n">trace</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/parser.html#MichelsonRuntimeError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.parser.MichelsonRuntimeError" title="Permalink to this definition">¶</a></dt>
+<em class="property">exception </em><code class="sig-prename descclassname">pytezos.repl.parser.</code><code class="sig-name descname">MichelsonRuntimeError</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">message</span></em>, <em class="sig-param"><span class="n">trace</span></em>, <em class="sig-param"><span class="n">data</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/parser.html#MichelsonRuntimeError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.parser.MichelsonRuntimeError" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="py method">
 <dt id="pytezos.repl.parser.MichelsonRuntimeError.init">
-<em class="property">classmethod </em><code class="sig-name descname">init</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">message</span></em>, <em class="sig-param"><span class="n">prim</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/parser.html#MichelsonRuntimeError.init"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.parser.MichelsonRuntimeError.init" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="sig-name descname">init</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">message</span></em>, <em class="sig-param"><span class="n">prim</span></em>, <em class="sig-param"><span class="n">data</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/parser.html#MichelsonRuntimeError.init"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.parser.MichelsonRuntimeError.init" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -220,7 +220,7 @@ Based on the following reference: <a class="reference external" href="https://mi
 
 <dl class="py exception">
 <dt id="pytezos.repl.parser.MichelsonTypeCheckError">
-<em class="property">exception </em><code class="sig-prename descclassname">pytezos.repl.parser.</code><code class="sig-name descname">MichelsonTypeCheckError</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">message</span></em>, <em class="sig-param"><span class="n">trace</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/parser.html#MichelsonTypeCheckError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.parser.MichelsonTypeCheckError" title="Permalink to this definition">¶</a></dt>
+<em class="property">exception </em><code class="sig-prename descclassname">pytezos.repl.parser.</code><code class="sig-name descname">MichelsonTypeCheckError</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">message</span></em>, <em class="sig-param"><span class="n">trace</span></em>, <em class="sig-param"><span class="n">data</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/parser.html#MichelsonTypeCheckError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.parser.MichelsonTypeCheckError" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py class">
@@ -489,6 +489,11 @@ if you want to build a response you’d need to define a selector.</p>
 <dl class="py function">
 <dt id="pytezos.repl.parser.primitive">
 <code class="sig-prename descclassname">pytezos.repl.parser.</code><code class="sig-name descname">primitive</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">prim</span></em>, <em class="sig-param"><span class="n">args_len</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/parser.html#primitive"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.parser.primitive" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.repl.parser.reduce_type_annots">
+<code class="sig-prename descclassname">pytezos.repl.parser.</code><code class="sig-name descname">reduce_type_annots</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">type_expr</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/repl/parser.html#reduce_type_annots"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.repl.parser.reduce_type_annots" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">

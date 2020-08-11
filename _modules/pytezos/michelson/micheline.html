@@ -167,7 +167,7 @@
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">namedtuple</span><span class="p">,</span> <span class="n">defaultdict</span>
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">lru_cache</span>
 
-<span class="kn">from</span> <span class="nn">pytezos.encoding</span> <span class="kn">import</span> <span class="n">forge_public_key</span><span class="p">,</span> <span class="n">forge_address</span><span class="p">,</span> <span class="n">forge_base58</span>
+<span class="kn">from</span> <span class="nn">pytezos.encoding</span> <span class="kn">import</span> <span class="n">forge_public_key</span><span class="p">,</span> <span class="n">forge_address</span><span class="p">,</span> <span class="n">forge_base58</span><span class="p">,</span> <span class="n">forge_contract</span>
 <span class="kn">from</span> <span class="nn">pytezos.michelson.formatter</span> <span class="kn">import</span> <span class="n">micheline_to_michelson</span>
 <span class="kn">from</span> <span class="nn">pytezos.michelson.grammar</span> <span class="kn">import</span> <span class="n">MichelsonParser</span>
 <span class="kn">from</span> <span class="nn">pytezos.repl.parser</span> <span class="kn">import</span> <span class="n">parse_expression</span><span class="p">,</span> <span class="n">dispatch_core_map</span>
@@ -215,7 +215,10 @@
         <span class="n">value</span> <span class="o">=</span> <span class="n">forge_public_key</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">hex</span><span class="p">()</span>
     <span class="k">elif</span> <span class="n">prim</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;address&#39;</span><span class="p">,</span> <span class="s1">&#39;contract&#39;</span><span class="p">,</span> <span class="s1">&#39;key_hash&#39;</span><span class="p">]</span> <span class="ow">and</span> <span class="n">binary</span><span class="p">:</span>
         <span class="n">core_type</span> <span class="o">=</span> <span class="s1">&#39;bytes&#39;</span>
-        <span class="n">value</span> <span class="o">=</span> <span class="n">forge_address</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">tz_only</span><span class="o">=</span><span class="n">prim</span> <span class="o">==</span> <span class="s1">&#39;key_hash&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">hex</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">prim</span> <span class="o">==</span> <span class="s1">&#39;key_hash&#39;</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">forge_address</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">tz_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">hex</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">forge_contract</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">hex</span><span class="p">()</span>
     <span class="k">elif</span> <span class="n">prim</span> <span class="o">==</span> <span class="s1">&#39;chain_id&#39;</span><span class="p">:</span>  <span class="c1"># and binary ?</span>
         <span class="n">core_type</span> <span class="o">=</span> <span class="s1">&#39;bytes&#39;</span>
         <span class="n">value</span> <span class="o">=</span> <span class="n">forge_base58</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">hex</span><span class="p">()</span>
