@@ -228,25 +228,12 @@
             <span class="sa">f</span><span class="s1">&#39;multiple variable annotations are not allowed&#39;</span></div>
 
 
-<div class="viewcode-block" id="reduce_type_annots"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.parser.reduce_type_annots">[docs]</a><span class="k">def</span> <span class="nf">reduce_type_annots</span><span class="p">(</span><span class="n">type_expr</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">reduce</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
-        <span class="k">def</span> <span class="nf">_ret</span><span class="p">(</span><span class="n">seq</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">seq</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="k">return</span> <span class="n">seq</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">return</span> <span class="p">[</span><span class="n">val</span> <span class="k">if</span> <span class="n">val</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)</span> <span class="k">else</span> <span class="sa">f</span><span class="s1">&#39;:</span><span class="si">{</span><span class="n">val</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">]</span>
-
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-            <span class="k">return</span> <span class="n">_ret</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-            <span class="k">return</span> <span class="n">_ret</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="p">[]</span>
-
+<div class="viewcode-block" id="remove_field_annots"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.parser.remove_field_annots">[docs]</a><span class="k">def</span> <span class="nf">remove_field_annots</span><span class="p">(</span><span class="n">type_expr</span><span class="p">):</span>
     <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span>
         <span class="n">prim</span><span class="o">=</span><span class="n">type_expr</span><span class="p">[</span><span class="s1">&#39;prim&#39;</span><span class="p">],</span>
         <span class="n">args</span><span class="o">=</span><span class="n">type_expr</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;args&#39;</span><span class="p">,</span> <span class="p">[]),</span>
-        <span class="n">annots</span><span class="o">=</span><span class="n">functools</span><span class="o">.</span><span class="n">reduce</span><span class="p">(</span><span class="n">reduce</span><span class="p">,</span> <span class="n">type_expr</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;annots&#39;</span><span class="p">,</span> <span class="p">[]),</span> <span class="p">[])</span>
+        <span class="n">annots</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="ow">not</span> <span class="n">x</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;%&#39;</span><span class="p">),</span>
+                           <span class="n">type_expr</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;annots&#39;</span><span class="p">,</span> <span class="p">[])))</span>
     <span class="p">)</span></div>
 
 
@@ -349,6 +336,10 @@
     <span class="k">return</span> <span class="n">val_expr</span></div>
 
 
+<div class="viewcode-block" id="get_type_annots"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.parser.get_type_annots">[docs]</a><span class="k">def</span> <span class="nf">get_type_annots</span><span class="p">(</span><span class="n">type_expr</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">),</span> <span class="n">type_expr</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;annots&#39;</span><span class="p">,</span> <span class="p">[])))</span></div>
+
+
 <div class="viewcode-block" id="expr_equal"><a class="viewcode-back" href="../../../repl.html#pytezos.repl.parser.expr_equal">[docs]</a><span class="k">def</span> <span class="nf">expr_equal</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
     <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">type</span><span class="p">(</span><span class="n">b</span><span class="p">):</span>
         <span class="k">return</span> <span class="kc">False</span>
@@ -356,8 +347,15 @@
         <span class="k">if</span> <span class="n">a</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;prim&#39;</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">a</span><span class="p">[</span><span class="s1">&#39;prim&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="n">b</span><span class="p">[</span><span class="s1">&#39;prim&#39;</span><span class="p">]:</span>
                 <span class="k">return</span> <span class="kc">False</span>
+            <span class="k">elif</span> <span class="ow">not</span> <span class="n">expr_equal</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;args&#39;</span><span class="p">,</span> <span class="p">[]),</span> <span class="n">b</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;args&#39;</span><span class="p">,</span> <span class="p">[])):</span>
+                <span class="k">return</span> <span class="kc">False</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">return</span> <span class="n">expr_equal</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;args&#39;</span><span class="p">,</span> <span class="p">[]),</span> <span class="n">b</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;args&#39;</span><span class="p">,</span> <span class="p">[]))</span>
+                <span class="n">a_type_annots</span> <span class="o">=</span> <span class="n">get_type_annots</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+                <span class="n">b_type_anonts</span> <span class="o">=</span> <span class="n">get_type_annots</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">a_type_annots</span> <span class="ow">and</span> <span class="n">b_type_anonts</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">a_type_annots</span> <span class="o">==</span> <span class="n">b_type_anonts</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="kc">True</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">a</span> <span class="o">==</span> <span class="n">b</span>
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
