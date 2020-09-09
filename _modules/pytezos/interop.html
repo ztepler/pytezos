@@ -162,12 +162,12 @@
   <h1>Source code for pytezos.interop</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">os.path</span> <span class="kn">import</span> <span class="n">exists</span><span class="p">,</span> <span class="n">expanduser</span>
 
-<span class="kn">from</span> <span class="nn">pytezos.rpc</span> <span class="kn">import</span> <span class="n">ShellQuery</span><span class="p">,</span> <span class="n">RpcNode</span><span class="p">,</span> <span class="n">mainnet</span><span class="p">,</span> <span class="n">babylonnet</span><span class="p">,</span> <span class="n">carthagenet</span><span class="p">,</span> <span class="n">zeronet</span><span class="p">,</span> <span class="n">localhost</span><span class="p">,</span> <span class="n">labnet</span><span class="p">,</span> <span class="n">pool</span>
+<span class="kn">from</span> <span class="nn">pytezos.rpc</span> <span class="kn">import</span> <span class="n">ShellQuery</span><span class="p">,</span> <span class="n">RpcNode</span><span class="p">,</span> <span class="n">mainnet</span><span class="p">,</span> <span class="n">carthagenet</span><span class="p">,</span> <span class="n">dalphanet</span><span class="p">,</span> <span class="n">delphinet</span><span class="p">,</span> <span class="n">localhost</span><span class="p">,</span> <span class="n">labnet</span><span class="p">,</span> <span class="n">pool</span>
 <span class="kn">from</span> <span class="nn">pytezos.crypto</span> <span class="kn">import</span> <span class="n">Key</span><span class="p">,</span> <span class="n">is_installed</span>
 <span class="kn">from</span> <span class="nn">pytezos.encoding</span> <span class="kn">import</span> <span class="n">is_key</span><span class="p">,</span> <span class="n">is_pkh</span>
 <span class="kn">from</span> <span class="nn">pytezos.tools.docstring</span> <span class="kn">import</span> <span class="n">InlineDocstring</span>
 
-<span class="n">default_shell</span> <span class="o">=</span> <span class="s1">&#39;carthagenet&#39;</span>
+<span class="n">default_shell</span> <span class="o">=</span> <span class="s1">&#39;delphinet&#39;</span>
 <span class="n">default_key</span> <span class="o">=</span> <span class="s1">&#39;edsk33N474hxzA4sKeWVM6iuGNGDpX2mGwHNxEA4UbWS8sW3Ta3NKH&#39;</span>  <span class="c1"># please, use responsibly</span>
 <span class="n">default_key_hash</span> <span class="o">=</span> <span class="s1">&#39;tz1cnQZXoznhduu4MVWfJF6GSyP6mMHMbbWa&#39;</span>
 
@@ -225,12 +225,12 @@
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">shell</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="n">networks</span> <span class="o">=</span> <span class="p">{</span>
                 <span class="s1">&#39;mainnet&#39;</span><span class="p">:</span> <span class="n">mainnet</span><span class="p">,</span>
-                <span class="s1">&#39;babylonnet&#39;</span><span class="p">:</span> <span class="n">babylonnet</span><span class="p">,</span>
                 <span class="s1">&#39;carthagenet&#39;</span><span class="p">:</span> <span class="n">carthagenet</span><span class="p">,</span>
-                <span class="s1">&#39;zeronet&#39;</span><span class="p">:</span> <span class="n">zeronet</span><span class="p">,</span>
                 <span class="s1">&#39;sandboxnet&#39;</span><span class="p">:</span> <span class="n">localhost</span><span class="o">.</span><span class="n">sandboxnet</span><span class="p">,</span>
                 <span class="s1">&#39;bbbox&#39;</span><span class="p">:</span> <span class="n">localhost</span><span class="o">.</span><span class="n">bbbox</span><span class="p">,</span>
                 <span class="s1">&#39;labnet&#39;</span><span class="p">:</span> <span class="n">labnet</span><span class="p">,</span>
+                <span class="s1">&#39;dalphanet&#39;</span><span class="p">:</span> <span class="n">dalphanet</span><span class="p">,</span>
+                <span class="s1">&#39;delphinet&#39;</span><span class="p">:</span> <span class="n">delphinet</span><span class="p">,</span>
                 <span class="s1">&#39;mainnet-pool&#39;</span><span class="p">:</span> <span class="n">pool</span><span class="o">.</span><span class="n">mainnet</span>
             <span class="p">}</span>
             <span class="k">if</span> <span class="n">shell</span> <span class="ow">in</span> <span class="n">networks</span><span class="p">:</span>
@@ -270,7 +270,7 @@
     <span class="k">def</span> <span class="nf">using</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shell</span><span class="p">:</span> <span class="n">ShellQuery</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">Key</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Change current rpc endpoint and account (private key).</span>
 
-<span class="sd">        :param shell: one of &#39;babylonnet&#39;, &#39;mainnet&#39;, &#39;zeronet&#39;, or RPC node uri, or instance of `ShellQuery`</span>
+<span class="sd">        :param shell: one of &#39;carthagenet&#39;, &#39;mainnet&#39;, &#39;delphinet&#39;, &#39;dalphanet&#39; or RPC node uri, or instance of `ShellQuery`</span>
 <span class="sd">        :param key: base58 encoded key, path to the faucet file, alias from tezos-client, or instance of `Key`</span>
 <span class="sd">        :returns: A copy of current object with changes applied</span>
 <span class="sd">        &quot;&quot;&quot;</span>
