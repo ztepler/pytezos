@@ -653,6 +653,12 @@ key_prim: Expected high-level data type, e.g. “address”, “nat”, “mutez
 </dd></dl>
 
 <dl class="py method">
+<dt id="pytezos.rpc.protocol.BlockQuery.protocol_parameters">
+<code class="sig-name descname">protocol_parameters</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/rpc/protocol.html#BlockQuery.protocol_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.rpc.protocol.BlockQuery.protocol_parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get decoded protocol parameters if they do exist in the header</p>
+</dd></dl>
+
+<dl class="py method">
 <dt id="pytezos.rpc.protocol.BlockQuery.voting_period">
 <code class="sig-name descname">voting_period</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; int<a class="reference internal" href="_modules/pytezos/rpc/protocol.html#BlockQuery.voting_period"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.rpc.protocol.BlockQuery.voting_period" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get voting period for this block from metadata.</p>
@@ -1836,7 +1842,7 @@ set self.__traceback__ to tb and return self.</p>
 
 <dl class="py class">
 <dt id="pytezos.rpc.node.RpcMultiNode">
-<em class="property">class </em><code class="sig-prename descclassname">pytezos.rpc.node.</code><code class="sig-name descname">RpcMultiNode</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">uri</span></em>, <em class="sig-param"><span class="n">network</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/rpc/node.html#RpcMultiNode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.rpc.node.RpcMultiNode" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">pytezos.rpc.node.</code><code class="sig-name descname">RpcMultiNode</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">uri</span></em>, <em class="sig-param"><span class="n">network</span></em>, <em class="sig-param"><span class="n">caching</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/rpc/node.html#RpcMultiNode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.rpc.node.RpcMultiNode" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="py method">
 <dt id="pytezos.rpc.node.RpcMultiNode.delete">
 <code class="sig-name descname">delete</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span></em>, <em class="sig-param"><span class="n">params</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pytezos.rpc.node.RpcMultiNode.delete" title="Permalink to this definition">¶</a></dt>
@@ -1866,7 +1872,7 @@ set self.__traceback__ to tb and return self.</p>
 
 <dl class="py class">
 <dt id="pytezos.rpc.node.RpcNode">
-<em class="property">class </em><code class="sig-prename descclassname">pytezos.rpc.node.</code><code class="sig-name descname">RpcNode</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">uri</span></em>, <em class="sig-param"><span class="n">network</span><span class="o">=</span><span class="default_value">''</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/rpc/node.html#RpcNode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.rpc.node.RpcNode" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">pytezos.rpc.node.</code><code class="sig-name descname">RpcNode</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">uri</span></em>, <em class="sig-param"><span class="n">network</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">caching</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/rpc/node.html#RpcNode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.rpc.node.RpcNode" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="py method">
 <dt id="pytezos.rpc.node.RpcNode.delete">
 <code class="sig-name descname">delete</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span></em>, <em class="sig-param"><span class="n">params</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/rpc/node.html#RpcNode.delete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.rpc.node.RpcNode.delete" title="Permalink to this definition">¶</a></dt>
