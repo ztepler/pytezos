@@ -306,10 +306,19 @@
                          <span class="n">parameters</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">)</span> \
             <span class="o">.</span><span class="n">fill</span><span class="p">()</span>
 
-<div class="viewcode-block" id="ContractCall.inject"><a class="viewcode-back" href="../../../high_level.html#pytezos.michelson.interface.ContractCall.inject">[docs]</a>    <span class="k">def</span> <span class="nf">inject</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="ContractCall.inject"><a class="viewcode-back" href="../../../high_level.html#pytezos.michelson.interface.ContractCall.inject">[docs]</a>    <span class="k">def</span> <span class="nf">inject</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_async</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">preapply</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">check_result</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">num_blocks_wait</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Autofill, sign and inject resulting operation group.</span>
+
+<span class="sd">        :param _async: do not wait for operation inclusion (default is True)</span>
+<span class="sd">        :param preapply: do a preapply before injection</span>
+<span class="sd">        :param check_result: raise RpcError in case operation is refused</span>
+<span class="sd">        :param num_blocks_wait: number of blocks to wait for injection</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">operation_group</span><span class="o">.</span><span class="n">autofill</span><span class="p">()</span><span class="o">.</span><span class="n">sign</span><span class="p">()</span><span class="o">.</span><span class="n">inject</span><span class="p">()</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">operation_group</span><span class="o">.</span><span class="n">autofill</span><span class="p">()</span><span class="o">.</span><span class="n">sign</span><span class="p">()</span><span class="o">.</span><span class="n">inject</span><span class="p">(</span>
+            <span class="n">_async</span><span class="o">=</span><span class="n">_async</span><span class="p">,</span>
+            <span class="n">preapply</span><span class="o">=</span><span class="n">preapply</span><span class="p">,</span>
+            <span class="n">check_result</span><span class="o">=</span><span class="n">check_result</span><span class="p">,</span>
+            <span class="n">num_blocks_wait</span><span class="o">=</span><span class="n">num_blocks_wait</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="ContractCall.cmdline"><a class="viewcode-back" href="../../../high_level.html#pytezos.michelson.interface.ContractCall.cmdline">[docs]</a>    <span class="k">def</span> <span class="nf">cmdline</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Generate command line for tezos client.</span>
