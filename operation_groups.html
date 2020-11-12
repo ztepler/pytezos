@@ -198,11 +198,14 @@ More info <a class="reference external" href="https://activate.tezos.com/">https
 
 <dl class="py method">
 <dt id="pytezos.operation.group.OperationGroup.autofill">
-<code class="sig-name descname">autofill</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">gas_reserve</span><span class="o">=</span><span class="default_value">100</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/operation/group.html#OperationGroup.autofill"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.operation.group.OperationGroup.autofill" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">autofill</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">gas_reserve</span><span class="o">=</span><span class="default_value">100</span></em>, <em class="sig-param"><span class="n">counter</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/operation/group.html#OperationGroup.autofill"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.operation.group.OperationGroup.autofill" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fill the gaps and then simulate the operation in order to calculate fee, gas/storage limits.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>gas_reserve</strong> – Add a safe reserve for gas limit (default is 100)</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>gas_reserve</strong> – Add a safe reserve for gas limit (default is 100)</p></li>
+<li><p><strong>counter</strong> – Override counter value (for manual handling)</p></li>
+</ul>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p><a class="reference internal" href="#pytezos.operation.group.OperationGroup" title="pytezos.operation.group.OperationGroup">OperationGroup</a></p>
@@ -321,12 +324,15 @@ More info <a class="reference external" href="https://tezos.gitlab.io/master/whi
 
 <dl class="py method">
 <dt id="pytezos.operation.group.OperationGroup.fill">
-<code class="sig-name descname">fill</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/operation/group.html#OperationGroup.fill"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.operation.group.OperationGroup.fill" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">fill</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">counter</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/operation/group.html#OperationGroup.fill"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.operation.group.OperationGroup.fill" title="Permalink to this definition">¶</a></dt>
 <dd><p>Try to fill all fields left unfilled, use approximate fees
 (not optimal, use <cite>autofill</cite> to simulate operation and get precise values).</p>
 <dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference internal" href="#pytezos.operation.group.OperationGroup" title="pytezos.operation.group.OperationGroup">OperationGroup</a></p>
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>counter</strong> – Override counter value (for manual handling)</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#pytezos.operation.group.OperationGroup" title="pytezos.operation.group.OperationGroup">OperationGroup</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -478,11 +484,14 @@ More info <a class="reference external" href="https://tezos.gitlab.io/master/whi
 
 <dl class="py method">
 <dt id="pytezos.operation.group.OperationGroup.run">
-<code class="sig-name descname">run</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/operation/group.html#OperationGroup.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.operation.group.OperationGroup.run" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">run</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">block_id</span><span class="o">=</span><span class="default_value">'head'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/operation/group.html#OperationGroup.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.operation.group.OperationGroup.run" title="Permalink to this definition">¶</a></dt>
 <dd><p>Simulate operation without signature checks.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>RPC response from <cite>run_operation</cite></p>
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>block_id</strong> – Specify a level at which this operation should be applied (default is head)</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>RPC response from <cite>run_operation</cite></p>
 </dd>
 </dl>
 </dd></dl>

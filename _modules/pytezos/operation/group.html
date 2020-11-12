@@ -161,6 +161,7 @@
             
   <h1>Source code for pytezos.operation.group</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">pprint</span> <span class="kn">import</span> <span class="n">pformat</span>
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">count</span>
 
 <span class="kn">from</span> <span class="nn">pytezos.crypto</span> <span class="kn">import</span> <span class="n">blake2b_32</span>
 <span class="kn">from</span> <span class="nn">pytezos.operation.content</span> <span class="kn">import</span> <span class="n">ContentMixin</span>
@@ -247,17 +248,22 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_spawn</span><span class="p">(</span><span class="n">contents</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">contents</span> <span class="o">+</span> <span class="p">[</span><span class="n">content</span><span class="p">])</span></div>
 
-<div class="viewcode-block" id="OperationGroup.fill"><a class="viewcode-back" href="../../../operation_groups.html#pytezos.operation.group.OperationGroup.fill">[docs]</a>    <span class="k">def</span> <span class="nf">fill</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="OperationGroup.fill"><a class="viewcode-back" href="../../../operation_groups.html#pytezos.operation.group.OperationGroup.fill">[docs]</a>    <span class="k">def</span> <span class="nf">fill</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">counter</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Try to fill all fields left unfilled, use approximate fees</span>
 <span class="sd">        (not optimal, use `autofill` to simulate operation and get precise values).</span>
 
+<span class="sd">        :param counter: Override counter value (for manual handling)</span>
 <span class="sd">        :rtype: OperationGroup</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">chain_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">chain_id</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell</span><span class="o">.</span><span class="n">chains</span><span class="o">.</span><span class="n">main</span><span class="o">.</span><span class="n">chain_id</span><span class="p">()</span>
         <span class="n">branch</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">branch</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">predecessor</span><span class="o">.</span><span class="n">hash</span><span class="p">()</span>
         <span class="n">protocol</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">protocol</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">header</span><span class="p">()[</span><span class="s1">&#39;protocol&#39;</span><span class="p">]</span>
         <span class="n">source</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">key</span><span class="o">.</span><span class="n">public_key_hash</span><span class="p">()</span>
-        <span class="n">counter</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell</span><span class="o">.</span><span class="n">contracts</span><span class="p">[</span><span class="n">source</span><span class="p">]</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">counter</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">counter</span> <span class="o">=</span> <span class="n">count</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">counter</span><span class="p">),</span> <span class="n">step</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">counter</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell</span><span class="o">.</span><span class="n">contracts</span><span class="p">[</span><span class="n">source</span><span class="p">]</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
 
         <span class="n">replace_map</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s1">&#39;pkh&#39;</span><span class="p">:</span> <span class="n">source</span><span class="p">,</span>
@@ -287,12 +293,13 @@
             <span class="n">branch</span><span class="o">=</span><span class="n">branch</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="OperationGroup.run"><a class="viewcode-back" href="../../../operation_groups.html#pytezos.operation.group.OperationGroup.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="OperationGroup.run"><a class="viewcode-back" href="../../../operation_groups.html#pytezos.operation.group.OperationGroup.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">block_id</span><span class="o">=</span><span class="s1">&#39;head&#39;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Simulate operation without signature checks.</span>
 
+<span class="sd">        :param block_id: Specify a level at which this operation should be applied (default is head)</span>
 <span class="sd">        :returns: RPC response from `run_operation`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">helpers</span><span class="o">.</span><span class="n">scripts</span><span class="o">.</span><span class="n">run_operation</span><span class="o">.</span><span class="n">post</span><span class="p">({</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell</span><span class="o">.</span><span class="n">blocks</span><span class="p">[</span><span class="n">block_id</span><span class="p">]</span><span class="o">.</span><span class="n">helpers</span><span class="o">.</span><span class="n">scripts</span><span class="o">.</span><span class="n">run_operation</span><span class="o">.</span><span class="n">post</span><span class="p">({</span>
             <span class="s1">&#39;operation&#39;</span><span class="p">:</span> <span class="p">{</span>
                 <span class="s1">&#39;branch&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">branch</span><span class="p">,</span>
                 <span class="s1">&#39;contents&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">contents</span><span class="p">,</span>
@@ -320,13 +327,14 @@
 
         <span class="k">return</span> <span class="n">local_data</span></div>
 
-<div class="viewcode-block" id="OperationGroup.autofill"><a class="viewcode-back" href="../../../operation_groups.html#pytezos.operation.group.OperationGroup.autofill">[docs]</a>    <span class="k">def</span> <span class="nf">autofill</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gas_reserve</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
+<div class="viewcode-block" id="OperationGroup.autofill"><a class="viewcode-back" href="../../../operation_groups.html#pytezos.operation.group.OperationGroup.autofill">[docs]</a>    <span class="k">def</span> <span class="nf">autofill</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gas_reserve</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">counter</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Fill the gaps and then simulate the operation in order to calculate fee, gas/storage limits.</span>
 
 <span class="sd">        :param gas_reserve: Add a safe reserve for gas limit (default is 100)</span>
+<span class="sd">        :param counter: Override counter value (for manual handling)</span>
 <span class="sd">        :rtype: OperationGroup</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">opg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fill</span><span class="p">()</span>
+        <span class="n">opg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">counter</span><span class="o">=</span><span class="n">counter</span><span class="p">)</span>
         <span class="n">opg_with_metadata</span> <span class="o">=</span> <span class="n">opg</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">OperationResult</span><span class="o">.</span><span class="n">is_applied</span><span class="p">(</span><span class="n">opg_with_metadata</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">RpcError</span><span class="o">.</span><span class="n">from_errors</span><span class="p">(</span><span class="n">OperationResult</span><span class="o">.</span><span class="n">errors</span><span class="p">(</span><span class="n">opg_with_metadata</span><span class="p">))</span> <span class="kn">from</span> <span class="bp">None</span>
