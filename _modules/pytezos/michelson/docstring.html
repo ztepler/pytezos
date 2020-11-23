@@ -257,6 +257,9 @@
             <span class="k">if</span> <span class="n">bin_type</span> <span class="o">==</span> <span class="s1">&#39;big_map&#39;</span><span class="p">:</span>
                 <span class="n">res</span> <span class="o">+=</span> <span class="s1">&#39;  /* big_map */&#39;</span>
 
+        <span class="k">elif</span> <span class="n">bin_type</span> <span class="o">==</span> <span class="s1">&#39;option&#39;</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">decode_node</span><span class="p">(</span><span class="n">bin_path</span> <span class="o">+</span> <span class="s1">&#39;0&#39;</span><span class="p">)</span>
+
         <span class="k">else</span><span class="p">:</span>
             <span class="n">res</span> <span class="o">=</span> <span class="n">node</span><span class="p">[</span><span class="s1">&#39;prim&#39;</span><span class="p">]</span>
             <span class="k">if</span> <span class="n">res</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">core_types</span><span class="p">:</span>
