@@ -164,8 +164,8 @@
 
 <span class="kn">from</span> <span class="nn">pytezos.rpc.node</span> <span class="kn">import</span> <span class="n">RpcError</span>
 <span class="kn">from</span> <span class="nn">pytezos.rpc.query</span> <span class="kn">import</span> <span class="n">RpcQuery</span>
-<span class="kn">from</span> <span class="nn">pytezos.tools.docstring</span> <span class="kn">import</span> <span class="n">get_attr_docstring</span>
-<span class="kn">from</span> <span class="nn">pytezos.encoding</span> <span class="kn">import</span> <span class="n">is_bh</span>
+<span class="kn">from</span> <span class="nn">pytezos.jupyter</span> <span class="kn">import</span> <span class="n">get_attr_docstring</span>
+<span class="kn">from</span> <span class="nn">pytezos.crypto.encoding</span> <span class="kn">import</span> <span class="n">is_bh</span>
 
 
 <div class="viewcode-block" id="find_state_change_intervals"><a class="viewcode-back" href="../../../rpc_queries.html#pytezos.rpc.search.find_state_change_intervals">[docs]</a><span class="k">def</span> <span class="nf">find_state_change_intervals</span><span class="p">(</span><span class="n">head</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">last</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">get</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">equals</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span>

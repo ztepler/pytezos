@@ -250,7 +250,7 @@
         <span class="k">if</span> <span class="n">res</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">404</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">RpcError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Not found: </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">res</span><span class="o">.</span><span class="n">status_code</span> <span class="o">!=</span> <span class="mi">200</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">RpcError</span><span class="o">.</span><span class="n">from_response</span><span class="p">(</span><span class="n">res</span><span class="p">)</span> <span class="kn">from</span> <span class="bp">None</span>
+            <span class="k">raise</span> <span class="n">RpcError</span><span class="o">.</span><span class="n">from_response</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">res</span></div>
 
@@ -296,7 +296,7 @@
 
 <div class="viewcode-block" id="RpcMultiNode"><a class="viewcode-back" href="../../../rpc_queries.html#pytezos.rpc.node.RpcMultiNode">[docs]</a><span class="k">class</span> <span class="nc">RpcMultiNode</span><span class="p">(</span><span class="n">RpcNode</span><span class="p">):</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uri</span><span class="p">,</span> <span class="n">network</span><span class="p">,</span> <span class="n">caching</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uri</span><span class="p">,</span> <span class="n">network</span><span class="p">,</span> <span class="n">caching</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">RpcMultiNode</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">uri</span><span class="o">=</span><span class="n">uri</span><span class="p">,</span> <span class="n">network</span><span class="o">=</span><span class="n">network</span><span class="p">,</span> <span class="n">caching</span><span class="o">=</span><span class="n">caching</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">uri</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">uri</span> <span class="o">=</span> <span class="p">[</span><span class="n">uri</span><span class="p">]</span>

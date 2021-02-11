@@ -175,14 +175,14 @@
 <p>Make sure you are familiar with the unittest package, if not - check out the docs: <a class="reference external" href="https://docs.python.org/3/library/unittest.html">https://docs.python.org/3/library/unittest.html</a></p>
 <p>Michelson tests are mostly based on two high-level interfaces:</p>
 <ul class="simple">
-<li><p><a class="reference internal" href="high_level.html#pytezos.michelson.interface.ContractInterface" title="pytezos.michelson.interface.ContractInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">pytezos.michelson.interface.ContractInterface</span></code></a> as a top-level entity</p></li>
-<li><p><a class="reference internal" href="high_level.html#pytezos.michelson.interface.ContractCall" title="pytezos.michelson.interface.ContractCall"><code class="xref py py-class docutils literal notranslate"><span class="pre">pytezos.michelson.interface.ContractCall</span></code></a> for simulating contract calls</p></li>
-<li><p><a class="reference internal" href="high_level.html#pytezos.michelson.interface.ContractCallResult" title="pytezos.michelson.interface.ContractCallResult"><code class="xref py py-class docutils literal notranslate"><span class="pre">pytezos.michelson.interface.ContractCallResult</span></code></a> for handling call results</p></li>
+<li><p><code class="xref py py-class docutils literal notranslate"><span class="pre">pytezos.michelson.interface.ContractInterface</span></code> as a top-level entity</p></li>
+<li><p><code class="xref py py-class docutils literal notranslate"><span class="pre">pytezos.michelson.interface.ContractCall</span></code> for simulating contract calls</p></li>
+<li><p><code class="xref py py-class docutils literal notranslate"><span class="pre">pytezos.michelson.interface.ContractCallResult</span></code> for handling call results</p></li>
 </ul>
 <p>There are also two options of executing Michelson scripts:</p>
 <ul class="simple">
-<li><p><a class="reference internal" href="high_level.html#pytezos.michelson.interface.ContractCall.result" title="pytezos.michelson.interface.ContractCall.result"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pytezos.michelson.interface.ContractCall.result()</span></code></a> which uses standard RPC endpoint (i.e. remote Michelson interpreter)</p></li>
-<li><p><a class="reference internal" href="high_level.html#pytezos.michelson.interface.ContractCall.interpret" title="pytezos.michelson.interface.ContractCall.interpret"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pytezos.michelson.interface.ContractCall.interpret()</span></code></a> that uses built-in interpreter which is not guaranteed to behave exactly as the reference one</p></li>
+<li><p><code class="xref py py-meth docutils literal notranslate"><span class="pre">pytezos.michelson.interface.ContractCall.result()</span></code> which uses standard RPC endpoint (i.e. remote Michelson interpreter)</p></li>
+<li><p><code class="xref py py-meth docutils literal notranslate"><span class="pre">pytezos.michelson.interface.ContractCall.interpret()</span></code> that uses built-in interpreter which is not guaranteed to behave exactly as the reference one</p></li>
 </ul>
 </div>
 <div class="section" id="step-by-step-guide">

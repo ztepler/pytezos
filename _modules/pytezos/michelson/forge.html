@@ -159,156 +159,24 @@
            <div itemprop="articleBody">
             
   <h1>Source code for pytezos.michelson.forge</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">pytezos.encoding</span> <span class="kn">import</span> <span class="n">forge_array</span><span class="p">,</span> <span class="n">parse_array</span>
+<span></span><span class="kn">import</span> <span class="nn">base58</span>
+<span class="kn">import</span> <span class="nn">strict_rfc3339</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span>
 
-<span class="n">prim_tags</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s1">&#39;parameter&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x00</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;storage&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x01</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;code&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x02</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;False&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x03</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;Elt&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x04</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;Left&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x05</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;None&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x06</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;Pair&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x07</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;Right&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x08</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;Some&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x09</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;True&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x0A</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;Unit&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x0B</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;PACK&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x0C</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;UNPACK&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x0D</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;BLAKE2B&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x0E</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;SHA256&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x0F</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;SHA512&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x10</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;ABS&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x11</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;ADD&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x12</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;AMOUNT&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x13</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;AND&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x14</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;BALANCE&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x15</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;CAR&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x16</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;CDR&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x17</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;CHECK_SIGNATURE&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x18</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;COMPARE&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x19</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;CONCAT&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x1A</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;CONS&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x1B</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;__CREATE_ACCOUNT__&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x1C</span><span class="s1">&#39;</span><span class="p">,</span>  <span class="c1"># DEPRECATED</span>
-    <span class="s1">&#39;CREATE_CONTRACT&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x1D</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;IMPLICIT_ACCOUNT&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x1E</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;DIP&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x1F</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;DROP&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x20</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;DUP&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x21</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;EDIV&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x22</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;EMPTY_MAP&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x23</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;EMPTY_SET&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x24</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;EQ&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x25</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;EXEC&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x26</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;FAILWITH&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x27</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;GE&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x28</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;GET&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x29</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;GT&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x2A</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;HASH_KEY&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x2B</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;IF&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x2C</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;IF_CONS&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x2D</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;IF_LEFT&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x2E</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;IF_NONE&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x2F</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;INT&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x30</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;LAMBDA&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x31</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;LE&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x32</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;LEFT&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x33</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;LOOP&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x34</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;LSL&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x35</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;LSR&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x36</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;LT&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x37</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;MAP&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x38</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;MEM&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x39</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;MUL&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x3A</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;NEG&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x3B</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;NEQ&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x3C</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;NIL&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x3D</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;NONE&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x3E</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;NOT&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x3F</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;NOW&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x40</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;OR&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x41</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;PAIR&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x42</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;PUSH&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x43</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;RIGHT&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x44</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;SIZE&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x45</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;SOME&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x46</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;SOURCE&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x47</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;SENDER&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x48</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;SELF&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x49</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;STEPS_TO_QUOTA&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x4A</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;SUB&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x4B</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;SWAP&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x4C</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;TRANSFER_TOKENS&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x4D</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;SET_DELEGATE&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x4E</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;UNIT&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x4F</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;UPDATE&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x50</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;XOR&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x51</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;ITER&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x52</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;LOOP_LEFT&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x53</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;ADDRESS&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x54</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;CONTRACT&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x55</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;ISNAT&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x56</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;CAST&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x57</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;RENAME&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x58</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;bool&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x59</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;contract&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x5A</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;int&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x5B</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;key&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x5C</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;key_hash&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x5D</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;lambda&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x5E</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;list&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x5F</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;map&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x60</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;big_map&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x61</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;nat&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x62</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;option&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x63</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;or&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x64</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;pair&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x65</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;set&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x66</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;signature&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x67</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;string&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x68</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;bytes&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x69</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;mutez&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x6A</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;timestamp&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x6B</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;unit&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x6C</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;operation&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x6D</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;address&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x6E</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;SLICE&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x6F</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;DIG&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x70</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;DUG&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x71</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;EMPTY_BIG_MAP&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x72</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;APPLY&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x73</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;chain_id&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x74</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;CHAIN_ID&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x75</span><span class="s1">&#39;</span>
-<span class="p">}</span>
+<span class="kn">from</span> <span class="nn">pytezos.crypto.encoding</span> <span class="kn">import</span> <span class="n">base58_encode</span><span class="p">,</span> <span class="n">base58_decode</span>
+<span class="kn">from</span> <span class="nn">pytezos.crypto.key</span> <span class="kn">import</span> <span class="n">blake2b_32</span>
+<span class="kn">from</span> <span class="nn">pytezos.michelson.tags</span> <span class="kn">import</span> <span class="n">prim_tags</span>
+
 <span class="n">prim_int</span> <span class="o">=</span> <span class="p">{</span><span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span> <span class="n">k</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">prim_tags</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
 
-<span class="n">len_tags</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="p">{</span>
-        <span class="kc">False</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x03</span><span class="s1">&#39;</span><span class="p">,</span>
-        <span class="kc">True</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x04</span><span class="s1">&#39;</span>
-    <span class="p">},</span>
-    <span class="p">{</span>
-        <span class="kc">False</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x05</span><span class="s1">&#39;</span><span class="p">,</span>
-        <span class="kc">True</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x06</span><span class="s1">&#39;</span>
-    <span class="p">},</span>
-    <span class="p">{</span>
-        <span class="kc">False</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x07</span><span class="s1">&#39;</span><span class="p">,</span>
-        <span class="kc">True</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x08</span><span class="s1">&#39;</span>
-    <span class="p">},</span>
-    <span class="p">{</span>
-        <span class="kc">False</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x09</span><span class="s1">&#39;</span><span class="p">,</span>
-        <span class="kc">True</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x09</span><span class="s1">&#39;</span>
-    <span class="p">}</span>
-<span class="p">]</span>
 
-<span class="n">reserved_entries</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s1">&#39;default&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x00</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;root&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x01</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;do&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x02</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;set_delegate&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x03</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;remove_delegate&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x04</span><span class="s1">&#39;</span>
-<span class="p">}</span>
+<span class="k">def</span> <span class="nf">get_tag</span><span class="p">(</span><span class="n">args_len</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">annots_len</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+    <span class="n">tag</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">args_len</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">3</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="k">if</span> <span class="n">annots_len</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">0</span><span class="p">),</span> <span class="mi">9</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">bytes</span><span class="p">([</span><span class="n">tag</span><span class="p">])</span>
+
+
+<span class="k">def</span> <span class="nf">read_tag</span><span class="p">(</span><span class="n">tag</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]:</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">tag</span> <span class="o">-</span> <span class="mi">3</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span> <span class="nb">bool</span><span class="p">((</span><span class="n">tag</span> <span class="o">-</span> <span class="mi">3</span><span class="p">)</span> <span class="o">%</span> <span class="mi">2</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="forge_int"><a class="viewcode-back" href="../../../pack.html#pytezos.michelson.forge.forge_int">[docs]</a><span class="k">def</span> <span class="nf">forge_int</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
@@ -331,7 +199,7 @@
     <span class="k">return</span> <span class="nb">bytes</span><span class="p">(</span><span class="n">res</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="parse_int"><a class="viewcode-back" href="../../../pack.html#pytezos.michelson.forge.parse_int">[docs]</a><span class="k">def</span> <span class="nf">parse_int</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+<div class="viewcode-block" id="unforge_int"><a class="viewcode-back" href="../../../pack.html#pytezos.michelson.forge.unforge_int">[docs]</a><span class="k">def</span> <span class="nf">unforge_int</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Decode signed unbounded integer from bytes.</span>
 
 <span class="sd">    :param data: Encoded integer</span>
@@ -356,15 +224,196 @@
     <span class="k">return</span> <span class="n">value</span><span class="p">,</span> <span class="n">length</span></div>
 
 
-<div class="viewcode-block" id="forge_entrypoint"><a class="viewcode-back" href="../../../pack.html#pytezos.michelson.forge.forge_entrypoint">[docs]</a><span class="k">def</span> <span class="nf">forge_entrypoint</span><span class="p">(</span><span class="n">entrypoint</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot; Encode Michelson contract entrypoint into the byte form.</span>
+<div class="viewcode-block" id="forge_nat"><a class="viewcode-back" href="../../../pack.html#pytezos.michelson.forge.forge_nat">[docs]</a><span class="k">def</span> <span class="nf">forge_nat</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot; Encode a number using LEB128 encoding (Zarith).</span>
 
-<span class="sd">    :param entrypoint: string</span>
+<span class="sd">    :param int value: the value to encode</span>
+<span class="sd">    :returns: encoded value</span>
+<span class="sd">    :rtype: bytes</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">entrypoint</span> <span class="ow">in</span> <span class="n">reserved_entries</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">reserved_entries</span><span class="p">[</span><span class="n">entrypoint</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">value</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Value cannot be negative.&#39;</span><span class="p">)</span>
+
+    <span class="n">buf</span> <span class="o">=</span> <span class="nb">bytearray</span><span class="p">()</span>
+    <span class="n">more</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">while</span> <span class="n">more</span><span class="p">:</span>
+        <span class="n">byte</span> <span class="o">=</span> <span class="n">value</span> <span class="o">&amp;</span> <span class="mh">0x7f</span>
+        <span class="n">value</span> <span class="o">&gt;&gt;=</span> <span class="mi">7</span>
+
+        <span class="k">if</span> <span class="n">value</span><span class="p">:</span>
+            <span class="n">byte</span> <span class="o">|=</span> <span class="mh">0x80</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">more</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="n">buf</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">byte</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="nb">bytes</span><span class="p">(</span><span class="n">buf</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="unforge_chain_id"><a class="viewcode-back" href="../../../pack.html#pytezos.michelson.forge.unforge_chain_id">[docs]</a><span class="k">def</span> <span class="nf">unforge_chain_id</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot; Decode chain id from byte form.</span>
+
+<span class="sd">    :param data: encoded chain id.</span>
+<span class="sd">    :returns: base58 encoded chain id</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">base58_encode</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;Net&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="unforge_signature"><a class="viewcode-back" href="../../../pack.html#pytezos.michelson.forge.unforge_signature">[docs]</a><span class="k">def</span> <span class="nf">unforge_signature</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot; Decode signature from byte form.</span>
+
+<span class="sd">    :param data: encoded signature.</span>
+<span class="sd">    :returns: base58 encoded signature (generic)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">base58_encode</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;sig&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="forge_bool"><a class="viewcode-back" href="../../../pack.html#pytezos.michelson.forge.forge_bool">[docs]</a><span class="k">def</span> <span class="nf">forge_bool</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot; Encode boolean value into bytes.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\xff</span><span class="s1">&#39;</span> <span class="k">if</span> <span class="n">value</span> <span class="k">else</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x00</span><span class="s1">&#39;</span></div>
+
+
+<div class="viewcode-block" id="forge_base58"><a class="viewcode-back" href="../../../pack.html#pytezos.michelson.forge.forge_base58">[docs]</a><span class="k">def</span> <span class="nf">forge_base58</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot; Encode base58 string into bytes.</span>
+
+<span class="sd">    :param value: base58 encoded value (with checksum)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">base58_decode</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="optimize_timestamp"><a class="viewcode-back" href="../../../pack.html#pytezos.michelson.forge.optimize_timestamp">[docs]</a><span class="k">def</span> <span class="nf">optimize_timestamp</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot; Encode timestamp into bytes.</span>
+
+<span class="sd">    :param value: RFC3339 time string</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">strict_rfc3339</span><span class="o">.</span><span class="n">rfc3339_to_timestamp</span><span class="p">(</span><span class="n">value</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="forge_address"><a class="viewcode-back" href="../../../pack.html#pytezos.michelson.forge.forge_address">[docs]</a><span class="k">def</span> <span class="nf">forge_address</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">tz_only</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot; Encode address or key hash into bytes.</span>
+
+<span class="sd">    :param value: base58 encoded address or key_hash</span>
+<span class="sd">    :param tz_only: True indicates that it&#39;s a key_hash (will be encoded in a more compact form)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">prefix</span> <span class="o">=</span> <span class="n">value</span><span class="p">[:</span><span class="mi">3</span><span class="p">]</span>
+    <span class="n">address</span> <span class="o">=</span> <span class="n">base58</span><span class="o">.</span><span class="n">b58decode_check</span><span class="p">(</span><span class="n">value</span><span class="p">)[</span><span class="mi">3</span><span class="p">:]</span>
+
+    <span class="k">if</span> <span class="n">prefix</span> <span class="o">==</span> <span class="s1">&#39;tz1&#39;</span><span class="p">:</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x00\x00</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="n">address</span>
+    <span class="k">elif</span> <span class="n">prefix</span> <span class="o">==</span> <span class="s1">&#39;tz2&#39;</span><span class="p">:</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x00\x01</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="n">address</span>
+    <span class="k">elif</span> <span class="n">prefix</span> <span class="o">==</span> <span class="s1">&#39;tz3&#39;</span><span class="p">:</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x00\x02</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="n">address</span>
+    <span class="k">elif</span> <span class="n">prefix</span> <span class="o">==</span> <span class="s1">&#39;KT1&#39;</span><span class="p">:</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x01</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="n">address</span> <span class="o">+</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x00</span><span class="s1">&#39;</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\xff</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="n">forge_array</span><span class="p">(</span><span class="n">entrypoint</span><span class="o">.</span><span class="n">encode</span><span class="p">(),</span> <span class="n">len_bytes</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></div>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">res</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="k">if</span> <span class="n">tz_only</span> <span class="k">else</span> <span class="n">res</span></div>
+
+
+<div class="viewcode-block" id="unforge_address"><a class="viewcode-back" href="../../../pack.html#pytezos.michelson.forge.unforge_address">[docs]</a><span class="k">def</span> <span class="nf">unforge_address</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Decode address or key_hash from bytes.</span>
+
+<span class="sd">    :param data: encoded address or key_hash</span>
+<span class="sd">    :returns: base58 encoded address</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">tz_prefixes</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x00\x00</span><span class="s1">&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;tz1&#39;</span><span class="p">,</span>
+        <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x00\x01</span><span class="s1">&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;tz2&#39;</span><span class="p">,</span>
+        <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x00\x02</span><span class="s1">&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;tz3&#39;</span>
+    <span class="p">}</span>
+
+    <span class="k">for</span> <span class="n">bin_prefix</span><span class="p">,</span> <span class="n">tz_prefix</span> <span class="ow">in</span> <span class="n">tz_prefixes</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">bin_prefix</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">base58_encode</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">2</span><span class="p">:],</span> <span class="n">tz_prefix</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x01</span><span class="s1">&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">data</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x00</span><span class="s1">&#39;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">base58_encode</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="sa">b</span><span class="s1">&#39;KT1&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">base58_encode</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">tz_prefixes</span><span class="p">[</span><span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x00</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="n">data</span><span class="p">[:</span><span class="mi">1</span><span class="p">]])</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="forge_contract"><a class="viewcode-back" href="../../../pack.html#pytezos.michelson.forge.forge_contract">[docs]</a><span class="k">def</span> <span class="nf">forge_contract</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot; Encode a value of contract type (address + optional entrypoint) into bytes.</span>
+
+<span class="sd">    :param value: &#39;tz12345&#39; or &#39;tz12345%default&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">parts</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;%&#39;</span><span class="p">)</span>
+    <span class="n">address</span><span class="p">,</span> <span class="n">entrypoint</span> <span class="o">=</span> <span class="p">(</span><span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span> <span class="k">else</span> <span class="p">(</span><span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s1">&#39;default&#39;</span><span class="p">)</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">forge_address</span><span class="p">(</span><span class="n">address</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">entrypoint</span> <span class="o">!=</span> <span class="s1">&#39;default&#39;</span><span class="p">:</span>
+        <span class="n">res</span> <span class="o">+=</span> <span class="n">entrypoint</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">res</span></div>
+
+
+<div class="viewcode-block" id="unforge_contract"><a class="viewcode-back" href="../../../pack.html#pytezos.michelson.forge.unforge_contract">[docs]</a><span class="k">def</span> <span class="nf">unforge_contract</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Decode contract (address + optional entrypoint) from bytes</span>
+
+<span class="sd">    :param data: encoded contract</span>
+<span class="sd">    :returns: base58 encoded address and entrypoint (if exists) separated by `%`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">unforge_address</span><span class="p">(</span><span class="n">data</span><span class="p">[:</span><span class="mi">22</span><span class="p">])</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">22</span><span class="p">:</span>
+        <span class="n">res</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;%</span><span class="si">{</span><span class="n">data</span><span class="p">[</span><span class="mi">22</span><span class="p">:]</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span><span class="si">}</span><span class="s1">&#39;</span>
+    <span class="k">return</span> <span class="n">res</span></div>
+
+
+<div class="viewcode-block" id="forge_public_key"><a class="viewcode-back" href="../../../pack.html#pytezos.michelson.forge.forge_public_key">[docs]</a><span class="k">def</span> <span class="nf">forge_public_key</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot; Encode public key into bytes.</span>
+
+<span class="sd">    :param value: public key in in base58 form</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">prefix</span> <span class="o">=</span> <span class="n">value</span><span class="p">[:</span><span class="mi">4</span><span class="p">]</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">base58</span><span class="o">.</span><span class="n">b58decode_check</span><span class="p">(</span><span class="n">value</span><span class="p">)[</span><span class="mi">4</span><span class="p">:]</span>
+
+    <span class="k">if</span> <span class="n">prefix</span> <span class="o">==</span> <span class="s1">&#39;edpk&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x00</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="n">res</span>
+    <span class="k">elif</span> <span class="n">prefix</span> <span class="o">==</span> <span class="s1">&#39;sppk&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x01</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="n">res</span>
+    <span class="k">elif</span> <span class="n">prefix</span> <span class="o">==</span> <span class="s1">&#39;p2pk&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x02</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="n">res</span>
+
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Unrecognized key type: #</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="unforge_public_key"><a class="viewcode-back" href="../../../pack.html#pytezos.michelson.forge.unforge_public_key">[docs]</a><span class="k">def</span> <span class="nf">unforge_public_key</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot; Decode public key from byte form.</span>
+
+<span class="sd">    :param data: encoded public key.</span>
+<span class="sd">    :returns: base58 encoded public key</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">key_prefix</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x00</span><span class="s1">&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;edpk&#39;</span><span class="p">,</span>
+        <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x01</span><span class="s1">&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;sppk&#39;</span><span class="p">,</span>
+        <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x02</span><span class="s1">&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;p2pk&#39;</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">base58_encode</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">key_prefix</span><span class="p">[</span><span class="n">data</span><span class="p">[:</span><span class="mi">1</span><span class="p">]])</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="forge_array"><a class="viewcode-back" href="../../../pack.html#pytezos.michelson.forge.forge_array">[docs]</a><span class="k">def</span> <span class="nf">forge_array</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">len_bytes</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot; Encode array of bytes (prepend length).</span>
+
+<span class="sd">    :param data: list of bytes</span>
+<span class="sd">    :param len_bytes: number of bytes to store array length</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">to_bytes</span><span class="p">(</span><span class="n">len_bytes</span><span class="p">,</span> <span class="s1">&#39;big&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="n">data</span></div>
+
+
+<div class="viewcode-block" id="unforge_array"><a class="viewcode-back" href="../../../pack.html#pytezos.michelson.forge.unforge_array">[docs]</a><span class="k">def</span> <span class="nf">unforge_array</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">len_bytes</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot; Decode array of bytes.</span>
+
+<span class="sd">    :param data: encoded array</span>
+<span class="sd">    :param len_bytes: number of bytes to store array length</span>
+<span class="sd">    :returns: Tuple[list of bytes, array length]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">len_bytes</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;not enough bytes to parse array length, wanted </span><span class="si">{</span><span class="n">len_bytes</span><span class="si">}</span><span class="s1">&#39;</span>
+    <span class="n">length</span> <span class="o">=</span> <span class="nb">int</span><span class="o">.</span><span class="n">from_bytes</span><span class="p">(</span><span class="n">data</span><span class="p">[:</span><span class="n">len_bytes</span><span class="p">],</span> <span class="s1">&#39;big&#39;</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">len_bytes</span> <span class="o">+</span> <span class="n">length</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;not enough bytes to parse array body, wanted </span><span class="si">{</span><span class="n">length</span><span class="si">}</span><span class="s1">&#39;</span>
+    <span class="k">return</span> <span class="n">data</span><span class="p">[</span><span class="n">len_bytes</span><span class="p">:</span><span class="n">len_bytes</span><span class="o">+</span><span class="n">length</span><span class="p">],</span> <span class="n">len_bytes</span><span class="o">+</span><span class="n">length</span></div>
 
 
 <div class="viewcode-block" id="forge_micheline"><a class="viewcode-back" href="../../../pack.html#pytezos.michelson.forge.forge_micheline">[docs]</a><span class="k">def</span> <span class="nf">forge_micheline</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
@@ -383,7 +432,7 @@
             <span class="n">args_len</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;args&#39;</span><span class="p">,</span> <span class="p">[]))</span>
             <span class="n">annots_len</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;annots&#39;</span><span class="p">,</span> <span class="p">[]))</span>
 
-            <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">len_tags</span><span class="p">[</span><span class="n">args_len</span><span class="p">][</span><span class="n">annots_len</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">])</span>
+            <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">get_tag</span><span class="p">(</span><span class="n">args_len</span><span class="p">,</span> <span class="n">annots_len</span><span class="p">))</span>
             <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">prim_tags</span><span class="p">[</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;prim&#39;</span><span class="p">]])</span>
 
             <span class="k">if</span> <span class="n">args_len</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
@@ -395,7 +444,7 @@
 
             <span class="k">if</span> <span class="n">annots_len</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">forge_array</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;annots&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">encode</span><span class="p">()))</span>
-            <span class="k">elif</span> <span class="n">args_len</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="k">elif</span> <span class="n">args_len</span> <span class="o">&gt;=</span> <span class="mi">3</span><span class="p">:</span>
                 <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x00</span><span class="s1">&#39;</span> <span class="o">*</span> <span class="mi">4</span><span class="p">)</span>
 
         <span class="k">elif</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;bytes&#39;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -417,6 +466,77 @@
     <span class="k">return</span> <span class="sa">b</span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">res</span><span class="p">)</span></div>
 
 
+<div class="viewcode-block" id="unforge_micheline"><a class="viewcode-back" href="../../../pack.html#pytezos.michelson.forge.unforge_micheline">[docs]</a><span class="k">def</span> <span class="nf">unforge_micheline</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Parse Micheline JSON from bytes.</span>
+
+<span class="sd">    :param data: Forged Micheline expression</span>
+<span class="sd">    :returns: Micheline JSON</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ptr</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">def</span> <span class="nf">unforge_sequence</span><span class="p">():</span>
+        <span class="k">nonlocal</span> <span class="n">ptr</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">offset</span> <span class="o">=</span> <span class="n">unforge_array</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">ptr</span><span class="p">:])</span>
+        <span class="n">end</span><span class="p">,</span> <span class="n">res</span> <span class="o">=</span> <span class="n">ptr</span> <span class="o">+</span> <span class="n">offset</span><span class="p">,</span> <span class="p">[]</span>
+        <span class="n">ptr</span> <span class="o">+=</span> <span class="mi">4</span>
+        <span class="k">while</span> <span class="n">ptr</span> <span class="o">&lt;</span> <span class="n">end</span><span class="p">:</span>
+            <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">unforge</span><span class="p">())</span>
+        <span class="k">assert</span> <span class="n">ptr</span> <span class="o">==</span> <span class="n">end</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;out of sequence boundaries&#39;</span>
+        <span class="k">return</span> <span class="n">res</span>
+
+    <span class="k">def</span> <span class="nf">unforge_prim_expr</span><span class="p">(</span><span class="n">args_len</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">annots</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="k">nonlocal</span> <span class="n">ptr</span>
+        <span class="n">prim_tag</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">ptr</span><span class="p">]</span>
+        <span class="n">ptr</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">expr</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;prim&#39;</span><span class="p">:</span> <span class="n">prim_int</span><span class="p">[</span><span class="n">prim_tag</span><span class="p">]}</span>
+
+        <span class="k">if</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">args_len</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="n">expr</span><span class="p">[</span><span class="s1">&#39;args&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">unforge</span><span class="p">()</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">args_len</span><span class="p">)]</span>
+        <span class="k">elif</span> <span class="n">args_len</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="n">expr</span><span class="p">[</span><span class="s1">&#39;args&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">unforge_sequence</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">args_len</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;unexpected args len </span><span class="si">{</span><span class="n">args_len</span><span class="si">}</span><span class="s1">&#39;</span>
+
+        <span class="k">if</span> <span class="n">annots</span><span class="p">:</span>
+            <span class="n">value</span><span class="p">,</span> <span class="n">offset</span> <span class="o">=</span> <span class="n">unforge_array</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">ptr</span><span class="p">:])</span>
+            <span class="n">ptr</span> <span class="o">+=</span> <span class="n">offset</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">expr</span><span class="p">[</span><span class="s1">&#39;annots&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">args_len</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="n">ptr</span> <span class="o">+=</span> <span class="mi">4</span>
+
+        <span class="k">return</span> <span class="n">expr</span>
+
+    <span class="k">def</span> <span class="nf">unforge</span><span class="p">():</span>
+        <span class="k">nonlocal</span> <span class="n">ptr</span>
+        <span class="n">tag</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">ptr</span><span class="p">]</span>
+        <span class="n">ptr</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">tag</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">value</span><span class="p">,</span> <span class="n">offset</span> <span class="o">=</span> <span class="n">unforge_int</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">ptr</span><span class="p">:])</span>
+            <span class="n">ptr</span> <span class="o">+=</span> <span class="n">offset</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;int&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)}</span>
+        <span class="k">elif</span> <span class="n">tag</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">value</span><span class="p">,</span> <span class="n">offset</span> <span class="o">=</span> <span class="n">unforge_array</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">ptr</span><span class="p">:])</span>
+            <span class="n">ptr</span> <span class="o">+=</span> <span class="n">offset</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;string&#39;</span><span class="p">:</span> <span class="n">value</span><span class="o">.</span><span class="n">decode</span><span class="p">()}</span>
+        <span class="k">elif</span> <span class="n">tag</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">unforge_sequence</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="mi">2</span> <span class="o">&lt;</span> <span class="n">tag</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">:</span>
+            <span class="n">args_len</span><span class="p">,</span> <span class="n">annots</span> <span class="o">=</span> <span class="n">read_tag</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">unforge_prim_expr</span><span class="p">(</span><span class="n">args_len</span><span class="p">,</span> <span class="n">annots</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">tag</span> <span class="o">==</span> <span class="mi">10</span><span class="p">:</span>
+            <span class="n">value</span><span class="p">,</span> <span class="n">offset</span> <span class="o">=</span> <span class="n">unforge_array</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">ptr</span><span class="p">:])</span>
+            <span class="n">ptr</span> <span class="o">+=</span> <span class="n">offset</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;bytes&#39;</span><span class="p">:</span> <span class="n">value</span><span class="o">.</span><span class="n">hex</span><span class="p">()}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="kc">False</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;unkonwn tag </span><span class="si">{</span><span class="n">tag</span><span class="si">}</span><span class="s1"> at position </span><span class="si">{</span><span class="n">ptr</span><span class="si">}</span><span class="s1">&#39;</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="n">unforge</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">ptr</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="sa">f</span><span class="s1">&#39;have not reach EOS (pos </span><span class="si">{</span><span class="n">ptr</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="si">}</span><span class="s1">)&#39;</span>
+    <span class="k">return</span> <span class="n">result</span></div>
+
+
 <div class="viewcode-block" id="forge_script"><a class="viewcode-back" href="../../../pack.html#pytezos.michelson.forge.forge_script">[docs]</a><span class="k">def</span> <span class="nf">forge_script</span><span class="p">(</span><span class="n">script</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot; Encode an origination script into the byte form.</span>
 
@@ -427,83 +547,9 @@
     <span class="k">return</span> <span class="n">forge_array</span><span class="p">(</span><span class="n">code</span><span class="p">)</span> <span class="o">+</span> <span class="n">forge_array</span><span class="p">(</span><span class="n">storage</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="unforge_micheline"><a class="viewcode-back" href="../../../pack.html#pytezos.michelson.forge.unforge_micheline">[docs]</a><span class="k">def</span> <span class="nf">unforge_micheline</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Parse Micheline expression from its encoded form (but do not UNPACK).</span>
-
-<span class="sd">    :param data: Encoded Micheline expression</span>
-<span class="sd">    :returns: Object</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">ptr</span> <span class="o">=</span> <span class="mi">0</span>
-
-    <span class="k">def</span> <span class="nf">parse_list</span><span class="p">():</span>
-        <span class="k">nonlocal</span> <span class="n">ptr</span>
-        <span class="n">_</span><span class="p">,</span> <span class="n">offset</span> <span class="o">=</span> <span class="n">parse_array</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">ptr</span><span class="p">:])</span>
-        <span class="n">end</span><span class="p">,</span> <span class="n">res</span> <span class="o">=</span> <span class="n">ptr</span> <span class="o">+</span> <span class="n">offset</span><span class="p">,</span> <span class="p">[]</span>
-        <span class="n">ptr</span> <span class="o">+=</span> <span class="mi">4</span>
-        <span class="k">while</span> <span class="n">ptr</span> <span class="o">&lt;</span> <span class="n">end</span><span class="p">:</span>
-            <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">parse</span><span class="p">())</span>
-        <span class="k">assert</span> <span class="n">ptr</span> <span class="o">==</span> <span class="n">end</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;out of array boundaries&#39;</span>
-        <span class="k">return</span> <span class="n">res</span>
-
-    <span class="k">def</span> <span class="nf">parse_prim_expr</span><span class="p">(</span><span class="n">args_len</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">annots</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="k">nonlocal</span> <span class="n">ptr</span>
-        <span class="n">prim_tag</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">ptr</span><span class="p">]</span>
-        <span class="n">ptr</span> <span class="o">+=</span> <span class="mi">1</span>
-        <span class="n">expr</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;prim&#39;</span><span class="p">:</span> <span class="n">prim_int</span><span class="p">[</span><span class="n">prim_tag</span><span class="p">]}</span>
-
-        <span class="k">if</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">args_len</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
-            <span class="n">expr</span><span class="p">[</span><span class="s1">&#39;args&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">parse</span><span class="p">()</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">args_len</span><span class="p">)]</span>
-        <span class="k">elif</span> <span class="n">args_len</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
-            <span class="n">expr</span><span class="p">[</span><span class="s1">&#39;args&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">parse_list</span><span class="p">()</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">assert</span> <span class="n">args_len</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;unexpected args len </span><span class="si">{</span><span class="n">args_len</span><span class="si">}</span><span class="s1">&#39;</span>
-
-        <span class="k">if</span> <span class="n">annots</span><span class="p">:</span>
-            <span class="n">value</span><span class="p">,</span> <span class="n">offset</span> <span class="o">=</span> <span class="n">parse_array</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">ptr</span><span class="p">:])</span>
-            <span class="n">ptr</span> <span class="o">+=</span> <span class="n">offset</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="n">expr</span><span class="p">[</span><span class="s1">&#39;annots&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">expr</span>
-
-    <span class="k">def</span> <span class="nf">parse</span><span class="p">():</span>
-        <span class="k">nonlocal</span> <span class="n">ptr</span>
-        <span class="n">tag</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">ptr</span><span class="p">]</span>
-        <span class="n">ptr</span> <span class="o">+=</span> <span class="mi">1</span>
-        <span class="k">if</span> <span class="n">tag</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">value</span><span class="p">,</span> <span class="n">offset</span> <span class="o">=</span> <span class="n">parse_int</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">ptr</span><span class="p">:])</span>
-            <span class="n">ptr</span> <span class="o">+=</span> <span class="n">offset</span>
-            <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;int&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)}</span>
-        <span class="k">elif</span> <span class="n">tag</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="n">value</span><span class="p">,</span> <span class="n">offset</span> <span class="o">=</span> <span class="n">parse_array</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">ptr</span><span class="p">:])</span>
-            <span class="n">ptr</span> <span class="o">+=</span> <span class="n">offset</span>
-            <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;string&#39;</span><span class="p">:</span> <span class="n">value</span><span class="o">.</span><span class="n">decode</span><span class="p">()}</span>
-        <span class="k">elif</span> <span class="n">tag</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">parse_list</span><span class="p">()</span>
-        <span class="k">elif</span> <span class="n">tag</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">parse_prim_expr</span><span class="p">(</span><span class="n">args_len</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">annots</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">tag</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">parse_prim_expr</span><span class="p">(</span><span class="n">args_len</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">annots</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">tag</span> <span class="o">==</span> <span class="mi">5</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">parse_prim_expr</span><span class="p">(</span><span class="n">args_len</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">annots</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">tag</span> <span class="o">==</span> <span class="mi">6</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">parse_prim_expr</span><span class="p">(</span><span class="n">args_len</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">annots</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">tag</span> <span class="o">==</span> <span class="mi">7</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">parse_prim_expr</span><span class="p">(</span><span class="n">args_len</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">annots</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">tag</span> <span class="o">==</span> <span class="mi">8</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">parse_prim_expr</span><span class="p">(</span><span class="n">args_len</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">annots</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">tag</span> <span class="o">==</span> <span class="mi">9</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">parse_prim_expr</span><span class="p">(</span><span class="n">args_len</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">annots</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">tag</span> <span class="o">==</span> <span class="mi">10</span><span class="p">:</span>
-            <span class="n">value</span><span class="p">,</span> <span class="n">offset</span> <span class="o">=</span> <span class="n">parse_array</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">ptr</span><span class="p">:])</span>
-            <span class="n">ptr</span> <span class="o">+=</span> <span class="n">offset</span>
-            <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;bytes&#39;</span><span class="p">:</span> <span class="n">value</span><span class="o">.</span><span class="n">hex</span><span class="p">()}</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">assert</span> <span class="kc">False</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;unkonwn tag </span><span class="si">{</span><span class="n">tag</span><span class="si">}</span><span class="s1"> at position </span><span class="si">{</span><span class="n">ptr</span><span class="si">}</span><span class="s1">&#39;</span>
-
-    <span class="n">res</span> <span class="o">=</span> <span class="n">parse</span><span class="p">()</span>
-    <span class="k">assert</span> <span class="n">ptr</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="sa">f</span><span class="s1">&#39;have not reach EOS (pos </span><span class="si">{</span><span class="n">ptr</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="si">}</span><span class="s1">)&#39;</span>
-    <span class="k">return</span> <span class="n">res</span></div>
+<span class="k">def</span> <span class="nf">forge_script_expr</span><span class="p">(</span><span class="n">packed_key</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">blake2b_32</span><span class="p">(</span><span class="n">packed_key</span><span class="p">)</span><span class="o">.</span><span class="n">digest</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">base58_encode</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;expr&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
 </pre></div>
 
            </div>

@@ -1841,7 +1841,7 @@ set self.__traceback__ to tb and return self.</p>
 
 <dl class="py class">
 <dt id="pytezos.rpc.node.RpcMultiNode">
-<em class="property">class </em><code class="sig-prename descclassname">pytezos.rpc.node.</code><code class="sig-name descname">RpcMultiNode</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">uri</span></em>, <em class="sig-param"><span class="n">network</span></em>, <em class="sig-param"><span class="n">caching</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/rpc/node.html#RpcMultiNode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.rpc.node.RpcMultiNode" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">pytezos.rpc.node.</code><code class="sig-name descname">RpcMultiNode</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">uri</span></em>, <em class="sig-param"><span class="n">network</span></em>, <em class="sig-param"><span class="n">caching</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/rpc/node.html#RpcMultiNode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.rpc.node.RpcMultiNode" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="py method">
 <dt id="pytezos.rpc.node.RpcMultiNode.delete">
 <code class="sig-name descname">delete</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span></em>, <em class="sig-param"><span class="n">params</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pytezos.rpc.node.RpcMultiNode.delete" title="Permalink to this definition">¶</a></dt>
@@ -1923,8 +1923,8 @@ to an account, or a parameter was supplied of the wrong type</p>
 </dd></dl>
 
 <dl class="py exception">
-<dt id="pytezos.rpc.errors.MichelsonRuntimeError">
-<em class="property">exception </em><code class="sig-prename descclassname">pytezos.rpc.errors.</code><code class="sig-name descname">MichelsonRuntimeError</code><a class="reference internal" href="_modules/pytezos/rpc/errors.html#MichelsonRuntimeError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.rpc.errors.MichelsonRuntimeError" title="Permalink to this definition">¶</a></dt>
+<dt id="pytezos.rpc.errors.MichelsonError">
+<em class="property">exception </em><code class="sig-prename descclassname">pytezos.rpc.errors.</code><code class="sig-name descname">MichelsonError</code><a class="reference internal" href="_modules/pytezos/rpc/errors.html#MichelsonError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.rpc.errors.MichelsonError" title="Permalink to this definition">¶</a></dt>
 <dd><p>Catch all michelson_v1 errors</p>
 </dd></dl>
 

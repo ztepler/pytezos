@@ -159,20 +159,20 @@
            <div itemprop="articleBody">
             
   <h1>Source code for pytezos.client</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">lru_cache</span>
-<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
 <span class="kn">from</span> <span class="nn">decimal</span> <span class="kn">import</span> <span class="n">Decimal</span>
 
+<span class="kn">from</span> <span class="nn">pytezos.rpc</span> <span class="kn">import</span> <span class="n">ShellQuery</span>
+<span class="kn">from</span> <span class="nn">pytezos.crypto.key</span> <span class="kn">import</span> <span class="n">Key</span>
 <span class="kn">from</span> <span class="nn">pytezos.operation.group</span> <span class="kn">import</span> <span class="n">OperationGroup</span>
 <span class="kn">from</span> <span class="nn">pytezos.operation.content</span> <span class="kn">import</span> <span class="n">ContentMixin</span>
-<span class="kn">from</span> <span class="nn">pytezos.michelson.interface</span> <span class="kn">import</span> <span class="n">ContractInterface</span>
-<span class="kn">from</span> <span class="nn">pytezos.michelson.contract</span> <span class="kn">import</span> <span class="n">Contract</span>
-<span class="kn">from</span> <span class="nn">pytezos.interop</span> <span class="kn">import</span> <span class="n">Interop</span>
-<span class="kn">from</span> <span class="nn">pytezos.tools.docstring</span> <span class="kn">import</span> <span class="n">get_class_docstring</span>
-<span class="kn">from</span> <span class="nn">pytezos.standards.non_fungible_token</span> <span class="kn">import</span> <span class="n">NonFungibleTokenImpl</span>
+<span class="kn">from</span> <span class="nn">pytezos.contract.interface</span> <span class="kn">import</span> <span class="n">ContractInterface</span>
+<span class="kn">from</span> <span class="nn">pytezos.contract.call</span> <span class="kn">import</span> <span class="n">ContractCall</span>
+<span class="kn">from</span> <span class="nn">pytezos.context.mixin</span> <span class="kn">import</span> <span class="n">ContextMixin</span>
+<span class="kn">from</span> <span class="nn">pytezos.jupyter</span> <span class="kn">import</span> <span class="n">get_class_docstring</span>
 
 
-<div class="viewcode-block" id="PyTezosClient"><a class="viewcode-back" href="../../high_level.html#pytezos.client.PyTezosClient">[docs]</a><span class="k">class</span> <span class="nc">PyTezosClient</span><span class="p">(</span><span class="n">Interop</span><span class="p">,</span> <span class="n">ContentMixin</span><span class="p">):</span>
+<div class="viewcode-block" id="PyTezosClient"><a class="viewcode-back" href="../../high_level.html#pytezos.client.PyTezosClient">[docs]</a><span class="k">class</span> <span class="nc">PyTezosClient</span><span class="p">(</span><span class="n">ContextMixin</span><span class="p">,</span> <span class="n">ContentMixin</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Entry point for a developer, start your script with:</span>
 <span class="sd">    `from pytezos import pytezos`</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -185,12 +185,6 @@
         <span class="p">]</span>
         <span class="k">return</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_spawn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">PyTezosClient</span><span class="p">(</span>
-            <span class="n">shell</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;shell&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell</span><span class="p">),</span>
-            <span class="n">key</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;key&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">key</span><span class="p">)</span>
-        <span class="p">)</span>
-
 <div class="viewcode-block" id="PyTezosClient.operation_group"><a class="viewcode-back" href="../../high_level.html#pytezos.client.PyTezosClient.operation_group">[docs]</a>    <span class="k">def</span> <span class="nf">operation_group</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">protocol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">branch</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">contents</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">signature</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OperationGroup</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot; Create new operation group (multiple contents).</span>
 <span class="sd">        You can leave all fields empty in order to create an empty operation group.</span>
@@ -202,12 +196,11 @@
 <span class="sd">        :rtype: OperationGroup</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">OperationGroup</span><span class="p">(</span>
+            <span class="n">context</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_spawn_context</span><span class="p">(),</span>
             <span class="n">protocol</span><span class="o">=</span><span class="n">protocol</span><span class="p">,</span>
             <span class="n">branch</span><span class="o">=</span><span class="n">branch</span><span class="p">,</span>
             <span class="n">contents</span><span class="o">=</span><span class="n">contents</span><span class="p">,</span>
-            <span class="n">signature</span><span class="o">=</span><span class="n">signature</span><span class="p">,</span>
-            <span class="n">shell</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">shell</span><span class="p">,</span>
-            <span class="n">key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">key</span>
+            <span class="n">signature</span><span class="o">=</span><span class="n">signature</span>
         <span class="p">)</span></div>
 
 <div class="viewcode-block" id="PyTezosClient.operation"><a class="viewcode-back" href="../../high_level.html#pytezos.client.PyTezosClient.operation">[docs]</a>    <span class="k">def</span> <span class="nf">operation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">content</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OperationGroup</span><span class="p">:</span>
@@ -216,11 +209,35 @@
 <span class="sd">        :param content: Operation body (depending on `kind`)</span>
 <span class="sd">        :rtype: OperationGroup</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">OperationGroup</span><span class="p">(</span>
-            <span class="n">contents</span><span class="o">=</span><span class="p">[</span><span class="n">content</span><span class="p">],</span>
-            <span class="n">shell</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">shell</span><span class="p">,</span>
-            <span class="n">key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">key</span>
-        <span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">OperationGroup</span><span class="p">(</span><span class="n">context</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_spawn_context</span><span class="p">(),</span> <span class="n">contents</span><span class="o">=</span><span class="p">[</span><span class="n">content</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="PyTezosClient.bulk"><a class="viewcode-back" href="../../high_level.html#pytezos.client.PyTezosClient.bulk">[docs]</a>    <span class="k">def</span> <span class="nf">bulk</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">operations</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">OperationGroup</span><span class="p">,</span> <span class="n">ContractCall</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">OperationGroup</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot; Batch multiple operations and contract calls in a single operation group</span>
+
+<span class="sd">        :param operations: a tuple of operations or contract calls</span>
+<span class="sd">        :rtype: OperationGroup</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">contents</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">reset_fields</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;pkh&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;source&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;delegate&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;counter&#39;</span><span class="p">:</span> <span class="s1">&#39;0&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;secret&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;period&#39;</span><span class="p">:</span> <span class="s1">&#39;0&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;public_key&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;fee&#39;</span><span class="p">:</span> <span class="s1">&#39;0&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;gas_limit&#39;</span><span class="p">:</span> <span class="s1">&#39;0&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;storage_limit&#39;</span><span class="p">:</span> <span class="s1">&#39;0&#39;</span>
+        <span class="p">}</span>
+        <span class="k">for</span> <span class="n">opg</span> <span class="ow">in</span> <span class="n">operations</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">opg</span><span class="p">,</span> <span class="n">ContractCall</span><span class="p">):</span>
+                <span class="n">opg</span> <span class="o">=</span> <span class="n">opg</span><span class="o">.</span><span class="n">as_transaction</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">opg</span><span class="p">,</span> <span class="n">OperationGroup</span><span class="p">),</span> <span class="sa">f</span><span class="s1">&#39;expected OperationGroup or ContractCall, got </span><span class="si">{</span><span class="n">opg</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="k">for</span> <span class="n">content</span> <span class="ow">in</span> <span class="n">opg</span><span class="o">.</span><span class="n">contents</span><span class="p">:</span>
+                <span class="n">contents</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="n">k</span><span class="p">:</span> <span class="n">reset_fields</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">content</span><span class="o">.</span><span class="n">items</span><span class="p">()})</span>
+        <span class="k">return</span> <span class="n">OperationGroup</span><span class="p">(</span><span class="n">context</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_spawn_context</span><span class="p">(),</span> <span class="n">contents</span><span class="o">=</span><span class="n">contents</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="PyTezosClient.account"><a class="viewcode-back" href="../../high_level.html#pytezos.client.PyTezosClient.account">[docs]</a>    <span class="k">def</span> <span class="nf">account</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">account_id</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot; Shortcut for RPC contract request.</span>
@@ -230,43 +247,35 @@
         <span class="n">address</span> <span class="o">=</span> <span class="n">account_id</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">key</span><span class="o">.</span><span class="n">public_key_hash</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell</span><span class="o">.</span><span class="n">contracts</span><span class="p">[</span><span class="n">address</span><span class="p">]()</span></div>
 
-    <span class="k">def</span> <span class="nf">balance</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Decimal</span><span class="p">:</span>
-        <span class="k">return</span> <span class="p">(</span><span class="n">Decimal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">account</span><span class="p">()[</span><span class="s1">&#39;balance&#39;</span><span class="p">])</span> <span class="o">/</span> <span class="mi">10</span> <span class="o">**</span> <span class="mi">6</span><span class="p">)</span><span class="o">.</span><span class="n">quantize</span><span class="p">(</span><span class="n">Decimal</span><span class="p">(</span><span class="s1">&#39;0.000001&#39;</span><span class="p">))</span>
+<div class="viewcode-block" id="PyTezosClient.balance"><a class="viewcode-back" href="../../high_level.html#pytezos.client.PyTezosClient.balance">[docs]</a>    <span class="k">def</span> <span class="nf">balance</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Decimal</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot; Get account balance</span>
+
+<span class="sd">        :return: amount in tez</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">balance_str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">account</span><span class="p">()[</span><span class="s1">&#39;balance&#39;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">Decimal</span><span class="p">(</span><span class="n">balance_str</span><span class="p">)</span> <span class="o">/</span> <span class="mi">10</span> <span class="o">**</span> <span class="mi">6</span><span class="p">)</span><span class="o">.</span><span class="n">quantize</span><span class="p">(</span><span class="n">Decimal</span><span class="p">(</span><span class="s1">&#39;0.000001&#39;</span><span class="p">))</span></div>
 
 <div class="viewcode-block" id="PyTezosClient.now"><a class="viewcode-back" href="../../high_level.html#pytezos.client.PyTezosClient.now">[docs]</a>    <span class="k">def</span> <span class="nf">now</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot; Timestamp of the current head (UTC).</span>
+        <span class="sd">&quot;&quot;&quot; Timestamp of the latest block + block time (UTC).</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">constants</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">constants</span><span class="p">()</span>  <span class="c1"># cached</span>
-        <span class="n">ts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">header</span><span class="p">()[</span><span class="s1">&#39;timestamp&#39;</span><span class="p">]</span>
-        <span class="n">dt</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">ts</span><span class="p">,</span> <span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">T%H:%M:%SZ&#39;</span><span class="p">)</span>
-        <span class="n">first_delay</span> <span class="o">=</span> <span class="n">constants</span><span class="p">[</span><span class="s1">&#39;time_between_blocks&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-        <span class="k">return</span> <span class="nb">int</span><span class="p">((</span><span class="n">dt</span> <span class="o">-</span> <span class="n">datetime</span><span class="p">(</span><span class="mi">1970</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">())</span> <span class="o">+</span> <span class="nb">int</span><span class="p">(</span><span class="n">first_delay</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">get_now</span><span class="p">()</span></div>
 
-    <span class="nd">@lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">_get_contract_interface</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">contract_id</span><span class="p">,</span> <span class="n">factory</span><span class="o">=</span><span class="n">Contract</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">ContractInterface</span><span class="p">(</span>
-            <span class="n">address</span><span class="o">=</span><span class="n">contract_id</span><span class="p">,</span>
-            <span class="n">shell</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">shell</span><span class="p">,</span>
-            <span class="n">key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">key</span><span class="p">,</span>
-            <span class="n">factory</span><span class="o">=</span><span class="n">factory</span>
-        <span class="p">)</span>
-
-<div class="viewcode-block" id="PyTezosClient.contract"><a class="viewcode-back" href="../../high_level.html#pytezos.client.PyTezosClient.contract">[docs]</a>    <span class="k">def</span> <span class="nf">contract</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">contract_id</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ContractInterface</span><span class="p">:</span>
+<div class="viewcode-block" id="PyTezosClient.contract"><a class="viewcode-back" href="../../high_level.html#pytezos.client.PyTezosClient.contract">[docs]</a>    <span class="k">def</span> <span class="nf">contract</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">address</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ContractInterface</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot; Get a high-level interface for a given smart contract id.</span>
 
-<span class="sd">        :param contract_id: KT address of a smart contract</span>
+<span class="sd">        :param address: KT address of a smart contract</span>
 <span class="sd">        :rtype: ContractInterface</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_contract_interface</span><span class="p">(</span><span class="n">contract_id</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">ContractInterface</span><span class="o">.</span><span class="n">from_context</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_spawn_context</span><span class="p">(</span><span class="n">address</span><span class="o">=</span><span class="n">address</span><span class="p">))</span></div>
 
-<div class="viewcode-block" id="PyTezosClient.nft_app"><a class="viewcode-back" href="../../high_level.html#pytezos.client.PyTezosClient.nft_app">[docs]</a>    <span class="k">def</span> <span class="nf">nft_app</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">contract_id</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ContractInterface</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot; Get a high-level NFT interface for a given smart contract id.</span>
+<div class="viewcode-block" id="PyTezosClient.using"><a class="viewcode-back" href="../../high_level.html#pytezos.client.PyTezosClient.using">[docs]</a>    <span class="k">def</span> <span class="nf">using</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shell</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">ShellQuery</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Key</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Change current rpc endpoint and account (private key).</span>
 
-<span class="sd">        Read more at https://nft.stove-labs.com/</span>
-<span class="sd">        :param contract_id: KT address of a smart contract</span>
-<span class="sd">        :rtype: ContractInterface</span>
+<span class="sd">        :param shell: one of &#39;mainnet&#39;, &#39;***net&#39;, or RPC node uri, or instance of `ShellQuery`</span>
+<span class="sd">        :param key: base58 encoded key, path to the faucet file, alias from tezos-client, or instance of `Key`</span>
+<span class="sd">        :returns: A copy of current object with changes applied</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_contract_interface</span><span class="p">(</span><span class="n">contract_id</span><span class="p">,</span> <span class="n">factory</span><span class="o">=</span><span class="n">NonFungibleTokenImpl</span><span class="p">)</span></div></div>
+        <span class="k">return</span> <span class="n">PyTezosClient</span><span class="p">(</span><span class="n">context</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_spawn_context</span><span class="p">(</span><span class="n">shell</span><span class="p">,</span> <span class="n">key</span><span class="p">))</span></div></div>
 </pre></div>
 
            </div>

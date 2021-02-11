@@ -159,9 +159,8 @@
            <div itemprop="articleBody">
             
   <h1>Source code for pytezos.operation.forge</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">pytezos.encoding</span> <span class="kn">import</span> <span class="n">forge_address</span><span class="p">,</span> <span class="n">forge_bool</span><span class="p">,</span> <span class="n">forge_nat</span><span class="p">,</span> <span class="n">forge_array</span><span class="p">,</span> <span class="n">forge_public_key</span><span class="p">,</span> \
-    <span class="n">forge_base58</span>
-<span class="kn">from</span> <span class="nn">pytezos.michelson.forge</span> <span class="kn">import</span> <span class="n">forge_entrypoint</span><span class="p">,</span> <span class="n">forge_micheline</span><span class="p">,</span> <span class="n">forge_script</span>
+<span></span><span class="kn">from</span> <span class="nn">pytezos.michelson.forge</span> <span class="kn">import</span> <span class="n">forge_micheline</span><span class="p">,</span> <span class="n">forge_script</span><span class="p">,</span> <span class="n">forge_nat</span><span class="p">,</span> <span class="n">forge_public_key</span><span class="p">,</span> \
+    <span class="n">forge_address</span><span class="p">,</span> <span class="n">forge_bool</span><span class="p">,</span> <span class="n">forge_array</span><span class="p">,</span> <span class="n">forge_base58</span>
 
 <span class="n">operation_tags</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s1">&#39;endorsement&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
@@ -176,6 +175,13 @@
     <span class="s1">&#39;origination&#39;</span><span class="p">:</span> <span class="mi">109</span><span class="p">,</span>
     <span class="s1">&#39;delegation&#39;</span><span class="p">:</span> <span class="mi">110</span>
 <span class="p">}</span>
+<span class="n">reserved_entrypoints</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;default&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x00</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;root&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x01</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;do&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x02</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;set_delegate&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x03</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;remove_delegate&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x04</span><span class="s1">&#39;</span>
+<span class="p">}</span>
 
 
 <div class="viewcode-block" id="has_parameters"><a class="viewcode-back" href="../../../operation_groups.html#pytezos.operation.forge.has_parameters">[docs]</a><span class="k">def</span> <span class="nf">has_parameters</span><span class="p">(</span><span class="n">content</span><span class="p">):</span>
@@ -187,6 +193,17 @@
             <span class="k">return</span> <span class="kc">True</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="forge_entrypoint"><a class="viewcode-back" href="../../../operation_groups.html#pytezos.operation.forge.forge_entrypoint">[docs]</a><span class="k">def</span> <span class="nf">forge_entrypoint</span><span class="p">(</span><span class="n">entrypoint</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot; Encode Michelson contract entrypoint into the byte form.</span>
+
+<span class="sd">    :param entrypoint: string</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">entrypoint</span> <span class="ow">in</span> <span class="n">reserved_entrypoints</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">reserved_entrypoints</span><span class="p">[</span><span class="n">entrypoint</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\xff</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="n">forge_array</span><span class="p">(</span><span class="n">entrypoint</span><span class="o">.</span><span class="n">encode</span><span class="p">(),</span> <span class="n">len_bytes</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="forge_operation"><a class="viewcode-back" href="../../../operation_groups.html#pytezos.operation.forge.forge_operation">[docs]</a><span class="k">def</span> <span class="nf">forge_operation</span><span class="p">(</span><span class="n">content</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
