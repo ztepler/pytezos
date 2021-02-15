@@ -161,21 +161,13 @@
   <h1>Source code for pytezos.context.impl</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Optional</span>
 <span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
-<span class="kn">from</span> <span class="nn">pyblake2</span> <span class="kn">import</span> <span class="n">blake2b</span>
 
 <span class="kn">from</span> <span class="nn">pytezos.rpc.errors</span> <span class="kn">import</span> <span class="n">RpcError</span>
 <span class="kn">from</span> <span class="nn">pytezos.crypto.key</span> <span class="kn">import</span> <span class="n">Key</span>
 <span class="kn">from</span> <span class="nn">pytezos.rpc.shell</span> <span class="kn">import</span> <span class="n">ShellQuery</span>
-<span class="kn">from</span> <span class="nn">pytezos.context.abstract</span> <span class="kn">import</span> <span class="n">AbstractContext</span>
-<span class="kn">from</span> <span class="nn">pytezos.crypto.encoding</span> <span class="kn">import</span> <span class="n">base58_encode</span><span class="p">,</span> <span class="n">base58_decode</span>
+<span class="kn">from</span> <span class="nn">pytezos.context.abstract</span> <span class="kn">import</span> <span class="n">AbstractContext</span><span class="p">,</span> <span class="n">get_originated_address</span>
+<span class="kn">from</span> <span class="nn">pytezos.crypto.encoding</span> <span class="kn">import</span> <span class="n">base58_encode</span>
 <span class="kn">from</span> <span class="nn">pytezos.michelson.micheline</span> <span class="kn">import</span> <span class="n">get_script_section</span>
-
-
-<div class="viewcode-block" id="get_originated_address"><a class="viewcode-back" href="../../../repl.html#pytezos.context.impl.get_originated_address">[docs]</a><span class="k">def</span> <span class="nf">get_originated_address</span><span class="p">(</span><span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">opg_hash</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="n">prefix</span> <span class="o">=</span> <span class="n">base58_decode</span><span class="p">(</span><span class="n">opg_hash</span><span class="p">)</span> <span class="k">if</span> <span class="n">opg_hash</span> <span class="k">else</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x00</span><span class="s1">&#39;</span> <span class="o">*</span> <span class="mi">32</span>
-    <span class="n">nonce</span> <span class="o">=</span> <span class="n">prefix</span> <span class="o">+</span> <span class="n">index</span><span class="o">.</span><span class="n">to_bytes</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="s1">&#39;big&#39;</span><span class="p">)</span>
-    <span class="n">nonce_hash</span> <span class="o">=</span> <span class="n">blake2b</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">nonce</span><span class="p">,</span> <span class="n">digest_size</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span><span class="o">.</span><span class="n">digest</span><span class="p">()</span>
-    <span class="k">return</span> <span class="n">base58_encode</span><span class="p">(</span><span class="n">nonce_hash</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;KT1&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="ExecutionContext"><a class="viewcode-back" href="../../../repl.html#pytezos.context.impl.ExecutionContext">[docs]</a><span class="k">class</span> <span class="nc">ExecutionContext</span><span class="p">(</span><span class="n">AbstractContext</span><span class="p">):</span>
@@ -237,9 +229,13 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">counter</span></div>
 
 <div class="viewcode-block" id="ExecutionContext.register_big_map"><a class="viewcode-back" href="../../../repl.html#pytezos.context.impl.ExecutionContext.register_big_map">[docs]</a>    <span class="k">def</span> <span class="nf">register_big_map</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ptr</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="n">tmp_ptr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_tmp_big_map_id</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">big_maps</span><span class="p">[</span><span class="n">tmp_ptr</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">ptr</span><span class="p">,</span> <span class="n">copy</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">tmp_ptr</span></div>
+        <span class="k">if</span> <span class="n">copy</span><span class="p">:</span>
+            <span class="n">tmp_ptr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_tmp_big_map_id</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">big_maps</span><span class="p">[</span><span class="n">tmp_ptr</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">ptr</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">tmp_ptr</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">big_maps</span><span class="p">[</span><span class="n">ptr</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">ptr</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">ptr</span></div>
 
 <div class="viewcode-block" id="ExecutionContext.get_tmp_big_map_id"><a class="viewcode-back" href="../../../repl.html#pytezos.context.impl.ExecutionContext.get_tmp_big_map_id">[docs]</a>    <span class="k">def</span> <span class="nf">get_tmp_big_map_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tmp_big_map_index</span> <span class="o">+=</span> <span class="mi">1</span>
@@ -271,8 +267,11 @@
 
 <div class="viewcode-block" id="ExecutionContext.get_parameter_expr"><a class="viewcode-back" href="../../../repl.html#pytezos.context.impl.ExecutionContext.get_parameter_expr">[docs]</a>    <span class="k">def</span> <span class="nf">get_parameter_expr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">address</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">:</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell</span> <span class="ow">and</span> <span class="n">address</span><span class="p">:</span>
-            <span class="n">script</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell</span><span class="o">.</span><span class="n">contracts</span><span class="p">[</span><span class="n">address</span><span class="p">]</span><span class="o">.</span><span class="n">script</span><span class="p">()</span>
-            <span class="k">return</span> <span class="n">get_script_section</span><span class="p">(</span><span class="n">script</span><span class="p">,</span> <span class="s1">&#39;parameter&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">address</span> <span class="o">==</span> <span class="n">get_originated_address</span><span class="p">(</span><span class="mi">0</span><span class="p">):</span>
+                <span class="k">return</span> <span class="kc">None</span>  <span class="c1"># dummy callback</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">script</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell</span><span class="o">.</span><span class="n">contracts</span><span class="p">[</span><span class="n">address</span><span class="p">]</span><span class="o">.</span><span class="n">script</span><span class="p">()</span>
+                <span class="k">return</span> <span class="n">get_script_section</span><span class="p">(</span><span class="n">script</span><span class="p">,</span> <span class="s1">&#39;parameter&#39;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">address</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameter_expr</span></div>
 
@@ -380,7 +379,10 @@
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_dummy_chain_id</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="ExecutionContext.get_dummy_address"><a class="viewcode-back" href="../../../repl.html#pytezos.context.impl.ExecutionContext.get_dummy_address">[docs]</a>    <span class="k">def</span> <span class="nf">get_dummy_address</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">base58_encode</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x00</span><span class="s1">&#39;</span> <span class="o">*</span> <span class="mi">20</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;KT1&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span></div>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">key</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">key</span><span class="o">.</span><span class="n">public_key_hash</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">base58_encode</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x00</span><span class="s1">&#39;</span> <span class="o">*</span> <span class="mi">20</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;KT1&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="ExecutionContext.get_dummy_public_key"><a class="viewcode-back" href="../../../repl.html#pytezos.context.impl.ExecutionContext.get_dummy_public_key">[docs]</a>    <span class="k">def</span> <span class="nf">get_dummy_public_key</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">key</span><span class="p">:</span>

@@ -177,10 +177,23 @@
 <em class="property">class </em><code class="sig-prename descclassname">pytezos.operation.group.</code><code class="sig-name descname">OperationGroup</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">context</span><span class="p">:</span> <span class="n"><a class="reference internal" href="repl.html#pytezos.context.impl.ExecutionContext" title="pytezos.context.impl.ExecutionContext">pytezos.context.impl.ExecutionContext</a></span></em>, <em class="sig-param"><span class="n">contents</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">protocol</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">chain_id</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">branch</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">signature</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/operation/group.html#OperationGroup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.operation.group.OperationGroup" title="Permalink to this definition">¶</a></dt>
 <dd><p>Operation group representation: contents (single or multiple), signature, other fields,
 and also useful helpers for filling with precise fees, signing, forging, and injecting.</p>
-<dl class="py attribute">
+<dl class="py method">
 <dt id="pytezos.operation.group.OperationGroup.activate_account">
-<code class="sig-name descname">activate_account</code><em class="property"> = &lt;function ContentMixin.activate_account&gt;  Activate recommended allocations for contributions to the TF fundraiser. More info https://activate.tezos.com/  :param activation_code: Secret code from pdf, leave empty for autocomplete :param pkh: Public key hash, leave empty for autocomplete :returns: dict or OperationGroup </em><a class="headerlink" href="#pytezos.operation.group.OperationGroup.activate_account" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="sig-name descname">activate_account</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">activation_code</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">pkh</span><span class="o">=</span><span class="default_value">''</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pytezos.operation.group.OperationGroup.activate_account" title="Permalink to this definition">¶</a></dt>
+<dd><p>Activate recommended allocations for contributions to the TF fundraiser.
+More info <a class="reference external" href="https://activate.tezos.com/">https://activate.tezos.com/</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>activation_code</strong> – Secret code from pdf, leave empty for autocomplete</p></li>
+<li><p><strong>pkh</strong> – Public key hash, leave empty for autocomplete</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>dict or OperationGroup</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt id="pytezos.operation.group.OperationGroup.autofill">
@@ -199,10 +212,26 @@ and also useful helpers for filling with precise fees, signing, forging, and inj
 </dl>
 </dd></dl>
 
-<dl class="py attribute">
+<dl class="py method">
 <dt id="pytezos.operation.group.OperationGroup.ballot">
-<code class="sig-name descname">ballot</code><em class="property"> = &lt;function ContentMixin.ballot&gt;  Vote for a proposal in a given voting period. Can only be submitted during Testing_vote or Promotion_vote periods, and only once per period. More info https://tezos.gitlab.io/master/whitedoc/voting.html  :param proposal: Hash of the proposal :param ballot: 'Yay', 'Nay' or 'Pass' :param source: Public key hash (of the signatory), leave None for autocomplete :param period: Number of the current voting period, leave None for autocomplete :returns: dict or OperationGroup </em><a class="headerlink" href="#pytezos.operation.group.OperationGroup.ballot" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="sig-name descname">ballot</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">proposal</span></em>, <em class="sig-param"><span class="n">ballot</span></em>, <em class="sig-param"><span class="n">source</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">period</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pytezos.operation.group.OperationGroup.ballot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Vote for a proposal in a given voting period.
+Can only be submitted during Testing_vote or Promotion_vote periods, and only once per period.
+More info <a class="reference external" href="https://tezos.gitlab.io/master/whitedoc/voting.html">https://tezos.gitlab.io/master/whitedoc/voting.html</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>proposal</strong> – Hash of the proposal</p></li>
+<li><p><strong>ballot</strong> – ‘Yay’, ‘Nay’ or ‘Pass’</p></li>
+<li><p><strong>source</strong> – Public key hash (of the signatory), leave None for autocomplete</p></li>
+<li><p><strong>period</strong> – Number of the current voting period, leave None for autocomplete</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>dict or OperationGroup</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt id="pytezos.operation.group.OperationGroup.binary_payload">
@@ -210,25 +239,87 @@ and also useful helpers for filling with precise fees, signing, forging, and inj
 <dd><p>Get binary payload used for injection/hash calculation.</p>
 </dd></dl>
 
-<dl class="py attribute">
+<dl class="py method">
 <dt id="pytezos.operation.group.OperationGroup.delegation">
-<code class="sig-name descname">delegation</code><em class="property"> = &lt;function ContentMixin.delegation&gt;  Delegate funds or register yourself as a delegate.  :param delegate: tz address of delegate, leave None to register yourself as a delegate :param source: Address from which funds will be delegated, leave None to use signatory address :param counter: Current account counter, leave None for autocomplete :param fee: Leave None for autocomplete :param gas_limit: Leave None for autocomplete :param storage_limit: Leave None for autocomplete :returns: dict or OperationGroup </em><a class="headerlink" href="#pytezos.operation.group.OperationGroup.delegation" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="sig-name descname">delegation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">delegate</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">source</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">counter</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">fee</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">gas_limit</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">storage_limit</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pytezos.operation.group.OperationGroup.delegation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delegate funds or register yourself as a delegate.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>delegate</strong> – tz address of delegate, leave None to register yourself as a delegate</p></li>
+<li><p><strong>source</strong> – Address from which funds will be delegated, leave None to use signatory address</p></li>
+<li><p><strong>counter</strong> – Current account counter, leave None for autocomplete</p></li>
+<li><p><strong>fee</strong> – Leave None for autocomplete</p></li>
+<li><p><strong>gas_limit</strong> – Leave None for autocomplete</p></li>
+<li><p><strong>storage_limit</strong> – Leave None for autocomplete</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>dict or OperationGroup</p>
+</dd>
+</dl>
+</dd></dl>
 
-<dl class="py attribute">
+<dl class="py method">
 <dt id="pytezos.operation.group.OperationGroup.double_baking_evidence">
-<code class="sig-name descname">double_baking_evidence</code><em class="property"> = &lt;function ContentMixin.double_baking_evidence&gt;  Provide evidence of double baking (two different blocks at the same height).  :param bh1: First block hash :param bh2: Second block hash :returns: dict or OperationGroup </em><a class="headerlink" href="#pytezos.operation.group.OperationGroup.double_baking_evidence" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="sig-name descname">double_baking_evidence</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bh1</span></em>, <em class="sig-param"><span class="n">bh2</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pytezos.operation.group.OperationGroup.double_baking_evidence" title="Permalink to this definition">¶</a></dt>
+<dd><p>Provide evidence of double baking (two different blocks at the same height).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>bh1</strong> – First block hash</p></li>
+<li><p><strong>bh2</strong> – Second block hash</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>dict or OperationGroup</p>
+</dd>
+</dl>
+</dd></dl>
 
-<dl class="py attribute">
+<dl class="py method">
 <dt id="pytezos.operation.group.OperationGroup.double_endorsement_evidence">
-<code class="sig-name descname">double_endorsement_evidence</code><em class="property"> = &lt;function ContentMixin.double_endorsement_evidence&gt;  Provide evidence of double endorsement (endorsing two different blocks at the same block height).  :param op1: Inline endorsement { &quot;branch&quot;: $block_hash, &quot;operations&quot;: { &quot;kind&quot;: &quot;endorsement&quot;, &quot;level&quot;: integer ∈ [-2^31-2, 2^31+2] }, &quot;signature&quot;?: $Signature } :param op2: Inline endorsement :returns: dict or OperationGroup </em><a class="headerlink" href="#pytezos.operation.group.OperationGroup.double_endorsement_evidence" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="sig-name descname">double_endorsement_evidence</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">op1</span><span class="p">:</span> <span class="n">dict</span></em>, <em class="sig-param"><span class="n">op2</span><span class="p">:</span> <span class="n">dict</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pytezos.operation.group.OperationGroup.double_endorsement_evidence" title="Permalink to this definition">¶</a></dt>
+<dd><p>Provide evidence of double endorsement (endorsing two different blocks at the same block height).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>op1</strong> – <p>Inline endorsement
+{</p>
+<blockquote>
+<div><p>”branch”: $block_hash,
+“operations”: {</p>
+<blockquote>
+<div><p>”kind”: “endorsement”,
+“level”: integer ∈ [-2^31-2, 2^31+2]</p>
+</div></blockquote>
+<p>},
+“signature”?: $Signature</p>
+</div></blockquote>
+<p>}</p>
+</p></li>
+<li><p><strong>op2</strong> – Inline endorsement</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>dict or OperationGroup</p>
+</dd>
+</dl>
+</dd></dl>
 
-<dl class="py attribute">
+<dl class="py method">
 <dt id="pytezos.operation.group.OperationGroup.endorsement">
-<code class="sig-name descname">endorsement</code><em class="property"> = &lt;function ContentMixin.endorsement&gt;  Endorse a block.  :param level: Endorsed level :returns: dict or OperationGroup </em><a class="headerlink" href="#pytezos.operation.group.OperationGroup.endorsement" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="sig-name descname">endorsement</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">level</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pytezos.operation.group.OperationGroup.endorsement" title="Permalink to this definition">¶</a></dt>
+<dd><p>Endorse a block.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>level</strong> – Endorsed level</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>dict or OperationGroup</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt id="pytezos.operation.group.OperationGroup.fill">
@@ -270,7 +361,7 @@ and also useful helpers for filling with precise fees, signing, forging, and inj
 
 <dl class="py method">
 <dt id="pytezos.operation.group.OperationGroup.inject">
-<code class="sig-name descname">inject</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">_async</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">preapply</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">check_result</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">num_blocks_wait</span><span class="o">=</span><span class="default_value">2</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/operation/group.html#OperationGroup.inject"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.operation.group.OperationGroup.inject" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">inject</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">_async</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">preapply</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">check_result</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">num_blocks_wait</span><span class="o">=</span><span class="default_value">5</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/operation/group.html#OperationGroup.inject"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.operation.group.OperationGroup.inject" title="Permalink to this definition">¶</a></dt>
 <dd><p>Inject the signed operation group.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -307,10 +398,28 @@ and also useful helpers for filling with precise fees, signing, forging, and inj
 </dl>
 </dd></dl>
 
-<dl class="py attribute">
+<dl class="py method">
 <dt id="pytezos.operation.group.OperationGroup.origination">
-<code class="sig-name descname">origination</code><em class="property"> = &lt;function ContentMixin.origination&gt;  Deploy smart contract (scriptless KT accounts are not used for delegation since Babylon)  :param script: {&quot;code&quot;: $Micheline, &quot;storage&quot;: $Micheline} :param balance: Amount transferred on the balance, WARNING: there is no default way to withdraw funds.More info: https://tezos.stackexchange.com/questions/1315/can-i-withdraw-funds-from-an-empty-smart-contract :param delegate: Set contract delegate, default None :param source: Address from which funds will be sent, leave None to use signatory address :param counter: Current account counter, leave None for autocomplete :param fee: Leave None for autocomplete :param gas_limit: Leave None for autocomplete :param storage_limit: Leave None for autocomplete :returns: dict or OperationGroup </em><a class="headerlink" href="#pytezos.operation.group.OperationGroup.origination" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="sig-name descname">origination</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">script</span></em>, <em class="sig-param"><span class="n">balance</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">delegate</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">source</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">counter</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">fee</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">gas_limit</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">storage_limit</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pytezos.operation.group.OperationGroup.origination" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deploy smart contract (scriptless KT accounts are not used for delegation since Babylon)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>script</strong> – {“code”: $Micheline, “storage”: $Micheline}</p></li>
+<li><p><strong>balance</strong> – Amount transferred on the balance, WARNING: there is no default way to withdraw funds.         More info: <a class="reference external" href="https://tezos.stackexchange.com/questions/1315/can-i-withdraw-funds-from-an-empty-smart-contract">https://tezos.stackexchange.com/questions/1315/can-i-withdraw-funds-from-an-empty-smart-contract</a></p></li>
+<li><p><strong>delegate</strong> – Set contract delegate, default None</p></li>
+<li><p><strong>source</strong> – Address from which funds will be sent, leave None to use signatory address</p></li>
+<li><p><strong>counter</strong> – Current account counter, leave None for autocomplete</p></li>
+<li><p><strong>fee</strong> – Leave None for autocomplete</p></li>
+<li><p><strong>gas_limit</strong> – Leave None for autocomplete</p></li>
+<li><p><strong>storage_limit</strong> – Leave None for autocomplete</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>dict or OperationGroup</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt id="pytezos.operation.group.OperationGroup.preapply">
@@ -323,10 +432,25 @@ and also useful helpers for filling with precise fees, signing, forging, and inj
 </dl>
 </dd></dl>
 
-<dl class="py attribute">
+<dl class="py method">
 <dt id="pytezos.operation.group.OperationGroup.proposals">
-<code class="sig-name descname">proposals</code><em class="property"> = &lt;function ContentMixin.proposals&gt;  Submit and/or upvote proposals to amend the protocol. Can only be submitted during a proposal period. More info https://tezos.gitlab.io/master/whitedoc/voting.html  :param proposals: List of proposal hashes or single proposal hash :param source: Public key hash (of the signatory), leave None for autocomplete :param period: Number of the current voting period, leave 0 for autocomplete :returns: dict or OperationGroup </em><a class="headerlink" href="#pytezos.operation.group.OperationGroup.proposals" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="sig-name descname">proposals</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">proposals</span></em>, <em class="sig-param"><span class="n">source</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">period</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pytezos.operation.group.OperationGroup.proposals" title="Permalink to this definition">¶</a></dt>
+<dd><p>Submit and/or upvote proposals to amend the protocol.
+Can only be submitted during a proposal period.
+More info <a class="reference external" href="https://tezos.gitlab.io/master/whitedoc/voting.html">https://tezos.gitlab.io/master/whitedoc/voting.html</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>proposals</strong> – List of proposal hashes or single proposal hash</p></li>
+<li><p><strong>source</strong> – Public key hash (of the signatory), leave None for autocomplete</p></li>
+<li><p><strong>period</strong> – Number of the current voting period, leave 0 for autocomplete</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>dict or OperationGroup</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt id="pytezos.operation.group.OperationGroup.result">
@@ -339,10 +463,26 @@ and also useful helpers for filling with precise fees, signing, forging, and inj
 </dl>
 </dd></dl>
 
-<dl class="py attribute">
+<dl class="py method">
 <dt id="pytezos.operation.group.OperationGroup.reveal">
-<code class="sig-name descname">reveal</code><em class="property"> = &lt;function ContentMixin.reveal&gt;  Reveal the public key associated with a tz address.  :param public_key: Public key to reveal, Base58 encoded :param source: Public key hash of the key revealed, leave None to use signatory address :param counter: Current account counter, leave None for autocomplete(More info https://tezos.stackexchange.com/questions/632/how-counter-grows) :param fee: Leave None for autocomplete :param gas_limit: Leave None for autocomplete :param storage_limit: Leave None for autocomplete :returns: dict or OperationGroup </em><a class="headerlink" href="#pytezos.operation.group.OperationGroup.reveal" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="sig-name descname">reveal</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">public_key</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">source</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">counter</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">fee</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">gas_limit</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">storage_limit</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pytezos.operation.group.OperationGroup.reveal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reveal the public key associated with a tz address.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>public_key</strong> – Public key to reveal, Base58 encoded</p></li>
+<li><p><strong>source</strong> – Public key hash of the key revealed, leave None to use signatory address</p></li>
+<li><p><strong>counter</strong> – Current account counter, leave None for autocomplete         (More info <a class="reference external" href="https://tezos.stackexchange.com/questions/632/how-counter-grows">https://tezos.stackexchange.com/questions/632/how-counter-grows</a>)</p></li>
+<li><p><strong>fee</strong> – Leave None for autocomplete</p></li>
+<li><p><strong>gas_limit</strong> – Leave None for autocomplete</p></li>
+<li><p><strong>storage_limit</strong> – Leave None for autocomplete</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>dict or OperationGroup</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt id="pytezos.operation.group.OperationGroup.run">
@@ -358,10 +498,23 @@ and also useful helpers for filling with precise fees, signing, forging, and inj
 </dl>
 </dd></dl>
 
-<dl class="py attribute">
+<dl class="py method">
 <dt id="pytezos.operation.group.OperationGroup.seed_nonce_revelation">
-<code class="sig-name descname">seed_nonce_revelation</code><em class="property"> = &lt;function ContentMixin.seed_nonce_revelation&gt;  Reveal the nonce committed operation in the previous cycle. More info https://tezos.stackexchange.com/questions/567/what-are-nonce-revelations  :param level: When nonce hash was committed :param nonce: Hex string :returns: dict or OperationGroup </em><a class="headerlink" href="#pytezos.operation.group.OperationGroup.seed_nonce_revelation" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="sig-name descname">seed_nonce_revelation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">level</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">nonce</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pytezos.operation.group.OperationGroup.seed_nonce_revelation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reveal the nonce committed operation in the previous cycle.
+More info <a class="reference external" href="https://tezos.stackexchange.com/questions/567/what-are-nonce-revelations">https://tezos.stackexchange.com/questions/567/what-are-nonce-revelations</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>level</strong> – When nonce hash was committed</p></li>
+<li><p><strong>nonce</strong> – Hex string</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>dict or OperationGroup</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt id="pytezos.operation.group.OperationGroup.sign">
@@ -374,10 +527,29 @@ and also useful helpers for filling with precise fees, signing, forging, and inj
 </dl>
 </dd></dl>
 
-<dl class="py attribute">
+<dl class="py method">
 <dt id="pytezos.operation.group.OperationGroup.transaction">
-<code class="sig-name descname">transaction</code><em class="property"> = &lt;function ContentMixin.transaction&gt;  Transfer tez to a given address (implicit or originated). If the receiver is a smart contract, then optional parameters may be passed.  :param source: Address from which funds will be sent, leave None to use signatory address :param destination: Address :param amount: Amount to send in microtez (int) or tez (Decimal) (optional) :param counter: Current account counter, leave None for autocomplete :param parameters: { &quot;entrypoint&quot;: $string, &quot;value&quot;: $Micheline expression } (optional) :param fee: Leave None for autocomplete :param gas_limit: Leave None for autocomplete :param storage_limit: Leave None for autocomplete :returns: dict or OperationGroup </em><a class="headerlink" href="#pytezos.operation.group.OperationGroup.transaction" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="sig-name descname">transaction</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">destination</span></em>, <em class="sig-param"><span class="n">amount</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">parameters</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">source</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">counter</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">fee</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">gas_limit</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">storage_limit</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pytezos.operation.group.OperationGroup.transaction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transfer tez to a given address (implicit or originated).
+If the receiver is a smart contract, then optional parameters may be passed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>source</strong> – Address from which funds will be sent, leave None to use signatory address</p></li>
+<li><p><strong>destination</strong> – Address</p></li>
+<li><p><strong>amount</strong> – Amount to send in microtez (int) or tez (Decimal) (optional)</p></li>
+<li><p><strong>counter</strong> – Current account counter, leave None for autocomplete</p></li>
+<li><p><strong>parameters</strong> – { “entrypoint”: $string, “value”: $Micheline expression } (optional)</p></li>
+<li><p><strong>fee</strong> – Leave None for autocomplete</p></li>
+<li><p><strong>gas_limit</strong> – Leave None for autocomplete</p></li>
+<li><p><strong>storage_limit</strong> – Leave None for autocomplete</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>dict or OperationGroup</p>
+</dd>
+</dl>
+</dd></dl>
 
 </dd></dl>
 

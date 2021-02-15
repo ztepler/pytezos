@@ -159,7 +159,8 @@
            <div itemprop="articleBody">
             
   <h1>Source code for pytezos.contract.data</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">deprecation</span> <span class="kn">import</span> <span class="n">deprecated</span>
 
 <span class="kn">from</span> <span class="nn">pytezos.context.impl</span> <span class="kn">import</span> <span class="n">ExecutionContext</span>
 <span class="kn">from</span> <span class="nn">pytezos.context.mixin</span> <span class="kn">import</span> <span class="n">ContextMixin</span>
@@ -171,26 +172,33 @@
 
 <div class="viewcode-block" id="ContractData"><a class="viewcode-back" href="../../../high_level.html#pytezos.contract.data.ContractData">[docs]</a><span class="k">class</span> <span class="nc">ContractData</span><span class="p">(</span><span class="n">ContextMixin</span><span class="p">):</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">ExecutionContext</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">MichelsonType</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">ExecutionContext</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">MichelsonType</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">ContractData</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">context</span><span class="o">=</span><span class="n">context</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="n">path</span>
-        <span class="bp">self</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">=</span> <span class="n">generate_pydoc</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">=</span> <span class="n">generate_pydoc</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">),</span> <span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">res</span> <span class="o">=</span> <span class="p">[</span>
             <span class="nb">super</span><span class="p">(</span><span class="n">ContractData</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">(),</span>
-            <span class="sa">f</span><span class="s1">&#39;.address  # </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">address</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
-            <span class="sa">f</span><span class="s1">&#39;.block_id  # </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">block_id</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
             <span class="sa">f</span><span class="s1">&#39;.path  # </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Builtin</span><span class="se">\n</span><span class="s1">()  # get as Python object&#39;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s1">&#39;[key]  # access child elements by name or index&#39;</span><span class="p">,</span>
             <span class="sa">f</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Typedef</span><span class="se">\n</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__doc__</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
             <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Helpers&#39;</span><span class="p">,</span>
             <span class="n">get_class_docstring</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">)</span>
         <span class="p">]</span>
         <span class="k">return</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;ContractData&#39;</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="s1">&#39;ContractData&#39;</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot; Access child elements by name or index (depending on the type)</span>
+
+<span class="sd">        :param item: field name (str) or index (int)</span>
+<span class="sd">        :rtype: ContractData</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">item</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">res</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">ContractData</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
 
 <div class="viewcode-block" id="ContractData.__call__"><a class="viewcode-back" href="../../../high_level.html#pytezos.contract.data.ContractData.__call__">[docs]</a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">try_unpack</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
@@ -239,7 +247,11 @@
 
 <span class="sd">        :return: Python object</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">dummy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">)</span><span class="o">.</span><span class="n">to_python_object</span><span class="p">(</span><span class="n">lazy_diff</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div></div>
+        <span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">dummy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">)</span><span class="o">.</span><span class="n">to_python_object</span><span class="p">(</span><span class="n">lazy_diff</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ContractData.default"><a class="viewcode-back" href="../../../high_level.html#pytezos.contract.data.ContractData.default">[docs]</a>    <span class="nd">@deprecated</span><span class="p">(</span><span class="n">deprecated_in</span><span class="o">=</span><span class="s1">&#39;3.0.0&#39;</span><span class="p">,</span> <span class="n">removed_in</span><span class="o">=</span><span class="s1">&#39;3.1.0&#39;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">default</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dummy</span><span class="p">()</span></div></div>
 </pre></div>
 
            </div>

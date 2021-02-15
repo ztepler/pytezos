@@ -204,6 +204,9 @@
         <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">BlocksQuery</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__call__</span><span class="p">(</span>
             <span class="n">length</span><span class="o">=</span><span class="n">length</span><span class="p">,</span> <span class="n">head</span><span class="o">=</span><span class="n">head</span><span class="p">,</span> <span class="n">min_date</span><span class="o">=</span><span class="n">min_date</span><span class="p">)</span></div>
 
+    <span class="k">def</span> <span class="nf">_get_block</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">block_id</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;BlockQuery&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">BlocksQuery</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__getitem__</span><span class="p">(</span><span class="n">block_id</span><span class="p">)</span>
+
     <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">block_id</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Construct block query or get a block range.</span>
 
@@ -215,7 +218,9 @@
 <span class="sd">        :rtype: BlockQuery or BlockSliceQuery</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">block_id</span><span class="p">,</span> <span class="nb">slice</span><span class="p">):</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">block_id</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">block_id</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="n">block_id</span> <span class="o">=</span> <span class="nb">slice</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_block</span><span class="p">(</span><span class="n">block_id</span><span class="o">.</span><span class="n">start</span><span class="p">)</span><span class="o">.</span><span class="n">level</span><span class="p">(),</span> <span class="n">block_id</span><span class="o">.</span><span class="n">stop</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">block_id</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
                 <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;Slice start should be an integer.&#39;</span><span class="p">)</span>
 
             <span class="k">return</span> <span class="n">BlockSliceQuery</span><span class="p">(</span>
@@ -229,7 +234,7 @@
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">block_id</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="n">block_id</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">block_id</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;head</span><span class="si">{</span><span class="n">block_id</span><span class="si">}</span><span class="s1">&#39;</span>
 
-        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">BlocksQuery</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__getitem__</span><span class="p">(</span><span class="n">block_id</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_block</span><span class="p">(</span><span class="n">block_id</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">current_voting_period</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>

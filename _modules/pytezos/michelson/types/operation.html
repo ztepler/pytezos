@@ -162,43 +162,24 @@
 <span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Type</span><span class="p">,</span> <span class="n">Optional</span>
 
 <span class="kn">from</span> <span class="nn">pytezos.michelson.types.base</span> <span class="kn">import</span> <span class="n">MichelsonType</span>
-<span class="kn">from</span> <span class="nn">pytezos.michelson.micheline</span> <span class="kn">import</span> <span class="n">MichelineSequence</span><span class="p">,</span> <span class="n">Micheline</span>
+<span class="kn">from</span> <span class="nn">pytezos.michelson.micheline</span> <span class="kn">import</span> <span class="n">MichelineSequence</span>
 
 
 <div class="viewcode-block" id="OperationType"><a class="viewcode-back" href="../../../../types.html#pytezos.michelson.types.operation.OperationType">[docs]</a><span class="k">class</span> <span class="nc">OperationType</span><span class="p">(</span><span class="n">MichelsonType</span><span class="p">,</span> <span class="n">prim</span><span class="o">=</span><span class="s1">&#39;operation&#39;</span><span class="p">):</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">content</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">content</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">ty</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">MichelsonType</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">OperationType</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">content</span> <span class="o">=</span> <span class="n">content</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ty</span> <span class="o">=</span> <span class="n">ty</span>
 
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="s1">&#39;&#39;</span>
-        <span class="c1"># if content[&#39;kind&#39;] == &#39;transaction&#39;:</span>
-        <span class="c1">#     return {&#39;kind&#39;: content[&#39;kind&#39;],</span>
-        <span class="c1">#             &#39;target&#39;: content[&#39;destination&#39;],</span>
-        <span class="c1">#             &#39;amount&#39;: content[&#39;amount&#39;],</span>
-        <span class="c1">#             &#39;entrypoint&#39;: content[&#39;parameters&#39;][&#39;entrypoint&#39;],</span>
-        <span class="c1">#             &#39;parameters&#39;: micheline_to_michelson(content[&#39;parameters&#39;][&#39;value&#39;])}</span>
-        <span class="c1"># elif content[&#39;kind&#39;] == &#39;origination&#39;:</span>
-        <span class="c1">#     res = {&#39;kind&#39;: content[&#39;kind&#39;],</span>
-        <span class="c1">#            &#39;target&#39;: content[&#39;originated_contract&#39;],</span>
-        <span class="c1">#            &#39;amount&#39;: content[&#39;balance&#39;],</span>
-        <span class="c1">#            &#39;storage&#39;: micheline_to_michelson(content[&#39;script&#39;][&#39;storage&#39;]),</span>
-        <span class="c1">#            &#39;code&#39;: micheline_to_michelson(content[&#39;script&#39;][&#39;code&#39;])}</span>
-        <span class="c1">#     if content.get(&#39;delegate&#39;):</span>
-        <span class="c1">#         res[&#39;delegate&#39;] = content[&#39;delegate&#39;]</span>
-        <span class="c1">#     return res</span>
-        <span class="c1"># elif content[&#39;kind&#39;] == &#39;delegation&#39;:</span>
-        <span class="c1">#     return {&#39;kind&#39;: content[&#39;kind&#39;],</span>
-        <span class="c1">#             &#39;target&#39;: content[&#39;delegate&#39;]}</span>
-        <span class="c1"># else:</span>
-        <span class="c1">#     assert False, content[&#39;kind&#39;]</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">content</span><span class="p">[</span><span class="s1">&#39;kind&#39;</span><span class="p">]</span>
 
 <div class="viewcode-block" id="OperationType.origination"><a class="viewcode-back" href="../../../../types.html#pytezos.michelson.types.operation.OperationType.origination">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">origination</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span>
                     <span class="n">source</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
                     <span class="n">script</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">MichelineSequence</span><span class="p">],</span>
-                    <span class="n">storage</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">MichelsonType</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                    <span class="n">storage</span><span class="p">:</span> <span class="n">MichelsonType</span><span class="p">,</span>
                     <span class="n">balance</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
                     <span class="n">delegate</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;OperationType&#39;</span><span class="p">:</span>
         <span class="n">content</span> <span class="o">=</span> <span class="p">{</span>
@@ -212,7 +193,7 @@
         <span class="p">}</span>
         <span class="k">if</span> <span class="n">delegate</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">content</span><span class="p">[</span><span class="s1">&#39;delegate&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">delegate</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">content</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">content</span><span class="p">,</span> <span class="n">ty</span><span class="o">=</span><span class="nb">type</span><span class="p">(</span><span class="n">storage</span><span class="p">))</span></div>
 
 <div class="viewcode-block" id="OperationType.delegation"><a class="viewcode-back" href="../../../../types.html#pytezos.michelson.types.operation.OperationType.delegation">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">delegation</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">source</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">delegate</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;OperationType&#39;</span><span class="p">:</span>
@@ -236,27 +217,18 @@
                 <span class="s1">&#39;value&#39;</span><span class="p">:</span> <span class="n">parameter</span><span class="o">.</span><span class="n">to_micheline_value</span><span class="p">()</span>
             <span class="p">}</span>
         <span class="p">}</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">content</span><span class="p">)</span></div>
-
-<div class="viewcode-block" id="OperationType.from_micheline_value"><a class="viewcode-back" href="../../../../types.html#pytezos.michelson.types.operation.OperationType.from_micheline_value">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">from_micheline_value</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">val_expr</span><span class="p">):</span>
-        <span class="k">assert</span> <span class="kc">False</span><span class="p">,</span> <span class="s1">&#39;forbidden&#39;</span></div>
-
-<div class="viewcode-block" id="OperationType.from_python_object"><a class="viewcode-back" href="../../../../types.html#pytezos.michelson.types.operation.OperationType.from_python_object">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">from_python_object</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">py_obj</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;OperationType&#39;</span><span class="p">:</span>
-        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">py_obj</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span>
-        <span class="k">assert</span> <span class="s1">&#39;kind&#39;</span> <span class="ow">in</span> <span class="n">py_obj</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">content</span><span class="o">=</span><span class="n">py_obj</span><span class="p">)</span></div>
-
-<div class="viewcode-block" id="OperationType.to_literal"><a class="viewcode-back" href="../../../../types.html#pytezos.michelson.types.operation.OperationType.to_literal">[docs]</a>    <span class="k">def</span> <span class="nf">to_literal</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">assert</span> <span class="kc">False</span><span class="p">,</span> <span class="s1">&#39;no literal representation&#39;</span></div>
-
-<div class="viewcode-block" id="OperationType.to_micheline_value"><a class="viewcode-back" href="../../../../types.html#pytezos.michelson.types.operation.OperationType.to_micheline_value">[docs]</a>    <span class="k">def</span> <span class="nf">to_micheline_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;readable&#39;</span><span class="p">,</span> <span class="n">lazy_diff</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="k">assert</span> <span class="kc">False</span><span class="p">,</span> <span class="s1">&#39;no micheline representation&#39;</span></div>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">content</span><span class="p">,</span> <span class="n">ty</span><span class="o">=</span><span class="nb">type</span><span class="p">(</span><span class="n">parameter</span><span class="p">))</span></div>
 
 <div class="viewcode-block" id="OperationType.to_python_object"><a class="viewcode-back" href="../../../../types.html#pytezos.michelson.types.operation.OperationType.to_python_object">[docs]</a>    <span class="k">def</span> <span class="nf">to_python_object</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">try_unpack</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">lazy_diff</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">comparable</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="k">assert</span> <span class="ow">not</span> <span class="n">comparable</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">prim</span><span class="si">}</span><span class="s1"> is not comparable&#39;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">content</span></div></div>
+        <span class="n">kind</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">content</span><span class="p">[</span><span class="s1">&#39;kind&#39;</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">ty</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;data type is not defined for </span><span class="si">{</span><span class="n">kind</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="k">if</span> <span class="n">kind</span> <span class="o">==</span> <span class="s1">&#39;transaction&#39;</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ty</span><span class="o">.</span><span class="n">from_micheline_value</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">content</span><span class="p">[</span><span class="s1">&#39;parameters&#39;</span><span class="p">][</span><span class="s1">&#39;value&#39;</span><span class="p">])</span>
+        <span class="k">elif</span> <span class="n">kind</span> <span class="o">==</span> <span class="s1">&#39;origination&#39;</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ty</span><span class="o">.</span><span class="n">from_micheline_value</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">content</span><span class="p">[</span><span class="s1">&#39;script&#39;</span><span class="p">][</span><span class="s1">&#39;storage&#39;</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="kc">False</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;not applicable for </span><span class="si">{</span><span class="n">kind</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="k">return</span> <span class="n">data</span><span class="o">.</span><span class="n">to_python_object</span><span class="p">(</span><span class="n">try_unpack</span><span class="o">=</span><span class="n">try_unpack</span><span class="p">)</span></div></div>
 </pre></div>
 
            </div>
