@@ -159,7 +159,7 @@
            <div itemprop="articleBody">
             
   <h1>Source code for pytezos.michelson.types.base</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">copy</span>
+<span></span><span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">copy</span><span class="p">,</span> <span class="n">deepcopy</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span> <span class="n">cast</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Any</span>
 
 <span class="kn">from</span> <span class="nn">pytezos.michelson.forge</span> <span class="kn">import</span> <span class="n">forge_micheline</span><span class="p">,</span> <span class="n">unforge_micheline</span>
@@ -381,7 +381,7 @@
 
 <div class="viewcode-block" id="MichelsonType.duplicate"><a class="viewcode-back" href="../../../../types.html#pytezos.michelson.types.base.MichelsonType.duplicate">[docs]</a>    <span class="k">def</span> <span class="nf">duplicate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_duplicable</span><span class="p">(),</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">prim</span><span class="si">}</span><span class="s1"> is not duplicable&#39;</span>
-        <span class="k">return</span> <span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div></div>
+        <span class="k">return</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="generate_pydoc"><a class="viewcode-back" href="../../../../types.html#pytezos.michelson.types.base.generate_pydoc">[docs]</a><span class="k">def</span> <span class="nf">generate_pydoc</span><span class="p">(</span><span class="n">ty</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">MichelsonType</span><span class="p">],</span> <span class="n">title</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>

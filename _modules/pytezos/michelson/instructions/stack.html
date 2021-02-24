@@ -264,11 +264,12 @@
 
 <div class="viewcode-block" id="CastIntruction.execute"><a class="viewcode-back" href="../../../../instructions.html#pytezos.michelson.instructions.stack.CastIntruction.execute">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">stack</span><span class="p">:</span> <span class="n">MichelsonStack</span><span class="p">,</span> <span class="n">stdout</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">context</span><span class="p">:</span> <span class="n">AbstractContext</span><span class="p">):</span>
-        <span class="n">top</span> <span class="o">=</span> <span class="n">stack</span><span class="o">.</span><span class="n">pop1</span><span class="p">()</span>
-        <span class="n">cast_type</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">Type</span><span class="p">[</span><span class="n">MichelsonType</span><span class="p">],</span> <span class="bp">cls</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-        <span class="n">res</span> <span class="o">=</span> <span class="n">cast_type</span><span class="o">.</span><span class="n">from_micheline_value</span><span class="p">(</span><span class="n">top</span><span class="o">.</span><span class="n">to_micheline_value</span><span class="p">())</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">stack</span><span class="o">.</span><span class="n">pop1</span><span class="p">()</span>
+        <span class="c1"># TODO: will become obsolete in the next protocol? (because annots are no longer part of the type)</span>
+        <span class="c1"># cast_type = cast(Type[MichelsonType], cls.args[0])</span>
+        <span class="c1"># res = cast_type.from_micheline_value(top.to_micheline_value())</span>
         <span class="n">stack</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
-        <span class="n">stdout</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">format_stdout</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">prim</span><span class="p">,</span> <span class="p">[</span><span class="n">top</span><span class="p">],</span> <span class="p">[</span><span class="n">res</span><span class="p">]))</span>
+        <span class="n">stdout</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">format_stdout</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">prim</span><span class="p">,</span> <span class="p">[</span><span class="n">res</span><span class="p">],</span> <span class="p">[</span><span class="n">res</span><span class="p">]))</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="p">()</span></div></div>
 
 

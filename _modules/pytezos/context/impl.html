@@ -211,6 +211,12 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">balance_update</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">big_maps</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span></div>
 
+    <span class="k">def</span> <span class="nf">__copy__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;It&#39;s not allowed to copy context&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__deepcopy__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">memodict</span><span class="o">=</span><span class="p">{}):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;It&#39;s not allowed to copy context&quot;</span><span class="p">)</span>
+
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">script</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameter_expr</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">storage_expr</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">code_expr</span><span class="p">:</span>

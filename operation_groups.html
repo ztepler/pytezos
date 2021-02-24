@@ -197,13 +197,14 @@ More info <a class="reference external" href="https://activate.tezos.com/">https
 
 <dl class="py method">
 <dt id="pytezos.operation.group.OperationGroup.autofill">
-<code class="sig-name descname">autofill</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">gas_reserve</span><span class="o">=</span><span class="default_value">100</span></em>, <em class="sig-param"><span class="n">counter</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/operation/group.html#OperationGroup.autofill"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.operation.group.OperationGroup.autofill" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">autofill</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">gas_reserve</span><span class="o">=</span><span class="default_value">100</span></em>, <em class="sig-param"><span class="n">counter</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>int<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">branch_offset</span><span class="o">=</span><span class="default_value">50</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/operation/group.html#OperationGroup.autofill"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.operation.group.OperationGroup.autofill" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fill the gaps and then simulate the operation in order to calculate fee, gas/storage limits.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>gas_reserve</strong> – Add a safe reserve for gas limit (default is 100)</p></li>
 <li><p><strong>counter</strong> – Override counter value (for manual handling)</p></li>
+<li><p><strong>branch_offset</strong> – select head~offset block as branch, where offset is in range (0, 60)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
@@ -361,15 +362,16 @@ More info <a class="reference external" href="https://tezos.gitlab.io/master/whi
 
 <dl class="py method">
 <dt id="pytezos.operation.group.OperationGroup.inject">
-<code class="sig-name descname">inject</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">_async</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">preapply</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">check_result</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">num_blocks_wait</span><span class="o">=</span><span class="default_value">5</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/operation/group.html#OperationGroup.inject"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.operation.group.OperationGroup.inject" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">inject</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">_async</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">preapply</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">check_result</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">num_blocks_wait</span><span class="o">=</span><span class="default_value">5</span></em>, <em class="sig-param"><span class="n">time_between_blocks</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>int<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/operation/group.html#OperationGroup.inject"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytezos.operation.group.OperationGroup.inject" title="Permalink to this definition">¶</a></dt>
 <dd><p>Inject the signed operation group.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>_async</strong> – do not wait for operation inclusion (default is True)</p></li>
 <li><p><strong>preapply</strong> – do a preapply before injection</p></li>
-<li><p><strong>check_result</strong> – raise RpcError in case operation is refused</p></li>
+<li><p><strong>check_result</strong> – raise RpcError in case operation is applied but has runtime errors</p></li>
 <li><p><strong>num_blocks_wait</strong> – number of blocks to wait for injection</p></li>
+<li><p><strong>time_between_blocks</strong> – override the corresponding parameter from constants</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
