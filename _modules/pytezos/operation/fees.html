@@ -164,8 +164,8 @@
 <span class="n">hard_gas_limit_per_operation</span> <span class="o">=</span> <span class="mi">1040000</span>
 <span class="n">hard_storage_limit_per_operation</span> <span class="o">=</span> <span class="mi">60000</span>
 <span class="n">minimal_fees</span> <span class="o">=</span> <span class="mi">100</span>
-<span class="n">minimal_nanotez_per_byte</span> <span class="o">=</span> <span class="mi">1</span>
-<span class="n">minimal_nanotez_per_gas_unit</span> <span class="o">=</span> <span class="o">.</span><span class="mi">1</span>
+<span class="n">minimal_mutez_per_byte</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">minimal_mutez_per_gas_unit</span> <span class="o">=</span> <span class="o">.</span><span class="mi">1</span>
 
 
 <div class="viewcode-block" id="calculate_fee"><a class="viewcode-back" href="../../../operation_groups.html#pytezos.operation.fees.calculate_fee">[docs]</a><span class="k">def</span> <span class="nf">calculate_fee</span><span class="p">(</span><span class="n">content</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">consumed_gas</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">extra_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">reserve</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
@@ -178,8 +178,8 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">forge_operation</span><span class="p">(</span><span class="n">content</span><span class="p">))</span> <span class="o">+</span> <span class="n">extra_size</span>
     <span class="n">fee</span> <span class="o">=</span> <span class="n">minimal_fees</span> \
-        <span class="o">+</span> <span class="n">minimal_nanotez_per_byte</span> <span class="o">*</span> <span class="n">size</span> \
-        <span class="o">+</span> <span class="nb">int</span><span class="p">(</span><span class="n">minimal_nanotez_per_gas_unit</span> <span class="o">*</span> <span class="n">consumed_gas</span><span class="p">)</span>
+        <span class="o">+</span> <span class="n">minimal_mutez_per_byte</span> <span class="o">*</span> <span class="n">size</span> \
+        <span class="o">+</span> <span class="nb">int</span><span class="p">(</span><span class="n">minimal_mutez_per_gas_unit</span> <span class="o">*</span> <span class="n">consumed_gas</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">fee</span> <span class="o">+</span> <span class="n">reserve</span></div>
 
 
