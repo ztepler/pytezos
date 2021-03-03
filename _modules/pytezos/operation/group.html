@@ -366,6 +366,10 @@
         <span class="n">extra_size</span> <span class="o">=</span> <span class="p">(</span><span class="mi">32</span> <span class="o">+</span> <span class="mi">64</span><span class="p">)</span> <span class="o">//</span> <span class="nb">len</span><span class="p">(</span><span class="n">opg</span><span class="o">.</span><span class="n">contents</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1"># size of serialized branch and signature</span>
 
         <span class="k">def</span> <span class="nf">fill_content</span><span class="p">(</span><span class="n">content</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+            <span class="k">nonlocal</span> <span class="n">fee</span>
+            <span class="k">nonlocal</span> <span class="n">gas_limit</span>
+            <span class="k">nonlocal</span> <span class="n">storage_limit</span>
+
             <span class="k">if</span> <span class="n">validation_passes</span><span class="p">[</span><span class="n">content</span><span class="p">[</span><span class="s1">&#39;kind&#39;</span><span class="p">]]</span> <span class="o">!=</span> <span class="mi">3</span><span class="p">:</span>
                 <span class="k">return</span> <span class="kc">None</span>
 
