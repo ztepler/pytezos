@@ -162,6 +162,7 @@
 <span></span><span class="kn">from</span> <span class="nn">pprint</span> <span class="kn">import</span> <span class="n">pformat</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
 
+<span class="kn">from</span> <span class="nn">pytezos.logging</span> <span class="kn">import</span> <span class="n">logger</span>
 <span class="kn">from</span> <span class="nn">pytezos.contract.call</span> <span class="kn">import</span> <span class="n">ContractCall</span>
 <span class="kn">from</span> <span class="nn">pytezos.context.mixin</span> <span class="kn">import</span> <span class="n">ContextMixin</span><span class="p">,</span> <span class="n">ExecutionContext</span>
 <span class="kn">from</span> <span class="nn">pytezos.michelson.sections.parameter</span> <span class="kn">import</span> <span class="n">ParameterSection</span>
@@ -237,7 +238,7 @@
             <span class="k">return</span> <span class="n">param_ty</span><span class="o">.</span><span class="n">from_python_object</span><span class="p">({</span><span class="bp">self</span><span class="o">.</span><span class="n">entrypoint</span><span class="p">:</span> <span class="n">py_obj</span><span class="p">})</span> \
                 <span class="o">.</span><span class="n">to_parameters</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="n">mode</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">mode</span><span class="p">)</span>
         <span class="k">except</span> <span class="n">MichelsonRuntimeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__doc__</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__doc__</span><span class="p">)</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Unexpected arguments: </span><span class="si">{</span><span class="n">pformat</span><span class="p">(</span><span class="n">py_obj</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="o">*</span><span class="n">e</span><span class="o">.</span><span class="n">args</span><span class="p">)</span></div></div>
 </pre></div>
 
