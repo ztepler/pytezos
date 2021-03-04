@@ -159,16 +159,24 @@
            <div itemprop="articleBody">
             
   <h1>Source code for pytezos.michelson.program</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Type</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">cast</span><span class="p">,</span> <span class="n">Any</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Type</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">cast</span>
 
-<span class="kn">from</span> <span class="nn">pytezos.michelson.sections.parameter</span> <span class="kn">import</span> <span class="n">ParameterSection</span>
-<span class="kn">from</span> <span class="nn">pytezos.michelson.micheline</span> <span class="kn">import</span> <span class="n">MichelineSequence</span><span class="p">,</span> <span class="n">try_catch</span>
-<span class="kn">from</span> <span class="nn">pytezos.michelson.sections.storage</span> <span class="kn">import</span> <span class="n">StorageSection</span>
+<span class="kn">from</span> <span class="nn">pytezos.context.abstract</span> <span class="kn">import</span> <span class="n">AbstractContext</span>  <span class="c1"># type: ignore</span>
+<span class="kn">from</span> <span class="nn">pytezos.michelson.instructions.base</span> <span class="kn">import</span> <span class="n">MichelsonInstruction</span>
+<span class="kn">from</span> <span class="nn">pytezos.michelson.instructions.base</span> <span class="kn">import</span> <span class="n">format_stdout</span>
+<span class="kn">from</span> <span class="nn">pytezos.michelson.micheline</span> <span class="kn">import</span> <span class="n">MichelineSequence</span>
+<span class="kn">from</span> <span class="nn">pytezos.michelson.micheline</span> <span class="kn">import</span> <span class="n">try_catch</span>
 <span class="kn">from</span> <span class="nn">pytezos.michelson.sections.code</span> <span class="kn">import</span> <span class="n">CodeSection</span>
-<span class="kn">from</span> <span class="nn">pytezos.context.abstract</span> <span class="kn">import</span> <span class="n">AbstractContext</span>
-<span class="kn">from</span> <span class="nn">pytezos.michelson.types</span> <span class="kn">import</span> <span class="n">PairType</span><span class="p">,</span> <span class="n">OperationType</span><span class="p">,</span> <span class="n">ListType</span>
+<span class="kn">from</span> <span class="nn">pytezos.michelson.sections.parameter</span> <span class="kn">import</span> <span class="n">ParameterSection</span>
+<span class="kn">from</span> <span class="nn">pytezos.michelson.sections.storage</span> <span class="kn">import</span> <span class="n">StorageSection</span>
 <span class="kn">from</span> <span class="nn">pytezos.michelson.stack</span> <span class="kn">import</span> <span class="n">MichelsonStack</span>
-<span class="kn">from</span> <span class="nn">pytezos.michelson.instructions.base</span> <span class="kn">import</span> <span class="n">format_stdout</span><span class="p">,</span> <span class="n">MichelsonInstruction</span>
+<span class="kn">from</span> <span class="nn">pytezos.michelson.types</span> <span class="kn">import</span> <span class="n">ListType</span>
+<span class="kn">from</span> <span class="nn">pytezos.michelson.types</span> <span class="kn">import</span> <span class="n">OperationType</span>
+<span class="kn">from</span> <span class="nn">pytezos.michelson.types</span> <span class="kn">import</span> <span class="n">PairType</span>
 
 
 <div class="viewcode-block" id="MichelsonProgram"><a class="viewcode-back" href="../../../code.html#pytezos.michelson.program.MichelsonProgram">[docs]</a><span class="k">class</span> <span class="nc">MichelsonProgram</span><span class="p">:</span>
@@ -243,8 +251,8 @@
             <span class="n">ListType</span><span class="o">.</span><span class="n">create_type</span><span class="p">(</span><span class="n">args</span><span class="o">=</span><span class="p">[</span><span class="n">OperationType</span><span class="p">]),</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">storage</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="p">]),</span> <span class="n">message</span><span class="o">=</span><span class="s1">&#39;list of operations + resulting storage&#39;</span><span class="p">)</span>
-        <span class="n">operations</span> <span class="o">=</span> <span class="p">[</span><span class="n">op</span><span class="o">.</span><span class="n">content</span> <span class="k">for</span> <span class="n">op</span> <span class="ow">in</span> <span class="n">res</span><span class="o">.</span><span class="n">items</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
-        <span class="n">lazy_diff</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">operations</span> <span class="o">=</span> <span class="p">[</span><span class="n">op</span><span class="o">.</span><span class="n">content</span> <span class="k">for</span> <span class="n">op</span> <span class="ow">in</span> <span class="n">res</span><span class="o">.</span><span class="n">items</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>  <span class="c1"># type: ignore</span>
+        <span class="n">lazy_diff</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># type: ignore</span>
         <span class="n">storage</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">items</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">aggregate_lazy_diff</span><span class="p">(</span><span class="n">lazy_diff</span><span class="p">)</span><span class="o">.</span><span class="n">to_micheline_value</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="n">output_mode</span><span class="p">)</span>
         <span class="n">stdout</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">format_stdout</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;END %</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">entrypoint</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="p">[</span><span class="n">res</span><span class="p">],</span> <span class="p">[]))</span>
         <span class="k">return</span> <span class="n">operations</span><span class="p">,</span> <span class="n">storage</span><span class="p">,</span> <span class="n">lazy_diff</span><span class="p">,</span> <span class="n">res</span></div></div>

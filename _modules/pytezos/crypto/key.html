@@ -159,16 +159,19 @@
            <div itemprop="articleBody">
             
   <h1>Source code for pytezos.crypto.key</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">hashlib</span>
-<span class="kn">import</span> <span class="nn">binascii</span>
+<span></span><span class="kn">import</span> <span class="nn">binascii</span>
+<span class="kn">import</span> <span class="nn">hashlib</span>
 <span class="kn">import</span> <span class="nn">json</span>
-<span class="kn">from</span> <span class="nn">os.path</span> <span class="kn">import</span> <span class="n">expanduser</span><span class="p">,</span> <span class="n">join</span><span class="p">,</span> <span class="n">abspath</span>
 <span class="kn">from</span> <span class="nn">getpass</span> <span class="kn">import</span> <span class="n">getpass</span>
-<span class="kn">from</span> <span class="nn">pyblake2</span> <span class="kn">import</span> <span class="n">blake2b</span>
-<span class="kn">from</span> <span class="nn">mnemonic</span> <span class="kn">import</span> <span class="n">Mnemonic</span>
 
-<span class="kn">from</span> <span class="nn">pytezos.crypto.encoding</span> <span class="kn">import</span> <span class="n">scrub_input</span><span class="p">,</span> <span class="n">base58_decode</span><span class="p">,</span> <span class="n">base58_encode</span>
-<span class="kn">from</span> <span class="nn">pytezos.jupyter</span> <span class="kn">import</span> <span class="n">InlineDocstring</span><span class="p">,</span> <span class="n">get_class_docstring</span>
+<span class="kn">from</span> <span class="nn">mnemonic</span> <span class="kn">import</span> <span class="n">Mnemonic</span>  <span class="c1"># type: ignore</span>
+<span class="kn">from</span> <span class="nn">pyblake2</span> <span class="kn">import</span> <span class="n">blake2b</span>  <span class="c1"># type: ignore</span>
+
+<span class="kn">from</span> <span class="nn">pytezos.crypto.encoding</span> <span class="kn">import</span> <span class="n">base58_decode</span>
+<span class="kn">from</span> <span class="nn">pytezos.crypto.encoding</span> <span class="kn">import</span> <span class="n">base58_encode</span>
+<span class="kn">from</span> <span class="nn">pytezos.crypto.encoding</span> <span class="kn">import</span> <span class="n">scrub_input</span>
+<span class="kn">from</span> <span class="nn">pytezos.jupyter</span> <span class="kn">import</span> <span class="n">InlineDocstring</span>
+<span class="kn">from</span> <span class="nn">pytezos.jupyter</span> <span class="kn">import</span> <span class="n">get_class_docstring</span>
 
 
 <span class="k">class</span> <span class="nc">CryptoExtraFallback</span><span class="p">:</span>
@@ -183,13 +186,13 @@
 
 
 <span class="k">try</span><span class="p">:</span>
-    <span class="kn">import</span> <span class="nn">pysodium</span>
-    <span class="kn">import</span> <span class="nn">secp256k1</span>
-    <span class="kn">import</span> <span class="nn">fastecdsa.ecdsa</span>
-    <span class="kn">import</span> <span class="nn">fastecdsa.keys</span>
-    <span class="kn">import</span> <span class="nn">fastecdsa.curve</span>
-    <span class="kn">import</span> <span class="nn">fastecdsa.encoding.sec1</span>
-    <span class="kn">from</span> <span class="nn">fastecdsa.encoding.util</span> <span class="kn">import</span> <span class="n">bytes_to_int</span>
+    <span class="kn">import</span> <span class="nn">fastecdsa.curve</span>  <span class="c1"># type: ignore</span>
+    <span class="kn">import</span> <span class="nn">fastecdsa.ecdsa</span>  <span class="c1"># type: ignore</span>
+    <span class="kn">import</span> <span class="nn">fastecdsa.encoding.sec1</span>  <span class="c1"># type: ignore</span>
+    <span class="kn">import</span> <span class="nn">fastecdsa.keys</span>  <span class="c1"># type: ignore</span>
+    <span class="kn">import</span> <span class="nn">pysodium</span>  <span class="c1"># type: ignore</span>
+    <span class="kn">import</span> <span class="nn">secp256k1</span>  <span class="c1"># type: ignore</span>
+    <span class="kn">from</span> <span class="nn">fastecdsa.encoding.util</span> <span class="kn">import</span> <span class="n">bytes_to_int</span>  <span class="c1"># type: ignore</span>
 <span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
     <span class="n">pysodium</span> <span class="o">=</span> <span class="n">CryptoExtraFallback</span><span class="p">()</span>
     <span class="n">secp256k1</span> <span class="o">=</span> <span class="n">CryptoExtraFallback</span><span class="p">()</span>

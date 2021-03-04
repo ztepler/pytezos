@@ -206,7 +206,7 @@
         <span class="s1">&#39;origination&#39;</span><span class="p">:</span> <span class="n">hard_gas_limit_per_operation</span><span class="p">,</span>
         <span class="s1">&#39;transaction&#39;</span><span class="p">:</span> <span class="n">hard_gas_limit_per_operation</span> <span class="k">if</span> <span class="n">content</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;destination&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;KT&#39;</span><span class="p">)</span> <span class="k">else</span> <span class="mi">1427</span>
     <span class="p">}</span>
-    <span class="k">return</span> <span class="n">values</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">content</span><span class="p">[</span><span class="s1">&#39;kind&#39;</span><span class="p">])</span></div>
+    <span class="k">return</span> <span class="n">values</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">content</span><span class="p">[</span><span class="s1">&#39;kind&#39;</span><span class="p">])</span>  <span class="c1"># type: ignore</span></div>
 
 
 <div class="viewcode-block" id="default_storage_limit"><a class="viewcode-back" href="../../../operation_groups.html#pytezos.operation.fees.default_storage_limit">[docs]</a><span class="k">def</span> <span class="nf">default_storage_limit</span><span class="p">(</span><span class="n">content</span><span class="p">):</span>

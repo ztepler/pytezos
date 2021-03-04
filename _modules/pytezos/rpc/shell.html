@@ -159,19 +159,21 @@
            <div itemprop="articleBody">
             
   <h1>Source code for pytezos.rpc.shell</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">requests</span>
-<span class="kn">import</span> <span class="nn">simplejson</span> <span class="k">as</span> <span class="nn">json</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
-<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">lru_cache</span>
-<span class="kn">from</span> <span class="nn">binascii</span> <span class="kn">import</span> <span class="n">hexlify</span>
+<span></span><span class="kn">from</span> <span class="nn">binascii</span> <span class="kn">import</span> <span class="n">hexlify</span>
 <span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">lru_cache</span>
 <span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">sleep</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
 
-<span class="kn">from</span> <span class="nn">pytezos.logging</span> <span class="kn">import</span> <span class="n">logger</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">import</span> <span class="nn">simplejson</span> <span class="k">as</span> <span class="nn">json</span>
+
 <span class="kn">from</span> <span class="nn">pytezos.crypto.encoding</span> <span class="kn">import</span> <span class="n">base58_decode</span>
-<span class="kn">from</span> <span class="nn">pytezos.rpc.query</span> <span class="kn">import</span> <span class="n">RpcQuery</span>
 <span class="kn">from</span> <span class="nn">pytezos.jupyter</span> <span class="kn">import</span> <span class="n">get_attr_docstring</span>
-<span class="kn">from</span> <span class="nn">pytezos.rpc.search</span> <span class="kn">import</span> <span class="n">CyclesQuery</span><span class="p">,</span> <span class="n">VotingPeriodsQuery</span>
+<span class="kn">from</span> <span class="nn">pytezos.logging</span> <span class="kn">import</span> <span class="n">logger</span>
+<span class="kn">from</span> <span class="nn">pytezos.rpc.query</span> <span class="kn">import</span> <span class="n">RpcQuery</span>
+<span class="kn">from</span> <span class="nn">pytezos.rpc.search</span> <span class="kn">import</span> <span class="n">CyclesQuery</span>
+<span class="kn">from</span> <span class="nn">pytezos.rpc.search</span> <span class="kn">import</span> <span class="n">VotingPeriodsQuery</span>
 
 
 <div class="viewcode-block" id="make_operation_result"><a class="viewcode-back" href="../../../rpc_queries.html#pytezos.rpc.shell.make_operation_result">[docs]</a><span class="k">def</span> <span class="nf">make_operation_result</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -192,7 +194,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">blocks</span><span class="o">.</span><span class="n">head</span>
 
-    <span class="nd">@property</span>
+    <span class="nd">@property</span>  <span class="c1"># type: ignore</span>
     <span class="nd">@lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">block</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Cached head block, useful if you just want to explore things.</span>
@@ -239,7 +241,7 @@
 <span class="sd">        :param time_between_blocks: override the corresponding parameter from constants</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">time_between_blocks</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">time_between_blocks</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">constants</span><span class="p">()[</span><span class="s2">&quot;time_between_blocks&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">time_between_blocks</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">constants</span><span class="p">()[</span><span class="s2">&quot;time_between_blocks&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>  <span class="c1"># type: ignore</span>
         <span class="n">header</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">header</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">block_hash</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">block_hash</span> <span class="o">=</span> <span class="n">header</span><span class="p">[</span><span class="s1">&#39;hash&#39;</span><span class="p">]</span>
@@ -247,7 +249,7 @@
         <span class="n">prev_block_dt</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">header</span><span class="p">[</span><span class="s1">&#39;timestamp&#39;</span><span class="p">],</span> <span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">T%H:%M:%SZ&#39;</span><span class="p">)</span>
         <span class="n">elapsed_sec</span> <span class="o">=</span> <span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">()</span> <span class="o">-</span> <span class="n">prev_block_dt</span><span class="p">)</span><span class="o">.</span><span class="n">seconds</span>
         <span class="n">delay_sec</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">if</span> <span class="n">elapsed_sec</span> <span class="o">&gt;</span> <span class="n">time_between_blocks</span> <span class="k">else</span> <span class="n">time_between_blocks</span> <span class="o">-</span> <span class="n">elapsed_sec</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Wait </span><span class="si">%s</span><span class="s1"> seconds until block </span><span class="si">%s</span><span class="s1"> is finalized&#39;</span> <span class="o">%</span> <span class="n">delay_sec</span><span class="p">,</span> <span class="n">block_hash</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Wait </span><span class="si">%s</span><span class="s1"> seconds until block </span><span class="si">%s</span><span class="s1"> is finalized&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">delay_sec</span><span class="p">,</span> <span class="n">block_hash</span><span class="p">,))</span>
         <span class="n">sleep</span><span class="p">(</span><span class="n">delay_sec</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">time_between_blocks</span><span class="p">):</span>

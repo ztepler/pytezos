@@ -159,12 +159,20 @@
            <div itemprop="articleBody">
             
   <h1>Source code for pytezos.michelson.types.pair</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Generator</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">cast</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Generator</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Type</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">cast</span>
 
+<span class="kn">from</span> <span class="nn">pytezos.context.abstract</span> <span class="kn">import</span> <span class="n">AbstractContext</span>  <span class="c1"># type: ignore</span>
 <span class="kn">from</span> <span class="nn">pytezos.michelson.micheline</span> <span class="kn">import</span> <span class="n">Micheline</span>
+<span class="kn">from</span> <span class="nn">pytezos.michelson.types.adt</span> <span class="kn">import</span> <span class="n">ADTMixin</span>
+<span class="kn">from</span> <span class="nn">pytezos.michelson.types.adt</span> <span class="kn">import</span> <span class="n">Nested</span>
+<span class="kn">from</span> <span class="nn">pytezos.michelson.types.adt</span> <span class="kn">import</span> <span class="n">wrap_pair</span>
 <span class="kn">from</span> <span class="nn">pytezos.michelson.types.base</span> <span class="kn">import</span> <span class="n">MichelsonType</span>
-<span class="kn">from</span> <span class="nn">pytezos.context.abstract</span> <span class="kn">import</span> <span class="n">AbstractContext</span>
-<span class="kn">from</span> <span class="nn">pytezos.michelson.types.adt</span> <span class="kn">import</span> <span class="n">ADTMixin</span><span class="p">,</span> <span class="n">Nested</span><span class="p">,</span> <span class="n">wrap_pair</span>
 
 
 <div class="viewcode-block" id="PairLiteral"><a class="viewcode-back" href="../../../../types.html#pytezos.michelson.types.pair.PairLiteral">[docs]</a><span class="k">class</span> <span class="nc">PairLiteral</span><span class="p">(</span><span class="n">Micheline</span><span class="p">,</span> <span class="n">prim</span><span class="o">=</span><span class="s1">&#39;Pair&#39;</span><span class="p">,</span> <span class="n">args_len</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -177,13 +185,13 @@
         <span class="nb">super</span><span class="p">(</span><span class="n">PairType</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">items</span> <span class="o">=</span> <span class="n">items</span>
 
-    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="s1">&#39;PairType&#39;</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="s1">&#39;PairType&#39;</span><span class="p">):</span>  <span class="c1"># type: ignore</span>
         <span class="k">return</span> <span class="nb">all</span><span class="p">(</span>
             <span class="n">item</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">items</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
             <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">item</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">)</span>
         <span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__lt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="s1">&#39;PairType&#39;</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__lt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="s1">&#39;PairType&#39;</span><span class="p">):</span>  <span class="c1"># type: ignore</span>
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">item</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">item</span> <span class="o">&lt;</span> <span class="n">other</span><span class="o">.</span><span class="n">items</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
                 <span class="k">return</span> <span class="kc">True</span>
@@ -202,10 +210,10 @@
     <span class="k">def</span> <span class="nf">init</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">items</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">MichelsonType</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="s1">&#39;PairType&#39;</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">items</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
             <span class="n">right_cls</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">Type</span><span class="p">[</span><span class="s1">&#39;PairType&#39;</span><span class="p">],</span> <span class="bp">cls</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-            <span class="n">items</span> <span class="o">=</span> <span class="n">items</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">right_cls</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">items</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+            <span class="n">items</span> <span class="o">=</span> <span class="n">items</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">right_cls</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">items</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>  <span class="c1"># type: ignore</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">items</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">items</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">items</span><span class="p">)</span></div>
+            <span class="n">items</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">items</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">items</span><span class="p">)</span>  <span class="c1"># type: ignore</span></div>
 
 <div class="viewcode-block" id="PairType.from_comb"><a class="viewcode-back" href="../../../../types.html#pytezos.michelson.types.pair.PairType.from_comb">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">from_comb</span><span class="p">(</span><span class="n">items</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">MichelsonType</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="s1">&#39;PairType&#39;</span><span class="p">:</span>
@@ -228,7 +236,7 @@
     <span class="k">def</span> <span class="nf">iter_type_args</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">entrypoints</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Type</span><span class="p">[</span><span class="n">MichelsonType</span><span class="p">]],</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">arg</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">args</span><span class="p">):</span>
             <span class="k">if</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">PairType</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span><span class="n">arg</span><span class="o">.</span><span class="n">field_name</span> <span class="ow">or</span> <span class="n">arg</span><span class="o">.</span><span class="n">type_name</span><span class="p">):</span>
-                <span class="k">yield from</span> <span class="n">arg</span><span class="o">.</span><span class="n">iter_type_args</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">path</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+                <span class="k">yield from</span> <span class="n">arg</span><span class="o">.</span><span class="n">iter_type_args</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">path</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>  <span class="c1"># type: ignore</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">yield</span> <span class="n">path</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">),</span> <span class="n">arg</span></div>
 

@@ -159,14 +159,25 @@
            <div itemprop="articleBody">
             
   <h1>Source code for pytezos.michelson.types.big_map</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span><span class="p">,</span> <span class="n">copy</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Generator</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Type</span>
+<span></span><span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">copy</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Generator</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Type</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span>
 
-<span class="kn">from</span> <span class="nn">pytezos.michelson.types.base</span> <span class="kn">import</span> <span class="n">MichelsonType</span><span class="p">,</span> <span class="n">Undefined</span>
-<span class="kn">from</span> <span class="nn">pytezos.michelson.micheline</span> <span class="kn">import</span> <span class="n">parse_micheline_literal</span><span class="p">,</span> <span class="n">Micheline</span><span class="p">,</span> <span class="n">MichelineLiteral</span><span class="p">,</span> <span class="n">MichelineSequence</span>
-<span class="kn">from</span> <span class="nn">pytezos.context.abstract</span> <span class="kn">import</span> <span class="n">AbstractContext</span>
-<span class="kn">from</span> <span class="nn">pytezos.michelson.types.map</span> <span class="kn">import</span> <span class="n">MapType</span><span class="p">,</span> <span class="n">EltLiteral</span>
+<span class="kn">from</span> <span class="nn">pytezos.context.abstract</span> <span class="kn">import</span> <span class="n">AbstractContext</span>  <span class="c1"># type: ignore</span>
 <span class="kn">from</span> <span class="nn">pytezos.michelson.forge</span> <span class="kn">import</span> <span class="n">forge_script_expr</span>
+<span class="kn">from</span> <span class="nn">pytezos.michelson.micheline</span> <span class="kn">import</span> <span class="n">Micheline</span>
+<span class="kn">from</span> <span class="nn">pytezos.michelson.micheline</span> <span class="kn">import</span> <span class="n">MichelineLiteral</span>
+<span class="kn">from</span> <span class="nn">pytezos.michelson.micheline</span> <span class="kn">import</span> <span class="n">MichelineSequence</span>
+<span class="kn">from</span> <span class="nn">pytezos.michelson.micheline</span> <span class="kn">import</span> <span class="n">parse_micheline_literal</span>
+<span class="kn">from</span> <span class="nn">pytezos.michelson.types.base</span> <span class="kn">import</span> <span class="n">MichelsonType</span>
+<span class="kn">from</span> <span class="nn">pytezos.michelson.types.base</span> <span class="kn">import</span> <span class="n">Undefined</span>
+<span class="kn">from</span> <span class="nn">pytezos.michelson.types.map</span> <span class="kn">import</span> <span class="n">EltLiteral</span>
+<span class="kn">from</span> <span class="nn">pytezos.michelson.types.map</span> <span class="kn">import</span> <span class="n">MapType</span>
 
 
 <div class="viewcode-block" id="big_map_diff_to_lazy_diff"><a class="viewcode-back" href="../../../../types.html#pytezos.michelson.types.big_map.big_map_diff_to_lazy_diff">[docs]</a><span class="k">def</span> <span class="nf">big_map_diff_to_lazy_diff</span><span class="p">(</span><span class="n">big_map_diff</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">]):</span>
@@ -209,7 +220,7 @@
     <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">removed_keys</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">MichelsonType</span><span class="p">,</span> <span class="n">Optional</span><span class="p">[</span><span class="n">MichelsonType</span><span class="p">]],</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">MichelsonType</span><span class="p">,</span> <span class="n">Optional</span><span class="p">[</span><span class="n">MichelsonType</span><span class="p">]],</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>  <span class="c1"># type: ignore</span>
         <span class="k">yield from</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">removed_keys</span><span class="p">:</span>
             <span class="k">yield</span> <span class="n">key</span><span class="p">,</span> <span class="kc">None</span>
@@ -224,7 +235,7 @@
 <div class="viewcode-block" id="BigMapType.empty"><a class="viewcode-back" href="../../../../types.html#pytezos.michelson.types.big_map.BigMapType.empty">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">empty</span><span class="p">(</span><span class="n">key_type</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">MichelsonType</span><span class="p">],</span> <span class="n">val_type</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">MichelsonType</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="s1">&#39;BigMapType&#39;</span><span class="p">:</span>
         <span class="bp">cls</span> <span class="o">=</span> <span class="n">BigMapType</span><span class="o">.</span><span class="n">create_type</span><span class="p">(</span><span class="n">args</span><span class="o">=</span><span class="p">[</span><span class="n">key_type</span><span class="p">,</span> <span class="n">val_type</span><span class="p">])</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">items</span><span class="o">=</span><span class="p">[])</span></div>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">items</span><span class="o">=</span><span class="p">[])</span>  <span class="c1"># type: ignore</span></div>
 
 <div class="viewcode-block" id="BigMapType.from_items"><a class="viewcode-back" href="../../../../types.html#pytezos.michelson.types.big_map.BigMapType.from_items">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">from_items</span><span class="p">(</span><span class="n">items</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">MichelsonType</span><span class="p">,</span> <span class="n">MichelsonType</span><span class="p">]]):</span>
@@ -360,7 +371,7 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">from_micheline_value</span><span class="p">(</span><span class="n">val_expr</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">val</span></div>
+            <span class="k">return</span> <span class="n">val</span>  <span class="c1"># type: ignore</span></div>
 
 <div class="viewcode-block" id="BigMapType.update"><a class="viewcode-back" href="../../../../types.html#pytezos.michelson.types.big_map.BigMapType.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">MichelsonType</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">MichelsonType</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Optional</span><span class="p">[</span><span class="n">MichelsonType</span><span class="p">],</span> <span class="n">MichelsonType</span><span class="p">]:</span>
         <span class="n">removed_keys</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">removed_keys</span><span class="p">)</span>
@@ -377,8 +388,8 @@
                 <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">removed_keys</span><span class="p">:</span>
                     <span class="n">removed_keys</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>  <span class="c1"># do nothing</span>
-                <span class="n">items</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span>
-        <span class="n">res</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)(</span><span class="n">items</span><span class="o">=</span><span class="n">items</span><span class="p">,</span> <span class="n">ptr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ptr</span><span class="p">,</span> <span class="n">removed_keys</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">removed_keys</span><span class="p">))</span>
+                <span class="n">items</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span>  <span class="c1"># type: ignore</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)(</span><span class="n">items</span><span class="o">=</span><span class="n">items</span><span class="p">,</span> <span class="n">ptr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ptr</span><span class="p">,</span> <span class="n">removed_keys</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">removed_keys</span><span class="p">))</span>  <span class="c1"># type: ignore</span>
         <span class="n">res</span><span class="o">.</span><span class="n">context</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span>
         <span class="k">return</span> <span class="n">prev_val</span><span class="p">,</span> <span class="n">res</span></div>
 
@@ -396,7 +407,7 @@
     <span class="k">def</span> <span class="nf">__deepcopy__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">memodict</span><span class="o">=</span><span class="p">{}):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">duplicate</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key_obj</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">MichelsonType</span><span class="p">]:</span>
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key_obj</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">MichelsonType</span><span class="p">]:</span>  <span class="c1"># type: ignore</span>
         <span class="n">key</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">from_python_object</span><span class="p">(</span><span class="n">key_obj</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">dup</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
 </pre></div>

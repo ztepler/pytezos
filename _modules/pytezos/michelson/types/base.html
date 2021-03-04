@@ -159,12 +159,20 @@
            <div itemprop="articleBody">
             
   <h1>Source code for pytezos.michelson.types.base</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">copy</span><span class="p">,</span> <span class="n">deepcopy</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span> <span class="n">cast</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Any</span>
+<span></span><span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">copy</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Type</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">cast</span>
 
-<span class="kn">from</span> <span class="nn">pytezos.michelson.forge</span> <span class="kn">import</span> <span class="n">forge_micheline</span><span class="p">,</span> <span class="n">unforge_micheline</span>
+<span class="kn">from</span> <span class="nn">pytezos.context.abstract</span> <span class="kn">import</span> <span class="n">AbstractContext</span>  <span class="c1"># type: ignore</span>
+<span class="kn">from</span> <span class="nn">pytezos.michelson.forge</span> <span class="kn">import</span> <span class="n">forge_micheline</span>
+<span class="kn">from</span> <span class="nn">pytezos.michelson.forge</span> <span class="kn">import</span> <span class="n">unforge_micheline</span>
 <span class="kn">from</span> <span class="nn">pytezos.michelson.micheline</span> <span class="kn">import</span> <span class="n">Micheline</span>
-<span class="kn">from</span> <span class="nn">pytezos.context.abstract</span> <span class="kn">import</span> <span class="n">AbstractContext</span>
 
 <span class="n">type_mappings</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s1">&#39;nat&#39;</span><span class="p">:</span> <span class="s1">&#39;int  /* Natural number */&#39;</span><span class="p">,</span>
@@ -214,10 +222,12 @@
     <span class="n">type_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">args</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="s1">&#39;MichelsonType&#39;</span><span class="p">],</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
 
-    <span class="k">def</span> <span class="fm">__lt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="s1">&#39;MichelsonType&#39;</span><span class="p">):</span>  <span class="c1"># for sorting</span>
+    <span class="c1"># NOTE: for sorting</span>
+    <span class="k">def</span> <span class="fm">__lt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="s1">&#39;MichelsonType&#39;</span><span class="p">):</span>
         <span class="k">assert</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_comparable</span><span class="p">(),</span> <span class="sa">f</span><span class="s1">&#39;must be implemented for comparable types&#39;</span>
 
-    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="s1">&#39;MichelsonType&#39;</span><span class="p">):</span>  <span class="c1"># for contains</span>
+    <span class="c1"># NOTE: for contains</span>
+    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="s1">&#39;MichelsonType&#39;</span><span class="p">):</span>  <span class="c1"># type: ignore</span>
         <span class="k">assert</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_comparable</span><span class="p">(),</span> <span class="sa">f</span><span class="s1">&#39;must be implemented for comparable types&#39;</span>
 
     <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
@@ -240,8 +250,8 @@
             <span class="k">assert</span> <span class="n">type_args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">is_comparable</span><span class="p">(),</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="n">prim</span><span class="si">}</span><span class="s1"> key type has to be comparable (not </span><span class="si">{</span><span class="n">type_args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">prim</span><span class="si">}</span><span class="s1">)&#39;</span>
         <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">prim</span> <span class="o">==</span> <span class="s1">&#39;big_map&#39;</span><span class="p">:</span>
             <span class="k">assert</span> <span class="n">type_args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">is_big_map_friendly</span><span class="p">(),</span> <span class="sa">f</span><span class="s1">&#39;impossible big_map value type&#39;</span>
-        <span class="n">res</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="p">(</span><span class="bp">cls</span><span class="p">,),</span> <span class="nb">dict</span><span class="p">(</span><span class="n">field_name</span><span class="o">=</span><span class="n">parse_name</span><span class="p">(</span><span class="n">annots</span><span class="p">,</span> <span class="s1">&#39;%&#39;</span><span class="p">),</span>
-                                              <span class="n">type_name</span><span class="o">=</span><span class="n">parse_name</span><span class="p">(</span><span class="n">annots</span><span class="p">,</span> <span class="s1">&#39;:&#39;</span><span class="p">),</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="p">(</span><span class="bp">cls</span><span class="p">,),</span> <span class="nb">dict</span><span class="p">(</span><span class="n">field_name</span><span class="o">=</span><span class="n">parse_name</span><span class="p">(</span><span class="n">annots</span><span class="p">,</span> <span class="s1">&#39;%&#39;</span><span class="p">),</span>  <span class="c1"># type: ignore</span>
+                                              <span class="n">type_name</span><span class="o">=</span><span class="n">parse_name</span><span class="p">(</span><span class="n">annots</span><span class="p">,</span> <span class="s1">&#39;:&#39;</span><span class="p">),</span>  <span class="c1"># type: ignore</span>
                                               <span class="n">args</span><span class="o">=</span><span class="n">args</span><span class="p">,</span>
                                               <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">cast</span><span class="p">(</span><span class="n">Type</span><span class="p">[</span><span class="s1">&#39;MichelsonType&#39;</span><span class="p">],</span> <span class="n">res</span><span class="p">)</span></div>
@@ -269,7 +279,7 @@
         <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">prim</span> <span class="ow">in</span> <span class="n">type_mappings</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="n">x</span> <span class="o">!=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">prim</span> <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">definitions</span><span class="p">):</span>
                 <span class="n">definitions</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="bp">cls</span><span class="o">.</span><span class="n">prim</span><span class="p">,</span> <span class="n">type_mappings</span><span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">prim</span><span class="p">]))</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">prim</span></div>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">prim</span>  <span class="c1"># type: ignore</span></div>
 
 <div class="viewcode-block" id="MichelsonType.is_comparable"><a class="viewcode-back" href="../../../../types.html#pytezos.michelson.types.base.MichelsonType.is_comparable">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">is_comparable</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
@@ -385,7 +395,7 @@
 
 
 <div class="viewcode-block" id="generate_pydoc"><a class="viewcode-back" href="../../../../types.html#pytezos.michelson.types.base.generate_pydoc">[docs]</a><span class="k">def</span> <span class="nf">generate_pydoc</span><span class="p">(</span><span class="n">ty</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">MichelsonType</span><span class="p">],</span> <span class="n">title</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="n">definitions</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">definitions</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># type: ignore</span>
     <span class="n">top_def</span> <span class="o">=</span> <span class="n">ty</span><span class="o">.</span><span class="n">generate_pydoc</span><span class="p">(</span><span class="n">definitions</span><span class="p">,</span> <span class="n">inferred_name</span><span class="o">=</span><span class="n">title</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">top_def</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;$&#39;</span><span class="p">):</span>
         <span class="n">definitions</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="p">(</span><span class="n">title</span> <span class="ow">or</span> <span class="n">ty</span><span class="o">.</span><span class="n">field_name</span> <span class="ow">or</span> <span class="n">ty</span><span class="o">.</span><span class="n">type_name</span> <span class="ow">or</span> <span class="s1">&#39;element&#39;</span><span class="p">,</span> <span class="n">top_def</span><span class="p">))</span>

@@ -159,17 +159,19 @@
            <div itemprop="articleBody">
             
   <h1>Source code for pytezos.rpc.protocol</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">pendulum</span>
-<span class="kn">import</span> <span class="nn">bson</span>
-<span class="kn">from</span> <span class="nn">pendulum.parsing.exceptions</span> <span class="kn">import</span> <span class="n">ParserError</span>
-<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<span></span><span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
 <span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">count</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Iterator</span>
 
+<span class="kn">import</span> <span class="nn">bson</span>  <span class="c1"># type: ignore</span>
+<span class="kn">import</span> <span class="nn">pendulum</span>
+<span class="kn">from</span> <span class="nn">pendulum.parsing.exceptions</span> <span class="kn">import</span> <span class="n">ParserError</span>
+
+<span class="kn">from</span> <span class="nn">pytezos.crypto.encoding</span> <span class="kn">import</span> <span class="n">is_bh</span>
+<span class="kn">from</span> <span class="nn">pytezos.crypto.encoding</span> <span class="kn">import</span> <span class="n">is_ogh</span>
 <span class="kn">from</span> <span class="nn">pytezos.jupyter</span> <span class="kn">import</span> <span class="n">get_attr_docstring</span>
-<span class="kn">from</span> <span class="nn">pytezos.rpc.search</span> <span class="kn">import</span> <span class="n">BlockSliceQuery</span>
 <span class="kn">from</span> <span class="nn">pytezos.rpc.query</span> <span class="kn">import</span> <span class="n">RpcQuery</span>
-<span class="kn">from</span> <span class="nn">pytezos.crypto.encoding</span> <span class="kn">import</span> <span class="n">is_bh</span><span class="p">,</span> <span class="n">is_ogh</span>
+<span class="kn">from</span> <span class="nn">pytezos.rpc.search</span> <span class="kn">import</span> <span class="n">BlockSliceQuery</span>
 
 
 <div class="viewcode-block" id="to_timestamp"><a class="viewcode-back" href="../../../rpc_queries.html#pytezos.rpc.protocol.to_timestamp">[docs]</a><span class="k">def</span> <span class="nf">to_timestamp</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
@@ -363,7 +365,7 @@
         <span class="n">kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mi">60</span><span class="p">)</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">ContextRawBytesQuery</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
-<div class="viewcode-block" id="ContextRawBytesQuery.__call__"><a class="viewcode-back" href="../../../rpc_queries.html#pytezos.rpc.protocol.ContextRawBytesQuery.__call__">[docs]</a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">depth</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<div class="viewcode-block" id="ContextRawBytesQuery.__call__"><a class="viewcode-back" href="../../../rpc_queries.html#pytezos.rpc.protocol.ContextRawBytesQuery.__call__">[docs]</a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">depth</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
         <span class="sd">&quot;&quot;&quot; Return the raw context.</span>
 
 <span class="sd">        :param depth: Context is a tree structure, default depth is 1</span>
@@ -514,7 +516,7 @@
 
 <div class="viewcode-block" id="ProposalQuery"><a class="viewcode-back" href="../../../rpc_queries.html#pytezos.rpc.protocol.ProposalQuery">[docs]</a><span class="k">class</span> <span class="nc">ProposalQuery</span><span class="p">(</span><span class="n">RpcQuery</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s1">&#39;/chains/</span><span class="si">{}</span><span class="s1">/blocks/</span><span class="si">{}</span><span class="s1">/votes/proposals/</span><span class="si">{}</span><span class="s1">&#39;</span><span class="p">):</span>
 
-<div class="viewcode-block" id="ProposalQuery.__call__"><a class="viewcode-back" href="../../../rpc_queries.html#pytezos.rpc.protocol.ProposalQuery.__call__">[docs]</a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<div class="viewcode-block" id="ProposalQuery.__call__"><a class="viewcode-back" href="../../../rpc_queries.html#pytezos.rpc.protocol.ProposalQuery.__call__">[docs]</a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
         <span class="sd">&quot;&quot;&quot; Roll count for this proposal.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">proposals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span><span class="p">()</span>

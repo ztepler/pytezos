@@ -159,19 +159,19 @@
            <div itemprop="articleBody">
             
   <h1>Source code for pytezos.client</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
-<span class="kn">from</span> <span class="nn">decimal</span> <span class="kn">import</span> <span class="n">Decimal</span>
+<span></span><span class="kn">from</span> <span class="nn">decimal</span> <span class="kn">import</span> <span class="n">Decimal</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span>
 
-<span class="kn">from</span> <span class="nn">pytezos.rpc</span> <span class="kn">import</span> <span class="n">ShellQuery</span>
-<span class="kn">from</span> <span class="nn">pytezos.logging</span> <span class="kn">import</span> <span class="n">logger</span>
-<span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">from</span> <span class="nn">pytezos.crypto.key</span> <span class="kn">import</span> <span class="n">Key</span>
-<span class="kn">from</span> <span class="nn">pytezos.operation.group</span> <span class="kn">import</span> <span class="n">OperationGroup</span>
-<span class="kn">from</span> <span class="nn">pytezos.operation.content</span> <span class="kn">import</span> <span class="n">ContentMixin</span>
-<span class="kn">from</span> <span class="nn">pytezos.contract.interface</span> <span class="kn">import</span> <span class="n">ContractInterface</span>
+<span class="kn">from</span> <span class="nn">pytezos.context.mixin</span> <span class="kn">import</span> <span class="n">ContextMixin</span>  <span class="c1"># type: ignore</span>
 <span class="kn">from</span> <span class="nn">pytezos.contract.call</span> <span class="kn">import</span> <span class="n">ContractCall</span>
-<span class="kn">from</span> <span class="nn">pytezos.context.mixin</span> <span class="kn">import</span> <span class="n">ContextMixin</span>
+<span class="kn">from</span> <span class="nn">pytezos.contract.interface</span> <span class="kn">import</span> <span class="n">ContractInterface</span>
+<span class="kn">from</span> <span class="nn">pytezos.crypto.key</span> <span class="kn">import</span> <span class="n">Key</span>
 <span class="kn">from</span> <span class="nn">pytezos.jupyter</span> <span class="kn">import</span> <span class="n">get_class_docstring</span>
+<span class="kn">from</span> <span class="nn">pytezos.logging</span> <span class="kn">import</span> <span class="n">logger</span>
+<span class="kn">from</span> <span class="nn">pytezos.operation.content</span> <span class="kn">import</span> <span class="n">ContentMixin</span>
+<span class="kn">from</span> <span class="nn">pytezos.operation.group</span> <span class="kn">import</span> <span class="n">OperationGroup</span>
+<span class="kn">from</span> <span class="nn">pytezos.rpc</span> <span class="kn">import</span> <span class="n">ShellQuery</span>
 
 
 <div class="viewcode-block" id="PyTezosClient"><a class="viewcode-back" href="../../high_level.html#pytezos.client.PyTezosClient">[docs]</a><span class="k">class</span> <span class="nc">PyTezosClient</span><span class="p">(</span><span class="n">ContextMixin</span><span class="p">,</span> <span class="n">ContentMixin</span><span class="p">):</span>

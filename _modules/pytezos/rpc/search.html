@@ -159,13 +159,15 @@
            <div itemprop="articleBody">
             
   <h1>Source code for pytezos.rpc.search</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Generator</span>
-<span class="kn">from</span> <span class="nn">pytezos.logging</span> <span class="kn">import</span> <span class="n">logger</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Generator</span>
 
+<span class="kn">from</span> <span class="nn">pytezos.crypto.encoding</span> <span class="kn">import</span> <span class="n">is_bh</span>
+<span class="kn">from</span> <span class="nn">pytezos.jupyter</span> <span class="kn">import</span> <span class="n">get_attr_docstring</span>
+<span class="kn">from</span> <span class="nn">pytezos.logging</span> <span class="kn">import</span> <span class="n">logger</span>
 <span class="kn">from</span> <span class="nn">pytezos.rpc.node</span> <span class="kn">import</span> <span class="n">RpcError</span>
 <span class="kn">from</span> <span class="nn">pytezos.rpc.query</span> <span class="kn">import</span> <span class="n">RpcQuery</span>
-<span class="kn">from</span> <span class="nn">pytezos.jupyter</span> <span class="kn">import</span> <span class="n">get_attr_docstring</span>
-<span class="kn">from</span> <span class="nn">pytezos.crypto.encoding</span> <span class="kn">import</span> <span class="n">is_bh</span>
 
 
 <div class="viewcode-block" id="find_state_change_intervals"><a class="viewcode-back" href="../../../rpc_queries.html#pytezos.rpc.search.find_state_change_intervals">[docs]</a><span class="k">def</span> <span class="nf">find_state_change_intervals</span><span class="p">(</span><span class="n">head</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">last</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">get</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">equals</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span>
@@ -184,7 +186,7 @@
 
 
 <div class="viewcode-block" id="find_state_change"><a class="viewcode-back" href="../../../rpc_queries.html#pytezos.rpc.search.find_state_change">[docs]</a><span class="k">def</span> <span class="nf">find_state_change</span><span class="p">(</span><span class="n">head</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">last</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">get</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">equals</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span>
-                      <span class="n">pred_value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">Any</span><span class="p">):</span>
+                      <span class="n">pred_value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">Any</span><span class="p">):</span>  <span class="c1"># type: ignore</span>
     <span class="k">def</span> <span class="nf">bisect</span><span class="p">(</span><span class="n">start</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">end</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">end</span> <span class="o">==</span> <span class="n">start</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">end</span><span class="p">,</span> <span class="n">get</span><span class="p">(</span><span class="n">end</span><span class="p">)</span>
@@ -248,7 +250,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_getitem</span><span class="p">(</span><span class="n">stop</span> <span class="o">+</span> <span class="n">item</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
 
-<div class="viewcode-block" id="BlockSliceQuery.__call__"><a class="viewcode-back" href="../../../rpc_queries.html#pytezos.rpc.search.BlockSliceQuery.__call__">[docs]</a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<div class="viewcode-block" id="BlockSliceQuery.__call__"><a class="viewcode-back" href="../../../rpc_queries.html#pytezos.rpc.search.BlockSliceQuery.__call__">[docs]</a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
         <span class="sd">&quot;&quot;&quot; Get block hashes (base58) for this interval.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">header</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_getitem</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_stop</span><span class="p">)</span><span class="o">.</span><span class="n">header</span><span class="p">()</span>

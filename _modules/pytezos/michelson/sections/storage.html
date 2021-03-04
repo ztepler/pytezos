@@ -159,15 +159,17 @@
            <div itemprop="articleBody">
             
   <h1>Source code for pytezos.michelson.sections.storage</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Type</span><span class="p">,</span> <span class="n">List</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Type</span>
 
+<span class="kn">from</span> <span class="nn">pytezos.context.abstract</span> <span class="kn">import</span> <span class="n">AbstractContext</span>  <span class="c1"># type: ignore</span>
+<span class="kn">from</span> <span class="nn">pytezos.michelson.micheline</span> <span class="kn">import</span> <span class="n">Micheline</span>
+<span class="kn">from</span> <span class="nn">pytezos.michelson.micheline</span> <span class="kn">import</span> <span class="n">MichelsonRuntimeError</span>
 <span class="kn">from</span> <span class="nn">pytezos.michelson.types</span> <span class="kn">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">pytezos.michelson.micheline</span> <span class="kn">import</span> <span class="n">Micheline</span><span class="p">,</span> <span class="n">MichelsonRuntimeError</span>
-<span class="kn">from</span> <span class="nn">pytezos.context.abstract</span> <span class="kn">import</span> <span class="n">AbstractContext</span>
 
 
 <div class="viewcode-block" id="StorageSection"><a class="viewcode-back" href="../../../../code.html#pytezos.michelson.sections.storage.StorageSection">[docs]</a><span class="k">class</span> <span class="nc">StorageSection</span><span class="p">(</span><span class="n">Micheline</span><span class="p">,</span> <span class="n">prim</span><span class="o">=</span><span class="s1">&#39;storage&#39;</span><span class="p">,</span> <span class="n">args_len</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
-    <span class="n">args</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">MichelsonType</span><span class="p">]]</span>
+    <span class="n">args</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">MichelsonType</span><span class="p">]]</span>  <span class="c1"># type: ignore</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">MichelsonType</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">Micheline</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
@@ -182,10 +184,10 @@
             <span class="bp">cls</span> <span class="o">=</span> <span class="n">Micheline</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">type_expr</span><span class="p">)</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">StorageSection</span><span class="p">):</span>
                 <span class="bp">cls</span> <span class="o">=</span> <span class="n">StorageSection</span><span class="o">.</span><span class="n">create_type</span><span class="p">(</span><span class="n">args</span><span class="o">=</span><span class="p">[</span><span class="bp">cls</span><span class="p">])</span>
-            <span class="k">assert</span> <span class="bp">cls</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">field_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;argument type cannot be annotated: %</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">field_name</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="k">assert</span> <span class="bp">cls</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">field_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;argument type cannot be annotated: %</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">field_name</span><span class="si">}</span><span class="s1">&#39;</span>  <span class="c1"># type: ignore</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">MichelsonRuntimeError</span><span class="p">(</span><span class="s1">&#39;storage&#39;</span><span class="p">,</span> <span class="o">*</span><span class="n">e</span><span class="o">.</span><span class="n">args</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">cls</span></div>
+        <span class="k">return</span> <span class="bp">cls</span>  <span class="c1"># type: ignore</span></div>
 
 <div class="viewcode-block" id="StorageSection.execute"><a class="viewcode-back" href="../../../../code.html#pytezos.michelson.sections.storage.StorageSection.execute">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">stack</span><span class="p">,</span> <span class="n">stdout</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">context</span><span class="p">:</span> <span class="n">AbstractContext</span><span class="p">):</span>
@@ -194,7 +196,7 @@
 
 <div class="viewcode-block" id="StorageSection.generate_pydoc"><a class="viewcode-back" href="../../../../code.html#pytezos.michelson.sections.storage.StorageSection.generate_pydoc">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">generate_pydoc</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="n">definitions</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">definitions</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># type: ignore</span>
         <span class="n">res</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">generate_pydoc</span><span class="p">(</span><span class="n">definitions</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">prim</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">res</span> <span class="o">!=</span> <span class="sa">f</span><span class="s1">&#39;$</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="n">prim</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">:</span>
             <span class="n">definitions</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">prim</span><span class="p">,</span> <span class="n">res</span><span class="p">))</span>
@@ -228,7 +230,7 @@
         <span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)(</span><span class="n">item</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="StorageSection.aggregate_lazy_diff"><a class="viewcode-back" href="../../../../code.html#pytezos.michelson.sections.storage.StorageSection.aggregate_lazy_diff">[docs]</a>    <span class="k">def</span> <span class="nf">aggregate_lazy_diff</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;readable&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
-        <span class="n">lazy_diff</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">lazy_diff</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># type: ignore</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">item</span><span class="o">.</span><span class="n">aggregate_lazy_diff</span><span class="p">(</span><span class="n">lazy_diff</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">lazy_diff</span></div></div>
 </pre></div>

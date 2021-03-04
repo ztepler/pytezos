@@ -159,11 +159,14 @@
            <div itemprop="articleBody">
             
   <h1>Source code for pytezos.michelson.types.option</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Type</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Type</span>
 
+<span class="kn">from</span> <span class="nn">pytezos.context.abstract</span> <span class="kn">import</span> <span class="n">AbstractContext</span>  <span class="c1"># type: ignore</span>
+<span class="kn">from</span> <span class="nn">pytezos.michelson.micheline</span> <span class="kn">import</span> <span class="n">Micheline</span>
+<span class="kn">from</span> <span class="nn">pytezos.michelson.micheline</span> <span class="kn">import</span> <span class="n">parse_micheline_value</span>
 <span class="kn">from</span> <span class="nn">pytezos.michelson.types.base</span> <span class="kn">import</span> <span class="n">MichelsonType</span>
-<span class="kn">from</span> <span class="nn">pytezos.michelson.micheline</span> <span class="kn">import</span> <span class="n">parse_micheline_value</span><span class="p">,</span> <span class="n">Micheline</span>
-<span class="kn">from</span> <span class="nn">pytezos.context.abstract</span> <span class="kn">import</span> <span class="n">AbstractContext</span>
 
 
 <div class="viewcode-block" id="NoneLiteral"><a class="viewcode-back" href="../../../../types.html#pytezos.michelson.types.option.NoneLiteral">[docs]</a><span class="k">class</span> <span class="nc">NoneLiteral</span><span class="p">(</span><span class="n">Micheline</span><span class="p">,</span> <span class="n">prim</span><span class="o">=</span><span class="s1">&#39;None&#39;</span><span class="p">):</span>
@@ -180,7 +183,7 @@
         <span class="nb">super</span><span class="p">(</span><span class="n">OptionType</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">item</span> <span class="o">=</span> <span class="n">item</span>
 
-    <span class="k">def</span> <span class="fm">__lt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="s1">&#39;OptionType&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__lt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="s1">&#39;OptionType&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
         <span class="k">if</span> <span class="n">other</span><span class="o">.</span><span class="n">item</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span>
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">item</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -188,8 +191,8 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">item</span> <span class="o">&lt;</span> <span class="n">other</span><span class="o">.</span><span class="n">item</span>
 
-    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="s1">&#39;OptionType&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">item</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">item</span>
+    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="s1">&#39;OptionType&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">item</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">item</span>  <span class="c1"># type: ignore</span>
 
     <span class="k">def</span> <span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">hash</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">item</span><span class="p">)</span>
@@ -200,12 +203,12 @@
 <div class="viewcode-block" id="OptionType.none"><a class="viewcode-back" href="../../../../types.html#pytezos.michelson.types.option.OptionType.none">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">none</span><span class="p">(</span><span class="n">some_type</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">MichelsonType</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="s1">&#39;OptionType&#39;</span><span class="p">:</span>
         <span class="bp">cls</span> <span class="o">=</span> <span class="n">OptionType</span><span class="o">.</span><span class="n">create_type</span><span class="p">(</span><span class="n">args</span><span class="o">=</span><span class="p">[</span><span class="n">some_type</span><span class="p">])</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>  <span class="c1"># type: ignore</span></div>
 
 <div class="viewcode-block" id="OptionType.from_some"><a class="viewcode-back" href="../../../../types.html#pytezos.michelson.types.option.OptionType.from_some">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">from_some</span><span class="p">(</span><span class="n">item</span><span class="p">:</span> <span class="n">MichelsonType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;OptionType&#39;</span><span class="p">:</span>
         <span class="bp">cls</span> <span class="o">=</span> <span class="n">OptionType</span><span class="o">.</span><span class="n">create_type</span><span class="p">(</span><span class="n">args</span><span class="o">=</span><span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">get_anon_type</span><span class="p">()])</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">item</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>  <span class="c1"># type: ignore</span></div>
 
 <div class="viewcode-block" id="OptionType.dummy"><a class="viewcode-back" href="../../../../types.html#pytezos.michelson.types.option.OptionType.dummy">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">dummy</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">AbstractContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;OptionType&#39;</span><span class="p">:</span>
@@ -238,13 +241,13 @@
 
 <div class="viewcode-block" id="OptionType.get_some"><a class="viewcode-back" href="../../../../types.html#pytezos.michelson.types.option.OptionType.get_some">[docs]</a>    <span class="k">def</span> <span class="nf">get_some</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MichelsonType</span><span class="p">:</span>
         <span class="k">assert</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_none</span><span class="p">()</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">item</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">item</span>  <span class="c1"># type: ignore</span></div>
 
 <div class="viewcode-block" id="OptionType.to_literal"><a class="viewcode-back" href="../../../../types.html#pytezos.michelson.types.option.OptionType.to_literal">[docs]</a>    <span class="k">def</span> <span class="nf">to_literal</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">[</span><span class="n">Micheline</span><span class="p">]:</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_none</span><span class="p">():</span>
             <span class="k">return</span> <span class="n">NoneLiteral</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">SomeLiteral</span><span class="o">.</span><span class="n">create_type</span><span class="p">(</span><span class="n">args</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">item</span><span class="o">.</span><span class="n">to_literal</span><span class="p">()])</span></div>
+            <span class="k">return</span> <span class="n">SomeLiteral</span><span class="o">.</span><span class="n">create_type</span><span class="p">(</span><span class="n">args</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">item</span><span class="o">.</span><span class="n">to_literal</span><span class="p">()])</span>  <span class="c1"># type: ignore</span></div>
 
 <div class="viewcode-block" id="OptionType.to_micheline_value"><a class="viewcode-back" href="../../../../types.html#pytezos.michelson.types.option.OptionType.to_micheline_value">[docs]</a>    <span class="k">def</span> <span class="nf">to_micheline_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;readable&#39;</span><span class="p">,</span> <span class="n">lazy_diff</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_none</span><span class="p">():</span>
@@ -262,16 +265,16 @@
                                               <span class="n">comparable</span><span class="o">=</span><span class="n">comparable</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="OptionType.merge_lazy_diff"><a class="viewcode-back" href="../../../../types.html#pytezos.michelson.types.option.OptionType.merge_lazy_diff">[docs]</a>    <span class="k">def</span> <span class="nf">merge_lazy_diff</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lazy_diff</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="s1">&#39;MichelsonType&#39;</span><span class="p">:</span>
-        <span class="n">item</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_none</span><span class="p">()</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">item</span><span class="o">.</span><span class="n">merge_lazy_diff</span><span class="p">(</span><span class="n">lazy_diff</span><span class="p">)</span>
+        <span class="n">item</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_none</span><span class="p">()</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">item</span><span class="o">.</span><span class="n">merge_lazy_diff</span><span class="p">(</span><span class="n">lazy_diff</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
         <span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)(</span><span class="n">item</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="OptionType.aggregate_lazy_diff"><a class="viewcode-back" href="../../../../types.html#pytezos.michelson.types.option.OptionType.aggregate_lazy_diff">[docs]</a>    <span class="k">def</span> <span class="nf">aggregate_lazy_diff</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lazy_diff</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;readable&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;MichelsonType&#39;</span><span class="p">:</span>
-        <span class="n">item</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_none</span><span class="p">()</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">item</span><span class="o">.</span><span class="n">aggregate_lazy_diff</span><span class="p">(</span><span class="n">lazy_diff</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">)</span>
+        <span class="n">item</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_none</span><span class="p">()</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">item</span><span class="o">.</span><span class="n">aggregate_lazy_diff</span><span class="p">(</span><span class="n">lazy_diff</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
         <span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)(</span><span class="n">item</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="OptionType.attach_context"><a class="viewcode-back" href="../../../../types.html#pytezos.michelson.types.option.OptionType.attach_context">[docs]</a>    <span class="k">def</span> <span class="nf">attach_context</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">AbstractContext</span><span class="p">,</span> <span class="n">big_map_copy</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_none</span><span class="p">():</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">item</span><span class="o">.</span><span class="n">attach_context</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="n">big_map_copy</span><span class="o">=</span><span class="n">big_map_copy</span><span class="p">)</span></div></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">item</span><span class="o">.</span><span class="n">attach_context</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="n">big_map_copy</span><span class="o">=</span><span class="n">big_map_copy</span><span class="p">)</span>  <span class="c1"># type: ignore</span></div></div>
 </pre></div>
 
            </div>

@@ -160,17 +160,21 @@
             
   <h1>Source code for pytezos.cli.cli</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">glob</span> <span class="kn">import</span> <span class="n">glob</span>
-<span class="kn">from</span> <span class="nn">os.path</span> <span class="kn">import</span> <span class="n">abspath</span><span class="p">,</span> <span class="n">dirname</span><span class="p">,</span> <span class="n">join</span><span class="p">,</span> <span class="n">exists</span>
+<span class="kn">from</span> <span class="nn">os.path</span> <span class="kn">import</span> <span class="n">abspath</span>
+<span class="kn">from</span> <span class="nn">os.path</span> <span class="kn">import</span> <span class="n">dirname</span>
+<span class="kn">from</span> <span class="nn">os.path</span> <span class="kn">import</span> <span class="n">exists</span>
+<span class="kn">from</span> <span class="nn">os.path</span> <span class="kn">import</span> <span class="n">join</span>
 <span class="kn">from</span> <span class="nn">pprint</span> <span class="kn">import</span> <span class="n">pformat</span>
-<span class="kn">import</span> <span class="nn">fire</span>
 
-<span class="kn">from</span> <span class="nn">pytezos</span> <span class="kn">import</span> <span class="n">pytezos</span><span class="p">,</span> <span class="n">ContractInterface</span>
+<span class="kn">import</span> <span class="nn">fire</span>  <span class="c1"># type: ignore</span>
+
+<span class="kn">from</span> <span class="nn">pytezos</span> <span class="kn">import</span> <span class="n">ContractInterface</span>
+<span class="kn">from</span> <span class="nn">pytezos</span> <span class="kn">import</span> <span class="n">pytezos</span>
+<span class="kn">from</span> <span class="nn">pytezos.context.mixin</span> <span class="kn">import</span> <span class="n">default_network</span>  <span class="c1"># type: ignore</span>
 <span class="kn">from</span> <span class="nn">pytezos.logging</span> <span class="kn">import</span> <span class="n">logger</span>
-<span class="kn">from</span> <span class="nn">pytezos.rpc.errors</span> <span class="kn">import</span> <span class="n">RpcError</span>
-<span class="kn">from</span> <span class="nn">pytezos.operation.result</span> <span class="kn">import</span> <span class="n">OperationResult</span>
-<span class="kn">from</span> <span class="nn">pytezos.context.mixin</span> <span class="kn">import</span> <span class="n">default_network</span>
 <span class="kn">from</span> <span class="nn">pytezos.michelson.types.base</span> <span class="kn">import</span> <span class="n">generate_pydoc</span>
-<span class="kn">from</span> <span class="nn">pytezos.cli.github</span> <span class="kn">import</span> <span class="n">create_deployment</span><span class="p">,</span> <span class="n">create_deployment_status</span>
+<span class="kn">from</span> <span class="nn">pytezos.operation.result</span> <span class="kn">import</span> <span class="n">OperationResult</span>
+<span class="kn">from</span> <span class="nn">pytezos.rpc.errors</span> <span class="kn">import</span> <span class="n">RpcError</span>
 
 <span class="n">kernel_js_path</span> <span class="o">=</span> <span class="n">join</span><span class="p">(</span><span class="n">dirname</span><span class="p">(</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)),</span> <span class="s1">&#39;assets&#39;</span><span class="p">,</span> <span class="s1">&#39;kernel.js&#39;</span><span class="p">)</span>
 <span class="n">kernel_json</span> <span class="o">=</span> <span class="p">{</span>

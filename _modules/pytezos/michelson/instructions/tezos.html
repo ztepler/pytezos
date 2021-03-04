@@ -159,16 +159,29 @@
            <div itemprop="articleBody">
             
   <h1>Source code for pytezos.michelson.instructions.tezos</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">cast</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Type</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Type</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">cast</span>
 
-<span class="kn">from</span> <span class="nn">pytezos.michelson.instructions.base</span> <span class="kn">import</span> <span class="n">format_stdout</span><span class="p">,</span> <span class="n">MichelsonInstruction</span>
-<span class="kn">from</span> <span class="nn">pytezos.michelson.stack</span> <span class="kn">import</span> <span class="n">MichelsonStack</span>
-<span class="kn">from</span> <span class="nn">pytezos.michelson.micheline</span> <span class="kn">import</span> <span class="n">MichelineSequence</span><span class="p">,</span> <span class="n">MichelsonRuntimeError</span>
+<span class="kn">from</span> <span class="nn">pytezos.context.abstract</span> <span class="kn">import</span> <span class="n">AbstractContext</span>  <span class="c1"># type: ignore</span>
+<span class="kn">from</span> <span class="nn">pytezos.michelson.instructions.base</span> <span class="kn">import</span> <span class="n">MichelsonInstruction</span>
+<span class="kn">from</span> <span class="nn">pytezos.michelson.instructions.base</span> <span class="kn">import</span> <span class="n">format_stdout</span>
+<span class="kn">from</span> <span class="nn">pytezos.michelson.micheline</span> <span class="kn">import</span> <span class="n">MichelineSequence</span>
 <span class="kn">from</span> <span class="nn">pytezos.michelson.sections</span> <span class="kn">import</span> <span class="n">ParameterSection</span>
+<span class="kn">from</span> <span class="nn">pytezos.michelson.stack</span> <span class="kn">import</span> <span class="n">MichelsonStack</span>
+<span class="kn">from</span> <span class="nn">pytezos.michelson.types</span> <span class="kn">import</span> <span class="n">AddressType</span>
+<span class="kn">from</span> <span class="nn">pytezos.michelson.types</span> <span class="kn">import</span> <span class="n">ChainIdType</span>
+<span class="kn">from</span> <span class="nn">pytezos.michelson.types</span> <span class="kn">import</span> <span class="n">ContractType</span>
+<span class="kn">from</span> <span class="nn">pytezos.michelson.types</span> <span class="kn">import</span> <span class="n">KeyHashType</span>
+<span class="kn">from</span> <span class="nn">pytezos.michelson.types</span> <span class="kn">import</span> <span class="n">MutezType</span>
+<span class="kn">from</span> <span class="nn">pytezos.michelson.types</span> <span class="kn">import</span> <span class="n">NatType</span>
+<span class="kn">from</span> <span class="nn">pytezos.michelson.types</span> <span class="kn">import</span> <span class="n">OperationType</span>
+<span class="kn">from</span> <span class="nn">pytezos.michelson.types</span> <span class="kn">import</span> <span class="n">OptionType</span>
+<span class="kn">from</span> <span class="nn">pytezos.michelson.types</span> <span class="kn">import</span> <span class="n">TimestampType</span>
+<span class="kn">from</span> <span class="nn">pytezos.michelson.types</span> <span class="kn">import</span> <span class="n">UnitType</span>
 <span class="kn">from</span> <span class="nn">pytezos.michelson.types.base</span> <span class="kn">import</span> <span class="n">MichelsonType</span>
-<span class="kn">from</span> <span class="nn">pytezos.michelson.types</span> <span class="kn">import</span> <span class="n">NatType</span><span class="p">,</span> <span class="n">ContractType</span><span class="p">,</span> <span class="n">AddressType</span><span class="p">,</span> <span class="n">TimestampType</span><span class="p">,</span> \
-    <span class="n">OptionType</span><span class="p">,</span> <span class="n">KeyHashType</span><span class="p">,</span> <span class="n">UnitType</span><span class="p">,</span> <span class="n">MutezType</span><span class="p">,</span> <span class="n">OperationType</span><span class="p">,</span> <span class="n">ChainIdType</span>
-<span class="kn">from</span> <span class="nn">pytezos.context.abstract</span> <span class="kn">import</span> <span class="n">AbstractContext</span>
 
 
 <div class="viewcode-block" id="AmountInstruction"><a class="viewcode-back" href="../../../../instructions.html#pytezos.michelson.instructions.tezos.AmountInstruction">[docs]</a><span class="k">class</span> <span class="nc">AmountInstruction</span><span class="p">(</span><span class="n">MichelsonInstruction</span><span class="p">,</span> <span class="n">prim</span><span class="o">=</span><span class="s1">&#39;AMOUNT&#39;</span><span class="p">):</span>
@@ -178,7 +191,7 @@
         <span class="n">amount</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">get_amount</span><span class="p">()</span>
         <span class="n">res</span> <span class="o">=</span> <span class="n">MutezType</span><span class="o">.</span><span class="n">from_value</span><span class="p">(</span><span class="n">amount</span><span class="p">)</span>
         <span class="n">stack</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
-        <span class="n">stdout</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">format_stdout</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">prim</span><span class="p">,</span> <span class="p">[],</span> <span class="p">[</span><span class="n">res</span><span class="p">]))</span>
+        <span class="n">stdout</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">format_stdout</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">prim</span><span class="p">,</span> <span class="p">[],</span> <span class="p">[</span><span class="n">res</span><span class="p">]))</span>  <span class="c1"># type: ignore</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="p">()</span></div></div>
 
 
@@ -189,7 +202,7 @@
         <span class="n">balance</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">get_balance</span><span class="p">()</span>
         <span class="n">res</span> <span class="o">=</span> <span class="n">MutezType</span><span class="o">.</span><span class="n">from_value</span><span class="p">(</span><span class="n">balance</span><span class="p">)</span>
         <span class="n">stack</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
-        <span class="n">stdout</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">format_stdout</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">prim</span><span class="p">,</span> <span class="p">[],</span> <span class="p">[</span><span class="n">res</span><span class="p">]))</span>
+        <span class="n">stdout</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">format_stdout</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">prim</span><span class="p">,</span> <span class="p">[],</span> <span class="p">[</span><span class="n">res</span><span class="p">]))</span>  <span class="c1"># type: ignore</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="p">()</span></div></div>
 
 
@@ -200,7 +213,7 @@
         <span class="n">chain_id</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">get_chain_id</span><span class="p">()</span>
         <span class="n">res</span> <span class="o">=</span> <span class="n">ChainIdType</span><span class="o">.</span><span class="n">from_value</span><span class="p">(</span><span class="n">chain_id</span><span class="p">)</span>
         <span class="n">stack</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
-        <span class="n">stdout</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">format_stdout</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">prim</span><span class="p">,</span> <span class="p">[],</span> <span class="p">[</span><span class="n">res</span><span class="p">]))</span>
+        <span class="n">stdout</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">format_stdout</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">prim</span><span class="p">,</span> <span class="p">[],</span> <span class="p">[</span><span class="n">res</span><span class="p">]))</span>  <span class="c1"># type: ignore</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="p">()</span></div></div>
 
 
@@ -223,9 +236,9 @@
         <span class="k">assert</span> <span class="n">self_type</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;parameter type is not defined&#39;</span>
         <span class="n">self_address</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">get_self_address</span><span class="p">()</span>
         <span class="n">res_type</span> <span class="o">=</span> <span class="n">ContractType</span><span class="o">.</span><span class="n">create_type</span><span class="p">(</span><span class="n">args</span><span class="o">=</span><span class="p">[</span><span class="n">self_type</span><span class="p">])</span>
-        <span class="n">res</span> <span class="o">=</span> <span class="n">res_type</span><span class="o">.</span><span class="n">from_value</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">self_address</span><span class="si">}</span><span class="s1">%</span><span class="si">{</span><span class="n">entrypoint</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">res_type</span><span class="o">.</span><span class="n">from_value</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">self_address</span><span class="si">}</span><span class="s1">%</span><span class="si">{</span><span class="n">entrypoint</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
         <span class="n">stack</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
-        <span class="n">stdout</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">format_stdout</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">prim</span><span class="p">,</span> <span class="p">[],</span> <span class="p">[</span><span class="n">res</span><span class="p">]))</span>
+        <span class="n">stdout</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">format_stdout</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">prim</span><span class="p">,</span> <span class="p">[],</span> <span class="p">[</span><span class="n">res</span><span class="p">]))</span>  <span class="c1"># type: ignore</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="p">()</span></div></div>
 
 
@@ -235,7 +248,7 @@
     <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">stack</span><span class="p">:</span> <span class="s1">&#39;MichelsonStack&#39;</span><span class="p">,</span> <span class="n">stdout</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">context</span><span class="p">:</span> <span class="n">AbstractContext</span><span class="p">):</span>
         <span class="n">res</span> <span class="o">=</span> <span class="n">AddressType</span><span class="o">.</span><span class="n">from_value</span><span class="p">(</span><span class="n">context</span><span class="o">.</span><span class="n">get_self_address</span><span class="p">())</span>
         <span class="n">stack</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
-        <span class="n">stdout</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">format_stdout</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">prim</span><span class="p">,</span> <span class="p">[],</span> <span class="p">[</span><span class="n">res</span><span class="p">]))</span>
+        <span class="n">stdout</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">format_stdout</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">prim</span><span class="p">,</span> <span class="p">[],</span> <span class="p">[</span><span class="n">res</span><span class="p">]))</span>  <span class="c1"># type: ignore</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="p">()</span></div></div>
 
 
@@ -246,7 +259,7 @@
         <span class="n">sender</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">get_sender</span><span class="p">()</span>
         <span class="n">res</span> <span class="o">=</span> <span class="n">AddressType</span><span class="o">.</span><span class="n">from_value</span><span class="p">(</span><span class="n">sender</span><span class="p">)</span>
         <span class="n">stack</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
-        <span class="n">stdout</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">format_stdout</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">prim</span><span class="p">,</span> <span class="p">[],</span> <span class="p">[</span><span class="n">res</span><span class="p">]))</span>
+        <span class="n">stdout</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">format_stdout</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">prim</span><span class="p">,</span> <span class="p">[],</span> <span class="p">[</span><span class="n">res</span><span class="p">]))</span>  <span class="c1"># type: ignore</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="p">()</span></div></div>
 
 
@@ -257,7 +270,7 @@
         <span class="n">source</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">get_source</span><span class="p">()</span>
         <span class="n">res</span> <span class="o">=</span> <span class="n">AddressType</span><span class="o">.</span><span class="n">from_value</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
         <span class="n">stack</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
-        <span class="n">stdout</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">format_stdout</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">prim</span><span class="p">,</span> <span class="p">[],</span> <span class="p">[</span><span class="n">res</span><span class="p">]))</span>
+        <span class="n">stdout</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">format_stdout</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">prim</span><span class="p">,</span> <span class="p">[],</span> <span class="p">[</span><span class="n">res</span><span class="p">]))</span>  <span class="c1"># type: ignore</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="p">()</span></div></div>
 
 
@@ -268,7 +281,7 @@
         <span class="n">now</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">get_now</span><span class="p">()</span>
         <span class="n">res</span> <span class="o">=</span> <span class="n">TimestampType</span><span class="o">.</span><span class="n">from_value</span><span class="p">(</span><span class="n">now</span><span class="p">)</span>
         <span class="n">stack</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
-        <span class="n">stdout</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">format_stdout</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">prim</span><span class="p">,</span> <span class="p">[],</span> <span class="p">[</span><span class="n">res</span><span class="p">]))</span>
+        <span class="n">stdout</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">format_stdout</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">prim</span><span class="p">,</span> <span class="p">[],</span> <span class="p">[</span><span class="n">res</span><span class="p">]))</span>  <span class="c1"># type: ignore</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="p">()</span></div></div>
 
 
@@ -280,7 +293,7 @@
         <span class="n">contract</span><span class="o">.</span><span class="n">assert_type_in</span><span class="p">(</span><span class="n">ContractType</span><span class="p">)</span>
         <span class="n">res</span> <span class="o">=</span> <span class="n">AddressType</span><span class="o">.</span><span class="n">from_value</span><span class="p">(</span><span class="n">contract</span><span class="o">.</span><span class="n">get_address</span><span class="p">())</span>
         <span class="n">stack</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
-        <span class="n">stdout</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">format_stdout</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">prim</span><span class="p">,</span> <span class="p">[</span><span class="n">contract</span><span class="p">],</span> <span class="p">[</span><span class="n">res</span><span class="p">]))</span>
+        <span class="n">stdout</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">format_stdout</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">prim</span><span class="p">,</span> <span class="p">[</span><span class="n">contract</span><span class="p">],</span> <span class="p">[</span><span class="n">res</span><span class="p">]))</span>  <span class="c1"># type: ignore</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="p">()</span></div></div>
 
 
@@ -298,11 +311,11 @@
                 <span class="n">stdout</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="n">prim</span><span class="si">}</span><span class="s1">: skip type checking for </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">address</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">entrypoint_type</span><span class="o">.</span><span class="n">assert_type_equal</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-            <span class="n">res</span> <span class="o">=</span> <span class="n">OptionType</span><span class="o">.</span><span class="n">from_some</span><span class="p">(</span><span class="n">contract_type</span><span class="o">.</span><span class="n">from_value</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">address</span><span class="p">)</span><span class="si">}</span><span class="s1">%</span><span class="si">{</span><span class="n">entrypoint</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">))</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">OptionType</span><span class="o">.</span><span class="n">from_some</span><span class="p">(</span><span class="n">contract_type</span><span class="o">.</span><span class="n">from_value</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">address</span><span class="p">)</span><span class="si">}</span><span class="s1">%</span><span class="si">{</span><span class="n">entrypoint</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">))</span>  <span class="c1"># type: ignore</span>
         <span class="k">except</span> <span class="ne">AssertionError</span><span class="p">:</span>
             <span class="n">res</span> <span class="o">=</span> <span class="n">OptionType</span><span class="o">.</span><span class="n">none</span><span class="p">(</span><span class="n">contract_type</span><span class="p">)</span>
         <span class="n">stack</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
-        <span class="n">stdout</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">format_stdout</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">prim</span><span class="p">,</span> <span class="p">[</span><span class="n">address</span><span class="p">],</span> <span class="p">[</span><span class="n">res</span><span class="p">]))</span>
+        <span class="n">stdout</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">format_stdout</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">prim</span><span class="p">,</span> <span class="p">[</span><span class="n">address</span><span class="p">],</span> <span class="p">[</span><span class="n">res</span><span class="p">]))</span>  <span class="c1"># type: ignore</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="p">()</span></div></div>
 
 
@@ -312,9 +325,9 @@
     <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">stack</span><span class="p">:</span> <span class="n">MichelsonStack</span><span class="p">,</span> <span class="n">stdout</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">context</span><span class="p">:</span> <span class="n">AbstractContext</span><span class="p">):</span>
         <span class="n">key_hash</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">KeyHashType</span><span class="p">,</span> <span class="n">stack</span><span class="o">.</span><span class="n">pop1</span><span class="p">())</span>
         <span class="n">key_hash</span><span class="o">.</span><span class="n">assert_type_equal</span><span class="p">(</span><span class="n">KeyHashType</span><span class="p">)</span>
-        <span class="n">res</span> <span class="o">=</span> <span class="n">ContractType</span><span class="o">.</span><span class="n">create_type</span><span class="p">(</span><span class="n">args</span><span class="o">=</span><span class="p">[</span><span class="n">UnitType</span><span class="p">])</span><span class="o">.</span><span class="n">from_value</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">key_hash</span><span class="p">))</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">ContractType</span><span class="o">.</span><span class="n">create_type</span><span class="p">(</span><span class="n">args</span><span class="o">=</span><span class="p">[</span><span class="n">UnitType</span><span class="p">])</span><span class="o">.</span><span class="n">from_value</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">key_hash</span><span class="p">))</span>  <span class="c1"># type: ignore</span>
         <span class="n">stack</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
-        <span class="n">stdout</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">format_stdout</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">prim</span><span class="p">,</span> <span class="p">[</span><span class="n">key_hash</span><span class="p">],</span> <span class="p">[</span><span class="n">res</span><span class="p">]))</span>
+        <span class="n">stdout</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">format_stdout</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">prim</span><span class="p">,</span> <span class="p">[</span><span class="n">key_hash</span><span class="p">],</span> <span class="p">[</span><span class="n">res</span><span class="p">]))</span>  <span class="c1"># type: ignore</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="p">()</span></div></div>
 
 
@@ -336,7 +349,7 @@
         <span class="n">context</span><span class="o">.</span><span class="n">spend_balance</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">amount</span><span class="p">))</span>
         <span class="n">origination</span> <span class="o">=</span> <span class="n">OperationType</span><span class="o">.</span><span class="n">origination</span><span class="p">(</span>
             <span class="n">source</span><span class="o">=</span><span class="n">context</span><span class="o">.</span><span class="n">get_self_address</span><span class="p">(),</span>
-            <span class="n">script</span><span class="o">=</span><span class="bp">cls</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+            <span class="n">script</span><span class="o">=</span><span class="bp">cls</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>  <span class="c1"># type: ignore</span>
             <span class="n">storage</span><span class="o">=</span><span class="n">initial_storage</span><span class="p">,</span>
             <span class="n">balance</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">amount</span><span class="p">),</span>
             <span class="n">delegate</span><span class="o">=</span><span class="kc">None</span> <span class="k">if</span> <span class="n">delegate</span><span class="o">.</span><span class="n">is_none</span><span class="p">()</span> <span class="k">else</span> <span class="nb">str</span><span class="p">(</span><span class="n">delegate</span><span class="o">.</span><span class="n">get_some</span><span class="p">())</span>
@@ -344,7 +357,7 @@
 
         <span class="n">stack</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">originated_address</span><span class="p">)</span>
         <span class="n">stack</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">origination</span><span class="p">)</span>
-        <span class="n">stdout</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">format_stdout</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">prim</span><span class="p">,</span> <span class="p">[</span><span class="n">delegate</span><span class="p">,</span> <span class="n">amount</span><span class="p">,</span> <span class="n">initial_storage</span><span class="p">],</span> <span class="p">[</span><span class="n">origination</span><span class="p">,</span> <span class="n">originated_address</span><span class="p">]))</span>
+        <span class="n">stdout</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">format_stdout</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">prim</span><span class="p">,</span> <span class="p">[</span><span class="n">delegate</span><span class="p">,</span> <span class="n">amount</span><span class="p">,</span> <span class="n">initial_storage</span><span class="p">],</span> <span class="p">[</span><span class="n">origination</span><span class="p">,</span> <span class="n">originated_address</span><span class="p">]))</span>  <span class="c1"># type: ignore</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="p">()</span></div></div>
 
 
@@ -360,7 +373,7 @@
             <span class="n">delegate</span><span class="o">=</span><span class="kc">None</span> <span class="k">if</span> <span class="n">delegate</span><span class="o">.</span><span class="n">is_none</span><span class="p">()</span> <span class="k">else</span> <span class="nb">str</span><span class="p">(</span><span class="n">delegate</span><span class="o">.</span><span class="n">get_some</span><span class="p">())</span>
         <span class="p">)</span>
         <span class="n">stack</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">delegation</span><span class="p">)</span>
-        <span class="n">stdout</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">format_stdout</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">prim</span><span class="p">,</span> <span class="p">[</span><span class="n">delegate</span><span class="p">],</span> <span class="p">[</span><span class="n">delegation</span><span class="p">]))</span>
+        <span class="n">stdout</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">format_stdout</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">prim</span><span class="p">,</span> <span class="p">[</span><span class="n">delegate</span><span class="p">],</span> <span class="p">[</span><span class="n">delegation</span><span class="p">]))</span>  <span class="c1"># type: ignore</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="p">()</span></div></div>
 
 
@@ -385,7 +398,7 @@
             <span class="n">parameter</span><span class="o">=</span><span class="n">parameter</span>
         <span class="p">)</span>
         <span class="n">stack</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">transaction</span><span class="p">)</span>
-        <span class="n">stdout</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">format_stdout</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">prim</span><span class="p">,</span> <span class="p">[</span><span class="n">parameter</span><span class="p">,</span> <span class="n">amount</span><span class="p">,</span> <span class="n">destination</span><span class="p">],</span> <span class="p">[</span><span class="n">transaction</span><span class="p">]))</span>
+        <span class="n">stdout</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">format_stdout</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">prim</span><span class="p">,</span> <span class="p">[</span><span class="n">parameter</span><span class="p">,</span> <span class="n">amount</span><span class="p">,</span> <span class="n">destination</span><span class="p">],</span> <span class="p">[</span><span class="n">transaction</span><span class="p">]))</span>  <span class="c1"># type: ignore</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="p">()</span></div></div>
 
 
@@ -397,7 +410,7 @@
         <span class="n">address</span><span class="o">.</span><span class="n">assert_type_equal</span><span class="p">(</span><span class="n">KeyHashType</span><span class="p">)</span>
         <span class="n">res</span> <span class="o">=</span> <span class="n">NatType</span><span class="o">.</span><span class="n">from_value</span><span class="p">(</span><span class="n">context</span><span class="o">.</span><span class="n">get_voting_power</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">address</span><span class="p">)))</span>
         <span class="n">stack</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
-        <span class="n">stdout</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">format_stdout</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">prim</span><span class="p">,</span> <span class="p">[</span><span class="n">address</span><span class="p">],</span> <span class="p">[</span><span class="n">res</span><span class="p">]))</span>
+        <span class="n">stdout</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">format_stdout</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">prim</span><span class="p">,</span> <span class="p">[</span><span class="n">address</span><span class="p">],</span> <span class="p">[</span><span class="n">res</span><span class="p">]))</span>  <span class="c1"># type: ignore</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="p">()</span></div></div>
 
 
@@ -407,7 +420,7 @@
     <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">stack</span><span class="p">:</span> <span class="s1">&#39;MichelsonStack&#39;</span><span class="p">,</span> <span class="n">stdout</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">context</span><span class="p">:</span> <span class="n">AbstractContext</span><span class="p">):</span>
         <span class="n">res</span> <span class="o">=</span> <span class="n">NatType</span><span class="o">.</span><span class="n">from_value</span><span class="p">(</span><span class="n">context</span><span class="o">.</span><span class="n">get_total_voting_power</span><span class="p">())</span>
         <span class="n">stack</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
-        <span class="n">stdout</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">format_stdout</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">prim</span><span class="p">,</span> <span class="p">[],</span> <span class="p">[</span><span class="n">res</span><span class="p">]))</span>
+        <span class="n">stdout</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">format_stdout</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">prim</span><span class="p">,</span> <span class="p">[],</span> <span class="p">[</span><span class="n">res</span><span class="p">]))</span>  <span class="c1"># type: ignore</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="p">()</span></div></div>
 
 
@@ -417,7 +430,7 @@
     <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">stack</span><span class="p">:</span> <span class="s1">&#39;MichelsonStack&#39;</span><span class="p">,</span> <span class="n">stdout</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">context</span><span class="p">:</span> <span class="n">AbstractContext</span><span class="p">):</span>
         <span class="n">res</span> <span class="o">=</span> <span class="n">NatType</span><span class="o">.</span><span class="n">from_value</span><span class="p">(</span><span class="n">context</span><span class="o">.</span><span class="n">get_level</span><span class="p">())</span>
         <span class="n">stack</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
-        <span class="n">stdout</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">format_stdout</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">prim</span><span class="p">,</span> <span class="p">[],</span> <span class="p">[</span><span class="n">res</span><span class="p">]))</span>
+        <span class="n">stdout</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">format_stdout</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">prim</span><span class="p">,</span> <span class="p">[],</span> <span class="p">[</span><span class="n">res</span><span class="p">]))</span>  <span class="c1"># type: ignore</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="p">()</span></div></div>
 </pre></div>
 
