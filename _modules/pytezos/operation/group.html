@@ -169,6 +169,7 @@
 <span class="kn">from</span> <span class="nn">pytezos.context.mixin</span> <span class="kn">import</span> <span class="n">ContextMixin</span>  <span class="c1"># type: ignore</span>
 <span class="kn">from</span> <span class="nn">pytezos.crypto.encoding</span> <span class="kn">import</span> <span class="n">base58_encode</span>
 <span class="kn">from</span> <span class="nn">pytezos.crypto.key</span> <span class="kn">import</span> <span class="n">blake2b_32</span>
+<span class="kn">from</span> <span class="nn">pytezos.jupyter</span> <span class="kn">import</span> <span class="n">get_class_docstring</span>
 <span class="kn">from</span> <span class="nn">pytezos.michelson.forge</span> <span class="kn">import</span> <span class="n">forge_base58</span>
 <span class="kn">from</span> <span class="nn">pytezos.operation.content</span> <span class="kn">import</span> <span class="n">ContentMixin</span>
 <span class="kn">from</span> <span class="nn">pytezos.operation.fees</span> <span class="kn">import</span> <span class="n">calculate_fee</span>
@@ -180,6 +181,7 @@
 <span class="kn">from</span> <span class="nn">pytezos.rpc.errors</span> <span class="kn">import</span> <span class="n">RpcError</span>
 
 <span class="n">DEFAULT_GAS_RESERVE</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="n">DEFAULT_BURN_RESERVE</span> <span class="o">=</span> <span class="mi">100</span>
 <span class="n">DEFAULT_BRANCH_OFFSET</span> <span class="o">=</span> <span class="mi">50</span>
 
 <span class="c1"># FIXME: Add explaination of these values</span>
@@ -346,6 +348,7 @@
 <div class="viewcode-block" id="OperationGroup.autofill"><a class="viewcode-back" href="../../../operation_groups.html#pytezos.operation.group.OperationGroup.autofill">[docs]</a>    <span class="k">def</span> <span class="nf">autofill</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">gas_reserve</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">DEFAULT_GAS_RESERVE</span><span class="p">,</span>
+        <span class="n">burn_reserve</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">DEFAULT_BURN_RESERVE</span><span class="p">,</span>
         <span class="n">counter</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">branch_offset</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">DEFAULT_BRANCH_OFFSET</span><span class="p">,</span>
         <span class="n">fee</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -355,6 +358,7 @@
         <span class="sd">&quot;&quot;&quot;Fill the gaps and then simulate the operation in order to calculate fee, gas/storage limits.</span>
 
 <span class="sd">        :param gas_reserve: Add a safe reserve for dynamically calculated gas limit (default is 100).</span>
+<span class="sd">        :param burn_reserve: Add a safe reserve for dynamically calculated storage limit (default is 100).</span>
 <span class="sd">        :param counter: Override counter value (for manual handling)</span>
 <span class="sd">        :param branch_offset: Select head~offset block as branch, where offset is in range (0, 60)</span>
 <span class="sd">        :param fee: Explicitly set fee for operation. If not set fee will be calculated depeding on results of operation dry-run.</span>
@@ -391,7 +395,7 @@
             <span class="k">if</span> <span class="n">storage_limit</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">_paid_storage_size_diff</span> <span class="o">=</span> <span class="n">OperationResult</span><span class="o">.</span><span class="n">paid_storage_size_diff</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
                 <span class="n">_burned</span> <span class="o">=</span> <span class="n">OperationResult</span><span class="o">.</span><span class="n">burned</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
-                <span class="n">storage_limit</span> <span class="o">=</span> <span class="n">_paid_storage_size_diff</span> <span class="o">+</span> <span class="n">_burned</span>
+                <span class="n">storage_limit</span> <span class="o">=</span> <span class="n">_paid_storage_size_diff</span> <span class="o">+</span> <span class="n">_burned</span> <span class="o">+</span> <span class="n">burn_reserve</span>
 
             <span class="n">content</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
                 <span class="n">gas_limit</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">gas_limit</span><span class="p">),</span>
