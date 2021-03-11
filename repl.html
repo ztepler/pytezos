@@ -182,6 +182,11 @@ Based on the following reference: <a class="reference external" href="https://te
 <dd></dd></dl>
 
 <dl class="py method">
+<dt id="pytezos.michelson.repl.Interpreter.run_tzt">
+<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">run_tzt</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">script</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">amount</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chain_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sender</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">balance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">None</span><a class="reference internal" href="_modules/pytezos/michelson/repl.html#Interpreter.run_tzt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.michelson.repl.Interpreter.run_tzt" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
 <dt id="pytezos.michelson.repl.Interpreter.run_view">
 <em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">run_view</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">entrypoint</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">storage</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#pytezos.context.impl.ExecutionContext" title="pytezos.context.impl.ExecutionContext"><span class="pre">pytezos.context.impl.ExecutionContext</span></a></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Exception</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="_modules/pytezos/michelson/repl.html#Interpreter.run_view"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.michelson.repl.Interpreter.run_view" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -256,15 +261,25 @@ Based on the following reference: <a class="reference external" href="https://te
 <span id="execution-context"></span><h2>Execution context<a class="headerlink" href="#module-pytezos.context.impl" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pytezos.context.impl.ExecutionContext">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">pytezos.context.impl.</span></code><code class="sig-name descname"><span class="pre">ExecutionContext</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">amount</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chain_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sender</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">balance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">now</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">voting_power</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">total_voting_power</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shell</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">address</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">counter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">script</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/context/impl.html#ExecutionContext"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.context.impl.ExecutionContext" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">pytezos.context.impl.</span></code><code class="sig-name descname"><span class="pre">ExecutionContext</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">amount</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chain_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sender</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">balance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">now</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">voting_power</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">total_voting_power</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shell</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">address</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">counter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">script</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tzt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/context/impl.html#ExecutionContext"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.context.impl.ExecutionContext" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="py method">
 <dt id="pytezos.context.impl.ExecutionContext.get_amount">
 <code class="sig-name descname"><span class="pre">get_amount</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">int</span><a class="reference internal" href="_modules/pytezos/context/impl.html#ExecutionContext.get_amount"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.context.impl.ExecutionContext.get_amount" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
+<dt id="pytezos.context.impl.ExecutionContext.get_amount_expr">
+<code class="sig-name descname"><span class="pre">get_amount_expr</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/context/impl.html#ExecutionContext.get_amount_expr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.context.impl.ExecutionContext.get_amount_expr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
 <dt id="pytezos.context.impl.ExecutionContext.get_balance">
 <code class="sig-name descname"><span class="pre">get_balance</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">int</span><a class="reference internal" href="_modules/pytezos/context/impl.html#ExecutionContext.get_balance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.context.impl.ExecutionContext.get_balance" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.context.impl.ExecutionContext.get_balance_expr">
+<code class="sig-name descname"><span class="pre">get_balance_expr</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/context/impl.html#ExecutionContext.get_balance_expr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.context.impl.ExecutionContext.get_balance_expr" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -280,6 +295,11 @@ Based on the following reference: <a class="reference external" href="https://te
 <dl class="py method">
 <dt id="pytezos.context.impl.ExecutionContext.get_chain_id">
 <code class="sig-name descname"><span class="pre">get_chain_id</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">str</span><a class="reference internal" href="_modules/pytezos/context/impl.html#ExecutionContext.get_chain_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.context.impl.ExecutionContext.get_chain_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.context.impl.ExecutionContext.get_chain_id_expr">
+<code class="sig-name descname"><span class="pre">get_chain_id_expr</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/context/impl.html#ExecutionContext.get_chain_id_expr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.context.impl.ExecutionContext.get_chain_id_expr" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -323,6 +343,11 @@ Based on the following reference: <a class="reference external" href="https://te
 <dd></dd></dl>
 
 <dl class="py method">
+<dt id="pytezos.context.impl.ExecutionContext.get_input_expr">
+<code class="sig-name descname"><span class="pre">get_input_expr</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/context/impl.html#ExecutionContext.get_input_expr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.context.impl.ExecutionContext.get_input_expr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
 <dt id="pytezos.context.impl.ExecutionContext.get_level">
 <code class="sig-name descname"><span class="pre">get_level</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">int</span><a class="reference internal" href="_modules/pytezos/context/impl.html#ExecutionContext.get_level"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.context.impl.ExecutionContext.get_level" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -333,13 +358,23 @@ Based on the following reference: <a class="reference external" href="https://te
 <dd></dd></dl>
 
 <dl class="py method">
+<dt id="pytezos.context.impl.ExecutionContext.get_now_expr">
+<code class="sig-name descname"><span class="pre">get_now_expr</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/context/impl.html#ExecutionContext.get_now_expr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.context.impl.ExecutionContext.get_now_expr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
 <dt id="pytezos.context.impl.ExecutionContext.get_originated_address">
 <code class="sig-name descname"><span class="pre">get_originated_address</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">str</span><a class="reference internal" href="_modules/pytezos/context/impl.html#ExecutionContext.get_originated_address"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.context.impl.ExecutionContext.get_originated_address" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
+<dt id="pytezos.context.impl.ExecutionContext.get_output_expr">
+<code class="sig-name descname"><span class="pre">get_output_expr</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/context/impl.html#ExecutionContext.get_output_expr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.context.impl.ExecutionContext.get_output_expr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
 <dt id="pytezos.context.impl.ExecutionContext.get_parameter_expr">
-<code class="sig-name descname"><span class="pre">get_parameter_expr</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">address</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Optional</span><a class="reference internal" href="_modules/pytezos/context/impl.html#ExecutionContext.get_parameter_expr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.context.impl.ExecutionContext.get_parameter_expr" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">get_parameter_expr</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">address</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/context/impl.html#ExecutionContext.get_parameter_expr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.context.impl.ExecutionContext.get_parameter_expr" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -353,13 +388,28 @@ Based on the following reference: <a class="reference external" href="https://te
 <dd></dd></dl>
 
 <dl class="py method">
+<dt id="pytezos.context.impl.ExecutionContext.get_self_expr">
+<code class="sig-name descname"><span class="pre">get_self_expr</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/context/impl.html#ExecutionContext.get_self_expr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.context.impl.ExecutionContext.get_self_expr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
 <dt id="pytezos.context.impl.ExecutionContext.get_sender">
 <code class="sig-name descname"><span class="pre">get_sender</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">str</span><a class="reference internal" href="_modules/pytezos/context/impl.html#ExecutionContext.get_sender"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.context.impl.ExecutionContext.get_sender" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
+<dt id="pytezos.context.impl.ExecutionContext.get_sender_expr">
+<code class="sig-name descname"><span class="pre">get_sender_expr</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/context/impl.html#ExecutionContext.get_sender_expr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.context.impl.ExecutionContext.get_sender_expr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
 <dt id="pytezos.context.impl.ExecutionContext.get_source">
 <code class="sig-name descname"><span class="pre">get_source</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">str</span><a class="reference internal" href="_modules/pytezos/context/impl.html#ExecutionContext.get_source"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.context.impl.ExecutionContext.get_source" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.context.impl.ExecutionContext.get_source_expr">
+<code class="sig-name descname"><span class="pre">get_source_expr</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/context/impl.html#ExecutionContext.get_source_expr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.context.impl.ExecutionContext.get_source_expr" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -408,6 +458,11 @@ Based on the following reference: <a class="reference external" href="https://te
 <dd></dd></dl>
 
 <dl class="py method">
+<dt id="pytezos.context.impl.ExecutionContext.set_chain_id_expr">
+<code class="sig-name descname"><span class="pre">set_chain_id_expr</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">expr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/context/impl.html#ExecutionContext.set_chain_id_expr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.context.impl.ExecutionContext.set_chain_id_expr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
 <dt id="pytezos.context.impl.ExecutionContext.set_code_expr">
 <code class="sig-name descname"><span class="pre">set_code_expr</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">expr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/context/impl.html#ExecutionContext.set_code_expr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.context.impl.ExecutionContext.set_code_expr" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -418,8 +473,23 @@ Based on the following reference: <a class="reference external" href="https://te
 <dd></dd></dl>
 
 <dl class="py method">
+<dt id="pytezos.context.impl.ExecutionContext.set_input_expr">
+<code class="sig-name descname"><span class="pre">set_input_expr</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">expr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/context/impl.html#ExecutionContext.set_input_expr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.context.impl.ExecutionContext.set_input_expr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.context.impl.ExecutionContext.set_output_expr">
+<code class="sig-name descname"><span class="pre">set_output_expr</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">expr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/context/impl.html#ExecutionContext.set_output_expr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.context.impl.ExecutionContext.set_output_expr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
 <dt id="pytezos.context.impl.ExecutionContext.set_parameter_expr">
 <code class="sig-name descname"><span class="pre">set_parameter_expr</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">expr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/context/impl.html#ExecutionContext.set_parameter_expr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.context.impl.ExecutionContext.set_parameter_expr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.context.impl.ExecutionContext.set_source_expr">
+<code class="sig-name descname"><span class="pre">set_source_expr</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">expr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/context/impl.html#ExecutionContext.set_source_expr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.context.impl.ExecutionContext.set_source_expr" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
