@@ -299,7 +299,9 @@
         <span class="k">try</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">()[</span><span class="s1">&#39;level&#39;</span><span class="p">][</span><span class="s1">&#39;level&#39;</span><span class="p">]</span>
         <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Can</span><span class="se">\&#39;</span><span class="s1">t get block level from metadata. It seems like node is not fully initialized yet.&#39;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">exc</span></div>
+            <span class="c1"># FIXME: Dirty hack for genesis block</span>
+            <span class="c1"># raise Exception(&#39;Can\&#39;t get block level from metadata. It seems like node is not fully initialized yet.&#39;) from exc</span>
+            <span class="k">return</span> <span class="mi">0</span></div>
 
 <div class="viewcode-block" id="BlockQuery.cycle"><a class="viewcode-back" href="../../../rpc_queries.html#pytezos.rpc.protocol.BlockQuery.cycle">[docs]</a>    <span class="k">def</span> <span class="nf">cycle</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot; Get cycle for this block from metadata.</span>

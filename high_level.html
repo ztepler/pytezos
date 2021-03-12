@@ -209,6 +209,34 @@ More info <a class="reference external" href="https://activate.tezos.com/">https
 </dd></dl>
 
 <dl class="py method">
+<dt id="pytezos.client.PyTezosClient.activate_protocol">
+<code class="sig-name descname"><span class="pre">activate_protocol</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">alias</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">pytezos.block.header.BlockHeader</span><a class="reference internal" href="_modules/pytezos/client.html#PyTezosClient.activate_protocol"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.client.PyTezosClient.activate_protocol" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initiate user-activated upgrade (sandbox only)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>alias</strong> – known protocol alias (first 8 symbols)</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>BlockHeader</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.client.PyTezosClient.bake_block">
+<code class="sig-name descname"><span class="pre">bake_block</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">min_fee</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">pytezos.block.header.BlockHeader</span><a class="reference internal" href="_modules/pytezos/client.html#PyTezosClient.bake_block"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.client.PyTezosClient.bake_block" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create and inject new block with operations from mempool</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>min_fee</strong> – filter operations by fee (default is 0)</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>BlockHeader</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt id="pytezos.client.PyTezosClient.balance">
 <code class="sig-name descname"><span class="pre">balance</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">decimal.Decimal</span><a class="reference internal" href="_modules/pytezos/client.html#PyTezosClient.balance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.client.PyTezosClient.balance" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get account balance</p>

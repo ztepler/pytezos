@@ -209,7 +209,7 @@ The <cite>operations</cite> embedded in <cite>blockHeader</cite> might be pre-va
 </p></li>
 <li><p><strong>_async</strong> – By default, the RPC will wait for the block to be validated before answering,         set True if you don’t want to.</p></li>
 <li><p><strong>force</strong> – </p></li>
-<li><p><strong>chain</strong> – Optionally you can specify the chain</p></li>
+<li><p><strong>chain</strong> – Optionally you can specify the chain (main/test)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -546,13 +546,15 @@ and signed by the client.</p>
 
 <dl class="py method">
 <dt id="pytezos.rpc.shell.ShellQuery.wait_next_block">
-<code class="sig-name descname"><span class="pre">wait_next_block</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">block_hash</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_between_blocks</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/rpc/shell.html#ShellQuery.wait_next_block"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.rpc.shell.ShellQuery.wait_next_block" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">wait_next_block</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">delay_sec</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block_hash</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_between_blocks</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iterations</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/rpc/shell.html#ShellQuery.wait_next_block"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.rpc.shell.ShellQuery.wait_next_block" title="Permalink to this definition">¶</a></dt>
 <dd><p>Wait until next block is finalized.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>block_hash</strong> – Current block hash (optional). If not set, current head is used.</p></li>
 <li><p><strong>time_between_blocks</strong> – override the corresponding parameter from constants</p></li>
+<li><p><strong>max_iterations</strong> – Manually set the number of iterations</p></li>
+<li><p><strong>delay_sec</strong> – Sleep delay</p></li>
 </ul>
 </dd>
 </dl>

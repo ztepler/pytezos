@@ -234,31 +234,42 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">chains</span><span class="o">.</span><span class="n">main</span><span class="o">.</span><span class="n">mempool</span>
 
-<div class="viewcode-block" id="ShellQuery.wait_next_block"><a class="viewcode-back" href="../../../rpc_queries.html#pytezos.rpc.shell.ShellQuery.wait_next_block">[docs]</a>    <span class="k">def</span> <span class="nf">wait_next_block</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">block_hash</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">time_between_blocks</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="ShellQuery.wait_next_block"><a class="viewcode-back" href="../../../rpc_queries.html#pytezos.rpc.shell.ShellQuery.wait_next_block">[docs]</a>    <span class="k">def</span> <span class="nf">wait_next_block</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                        <span class="n">delay_sec</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                        <span class="n">block_hash</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                        <span class="n">time_between_blocks</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                        <span class="n">max_iterations</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Wait until next block is finalized.</span>
 
 <span class="sd">        :param block_hash: Current block hash (optional). If not set, current head is used.</span>
 <span class="sd">        :param time_between_blocks: override the corresponding parameter from constants</span>
+<span class="sd">        :param max_iterations: Manually set the number of iterations</span>
+<span class="sd">        :param delay_sec: Sleep delay</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">time_between_blocks</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">time_between_blocks</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">constants</span><span class="p">()[</span><span class="s2">&quot;time_between_blocks&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>  <span class="c1"># type: ignore</span>
-        <span class="n">header</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">header</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">block_hash</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">block_hash</span> <span class="o">=</span> <span class="n">header</span><span class="p">[</span><span class="s1">&#39;hash&#39;</span><span class="p">]</span>
 
-        <span class="n">prev_block_dt</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">header</span><span class="p">[</span><span class="s1">&#39;timestamp&#39;</span><span class="p">],</span> <span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">T%H:%M:%SZ&#39;</span><span class="p">)</span>
-        <span class="n">elapsed_sec</span> <span class="o">=</span> <span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">()</span> <span class="o">-</span> <span class="n">prev_block_dt</span><span class="p">)</span><span class="o">.</span><span class="n">seconds</span>
-        <span class="n">delay_sec</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">if</span> <span class="n">elapsed_sec</span> <span class="o">&gt;</span> <span class="n">time_between_blocks</span> <span class="k">else</span> <span class="n">time_between_blocks</span> <span class="o">-</span> <span class="n">elapsed_sec</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Wait </span><span class="si">%s</span><span class="s1"> seconds until block </span><span class="si">%s</span><span class="s1"> is finalized&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">delay_sec</span><span class="p">,</span> <span class="n">block_hash</span><span class="p">,))</span>
-        <span class="n">sleep</span><span class="p">(</span><span class="n">delay_sec</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">time_between_blocks</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">header</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">header</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">block_hash</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">block_hash</span> <span class="o">=</span> <span class="n">header</span><span class="p">[</span><span class="s1">&#39;hash&#39;</span><span class="p">]</span>
 
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">time_between_blocks</span><span class="p">):</span>
+            <span class="n">prev_block_dt</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">header</span><span class="p">[</span><span class="s1">&#39;timestamp&#39;</span><span class="p">],</span> <span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">T%H:%M:%SZ&#39;</span><span class="p">)</span>
+            <span class="n">elapsed_sec</span> <span class="o">=</span> <span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">()</span> <span class="o">-</span> <span class="n">prev_block_dt</span><span class="p">)</span><span class="o">.</span><span class="n">seconds</span>
+            <span class="n">sleep_sec</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">if</span> <span class="n">elapsed_sec</span> <span class="o">&gt;</span> <span class="n">time_between_blocks</span> <span class="k">else</span> <span class="n">time_between_blocks</span> <span class="o">-</span> <span class="n">elapsed_sec</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Wait </span><span class="si">%s</span><span class="s1"> seconds until block </span><span class="si">%s</span><span class="s1"> is finalized&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">sleep_sec</span><span class="p">,</span> <span class="n">block_hash</span><span class="p">,))</span>
+            <span class="n">sleep</span><span class="p">(</span><span class="n">sleep_sec</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">max_iterations</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">max_iterations</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">time_between_blocks</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_iterations</span><span class="p">):</span>
             <span class="n">current_block_hash</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">hash</span><span class="p">()</span>
             <span class="k">if</span> <span class="n">current_block_hash</span> <span class="o">==</span> <span class="n">block_hash</span><span class="p">:</span>
-                <span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+                <span class="n">sleep</span><span class="p">(</span><span class="n">delay_sec</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">current_block_hash</span>
-        <span class="k">assert</span> <span class="kc">False</span></div></div>
+        <span class="k">raise</span> <span class="ne">StopIteration</span><span class="p">(</span><span class="s2">&quot;Timeout&quot;</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="ChainQuery"><a class="viewcode-back" href="../../../rpc_queries.html#pytezos.rpc.shell.ChainQuery">[docs]</a><span class="k">class</span> <span class="nc">ChainQuery</span><span class="p">(</span><span class="n">RpcQuery</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s1">&#39;/chains/</span><span class="si">{}</span><span class="s1">&#39;</span><span class="p">):</span>
@@ -353,7 +364,7 @@
 <span class="sd">        :param _async: By default, the RPC will wait for the block to be validated before answering, \</span>
 <span class="sd">        set True if you don&#39;t want to.</span>
 <span class="sd">        :param force:</span>
-<span class="sd">        :param chain: Optionally you can specify the chain</span>
+<span class="sd">        :param chain: Optionally you can specify the chain (main/test)</span>
 <span class="sd">        :returns: ID of the block</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_post</span><span class="p">(</span>
