@@ -159,8 +159,7 @@
            <div itemprop="articleBody">
             
   <h1>Source code for pytezos.contract.data</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">from</span> <span class="nn">deprecation</span> <span class="kn">import</span> <span class="n">deprecated</span>  <span class="c1"># type: ignore</span>
 
@@ -168,8 +167,7 @@
 <span class="kn">from</span> <span class="nn">pytezos.context.mixin</span> <span class="kn">import</span> <span class="n">ContextMixin</span>  <span class="c1"># type: ignore</span>
 <span class="kn">from</span> <span class="nn">pytezos.michelson.format</span> <span class="kn">import</span> <span class="n">micheline_to_michelson</span>
 <span class="kn">from</span> <span class="nn">pytezos.michelson.parse</span> <span class="kn">import</span> <span class="n">michelson_to_micheline</span>
-<span class="kn">from</span> <span class="nn">pytezos.michelson.types.base</span> <span class="kn">import</span> <span class="n">MichelsonType</span>
-<span class="kn">from</span> <span class="nn">pytezos.michelson.types.base</span> <span class="kn">import</span> <span class="n">generate_pydoc</span>
+<span class="kn">from</span> <span class="nn">pytezos.michelson.types.base</span> <span class="kn">import</span> <span class="n">MichelsonType</span><span class="p">,</span> <span class="n">generate_pydoc</span>
 
 
 <div class="viewcode-block" id="ContractData"><a class="viewcode-back" href="../../../high_level.html#pytezos.contract.data.ContractData">[docs]</a><span class="k">class</span> <span class="nc">ContractData</span><span class="p">(</span><span class="n">ContextMixin</span><span class="p">):</span>

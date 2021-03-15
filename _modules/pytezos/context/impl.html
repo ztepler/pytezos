@@ -161,14 +161,14 @@
   <h1>Source code for pytezos.context.impl</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
 <span class="kn">from</span> <span class="nn">inspect</span> <span class="kn">import</span> <span class="n">Parameter</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span>
 
 <span class="kn">from</span> <span class="nn">pytezos.context.abstract</span> <span class="kn">import</span> <span class="n">AbstractContext</span>  <span class="c1"># type: ignore</span>
 <span class="kn">from</span> <span class="nn">pytezos.context.abstract</span> <span class="kn">import</span> <span class="n">get_originated_address</span>
 <span class="kn">from</span> <span class="nn">pytezos.crypto.encoding</span> <span class="kn">import</span> <span class="n">base58_encode</span>
 <span class="kn">from</span> <span class="nn">pytezos.crypto.key</span> <span class="kn">import</span> <span class="n">Key</span>
 <span class="kn">from</span> <span class="nn">pytezos.michelson.micheline</span> <span class="kn">import</span> <span class="n">get_script_section</span>
+<span class="kn">from</span> <span class="nn">pytezos.operation</span> <span class="kn">import</span> <span class="n">DEFAULT_OPERATIONS_TTL</span><span class="p">,</span> <span class="n">MAX_OPERATIONS_TTL</span>
 <span class="kn">from</span> <span class="nn">pytezos.rpc.errors</span> <span class="kn">import</span> <span class="n">RpcError</span>
 <span class="kn">from</span> <span class="nn">pytezos.rpc.shell</span> <span class="kn">import</span> <span class="n">ShellQuery</span>
 
@@ -212,6 +212,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">alloc_sapling_index</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">balance_update</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">big_maps</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sandboxed</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 
 <div class="viewcode-block" id="ExecutionContext.reset"><a class="viewcode-back" href="../../../repl.html#pytezos.context.impl.ExecutionContext.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">counter</span> <span class="o">=</span> <span class="kc">None</span>
@@ -230,11 +231,27 @@
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;It&#39;s not allowed to copy context&quot;</span><span class="p">)</span>
 
     <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">constants</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;`shell` is not set&#39;</span><span class="p">)</span>
+        <span class="c1"># NOTE: Cached</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">constants</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">script</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameter_expr</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">storage_expr</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">code_expr</span><span class="p">:</span>
             <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">code</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">parameter_expr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">storage_expr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">code_expr</span><span class="p">])</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">sandboxed</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;`shell` is not set&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sandboxed</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">version</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell</span><span class="o">.</span><span class="n">version</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_sandboxed</span> <span class="o">=</span> <span class="n">version</span><span class="p">[</span><span class="s1">&#39;network_version&#39;</span><span class="p">][</span><span class="s1">&#39;chain_name&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;SANDBOXED_TEZOS&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sandboxed</span>
 
 <div class="viewcode-block" id="ExecutionContext.set_counter"><a class="viewcode-back" href="../../../repl.html#pytezos.context.impl.ExecutionContext.set_counter">[docs]</a>    <span class="k">def</span> <span class="nf">set_counter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">counter</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">counter</span> <span class="o">=</span> <span class="n">counter</span></div>
@@ -383,11 +400,9 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">now</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">now</span>
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell</span><span class="p">:</span>
-            <span class="c1"># NOTE: cached</span>
-            <span class="n">constants</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">constants</span><span class="p">()</span>  <span class="c1"># type: ignore</span>
             <span class="n">ts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">header</span><span class="p">()[</span><span class="s1">&#39;timestamp&#39;</span><span class="p">]</span>
             <span class="n">dt</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">ts</span><span class="p">,</span> <span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">T%H:%M:%SZ&#39;</span><span class="p">)</span>
-            <span class="n">first_delay</span> <span class="o">=</span> <span class="n">constants</span><span class="p">[</span><span class="s1">&#39;time_between_blocks&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">first_delay</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">constants</span><span class="p">[</span><span class="s1">&#39;time_between_blocks&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
             <span class="k">return</span> <span class="nb">int</span><span class="p">((</span><span class="n">dt</span> <span class="o">-</span> <span class="n">datetime</span><span class="p">(</span><span class="mi">1970</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">())</span> <span class="o">+</span> <span class="nb">int</span><span class="p">(</span><span class="n">first_delay</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="mi">0</span></div>
@@ -466,7 +481,12 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">total_voting_power</span> <span class="o">=</span> <span class="n">total_voting_power</span></div>
 
 <div class="viewcode-block" id="ExecutionContext.set_voting_power"><a class="viewcode-back" href="../../../repl.html#pytezos.context.impl.ExecutionContext.set_voting_power">[docs]</a>    <span class="k">def</span> <span class="nf">set_voting_power</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">address</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">voting_power</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">voting_power</span><span class="p">[</span><span class="n">address</span><span class="p">]</span> <span class="o">=</span> <span class="n">voting_power</span></div></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">voting_power</span><span class="p">[</span><span class="n">address</span><span class="p">]</span> <span class="o">=</span> <span class="n">voting_power</span></div>
+
+<div class="viewcode-block" id="ExecutionContext.get_operations_ttl"><a class="viewcode-back" href="../../../repl.html#pytezos.context.impl.ExecutionContext.get_operations_ttl">[docs]</a>    <span class="k">def</span> <span class="nf">get_operations_ttl</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">sandboxed</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">MAX_OPERATIONS_TTL</span>
+        <span class="k">return</span> <span class="n">DEFAULT_OPERATIONS_TTL</span></div></div>
 </pre></div>
 
            </div>

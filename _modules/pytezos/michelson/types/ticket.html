@@ -161,17 +161,13 @@
   <h1>Source code for pytezos.michelson.types.ticket</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">copy</span>
 <span class="kn">from</span> <span class="nn">pprint</span> <span class="kn">import</span> <span class="n">pformat</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Type</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Type</span>
 
 <span class="kn">from</span> <span class="nn">pytezos.context.abstract</span> <span class="kn">import</span> <span class="n">AbstractContext</span>  <span class="c1"># type: ignore</span>
 <span class="kn">from</span> <span class="nn">pytezos.michelson.format</span> <span class="kn">import</span> <span class="n">micheline_to_michelson</span>
 <span class="kn">from</span> <span class="nn">pytezos.michelson.micheline</span> <span class="kn">import</span> <span class="n">Micheline</span>
 <span class="kn">from</span> <span class="nn">pytezos.michelson.types.base</span> <span class="kn">import</span> <span class="n">MichelsonType</span>
-<span class="kn">from</span> <span class="nn">pytezos.michelson.types.domain</span> <span class="kn">import</span> <span class="n">AddressType</span>
-<span class="kn">from</span> <span class="nn">pytezos.michelson.types.domain</span> <span class="kn">import</span> <span class="n">NatType</span>
+<span class="kn">from</span> <span class="nn">pytezos.michelson.types.domain</span> <span class="kn">import</span> <span class="n">AddressType</span><span class="p">,</span> <span class="n">NatType</span>
 <span class="kn">from</span> <span class="nn">pytezos.michelson.types.pair</span> <span class="kn">import</span> <span class="n">PairType</span>
 
 

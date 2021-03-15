@@ -159,37 +159,20 @@
            <div itemprop="articleBody">
             
   <h1>Source code for pytezos.michelson.program</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Type</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">cast</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span> <span class="n">cast</span>
 
 <span class="kn">from</span> <span class="nn">pytezos.context.impl</span> <span class="kn">import</span> <span class="n">ExecutionContext</span>
 <span class="kn">from</span> <span class="nn">pytezos.crypto.encoding</span> <span class="kn">import</span> <span class="n">base58_encode</span>
-<span class="kn">from</span> <span class="nn">pytezos.michelson.instructions.base</span> <span class="kn">import</span> <span class="n">MichelsonInstruction</span>
-<span class="kn">from</span> <span class="nn">pytezos.michelson.instructions.base</span> <span class="kn">import</span> <span class="n">format_stdout</span>
+<span class="kn">from</span> <span class="nn">pytezos.michelson.instructions.base</span> <span class="kn">import</span> <span class="n">MichelsonInstruction</span><span class="p">,</span> <span class="n">format_stdout</span>
 <span class="kn">from</span> <span class="nn">pytezos.michelson.instructions.tzt</span> <span class="kn">import</span> <span class="n">StackEltInstruction</span>
-<span class="kn">from</span> <span class="nn">pytezos.michelson.micheline</span> <span class="kn">import</span> <span class="n">MichelineSequence</span>
-<span class="kn">from</span> <span class="nn">pytezos.michelson.micheline</span> <span class="kn">import</span> <span class="n">get_script_section</span>
-<span class="kn">from</span> <span class="nn">pytezos.michelson.micheline</span> <span class="kn">import</span> <span class="n">try_catch</span>
-<span class="kn">from</span> <span class="nn">pytezos.michelson.micheline</span> <span class="kn">import</span> <span class="n">validate_sections</span>
+<span class="kn">from</span> <span class="nn">pytezos.michelson.micheline</span> <span class="kn">import</span> <span class="n">MichelineSequence</span><span class="p">,</span> <span class="n">get_script_section</span><span class="p">,</span> <span class="n">try_catch</span><span class="p">,</span> <span class="n">validate_sections</span>
 <span class="kn">from</span> <span class="nn">pytezos.michelson.sections.code</span> <span class="kn">import</span> <span class="n">CodeSection</span>
 <span class="kn">from</span> <span class="nn">pytezos.michelson.sections.parameter</span> <span class="kn">import</span> <span class="n">ParameterSection</span>
 <span class="kn">from</span> <span class="nn">pytezos.michelson.sections.storage</span> <span class="kn">import</span> <span class="n">StorageSection</span>
-<span class="kn">from</span> <span class="nn">pytezos.michelson.sections.tzt</span> <span class="kn">import</span> <span class="n">AmountSection</span>
-<span class="kn">from</span> <span class="nn">pytezos.michelson.sections.tzt</span> <span class="kn">import</span> <span class="n">BalanceSection</span>
-<span class="kn">from</span> <span class="nn">pytezos.michelson.sections.tzt</span> <span class="kn">import</span> <span class="n">ChainIdSection</span>
-<span class="kn">from</span> <span class="nn">pytezos.michelson.sections.tzt</span> <span class="kn">import</span> <span class="n">InputSection</span>
-<span class="kn">from</span> <span class="nn">pytezos.michelson.sections.tzt</span> <span class="kn">import</span> <span class="n">NowSection</span>
-<span class="kn">from</span> <span class="nn">pytezos.michelson.sections.tzt</span> <span class="kn">import</span> <span class="n">OutputSection</span>
-<span class="kn">from</span> <span class="nn">pytezos.michelson.sections.tzt</span> <span class="kn">import</span> <span class="n">SelfSection</span>
-<span class="kn">from</span> <span class="nn">pytezos.michelson.sections.tzt</span> <span class="kn">import</span> <span class="n">SenderSection</span>
-<span class="kn">from</span> <span class="nn">pytezos.michelson.sections.tzt</span> <span class="kn">import</span> <span class="n">SourceSection</span>
+<span class="kn">from</span> <span class="nn">pytezos.michelson.sections.tzt</span> <span class="kn">import</span> <span class="p">(</span><span class="n">AmountSection</span><span class="p">,</span> <span class="n">BalanceSection</span><span class="p">,</span> <span class="n">ChainIdSection</span><span class="p">,</span> <span class="n">InputSection</span><span class="p">,</span> <span class="n">NowSection</span><span class="p">,</span> <span class="n">OutputSection</span><span class="p">,</span>
+                                            <span class="n">SelfSection</span><span class="p">,</span> <span class="n">SenderSection</span><span class="p">,</span> <span class="n">SourceSection</span><span class="p">)</span>
 <span class="kn">from</span> <span class="nn">pytezos.michelson.stack</span> <span class="kn">import</span> <span class="n">MichelsonStack</span>
-<span class="kn">from</span> <span class="nn">pytezos.michelson.types</span> <span class="kn">import</span> <span class="n">ListType</span>
-<span class="kn">from</span> <span class="nn">pytezos.michelson.types</span> <span class="kn">import</span> <span class="n">OperationType</span>
-<span class="kn">from</span> <span class="nn">pytezos.michelson.types</span> <span class="kn">import</span> <span class="n">PairType</span>
+<span class="kn">from</span> <span class="nn">pytezos.michelson.types</span> <span class="kn">import</span> <span class="n">ListType</span><span class="p">,</span> <span class="n">OperationType</span><span class="p">,</span> <span class="n">PairType</span>
 
 
 <div class="viewcode-block" id="MichelsonProgram"><a class="viewcode-back" href="../../../code.html#pytezos.michelson.program.MichelsonProgram">[docs]</a><span class="k">class</span> <span class="nc">MichelsonProgram</span><span class="p">:</span>

@@ -159,28 +159,15 @@
            <div itemprop="articleBody">
             
   <h1>Source code for pytezos.michelson.instructions.tezos</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Type</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">cast</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span> <span class="n">cast</span>
 
 <span class="kn">from</span> <span class="nn">pytezos.context.abstract</span> <span class="kn">import</span> <span class="n">AbstractContext</span>  <span class="c1"># type: ignore</span>
-<span class="kn">from</span> <span class="nn">pytezos.michelson.instructions.base</span> <span class="kn">import</span> <span class="n">MichelsonInstruction</span>
-<span class="kn">from</span> <span class="nn">pytezos.michelson.instructions.base</span> <span class="kn">import</span> <span class="n">format_stdout</span>
+<span class="kn">from</span> <span class="nn">pytezos.michelson.instructions.base</span> <span class="kn">import</span> <span class="n">MichelsonInstruction</span><span class="p">,</span> <span class="n">format_stdout</span>
 <span class="kn">from</span> <span class="nn">pytezos.michelson.micheline</span> <span class="kn">import</span> <span class="n">MichelineSequence</span>
 <span class="kn">from</span> <span class="nn">pytezos.michelson.sections</span> <span class="kn">import</span> <span class="n">ParameterSection</span>
 <span class="kn">from</span> <span class="nn">pytezos.michelson.stack</span> <span class="kn">import</span> <span class="n">MichelsonStack</span>
-<span class="kn">from</span> <span class="nn">pytezos.michelson.types</span> <span class="kn">import</span> <span class="n">AddressType</span>
-<span class="kn">from</span> <span class="nn">pytezos.michelson.types</span> <span class="kn">import</span> <span class="n">ChainIdType</span>
-<span class="kn">from</span> <span class="nn">pytezos.michelson.types</span> <span class="kn">import</span> <span class="n">ContractType</span>
-<span class="kn">from</span> <span class="nn">pytezos.michelson.types</span> <span class="kn">import</span> <span class="n">KeyHashType</span>
-<span class="kn">from</span> <span class="nn">pytezos.michelson.types</span> <span class="kn">import</span> <span class="n">MutezType</span>
-<span class="kn">from</span> <span class="nn">pytezos.michelson.types</span> <span class="kn">import</span> <span class="n">NatType</span>
-<span class="kn">from</span> <span class="nn">pytezos.michelson.types</span> <span class="kn">import</span> <span class="n">OperationType</span>
-<span class="kn">from</span> <span class="nn">pytezos.michelson.types</span> <span class="kn">import</span> <span class="n">OptionType</span>
-<span class="kn">from</span> <span class="nn">pytezos.michelson.types</span> <span class="kn">import</span> <span class="n">TimestampType</span>
-<span class="kn">from</span> <span class="nn">pytezos.michelson.types</span> <span class="kn">import</span> <span class="n">UnitType</span>
+<span class="kn">from</span> <span class="nn">pytezos.michelson.types</span> <span class="kn">import</span> <span class="p">(</span><span class="n">AddressType</span><span class="p">,</span> <span class="n">ChainIdType</span><span class="p">,</span> <span class="n">ContractType</span><span class="p">,</span> <span class="n">KeyHashType</span><span class="p">,</span> <span class="n">MutezType</span><span class="p">,</span> <span class="n">NatType</span><span class="p">,</span> <span class="n">OperationType</span><span class="p">,</span> <span class="n">OptionType</span><span class="p">,</span>
+                                     <span class="n">TimestampType</span><span class="p">,</span> <span class="n">UnitType</span><span class="p">)</span>
 <span class="kn">from</span> <span class="nn">pytezos.michelson.types.base</span> <span class="kn">import</span> <span class="n">MichelsonType</span>
 
 

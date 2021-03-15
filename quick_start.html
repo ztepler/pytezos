@@ -469,7 +469,7 @@ tutorial we will get it from Michelson source file. There are plenty of availabl
 </div>
 <p>PyTezos can generate empty storage based on the type description, moreover it can do smart filling with the context provided (network, key).
 Let’s attach shell and key to the contract interface and see the default storage generated:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ci</span> <span class="o">=</span> <span class="n">ci</span><span class="o">.</span><span class="n">using</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;edsk4CsgT5yQSxXGvU1uXMNNcoMLXGSQ99GRh72j6sQyNKgSnkmzTT&#39;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ci</span> <span class="o">=</span> <span class="n">contract</span><span class="o">.</span><span class="n">using</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;edsk4CsgT5yQSxXGvU1uXMNNcoMLXGSQ99GRh72j6sQyNKgSnkmzTT&#39;</span><span class="p">)</span>
 <span class="gp">... </span><span class="n">ci</span><span class="o">.</span><span class="n">storage</span><span class="o">.</span><span class="n">dummy</span><span class="p">()</span>
 <span class="go">{&#39;manager&#39;: &#39;tz1Ne4yzDRQPd5HFz6sTaCYCNHwFubT2MWsB&#39;, &#39;tickets&#39;: {}}</span>
 </pre></div>

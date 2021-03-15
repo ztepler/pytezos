@@ -159,20 +159,12 @@
            <div itemprop="articleBody">
             
   <h1>Source code for pytezos.michelson.instructions.boolean</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">cast</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">cast</span>
 
 <span class="kn">from</span> <span class="nn">pytezos.context.abstract</span> <span class="kn">import</span> <span class="n">AbstractContext</span>  <span class="c1"># type: ignore</span>
-<span class="kn">from</span> <span class="nn">pytezos.michelson.instructions.base</span> <span class="kn">import</span> <span class="n">MichelsonInstruction</span>
-<span class="kn">from</span> <span class="nn">pytezos.michelson.instructions.base</span> <span class="kn">import</span> <span class="n">dispatch_types</span>
-<span class="kn">from</span> <span class="nn">pytezos.michelson.instructions.base</span> <span class="kn">import</span> <span class="n">format_stdout</span>
+<span class="kn">from</span> <span class="nn">pytezos.michelson.instructions.base</span> <span class="kn">import</span> <span class="n">MichelsonInstruction</span><span class="p">,</span> <span class="n">dispatch_types</span><span class="p">,</span> <span class="n">format_stdout</span>
 <span class="kn">from</span> <span class="nn">pytezos.michelson.stack</span> <span class="kn">import</span> <span class="n">MichelsonStack</span>
-<span class="kn">from</span> <span class="nn">pytezos.michelson.types</span> <span class="kn">import</span> <span class="n">BoolType</span>
-<span class="kn">from</span> <span class="nn">pytezos.michelson.types</span> <span class="kn">import</span> <span class="n">IntType</span>
-<span class="kn">from</span> <span class="nn">pytezos.michelson.types</span> <span class="kn">import</span> <span class="n">NatType</span>
+<span class="kn">from</span> <span class="nn">pytezos.michelson.types</span> <span class="kn">import</span> <span class="n">BoolType</span><span class="p">,</span> <span class="n">IntType</span><span class="p">,</span> <span class="n">NatType</span>
 
 
 <div class="viewcode-block" id="execute_boolean_add"><a class="viewcode-back" href="../../../../instructions.html#pytezos.michelson.instructions.boolean.execute_boolean_add">[docs]</a><span class="k">def</span> <span class="nf">execute_boolean_add</span><span class="p">(</span><span class="n">prim</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">stack</span><span class="p">:</span> <span class="n">MichelsonStack</span><span class="p">,</span> <span class="n">stdout</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">add</span><span class="p">:</span> <span class="n">Callable</span><span class="p">):</span>

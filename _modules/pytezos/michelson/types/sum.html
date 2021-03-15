@@ -159,25 +159,13 @@
            <div itemprop="articleBody">
             
   <h1>Source code for pytezos.michelson.types.sum</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Generator</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Type</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">cast</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Generator</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">cast</span>
 
 <span class="kn">from</span> <span class="nn">pytezos.context.abstract</span> <span class="kn">import</span> <span class="n">AbstractContext</span>  <span class="c1"># type: ignore</span>
-<span class="kn">from</span> <span class="nn">pytezos.michelson.micheline</span> <span class="kn">import</span> <span class="n">Micheline</span>
-<span class="kn">from</span> <span class="nn">pytezos.michelson.micheline</span> <span class="kn">import</span> <span class="n">parse_micheline_value</span>
-<span class="kn">from</span> <span class="nn">pytezos.michelson.types.adt</span> <span class="kn">import</span> <span class="n">ADTMixin</span>
-<span class="kn">from</span> <span class="nn">pytezos.michelson.types.adt</span> <span class="kn">import</span> <span class="n">Nested</span>
-<span class="kn">from</span> <span class="nn">pytezos.michelson.types.adt</span> <span class="kn">import</span> <span class="n">wrap_or</span>
-<span class="kn">from</span> <span class="nn">pytezos.michelson.types.base</span> <span class="kn">import</span> <span class="n">MichelsonType</span>
-<span class="kn">from</span> <span class="nn">pytezos.michelson.types.base</span> <span class="kn">import</span> <span class="n">Undefined</span>
-<span class="kn">from</span> <span class="nn">pytezos.michelson.types.base</span> <span class="kn">import</span> <span class="n">undefined</span>
-<span class="kn">from</span> <span class="nn">pytezos.michelson.types.core</span> <span class="kn">import</span> <span class="n">Unit</span>
-<span class="kn">from</span> <span class="nn">pytezos.michelson.types.core</span> <span class="kn">import</span> <span class="n">UnitType</span>
+<span class="kn">from</span> <span class="nn">pytezos.michelson.micheline</span> <span class="kn">import</span> <span class="n">Micheline</span><span class="p">,</span> <span class="n">parse_micheline_value</span>
+<span class="kn">from</span> <span class="nn">pytezos.michelson.types.adt</span> <span class="kn">import</span> <span class="n">ADTMixin</span><span class="p">,</span> <span class="n">Nested</span><span class="p">,</span> <span class="n">wrap_or</span>
+<span class="kn">from</span> <span class="nn">pytezos.michelson.types.base</span> <span class="kn">import</span> <span class="n">MichelsonType</span><span class="p">,</span> <span class="n">Undefined</span><span class="p">,</span> <span class="n">undefined</span>
+<span class="kn">from</span> <span class="nn">pytezos.michelson.types.core</span> <span class="kn">import</span> <span class="n">Unit</span><span class="p">,</span> <span class="n">UnitType</span>
 
 
 <div class="viewcode-block" id="LeftLiteral"><a class="viewcode-back" href="../../../../types.html#pytezos.michelson.types.sum.LeftLiteral">[docs]</a><span class="k">class</span> <span class="nc">LeftLiteral</span><span class="p">(</span><span class="n">Micheline</span><span class="p">,</span> <span class="n">prim</span><span class="o">=</span><span class="s1">&#39;Left&#39;</span><span class="p">,</span> <span class="n">args_len</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
