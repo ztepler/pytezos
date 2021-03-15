@@ -1,8 +1,8 @@
+from typing import Union
 from pytezos.rpc.query import RpcQuery
 
 
 class BakingRightsQuery(RpcQuery, path='/chains/{}/blocks/{}/helpers/baking_rights'):
-
     def __call__(self, level=None, cycle=None, delegate=None, max_priority=None, _all=None):
         """ Retrieves the list of delegates allowed to bake a block.
         By default, it gives the best baking priorities for bakers that have at least one opportunity
@@ -18,19 +18,20 @@ class BakingRightsQuery(RpcQuery, path='/chains/{}/blocks/{}/helpers/baking_righ
          The timestamps are omitted for levels in the past, and are only estimates for levels later that the next block,\
          based on the hypothesis that all predecessor blocks were baked at the first priority.
         """
-        return self._get(params={
-            'level': level,
-            'cycle': cycle,
-            'delegate': delegate,
-            'max_priority': max_priority,
-            'all': _all
-        })
+        return self._get(
+            params={
+                'level': level,
+                'cycle': cycle,
+                'delegate': delegate,
+                'max_priority': max_priority,
+                'all': _all,
+            }
+        )
 
 
 class ForgeOperationsQuery(RpcQuery, path='/chains/{}/blocks/{}/helpers/forge/operations'):
-
     def post(self, operation):
-        """ Get raw bytes encoding of an unsigned operation
+        """Get raw bytes encoding of an unsigned operation
 
         :param operation: Json input
             {
@@ -43,9 +44,8 @@ class ForgeOperationsQuery(RpcQuery, path='/chains/{}/blocks/{}/helpers/forge/op
 
 
 class ForgeProtocolDataQuery(RpcQuery, path='/chains/{}/blocks/{}/helpers/forge/protocol_data'):
-
     def post(self, protocol_data):
-        """ Forge the protocol-specific part of a block header.
+        """Forge the protocol-specific part of a block header.
 
         :param protocol_data: Json input
             {
@@ -59,9 +59,8 @@ class ForgeProtocolDataQuery(RpcQuery, path='/chains/{}/blocks/{}/helpers/forge/
 
 
 class ForgeBlockHeaderQuery(RpcQuery, path='/chains/{}/blocks/{}/helpers/forge_block_header'):
-
     def post(self, block_header):
-        """ Forge block header.
+        """Forge block header.
 
         :param block_header: Json input
             {
@@ -81,9 +80,8 @@ class ForgeBlockHeaderQuery(RpcQuery, path='/chains/{}/blocks/{}/helpers/forge_b
 
 
 class ParseBlockQuery(RpcQuery, path='/chains/{}/blocks/{}/helpers/parse/block'):
-
     def post(self, block_header):
-        """ Retrieves protocol-specific part of a block header and signature.
+        """Retrieves protocol-specific part of a block header and signature.
 
         :param block_header: Json input
             {
@@ -103,9 +101,8 @@ class ParseBlockQuery(RpcQuery, path='/chains/{}/blocks/{}/helpers/parse/block')
 
 
 class ParseOperationsQuery(RpcQuery, path='/chains/{}/blocks/{}/helpers/parse/operations'):
-
     def post(self, operations):
-        """ Extracts contents and signatures from the forged and optionally signed operations (bulk).
+        """Extracts contents and signatures from the forged and optionally signed operations (bulk).
 
         :param operations: Json input
             {
@@ -121,9 +118,8 @@ class ParseOperationsQuery(RpcQuery, path='/chains/{}/blocks/{}/helpers/parse/op
 
 
 class PreapplyBlockQuery(RpcQuery, path='/chains/{}/blocks/{}/helpers/preapply/block'):
-
     def post(self, block, sort=None, timestamp=None):
-        """ Simulate the validation of a block that would contain the given operations
+        """Simulate the validation of a block that would contain the given operations
         and return the resulting fitness and context hash.
 
         :param block: Json input
@@ -146,16 +142,12 @@ class PreapplyBlockQuery(RpcQuery, path='/chains/{}/blocks/{}/helpers/preapply/b
         :param timestamp: timestamp
         :returns: Json object
         """
-        return self._post(
-            json=block,
-            params=dict(sort=sort, timestamp=timestamp)
-        )
+        return self._post(json=block, params=dict(sort=sort, timestamp=timestamp))
 
 
 class PreapplyOperationsQuery(RpcQuery, path='/chains/{}/blocks/{}/helpers/preapply/operations'):
-
     def post(self, operations):
-        """ Simulate the validation of operation(s).
+        """Simulate the validation of operation(s).
 
         :param operations: Json input
             [{
@@ -170,9 +162,8 @@ class PreapplyOperationsQuery(RpcQuery, path='/chains/{}/blocks/{}/helpers/preap
 
 
 class ScriptsEntrypoint(RpcQuery, path='/chains/{}/blocks/{}/helpers/scripts/entrypoint'):
-
     def post(self, script, entrypoint=None):
-        """ Return the type of the given entrypoint.
+        """Return the type of the given entrypoint.
 
         :param script: Micheline expression
         :param entrypoint: Name of the entrypoint (leave None if there's only one)
@@ -185,19 +176,59 @@ class ScriptsEntrypoint(RpcQuery, path='/chains/{}/blocks/{}/helpers/scripts/ent
 
 
 class ScriptsEntrypoints(RpcQuery, path='/chains/{}/blocks/{}/helpers/scripts/entrypoints'):
-
     def post(self, script):
-        """ Return the list of entrypoints of the given script.
+        """Return the list of entrypoints of the given script.
 
         :param script: Micheline expression
         """
         return self._post({'script': script})
 
 
-class ScriptsPackDataQuery(RpcQuery, path='/chains/{}/blocks/{}/helpers/scripts/pack_data'):
+class ScriptsNormalizeData(RpcQuery, path='/chains/{}/blocks/{}/helpers/scripts/normalize_data'):
+    def post(
+        self,
+        data: Union[dict, list],
+        type: Union[dict, list],
+        unparsing_mode: str,
+        legacy: bool,
+    ):
+        """Normalizes some data expression using the requested unparsing mode.
 
+        :param data: Micheline expression
+        :param type: Micheline expression
+        :param unparsing_mode: One of "Readable", "Optimized", "Optimized_legacy"
+        :param legacy: Unknown
+        :returns: Normalized micheline expression
+        """
+        return self._post(
+            {
+                'data': data,
+                'type': type,
+                'unparsing_mode': unparsing_mode,
+                'legacy': legacy,
+            }
+        )
+
+
+class ScriptsNormalizeScript(RpcQuery, path='/chains/{}/blocks/{}/helpers/scripts/normalize_script'):
+    def post(self, script: Union[dict, list], unparsing_mode: str):
+        """Normalizes a Michelson script using the requested unparsing mode.
+
+        :param script: Micheline expression
+        :param unparsing_mode: One of "Readable", "Optimized", "Optimized_legacy"
+        :returns: Normalized micheline expression
+        """
+        return self._post(
+            {
+                'script': script,
+                'unparsing_mode': unparsing_mode,
+            }
+        )
+
+
+class ScriptsPackDataQuery(RpcQuery, path='/chains/{}/blocks/{}/helpers/scripts/pack_data'):
     def post(self, expression):
-        """ Computes the serialized version of some data expression using the same algorithm as script instruction PACK.
+        """Computes the serialized version of some data expression using the same algorithm as script instruction PACK.
 
         :param expression: Json input
             {
@@ -211,9 +242,8 @@ class ScriptsPackDataQuery(RpcQuery, path='/chains/{}/blocks/{}/helpers/scripts/
 
 
 class ScriptsRunCodeQuery(RpcQuery, path='/chains/{}/blocks/{}/helpers/scripts/run_code'):
-
     def post(self, invocation):
-        """ Run a piece of code in the current context.
+        """Run a piece of code in the current context.
 
         :param invocation: Json input
             {
@@ -233,9 +263,8 @@ class ScriptsRunCodeQuery(RpcQuery, path='/chains/{}/blocks/{}/helpers/scripts/r
 
 
 class ScriptsRunOperationQuery(RpcQuery, path='/chains/{}/blocks/{}/helpers/scripts/run_operation'):
-
     def post(self, operation):
-        """ Run an operation without signature checks.
+        """Run an operation without signature checks.
 
         :param operation: Json input
             {
@@ -249,9 +278,8 @@ class ScriptsRunOperationQuery(RpcQuery, path='/chains/{}/blocks/{}/helpers/scri
 
 
 class ScriptsTraceCodeQuery(RpcQuery, path='/chains/{}/blocks/{}/helpers/scripts/trace_code'):
-
     def post(self, invocation):
-        """ Run a piece of code in the current context, keeping a trace.
+        """Run a piece of code in the current context, keeping a trace.
 
         :param invocation: Json input
             {
@@ -271,9 +299,8 @@ class ScriptsTraceCodeQuery(RpcQuery, path='/chains/{}/blocks/{}/helpers/scripts
 
 
 class ScriptsTypecheckCodeQuery(RpcQuery, path='/chains/{}/blocks/{}/helpers/scripts/typecheck_code'):
-
     def post(self, expression):
-        """ Check that some data expression is well formed and of a given type in the current context.
+        """Check that some data expression is well formed and of a given type in the current context.
 
         :param expression: Json input
             {
@@ -286,9 +313,8 @@ class ScriptsTypecheckCodeQuery(RpcQuery, path='/chains/{}/blocks/{}/helpers/scr
 
 
 class ScriptsTypecheckDataQuery(RpcQuery, path='/chains/{}/blocks/{}/helpers/scripts/typecheck_data'):
-
     def post(self, expression):
-        """ Check that some data expression is well formed and of a given type in the current context.
+        """Check that some data expression is well formed and of a given type in the current context.
 
         :param expression: Json input
             {
