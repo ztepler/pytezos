@@ -971,6 +971,11 @@
 <dd></dd></dl>
 
 <dl class="py attribute">
+<dt id="pytezos.michelson.program.TztMichelsonProgram.big_maps">
+<code class="sig-name descname"><span class="pre">big_maps</span></code><em class="property"><span class="pre">:</span> <span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Type</span><span class="p"><span class="pre">[</span></span><span class="pre">pytezos.michelson.sections.tzt.BigMapsSection</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pytezos.michelson.program.TztMichelsonProgram.big_maps" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
 <dt id="pytezos.michelson.program.TztMichelsonProgram.code">
 <code class="sig-name descname"><span class="pre">code</span></code><em class="property"><span class="pre">:</span> <span class="pre">Type</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#pytezos.michelson.sections.code.CodeSection" title="pytezos.michelson.sections.code.CodeSection"><span class="pre">pytezos.michelson.sections.code.CodeSection</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pytezos.michelson.program.TztMichelsonProgram.code" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -982,7 +987,7 @@
 
 <dl class="py method">
 <dt id="pytezos.michelson.program.TztMichelsonProgram.end">
-<code class="sig-name descname"><span class="pre">end</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stack</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="repl.html#pytezos.michelson.stack.MichelsonStack" title="pytezos.michelson.stack.MichelsonStack"><span class="pre">pytezos.michelson.stack.MichelsonStack</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">stdout</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">None</span><a class="reference internal" href="_modules/pytezos/michelson/program.html#TztMichelsonProgram.end"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.michelson.program.TztMichelsonProgram.end" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">end</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stack</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="repl.html#pytezos.michelson.stack.MichelsonStack" title="pytezos.michelson.stack.MichelsonStack"><span class="pre">pytezos.michelson.stack.MichelsonStack</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">stdout</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="repl.html#pytezos.context.impl.ExecutionContext" title="pytezos.context.impl.ExecutionContext"><span class="pre">pytezos.context.impl.ExecutionContext</span></a></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">None</span><a class="reference internal" href="_modules/pytezos/michelson/program.html#TztMichelsonProgram.end"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.michelson.program.TztMichelsonProgram.end" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -1018,6 +1023,11 @@
 <dl class="py attribute">
 <dt id="pytezos.michelson.program.TztMichelsonProgram.output">
 <code class="sig-name descname"><span class="pre">output</span></code><em class="property"><span class="pre">:</span> <span class="pre">Type</span><span class="p"><span class="pre">[</span></span><span class="pre">pytezos.michelson.sections.tzt.OutputSection</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pytezos.michelson.program.TztMichelsonProgram.output" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.michelson.program.TztMichelsonProgram.register_bigmaps">
+<code class="sig-name descname"><span class="pre">register_bigmaps</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stack</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="repl.html#pytezos.michelson.stack.MichelsonStack" title="pytezos.michelson.stack.MichelsonStack"><span class="pre">pytezos.michelson.stack.MichelsonStack</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">stdout</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="repl.html#pytezos.context.impl.ExecutionContext" title="pytezos.context.impl.ExecutionContext"><span class="pre">pytezos.context.impl.ExecutionContext</span></a></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">None</span><a class="reference internal" href="_modules/pytezos/michelson/program.html#TztMichelsonProgram.register_bigmaps"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.michelson.program.TztMichelsonProgram.register_bigmaps" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>

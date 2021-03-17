@@ -173,6 +173,7 @@
 <span class="kn">from</span> <span class="nn">pytezos.rpc.shell</span> <span class="kn">import</span> <span class="n">ShellQuery</span>
 
 
+<span class="c1"># FIXME: Subclassing ExecutionContext makes Python</span>
 <div class="viewcode-block" id="ExecutionContext"><a class="viewcode-back" href="../../../repl.html#pytezos.context.impl.ExecutionContext">[docs]</a><span class="k">class</span> <span class="nc">ExecutionContext</span><span class="p">(</span><span class="n">AbstractContext</span><span class="p">):</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">amount</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">chain_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sender</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">balance</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -193,6 +194,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">chain_id</span> <span class="o">=</span> <span class="n">chain_id</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">voting_power</span> <span class="o">=</span> <span class="n">voting_power</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">total_voting_power</span> <span class="o">=</span> <span class="n">total_voting_power</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tzt</span> <span class="o">=</span> <span class="n">tzt</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">parameter_expr</span> <span class="o">=</span> <span class="n">get_script_section</span><span class="p">(</span><span class="n">script</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;parameter&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="n">script</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">tzt</span> <span class="k">else</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">storage_expr</span> <span class="o">=</span> <span class="n">get_script_section</span><span class="p">(</span><span class="n">script</span><span class="p">,</span>  <span class="n">name</span><span class="o">=</span><span class="s1">&#39;storage&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="n">script</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">tzt</span> <span class="k">else</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">code_expr</span> <span class="o">=</span> <span class="n">get_script_section</span><span class="p">(</span><span class="n">script</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;code&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="n">script</span> <span class="k">else</span> <span class="kc">None</span>
@@ -205,6 +207,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">now_expr</span> <span class="o">=</span> <span class="n">get_script_section</span><span class="p">(</span><span class="n">script</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;now&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="n">script</span> <span class="ow">and</span> <span class="n">tzt</span> <span class="k">else</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">source_expr</span> <span class="o">=</span> <span class="n">get_script_section</span><span class="p">(</span><span class="n">script</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;source&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="n">script</span> <span class="ow">and</span> <span class="n">tzt</span> <span class="k">else</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">chain_id_expr</span> <span class="o">=</span> <span class="n">get_script_section</span><span class="p">(</span><span class="n">script</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;chain_id&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="n">script</span> <span class="ow">and</span> <span class="n">tzt</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">big_maps_expr</span> <span class="o">=</span> <span class="n">get_script_section</span><span class="p">(</span><span class="n">script</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;big_maps&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="n">script</span> <span class="ow">and</span> <span class="n">tzt</span> <span class="k">else</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">origination_index</span> <span class="o">=</span> <span class="mi">1</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tmp_big_map_index</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tmp_sapling_index</span> <span class="o">=</span> <span class="mi">0</span>
@@ -212,6 +215,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">alloc_sapling_index</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">balance_update</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">big_maps</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tzt_big_maps</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_sandboxed</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 
 <div class="viewcode-block" id="ExecutionContext.reset"><a class="viewcode-back" href="../../../repl.html#pytezos.context.impl.ExecutionContext.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -222,7 +226,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">alloc_big_map_index</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">alloc_sapling_index</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">balance_update</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">big_maps</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">big_maps</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tzt_big_maps</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span></div>
 
     <span class="k">def</span> <span class="nf">__copy__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;It&#39;s not allowed to copy context&quot;</span><span class="p">)</span>
@@ -342,6 +347,9 @@
 <div class="viewcode-block" id="ExecutionContext.get_chain_id_expr"><a class="viewcode-back" href="../../../repl.html#pytezos.context.impl.ExecutionContext.get_chain_id_expr">[docs]</a>    <span class="k">def</span> <span class="nf">get_chain_id_expr</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">chain_id_expr</span></div>
 
+<div class="viewcode-block" id="ExecutionContext.get_big_maps_expr"><a class="viewcode-back" href="../../../repl.html#pytezos.context.impl.ExecutionContext.get_big_maps_expr">[docs]</a>    <span class="k">def</span> <span class="nf">get_big_maps_expr</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">big_maps_expr</span></div>
+
 <div class="viewcode-block" id="ExecutionContext.set_storage_expr"><a class="viewcode-back" href="../../../repl.html#pytezos.context.impl.ExecutionContext.set_storage_expr">[docs]</a>    <span class="k">def</span> <span class="nf">set_storage_expr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">storage_expr</span> <span class="o">=</span> <span class="n">expr</span></div>
 
@@ -363,8 +371,11 @@
 <div class="viewcode-block" id="ExecutionContext.set_chain_id_expr"><a class="viewcode-back" href="../../../repl.html#pytezos.context.impl.ExecutionContext.set_chain_id_expr">[docs]</a>    <span class="k">def</span> <span class="nf">set_chain_id_expr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">chain_id_expr</span> <span class="o">=</span> <span class="n">expr</span></div>
 
+<div class="viewcode-block" id="ExecutionContext.set_big_maps_expr"><a class="viewcode-back" href="../../../repl.html#pytezos.context.impl.ExecutionContext.set_big_maps_expr">[docs]</a>    <span class="k">def</span> <span class="nf">set_big_maps_expr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">big_maps_expr</span> <span class="o">=</span> <span class="n">expr</span></div>
+
 <div class="viewcode-block" id="ExecutionContext.get_big_map_value"><a class="viewcode-back" href="../../../repl.html#pytezos.context.impl.ExecutionContext.get_big_map_value">[docs]</a>    <span class="k">def</span> <span class="nf">get_big_map_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ptr</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">key_hash</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">ptr</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">tzt</span> <span class="ow">or</span> <span class="n">ptr</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;shell is undefined&#39;</span>
         <span class="k">try</span><span class="p">:</span>

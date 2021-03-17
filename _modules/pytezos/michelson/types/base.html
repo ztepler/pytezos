@@ -298,7 +298,7 @@
 
 <div class="viewcode-block" id="MichelsonType.is_pushable"><a class="viewcode-back" href="../../../../types.html#pytezos.michelson.types.base.MichelsonType.is_pushable">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">is_pushable</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
-        <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">prim</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;big_map&#39;</span><span class="p">,</span> <span class="s1">&#39;contract&#39;</span><span class="p">,</span> <span class="s1">&#39;operation&#39;</span><span class="p">,</span> <span class="s1">&#39;sapling_state&#39;</span><span class="p">,</span> <span class="s1">&#39;ticket&#39;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">prim</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;big_map&#39;</span><span class="p">,</span> <span class="s1">&#39;operation&#39;</span><span class="p">,</span> <span class="s1">&#39;sapling_state&#39;</span><span class="p">,</span> <span class="s1">&#39;ticket&#39;</span><span class="p">]:</span>
             <span class="k">return</span> <span class="kc">False</span>
         <span class="k">elif</span> <span class="bp">cls</span><span class="o">.</span><span class="n">prim</span> <span class="o">==</span> <span class="s1">&#39;lambda&#39;</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">True</span>
