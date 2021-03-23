@@ -347,7 +347,7 @@
 
 <div class="viewcode-block" id="BlockInjectionQuery"><a class="viewcode-back" href="../../../rpc_queries.html#pytezos.rpc.shell.BlockInjectionQuery">[docs]</a><span class="k">class</span> <span class="nc">BlockInjectionQuery</span><span class="p">(</span><span class="n">RpcQuery</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s1">&#39;/injection/block&#39;</span><span class="p">):</span>
 
-<div class="viewcode-block" id="BlockInjectionQuery.post"><a class="viewcode-back" href="../../../rpc_queries.html#pytezos.rpc.shell.BlockInjectionQuery.post">[docs]</a>    <span class="k">def</span> <span class="nf">post</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">block</span><span class="p">,</span> <span class="n">_async</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">chain</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="BlockInjectionQuery.post"><a class="viewcode-back" href="../../../rpc_queries.html#pytezos.rpc.shell.BlockInjectionQuery.post">[docs]</a>    <span class="k">def</span> <span class="nf">post</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">block</span><span class="p">,</span> <span class="n">timestamp</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">_async</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">chain</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Inject a block in the node and broadcast it.</span>
 <span class="sd">        The `operations` embedded in `blockHeader` might be pre-validated using a contextual RPCs from the latest block</span>
 <span class="sd">        (e.g. &#39;/blocks/head/context/preapply&#39;).</span>
@@ -370,7 +370,8 @@
             <span class="n">params</span><span class="o">=</span><span class="p">{</span>
                 <span class="s1">&#39;async&#39;</span><span class="p">:</span> <span class="n">_async</span><span class="p">,</span>
                 <span class="s1">&#39;force&#39;</span><span class="p">:</span> <span class="n">force</span><span class="p">,</span>
-                <span class="s1">&#39;chain&#39;</span><span class="p">:</span> <span class="n">chain</span>
+                <span class="s1">&#39;chain&#39;</span><span class="p">:</span> <span class="n">chain</span><span class="p">,</span>
+                <span class="s1">&#39;timestamp&#39;</span><span class="p">:</span> <span class="n">timestamp</span><span class="p">,</span>
             <span class="p">},</span>
             <span class="n">json</span><span class="o">=</span><span class="n">block</span>
         <span class="p">)</span></div></div>

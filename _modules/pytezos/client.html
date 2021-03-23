@@ -172,7 +172,7 @@
 <span class="kn">from</span> <span class="nn">pytezos.operation.content</span> <span class="kn">import</span> <span class="n">ContentMixin</span>
 <span class="kn">from</span> <span class="nn">pytezos.operation.group</span> <span class="kn">import</span> <span class="n">OperationGroup</span>
 <span class="kn">from</span> <span class="nn">pytezos.rpc</span> <span class="kn">import</span> <span class="n">ShellQuery</span>
-<span class="kn">from</span> <span class="nn">pytezos.sandbox.parameters</span> <span class="kn">import</span> <span class="n">get_protocol_hash</span><span class="p">,</span> <span class="n">get_protocol_parameters</span>
+<span class="kn">from</span> <span class="nn">pytezos.sandbox.parameters</span> <span class="kn">import</span> <span class="n">get_protocol_parameters</span>
 
 
 <div class="viewcode-block" id="PyTezosClient"><a class="viewcode-back" href="../../high_level.html#pytezos.client.PyTezosClient">[docs]</a><span class="k">class</span> <span class="nc">PyTezosClient</span><span class="p">(</span><span class="n">ContextMixin</span><span class="p">,</span> <span class="n">ContentMixin</span><span class="p">):</span>
@@ -292,16 +292,16 @@
     <span class="k">def</span> <span class="nf">loglevel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
 
-<div class="viewcode-block" id="PyTezosClient.activate_protocol"><a class="viewcode-back" href="../../high_level.html#pytezos.client.PyTezosClient.activate_protocol">[docs]</a>    <span class="k">def</span> <span class="nf">activate_protocol</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">alias</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BlockHeader</span><span class="p">:</span>
+<div class="viewcode-block" id="PyTezosClient.activate_protocol"><a class="viewcode-back" href="../../high_level.html#pytezos.client.PyTezosClient.activate_protocol">[docs]</a>    <span class="k">def</span> <span class="nf">activate_protocol</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">protocol_hash</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BlockHeader</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot; Initiate user-activated upgrade (sandbox only)</span>
 
-<span class="sd">        :param alias: known protocol alias (first 8 symbols)</span>
+<span class="sd">        :param protocol_hash: Protocol hash</span>
 <span class="sd">        :rtype: BlockHeader</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">BlockHeader</span><span class="o">.</span><span class="n">activate_protocol</span><span class="p">(</span>
-            <span class="n">protocol_hash</span><span class="o">=</span><span class="n">get_protocol_hash</span><span class="p">(</span><span class="n">alias</span><span class="p">),</span>
-            <span class="n">parameters</span><span class="o">=</span><span class="n">get_protocol_parameters</span><span class="p">(</span><span class="n">alias</span><span class="p">),</span>
-            <span class="n">context</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">,</span>
+            <span class="n">protocol_hash</span><span class="o">=</span><span class="n">protocol_hash</span><span class="p">,</span>
+            <span class="n">parameters</span><span class="o">=</span><span class="n">get_protocol_parameters</span><span class="p">(</span><span class="n">protocol_hash</span><span class="p">),</span>
+            <span class="n">context</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span>
         <span class="p">)</span></div>
 
 <div class="viewcode-block" id="PyTezosClient.bake_block"><a class="viewcode-back" href="../../high_level.html#pytezos.client.PyTezosClient.bake_block">[docs]</a>    <span class="k">def</span> <span class="nf">bake_block</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">min_fee</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BlockHeader</span><span class="p">:</span>

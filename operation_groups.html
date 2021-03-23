@@ -205,7 +205,7 @@ More info <a class="reference external" href="https://activate.tezos.com/">https
 <li><p><strong>gas_reserve</strong> – Add a safe reserve for dynamically calculated gas limit (default is 100).</p></li>
 <li><p><strong>burn_reserve</strong> – Add a safe reserve for dynamically calculated storage limit (default is 100).</p></li>
 <li><p><strong>counter</strong> – Override counter value (for manual handling)</p></li>
-<li><p><strong>branch_offset</strong> – Select head~offset block as branch, where offset is in range (0, 60)</p></li>
+<li><p><strong>ttl</strong> – Number of blocks to wait in the mempool before removal (default is 5 for public network, 60 for sandbox)</p></li>
 <li><p><strong>fee</strong> – Explicitly set fee for operation. If not set fee will be calculated depeding on results of operation dry-run.</p></li>
 <li><p><strong>gas_limit</strong> – Explicitly set gas limit for operation. If not set gas limit will be calculated depeding on results of
 operation dry-run.</p></li>
@@ -337,7 +337,7 @@ More info <a class="reference external" href="https://tezos.gitlab.io/master/whi
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>counter</strong> – Override counter value (for manual handling)</p></li>
-<li><p><strong>branch_offset</strong> – select head~offset block as branch, where offset is in range (0, 60)</p></li>
+<li><p><strong>ttl</strong> – Number of blocks to wait in the mempool before removal (default is 5 for public network, 60 for sandbox)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
