@@ -183,7 +183,7 @@
             <span class="n">res</span> <span class="o">=</span> <span class="n">OptionType</span><span class="o">.</span><span class="n">from_some</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
         <span class="n">stack</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
         <span class="n">stdout</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">format_stdout</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">prim</span><span class="p">,</span> <span class="p">[</span><span class="n">pair</span><span class="p">],</span> <span class="p">[</span><span class="n">res</span><span class="p">]))</span>  <span class="c1"># type: ignore</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="p">()</span></div></div>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">stack_items_added</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="ReadTicketInstruction"><a class="viewcode-back" href="../../../../instructions.html#pytezos.michelson.instructions.ticket.ReadTicketInstruction">[docs]</a><span class="k">class</span> <span class="nc">ReadTicketInstruction</span><span class="p">(</span><span class="n">MichelsonInstruction</span><span class="p">,</span> <span class="n">prim</span><span class="o">=</span><span class="s1">&#39;READ_TICKET&#39;</span><span class="p">):</span>
@@ -196,7 +196,7 @@
         <span class="n">stack</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">ticket</span><span class="p">)</span>
         <span class="n">stack</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
         <span class="n">stdout</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">format_stdout</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">prim</span><span class="p">,</span> <span class="p">[</span><span class="n">ticket</span><span class="p">],</span> <span class="p">[</span><span class="n">res</span><span class="p">,</span> <span class="n">ticket</span><span class="p">]))</span>  <span class="c1"># type: ignore</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="p">()</span></div></div>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">stack_items_added</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="SplitTicketInstruction"><a class="viewcode-back" href="../../../../instructions.html#pytezos.michelson.instructions.ticket.SplitTicketInstruction">[docs]</a><span class="k">class</span> <span class="nc">SplitTicketInstruction</span><span class="p">(</span><span class="n">MichelsonInstruction</span><span class="p">,</span> <span class="n">prim</span><span class="o">=</span><span class="s1">&#39;SPLIT_TICKET&#39;</span><span class="p">):</span>
@@ -216,7 +216,7 @@
             <span class="n">res</span> <span class="o">=</span> <span class="n">OptionType</span><span class="o">.</span><span class="n">from_some</span><span class="p">(</span><span class="n">PairType</span><span class="o">.</span><span class="n">from_comb</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">res</span><span class="p">)))</span>  <span class="c1"># type: ignore</span>
         <span class="n">stack</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
         <span class="n">stdout</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">format_stdout</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">prim</span><span class="p">,</span> <span class="p">[</span><span class="n">ticket</span><span class="p">,</span> <span class="n">amounts</span><span class="p">],</span> <span class="p">[</span><span class="n">res</span><span class="p">]))</span>  <span class="c1"># type: ignore</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="p">()</span></div></div>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">stack_items_added</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="TicketInstruction"><a class="viewcode-back" href="../../../../instructions.html#pytezos.michelson.instructions.ticket.TicketInstruction">[docs]</a><span class="k">class</span> <span class="nc">TicketInstruction</span><span class="p">(</span><span class="n">MichelsonInstruction</span><span class="p">,</span> <span class="n">prim</span><span class="o">=</span><span class="s1">&#39;TICKET&#39;</span><span class="p">):</span>
@@ -229,7 +229,7 @@
         <span class="n">res</span> <span class="o">=</span> <span class="n">TicketType</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">address</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">amount</span><span class="p">))</span>
         <span class="n">stack</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
         <span class="n">stdout</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">format_stdout</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">prim</span><span class="p">,</span> <span class="p">[</span><span class="n">item</span><span class="p">,</span> <span class="n">amount</span><span class="p">],</span> <span class="p">[</span><span class="n">res</span><span class="p">]))</span>  <span class="c1"># type: ignore</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="p">()</span></div></div>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">stack_items_added</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></div></div>
 </pre></div>
 
            </div>

@@ -179,7 +179,7 @@
         <span class="n">res</span> <span class="o">=</span> <span class="n">MutezType</span><span class="o">.</span><span class="n">from_value</span><span class="p">(</span><span class="n">amount</span><span class="p">)</span>
         <span class="n">stack</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
         <span class="n">stdout</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">format_stdout</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">prim</span><span class="p">,</span> <span class="p">[],</span> <span class="p">[</span><span class="n">res</span><span class="p">]))</span>  <span class="c1"># type: ignore</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="p">()</span></div></div>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">stack_items_added</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="BalanceInstruction"><a class="viewcode-back" href="../../../../instructions.html#pytezos.michelson.instructions.tezos.BalanceInstruction">[docs]</a><span class="k">class</span> <span class="nc">BalanceInstruction</span><span class="p">(</span><span class="n">MichelsonInstruction</span><span class="p">,</span> <span class="n">prim</span><span class="o">=</span><span class="s1">&#39;BALANCE&#39;</span><span class="p">):</span>
@@ -190,7 +190,7 @@
         <span class="n">res</span> <span class="o">=</span> <span class="n">MutezType</span><span class="o">.</span><span class="n">from_value</span><span class="p">(</span><span class="n">balance</span><span class="p">)</span>
         <span class="n">stack</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
         <span class="n">stdout</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">format_stdout</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">prim</span><span class="p">,</span> <span class="p">[],</span> <span class="p">[</span><span class="n">res</span><span class="p">]))</span>  <span class="c1"># type: ignore</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="p">()</span></div></div>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">stack_items_added</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="ChainIdInstruction"><a class="viewcode-back" href="../../../../instructions.html#pytezos.michelson.instructions.tezos.ChainIdInstruction">[docs]</a><span class="k">class</span> <span class="nc">ChainIdInstruction</span><span class="p">(</span><span class="n">MichelsonInstruction</span><span class="p">,</span> <span class="n">prim</span><span class="o">=</span><span class="s1">&#39;CHAIN_ID&#39;</span><span class="p">):</span>
@@ -201,7 +201,7 @@
         <span class="n">res</span> <span class="o">=</span> <span class="n">ChainIdType</span><span class="o">.</span><span class="n">from_value</span><span class="p">(</span><span class="n">chain_id</span><span class="p">)</span>
         <span class="n">stack</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
         <span class="n">stdout</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">format_stdout</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">prim</span><span class="p">,</span> <span class="p">[],</span> <span class="p">[</span><span class="n">res</span><span class="p">]))</span>  <span class="c1"># type: ignore</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="p">()</span></div></div>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">stack_items_added</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="get_entrypoint_type"><a class="viewcode-back" href="../../../../instructions.html#pytezos.michelson.instructions.tezos.get_entrypoint_type">[docs]</a><span class="k">def</span> <span class="nf">get_entrypoint_type</span><span class="p">(</span><span class="n">context</span><span class="p">:</span> <span class="n">AbstractContext</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">address</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">MichelsonType</span><span class="p">]]:</span>
@@ -226,7 +226,7 @@
         <span class="n">res</span> <span class="o">=</span> <span class="n">res_type</span><span class="o">.</span><span class="n">from_value</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">self_address</span><span class="si">}</span><span class="s1">%</span><span class="si">{</span><span class="n">entrypoint</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
         <span class="n">stack</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
         <span class="n">stdout</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">format_stdout</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">prim</span><span class="p">,</span> <span class="p">[],</span> <span class="p">[</span><span class="n">res</span><span class="p">]))</span>  <span class="c1"># type: ignore</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="p">()</span></div></div>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">stack_items_added</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="SelfAddressInstruction"><a class="viewcode-back" href="../../../../instructions.html#pytezos.michelson.instructions.tezos.SelfAddressInstruction">[docs]</a><span class="k">class</span> <span class="nc">SelfAddressInstruction</span><span class="p">(</span><span class="n">MichelsonInstruction</span><span class="p">,</span> <span class="n">prim</span><span class="o">=</span><span class="s1">&#39;SELF_ADDRESS&#39;</span><span class="p">):</span>
@@ -236,7 +236,7 @@
         <span class="n">res</span> <span class="o">=</span> <span class="n">AddressType</span><span class="o">.</span><span class="n">from_value</span><span class="p">(</span><span class="n">context</span><span class="o">.</span><span class="n">get_self_address</span><span class="p">())</span>
         <span class="n">stack</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
         <span class="n">stdout</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">format_stdout</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">prim</span><span class="p">,</span> <span class="p">[],</span> <span class="p">[</span><span class="n">res</span><span class="p">]))</span>  <span class="c1"># type: ignore</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="p">()</span></div></div>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">stack_items_added</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="SenderInstruction"><a class="viewcode-back" href="../../../../instructions.html#pytezos.michelson.instructions.tezos.SenderInstruction">[docs]</a><span class="k">class</span> <span class="nc">SenderInstruction</span><span class="p">(</span><span class="n">MichelsonInstruction</span><span class="p">,</span> <span class="n">prim</span><span class="o">=</span><span class="s1">&#39;SENDER&#39;</span><span class="p">):</span>
@@ -247,7 +247,7 @@
         <span class="n">res</span> <span class="o">=</span> <span class="n">AddressType</span><span class="o">.</span><span class="n">from_value</span><span class="p">(</span><span class="n">sender</span><span class="p">)</span>
         <span class="n">stack</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
         <span class="n">stdout</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">format_stdout</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">prim</span><span class="p">,</span> <span class="p">[],</span> <span class="p">[</span><span class="n">res</span><span class="p">]))</span>  <span class="c1"># type: ignore</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="p">()</span></div></div>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">stack_items_added</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="SourceInstruction"><a class="viewcode-back" href="../../../../instructions.html#pytezos.michelson.instructions.tezos.SourceInstruction">[docs]</a><span class="k">class</span> <span class="nc">SourceInstruction</span><span class="p">(</span><span class="n">MichelsonInstruction</span><span class="p">,</span> <span class="n">prim</span><span class="o">=</span><span class="s1">&#39;SOURCE&#39;</span><span class="p">):</span>
@@ -258,7 +258,7 @@
         <span class="n">res</span> <span class="o">=</span> <span class="n">AddressType</span><span class="o">.</span><span class="n">from_value</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
         <span class="n">stack</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
         <span class="n">stdout</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">format_stdout</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">prim</span><span class="p">,</span> <span class="p">[],</span> <span class="p">[</span><span class="n">res</span><span class="p">]))</span>  <span class="c1"># type: ignore</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="p">()</span></div></div>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">stack_items_added</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="NowInstruction"><a class="viewcode-back" href="../../../../instructions.html#pytezos.michelson.instructions.tezos.NowInstruction">[docs]</a><span class="k">class</span> <span class="nc">NowInstruction</span><span class="p">(</span><span class="n">MichelsonInstruction</span><span class="p">,</span> <span class="n">prim</span><span class="o">=</span><span class="s1">&#39;NOW&#39;</span><span class="p">):</span>
@@ -269,7 +269,7 @@
         <span class="n">res</span> <span class="o">=</span> <span class="n">TimestampType</span><span class="o">.</span><span class="n">from_value</span><span class="p">(</span><span class="n">now</span><span class="p">)</span>
         <span class="n">stack</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
         <span class="n">stdout</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">format_stdout</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">prim</span><span class="p">,</span> <span class="p">[],</span> <span class="p">[</span><span class="n">res</span><span class="p">]))</span>  <span class="c1"># type: ignore</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="p">()</span></div></div>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">stack_items_added</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="AddressInstruction"><a class="viewcode-back" href="../../../../instructions.html#pytezos.michelson.instructions.tezos.AddressInstruction">[docs]</a><span class="k">class</span> <span class="nc">AddressInstruction</span><span class="p">(</span><span class="n">MichelsonInstruction</span><span class="p">,</span> <span class="n">prim</span><span class="o">=</span><span class="s1">&#39;ADDRESS&#39;</span><span class="p">):</span>
@@ -281,7 +281,7 @@
         <span class="n">res</span> <span class="o">=</span> <span class="n">AddressType</span><span class="o">.</span><span class="n">from_value</span><span class="p">(</span><span class="n">contract</span><span class="o">.</span><span class="n">get_address</span><span class="p">())</span>
         <span class="n">stack</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
         <span class="n">stdout</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">format_stdout</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">prim</span><span class="p">,</span> <span class="p">[</span><span class="n">contract</span><span class="p">],</span> <span class="p">[</span><span class="n">res</span><span class="p">]))</span>  <span class="c1"># type: ignore</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="p">()</span></div></div>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">stack_items_added</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="ContractInstruction"><a class="viewcode-back" href="../../../../instructions.html#pytezos.michelson.instructions.tezos.ContractInstruction">[docs]</a><span class="k">class</span> <span class="nc">ContractInstruction</span><span class="p">(</span><span class="n">MichelsonInstruction</span><span class="p">,</span> <span class="n">prim</span><span class="o">=</span><span class="s1">&#39;CONTRACT&#39;</span><span class="p">,</span> <span class="n">args_len</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
@@ -303,7 +303,7 @@
             <span class="n">res</span> <span class="o">=</span> <span class="n">OptionType</span><span class="o">.</span><span class="n">none</span><span class="p">(</span><span class="n">contract_type</span><span class="p">)</span>
         <span class="n">stack</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
         <span class="n">stdout</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">format_stdout</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">prim</span><span class="p">,</span> <span class="p">[</span><span class="n">address</span><span class="p">],</span> <span class="p">[</span><span class="n">res</span><span class="p">]))</span>  <span class="c1"># type: ignore</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="p">()</span></div></div>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">stack_items_added</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="ImplicitAccountInstruction"><a class="viewcode-back" href="../../../../instructions.html#pytezos.michelson.instructions.tezos.ImplicitAccountInstruction">[docs]</a><span class="k">class</span> <span class="nc">ImplicitAccountInstruction</span><span class="p">(</span><span class="n">MichelsonInstruction</span><span class="p">,</span> <span class="n">prim</span><span class="o">=</span><span class="s1">&#39;IMPLICIT_ACCOUNT&#39;</span><span class="p">):</span>
@@ -315,7 +315,7 @@
         <span class="n">res</span> <span class="o">=</span> <span class="n">ContractType</span><span class="o">.</span><span class="n">create_type</span><span class="p">(</span><span class="n">args</span><span class="o">=</span><span class="p">[</span><span class="n">UnitType</span><span class="p">])</span><span class="o">.</span><span class="n">from_value</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">key_hash</span><span class="p">))</span>  <span class="c1"># type: ignore</span>
         <span class="n">stack</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
         <span class="n">stdout</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">format_stdout</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">prim</span><span class="p">,</span> <span class="p">[</span><span class="n">key_hash</span><span class="p">],</span> <span class="p">[</span><span class="n">res</span><span class="p">]))</span>  <span class="c1"># type: ignore</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="p">()</span></div></div>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">stack_items_added</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="CreateContractInstruction"><a class="viewcode-back" href="../../../../instructions.html#pytezos.michelson.instructions.tezos.CreateContractInstruction">[docs]</a><span class="k">class</span> <span class="nc">CreateContractInstruction</span><span class="p">(</span><span class="n">MichelsonInstruction</span><span class="p">,</span> <span class="n">prim</span><span class="o">=</span><span class="s1">&#39;CREATE_CONTRACT&#39;</span><span class="p">,</span> <span class="n">args_len</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
@@ -345,7 +345,7 @@
         <span class="n">stack</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">originated_address</span><span class="p">)</span>
         <span class="n">stack</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">origination</span><span class="p">)</span>
         <span class="n">stdout</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">format_stdout</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">prim</span><span class="p">,</span> <span class="p">[</span><span class="n">delegate</span><span class="p">,</span> <span class="n">amount</span><span class="p">,</span> <span class="n">initial_storage</span><span class="p">],</span> <span class="p">[</span><span class="n">origination</span><span class="p">,</span> <span class="n">originated_address</span><span class="p">]))</span>  <span class="c1"># type: ignore</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="p">()</span></div></div>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">stack_items_added</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="SetDelegateInstruction"><a class="viewcode-back" href="../../../../instructions.html#pytezos.michelson.instructions.tezos.SetDelegateInstruction">[docs]</a><span class="k">class</span> <span class="nc">SetDelegateInstruction</span><span class="p">(</span><span class="n">MichelsonInstruction</span><span class="p">,</span> <span class="n">prim</span><span class="o">=</span><span class="s1">&#39;SET_DELEGATE&#39;</span><span class="p">):</span>
@@ -361,7 +361,7 @@
         <span class="p">)</span>
         <span class="n">stack</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">delegation</span><span class="p">)</span>
         <span class="n">stdout</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">format_stdout</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">prim</span><span class="p">,</span> <span class="p">[</span><span class="n">delegate</span><span class="p">],</span> <span class="p">[</span><span class="n">delegation</span><span class="p">]))</span>  <span class="c1"># type: ignore</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="p">()</span></div></div>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">stack_items_added</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="TransferTokensInstruction"><a class="viewcode-back" href="../../../../instructions.html#pytezos.michelson.instructions.tezos.TransferTokensInstruction">[docs]</a><span class="k">class</span> <span class="nc">TransferTokensInstruction</span><span class="p">(</span><span class="n">MichelsonInstruction</span><span class="p">,</span> <span class="n">prim</span><span class="o">=</span><span class="s1">&#39;TRANSFER_TOKENS&#39;</span><span class="p">):</span>
@@ -386,7 +386,7 @@
         <span class="p">)</span>
         <span class="n">stack</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">transaction</span><span class="p">)</span>
         <span class="n">stdout</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">format_stdout</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">prim</span><span class="p">,</span> <span class="p">[</span><span class="n">parameter</span><span class="p">,</span> <span class="n">amount</span><span class="p">,</span> <span class="n">destination</span><span class="p">],</span> <span class="p">[</span><span class="n">transaction</span><span class="p">]))</span>  <span class="c1"># type: ignore</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="p">()</span></div></div>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">stack_items_added</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="VotingPowerInstruction"><a class="viewcode-back" href="../../../../instructions.html#pytezos.michelson.instructions.tezos.VotingPowerInstruction">[docs]</a><span class="k">class</span> <span class="nc">VotingPowerInstruction</span><span class="p">(</span><span class="n">MichelsonInstruction</span><span class="p">,</span> <span class="n">prim</span><span class="o">=</span><span class="s1">&#39;VOTING_POWER&#39;</span><span class="p">):</span>
@@ -398,7 +398,7 @@
         <span class="n">res</span> <span class="o">=</span> <span class="n">NatType</span><span class="o">.</span><span class="n">from_value</span><span class="p">(</span><span class="n">context</span><span class="o">.</span><span class="n">get_voting_power</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">address</span><span class="p">)))</span>
         <span class="n">stack</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
         <span class="n">stdout</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">format_stdout</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">prim</span><span class="p">,</span> <span class="p">[</span><span class="n">address</span><span class="p">],</span> <span class="p">[</span><span class="n">res</span><span class="p">]))</span>  <span class="c1"># type: ignore</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="p">()</span></div></div>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">stack_items_added</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="TotalVotingPowerInstruction"><a class="viewcode-back" href="../../../../instructions.html#pytezos.michelson.instructions.tezos.TotalVotingPowerInstruction">[docs]</a><span class="k">class</span> <span class="nc">TotalVotingPowerInstruction</span><span class="p">(</span><span class="n">MichelsonInstruction</span><span class="p">,</span> <span class="n">prim</span><span class="o">=</span><span class="s1">&#39;TOTAL_VOTING_POWER&#39;</span><span class="p">):</span>
@@ -408,7 +408,7 @@
         <span class="n">res</span> <span class="o">=</span> <span class="n">NatType</span><span class="o">.</span><span class="n">from_value</span><span class="p">(</span><span class="n">context</span><span class="o">.</span><span class="n">get_total_voting_power</span><span class="p">())</span>
         <span class="n">stack</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
         <span class="n">stdout</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">format_stdout</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">prim</span><span class="p">,</span> <span class="p">[],</span> <span class="p">[</span><span class="n">res</span><span class="p">]))</span>  <span class="c1"># type: ignore</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="p">()</span></div></div>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">stack_items_added</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="LevelInstruction"><a class="viewcode-back" href="../../../../instructions.html#pytezos.michelson.instructions.tezos.LevelInstruction">[docs]</a><span class="k">class</span> <span class="nc">LevelInstruction</span><span class="p">(</span><span class="n">MichelsonInstruction</span><span class="p">,</span> <span class="n">prim</span><span class="o">=</span><span class="s1">&#39;LEVEL&#39;</span><span class="p">):</span>
@@ -418,7 +418,7 @@
         <span class="n">res</span> <span class="o">=</span> <span class="n">NatType</span><span class="o">.</span><span class="n">from_value</span><span class="p">(</span><span class="n">context</span><span class="o">.</span><span class="n">get_level</span><span class="p">())</span>
         <span class="n">stack</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
         <span class="n">stdout</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">format_stdout</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">prim</span><span class="p">,</span> <span class="p">[],</span> <span class="p">[</span><span class="n">res</span><span class="p">]))</span>  <span class="c1"># type: ignore</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="p">()</span></div></div>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">stack_items_added</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></div></div>
 </pre></div>
 
            </div>

@@ -172,7 +172,6 @@
 <span class="kn">from</span> <span class="nn">pytezos.rpc.shell</span> <span class="kn">import</span> <span class="n">ShellQuery</span>
 
 
-<span class="c1"># FIXME: Subclassing ExecutionContext makes Python</span>
 <div class="viewcode-block" id="ExecutionContext"><a class="viewcode-back" href="../../../repl.html#pytezos.context.impl.ExecutionContext">[docs]</a><span class="k">class</span> <span class="nc">ExecutionContext</span><span class="p">(</span><span class="n">AbstractContext</span><span class="p">):</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">amount</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">chain_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sender</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">balance</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -215,19 +214,17 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">balance_update</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">big_maps</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tzt_big_maps</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">debug</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_sandboxed</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="k">def</span> <span class="nf">__copy__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;It&#39;s not allowed to copy context&quot;</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">__deepcopy__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">memodict</span><span class="o">=</span><span class="p">{}):</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;It&#39;s not allowed to copy context&quot;</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">constants</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;`shell` is not set&#39;</span><span class="p">)</span>
-        <span class="c1"># NOTE: Cached</span>
+        <span class="c1"># FIXME: Cached, can be an issue when switching between protocols</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">constants</span><span class="p">()</span>
 
     <span class="nd">@property</span>
