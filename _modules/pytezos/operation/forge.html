@@ -161,20 +161,8 @@
   <h1>Source code for pytezos.operation.forge</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">pytezos.michelson.forge</span> <span class="kn">import</span> <span class="p">(</span><span class="n">forge_address</span><span class="p">,</span> <span class="n">forge_array</span><span class="p">,</span> <span class="n">forge_base58</span><span class="p">,</span> <span class="n">forge_bool</span><span class="p">,</span> <span class="n">forge_micheline</span><span class="p">,</span> <span class="n">forge_nat</span><span class="p">,</span> <span class="n">forge_public_key</span><span class="p">,</span>
                                      <span class="n">forge_script</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">pytezos.operation.kind</span> <span class="kn">import</span> <span class="n">operation_tags</span>
 
-<span class="n">operation_tags</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s1">&#39;endorsement&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-    <span class="s1">&#39;proposal&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
-    <span class="s1">&#39;ballot&#39;</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span>
-    <span class="s1">&#39;seed_nonce_revelation&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-    <span class="s1">&#39;double_endorsement_evidence&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
-    <span class="s1">&#39;double_baking_evidence&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
-    <span class="s1">&#39;activate_account&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
-    <span class="s1">&#39;reveal&#39;</span><span class="p">:</span> <span class="mi">107</span><span class="p">,</span>
-    <span class="s1">&#39;transaction&#39;</span><span class="p">:</span> <span class="mi">108</span><span class="p">,</span>
-    <span class="s1">&#39;origination&#39;</span><span class="p">:</span> <span class="mi">109</span><span class="p">,</span>
-    <span class="s1">&#39;delegation&#39;</span><span class="p">:</span> <span class="mi">110</span>
-<span class="p">}</span>
 <span class="n">reserved_entrypoints</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s1">&#39;default&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x00</span><span class="s1">&#39;</span><span class="p">,</span>
     <span class="s1">&#39;root&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x01</span><span class="s1">&#39;</span><span class="p">,</span>

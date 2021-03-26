@@ -162,6 +162,8 @@
 <span></span><span class="kn">from</span> <span class="nn">pprint</span> <span class="kn">import</span> <span class="n">pformat</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
 
+<span class="kn">from</span> <span class="nn">deprecation</span> <span class="kn">import</span> <span class="n">deprecated</span>  <span class="c1"># type: ignore</span>
+
 <span class="kn">from</span> <span class="nn">pytezos.context.impl</span> <span class="kn">import</span> <span class="n">ExecutionContext</span>  <span class="c1"># type: ignore</span>
 <span class="kn">from</span> <span class="nn">pytezos.context.mixin</span> <span class="kn">import</span> <span class="n">ContextMixin</span>  <span class="c1"># type: ignore</span>
 <span class="kn">from</span> <span class="nn">pytezos.crypto.encoding</span> <span class="kn">import</span> <span class="n">base58_encode</span>
@@ -173,23 +175,9 @@
 <span class="kn">from</span> <span class="nn">pytezos.operation.content</span> <span class="kn">import</span> <span class="n">ContentMixin</span>
 <span class="kn">from</span> <span class="nn">pytezos.operation.fees</span> <span class="kn">import</span> <span class="n">calculate_fee</span><span class="p">,</span> <span class="n">default_fee</span><span class="p">,</span> <span class="n">default_gas_limit</span><span class="p">,</span> <span class="n">default_storage_limit</span>
 <span class="kn">from</span> <span class="nn">pytezos.operation.forge</span> <span class="kn">import</span> <span class="n">forge_operation_group</span>
+<span class="kn">from</span> <span class="nn">pytezos.operation.kind</span> <span class="kn">import</span> <span class="n">validation_passes</span>
 <span class="kn">from</span> <span class="nn">pytezos.operation.result</span> <span class="kn">import</span> <span class="n">OperationResult</span>
 <span class="kn">from</span> <span class="nn">pytezos.rpc.errors</span> <span class="kn">import</span> <span class="n">RpcError</span>
-
-<span class="c1"># NOTE: Explaination: https://pytezos.baking-bad.org/tutorials/02.html#operation-group</span>
-<span class="n">validation_passes</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s1">&#39;endorsement&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-    <span class="s1">&#39;proposal&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-    <span class="s1">&#39;ballot&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-    <span class="s1">&#39;seed_nonce_revelation&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
-    <span class="s1">&#39;double_endorsement_evidence&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
-    <span class="s1">&#39;double_baking_evidence&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
-    <span class="s1">&#39;activate_account&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
-    <span class="s1">&#39;reveal&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
-    <span class="s1">&#39;transaction&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
-    <span class="s1">&#39;origination&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
-    <span class="s1">&#39;delegation&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
-<span class="p">}</span>
 
 
 <div class="viewcode-block" id="OperationGroup"><a class="viewcode-back" href="../../../operation_groups.html#pytezos.operation.group.OperationGroup">[docs]</a><span class="k">class</span> <span class="nc">OperationGroup</span><span class="p">(</span><span class="n">ContextMixin</span><span class="p">,</span> <span class="n">ContentMixin</span><span class="p">):</span>
@@ -234,7 +222,8 @@
         <span class="p">)</span>
 
 <div class="viewcode-block" id="OperationGroup.json_payload"><a class="viewcode-back" href="../../../operation_groups.html#pytezos.operation.group.OperationGroup.json_payload">[docs]</a>    <span class="k">def</span> <span class="nf">json_payload</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Get json payload used for the preapply.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot; Get JSON payload used for the injection.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">{</span>
             <span class="s1">&#39;protocol&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">protocol</span><span class="p">,</span>
             <span class="s1">&#39;branch&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">branch</span><span class="p">,</span>
@@ -260,8 +249,8 @@
 <div class="viewcode-block" id="OperationGroup.fill"><a class="viewcode-back" href="../../../operation_groups.html#pytezos.operation.group.OperationGroup.fill">[docs]</a>    <span class="k">def</span> <span class="nf">fill</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">counter</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">branch_offset</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">ttl</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Try to fill all fields left unfilled, use approximate fees</span>
 <span class="sd">        (not optimal, use `autofill` to simulate operation and get precise values).</span>
@@ -270,9 +259,10 @@
 <span class="sd">        :param ttl: Number of blocks to wait in the mempool before removal (default is 5 for public network, 60 for sandbox)</span>
 <span class="sd">        :rtype: OperationGroup</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">branch_offset</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;branch_offset&#39;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;`branch_offset` argument is deprecated, use `ttl` instead&#39;</span><span class="p">)</span>
-            <span class="n">ttl</span> <span class="o">=</span> <span class="n">MAX_OPERATIONS_TTL</span> <span class="o">-</span> <span class="n">branch_offset</span>
+            <span class="n">ttl</span> <span class="o">=</span> <span class="n">MAX_OPERATIONS_TTL</span> <span class="o">-</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;branch_offset&#39;</span><span class="p">]</span>
+
         <span class="k">if</span> <span class="n">ttl</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">ttl</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">get_operations_ttl</span><span class="p">()</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">ttl</span> <span class="o">&lt;=</span> <span class="n">MAX_OPERATIONS_TTL</span><span class="p">:</span>
@@ -330,10 +320,10 @@
             <span class="p">}</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="OperationGroup.forge"><a class="viewcode-back" href="../../../operation_groups.html#pytezos.operation.group.OperationGroup.forge">[docs]</a>    <span class="k">def</span> <span class="nf">forge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">validate</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<div class="viewcode-block" id="OperationGroup.forge"><a class="viewcode-back" href="../../../operation_groups.html#pytezos.operation.group.OperationGroup.forge">[docs]</a>    <span class="k">def</span> <span class="nf">forge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">validate</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Convert json representation of the operation group into bytes.</span>
 
-<span class="sd">        :param validate: Forge remotely also and compare results, default is True</span>
+<span class="sd">        :param validate: Forge remotely also and compare results, default is False</span>
 <span class="sd">        :returns: Hex string</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">payload</span> <span class="o">=</span> <span class="p">{</span>
@@ -354,11 +344,11 @@
         <span class="n">gas_reserve</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">DEFAULT_GAS_RESERVE</span><span class="p">,</span>
         <span class="n">burn_reserve</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">DEFAULT_BURN_RESERVE</span><span class="p">,</span>
         <span class="n">counter</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">branch_offset</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">ttl</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">fee</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">gas_limit</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">storage_limit</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;OperationGroup&#39;</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Fill the gaps and then simulate the operation in order to calculate fee, gas/storage limits.</span>
 
@@ -373,7 +363,11 @@
 <span class="sd">            results of operation dry-run.</span>
 <span class="sd">        :rtype: OperationGroup</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">opg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">counter</span><span class="o">=</span><span class="n">counter</span><span class="p">,</span> <span class="n">ttl</span><span class="o">=</span><span class="n">ttl</span><span class="p">,</span> <span class="n">branch_offset</span><span class="o">=</span><span class="n">branch_offset</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;branch_offset&#39;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;`branch_offset` argument is deprecated, use `ttl` instead&#39;</span><span class="p">)</span>
+            <span class="n">ttl</span> <span class="o">=</span> <span class="n">MAX_OPERATIONS_TTL</span> <span class="o">-</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;branch_offset&#39;</span><span class="p">]</span>
+
+        <span class="n">opg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">counter</span><span class="o">=</span><span class="n">counter</span><span class="p">,</span> <span class="n">ttl</span><span class="o">=</span><span class="n">ttl</span><span class="p">)</span>
         <span class="n">opg_with_metadata</span> <span class="o">=</span> <span class="n">opg</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">OperationResult</span><span class="o">.</span><span class="n">is_applied</span><span class="p">(</span><span class="n">opg_with_metadata</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">RpcError</span><span class="o">.</span><span class="n">from_errors</span><span class="p">(</span><span class="n">OperationResult</span><span class="o">.</span><span class="n">errors</span><span class="p">(</span><span class="n">opg_with_metadata</span><span class="p">))</span>
@@ -381,34 +375,34 @@
         <span class="n">extra_size</span> <span class="o">=</span> <span class="p">(</span><span class="mi">32</span> <span class="o">+</span> <span class="mi">64</span><span class="p">)</span> <span class="o">//</span> <span class="nb">len</span><span class="p">(</span><span class="n">opg</span><span class="o">.</span><span class="n">contents</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1"># size of serialized branch and signature</span>
 
         <span class="k">def</span> <span class="nf">fill_content</span><span class="p">(</span><span class="n">content</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
-            <span class="k">nonlocal</span> <span class="n">fee</span>
-            <span class="k">nonlocal</span> <span class="n">gas_limit</span>
-            <span class="k">nonlocal</span> <span class="n">storage_limit</span>
+            <span class="k">if</span> <span class="n">validation_passes</span><span class="p">[</span><span class="n">content</span><span class="p">[</span><span class="s1">&#39;kind&#39;</span><span class="p">]]</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+                <span class="n">_gas_limit</span><span class="p">,</span> <span class="n">_storage_limit</span><span class="p">,</span> <span class="n">_fee</span> <span class="o">=</span> <span class="n">gas_limit</span><span class="p">,</span> <span class="n">storage_limit</span><span class="p">,</span> <span class="n">fee</span>
 
-            <span class="k">if</span> <span class="n">validation_passes</span><span class="p">[</span><span class="n">content</span><span class="p">[</span><span class="s1">&#39;kind&#39;</span><span class="p">]]</span> <span class="o">!=</span> <span class="mi">3</span><span class="p">:</span>
-                <span class="k">return</span> <span class="kc">None</span>
+                <span class="k">if</span> <span class="n">_gas_limit</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">_gas_limit</span> <span class="o">=</span> <span class="n">OperationResult</span><span class="o">.</span><span class="n">consumed_gas</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">content</span><span class="p">[</span><span class="s1">&#39;kind&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;origination&#39;</span><span class="p">,</span> <span class="s1">&#39;transaction&#39;</span><span class="p">]:</span>
+                        <span class="n">_gas_limit</span> <span class="o">+=</span> <span class="n">gas_reserve</span>
 
-            <span class="k">if</span> <span class="n">fee</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">gas_limit</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">_consumed_gas</span> <span class="o">=</span> <span class="n">OperationResult</span><span class="o">.</span><span class="n">consumed_gas</span><span class="p">(</span><span class="n">content</span><span class="p">)</span> <span class="o">+</span> <span class="n">gas_reserve</span>
+                <span class="k">if</span> <span class="n">storage_limit</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">_paid_storage_size_diff</span> <span class="o">=</span> <span class="n">OperationResult</span><span class="o">.</span><span class="n">paid_storage_size_diff</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
+                    <span class="n">_burned</span> <span class="o">=</span> <span class="n">OperationResult</span><span class="o">.</span><span class="n">burned</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
+                    <span class="n">_storage_limit</span> <span class="o">=</span> <span class="n">_paid_storage_size_diff</span> <span class="o">+</span> <span class="n">_burned</span>
+                    <span class="k">if</span> <span class="n">content</span><span class="p">[</span><span class="s1">&#39;kind&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;origination&#39;</span><span class="p">,</span> <span class="s1">&#39;transaction&#39;</span><span class="p">]:</span>
+                        <span class="n">_storage_limit</span> <span class="o">+=</span> <span class="n">burn_reserve</span>
 
-                <span class="k">if</span> <span class="n">fee</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="n">fee</span> <span class="o">=</span> <span class="n">calculate_fee</span><span class="p">(</span><span class="n">content</span><span class="p">,</span> <span class="n">_consumed_gas</span><span class="p">,</span> <span class="n">extra_size</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">_fee</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">_fee</span> <span class="o">=</span> <span class="n">calculate_fee</span><span class="p">(</span><span class="n">content</span><span class="p">,</span> <span class="n">_gas_limit</span><span class="p">,</span> <span class="n">extra_size</span><span class="p">)</span>
 
-                <span class="k">if</span> <span class="n">gas_limit</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="n">gas_limit</span> <span class="o">=</span> <span class="n">_consumed_gas</span> <span class="o">+</span> <span class="n">gas_reserve</span>
-
-            <span class="k">if</span> <span class="n">storage_limit</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">_paid_storage_size_diff</span> <span class="o">=</span> <span class="n">OperationResult</span><span class="o">.</span><span class="n">paid_storage_size_diff</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
-                <span class="n">_burned</span> <span class="o">=</span> <span class="n">OperationResult</span><span class="o">.</span><span class="n">burned</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
-                <span class="n">storage_limit</span> <span class="o">=</span> <span class="n">_paid_storage_size_diff</span> <span class="o">+</span> <span class="n">_burned</span> <span class="o">+</span> <span class="n">burn_reserve</span>
-
-            <span class="n">content</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
-                <span class="n">gas_limit</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">gas_limit</span><span class="p">),</span>
-                <span class="n">storage_limit</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">storage_limit</span><span class="p">),</span>
-                <span class="n">fee</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">fee</span><span class="p">),</span>
-            <span class="p">)</span>
+                <span class="n">current_counter</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">content</span><span class="p">[</span><span class="s1">&#39;counter&#39;</span><span class="p">])</span>
+                <span class="n">content</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+                    <span class="n">gas_limit</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">_gas_limit</span><span class="p">),</span>
+                    <span class="n">storage_limit</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">_storage_limit</span><span class="p">),</span>
+                    <span class="n">fee</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">_fee</span><span class="p">),</span>
+                    <span class="n">counter</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">current_counter</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">get_counter_offset</span><span class="p">())</span>
+                <span class="p">)</span>
 
             <span class="n">content</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;metadata&#39;</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;autofilled transaction content: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">content</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">content</span>
 
         <span class="n">opg</span><span class="o">.</span><span class="n">contents</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">fill_content</span><span class="p">,</span> <span class="n">opg_with_metadata</span><span class="p">[</span><span class="s1">&#39;contents&#39;</span><span class="p">]))</span>
@@ -439,7 +433,12 @@
         <span class="n">hash_digest</span> <span class="o">=</span> <span class="n">blake2b_32</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">binary_payload</span><span class="p">())</span><span class="o">.</span><span class="n">digest</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">base58_encode</span><span class="p">(</span><span class="n">hash_digest</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;o&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="OperationGroup.preapply"><a class="viewcode-back" href="../../../operation_groups.html#pytezos.operation.group.OperationGroup.preapply">[docs]</a>    <span class="k">def</span> <span class="nf">preapply</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">run_operation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># TODO: Docstring</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell</span><span class="o">.</span><span class="n">blocks</span><span class="p">[</span><span class="s1">&#39;head&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">helpers</span><span class="o">.</span><span class="n">scripts</span><span class="o">.</span><span class="n">run_operation</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">json_payload</span><span class="p">())</span>
+
+<div class="viewcode-block" id="OperationGroup.preapply"><a class="viewcode-back" href="../../../operation_groups.html#pytezos.operation.group.OperationGroup.preapply">[docs]</a>    <span class="nd">@deprecated</span><span class="p">(</span><span class="n">deprecated_in</span><span class="o">=</span><span class="s1">&#39;3.1.0&#39;</span><span class="p">,</span> <span class="n">removed_in</span><span class="o">=</span><span class="s1">&#39;4.0.0&#39;</span><span class="p">,</span> <span class="n">details</span><span class="o">=</span><span class="s1">&#39;use `run_operation()` instead&#39;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">preapply</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Preapply signed operation group.</span>
 
 <span class="sd">        :returns: RPC response from `preapply`</span>
@@ -447,35 +446,29 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">signature</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Not signed&#39;</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">helpers</span><span class="o">.</span><span class="n">preapply</span><span class="o">.</span><span class="n">operations</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">operations</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">json_payload</span><span class="p">()])[</span><span class="mi">0</span><span class="p">]</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_operation</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="OperationGroup.inject"><a class="viewcode-back" href="../../../operation_groups.html#pytezos.operation.group.OperationGroup.inject">[docs]</a>    <span class="k">def</span> <span class="nf">inject</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">_async</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">preapply</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">check_result</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">num_blocks_wait</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
         <span class="n">time_between_blocks</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">min_confirmations</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">min_confirmations</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Inject the signed operation group.</span>
 
-<span class="sd">        :param preapply: do a preapply before injection</span>
 <span class="sd">        :param check_result: raise RpcError in case operation is applied but has runtime errors</span>
 <span class="sd">        :param num_blocks_wait: number of blocks to wait for injection</span>
 <span class="sd">        :param time_between_blocks: override the corresponding parameter from constants</span>
-<span class="sd">        :param min_configrations: number of block injections to wait for before returning</span>
+<span class="sd">        :param min_confirmations: number of block injections to wait for before returning</span>
 <span class="sd">        :returns: operation group with metadata (raw RPC response)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">_async</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;_async&#39;</span><span class="p">):</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;`_async` argument is deprecated, use `min_confirmations` instead&#39;</span><span class="p">)</span>
-            <span class="n">min_confirmations</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">if</span> <span class="n">_async</span> <span class="ow">is</span> <span class="kc">True</span> <span class="k">else</span> <span class="mi">1</span>
+            <span class="n">min_confirmations</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">if</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;_async&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">True</span> <span class="k">else</span> <span class="mi">1</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">preapply</span><span class="p">:</span>
-            <span class="n">opg_with_metadata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">preapply</span><span class="p">()</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">OperationResult</span><span class="o">.</span><span class="n">is_applied</span><span class="p">(</span><span class="n">opg_with_metadata</span><span class="p">):</span>
-                <span class="k">raise</span> <span class="n">RpcError</span><span class="o">.</span><span class="n">from_errors</span><span class="p">(</span><span class="n">OperationResult</span><span class="o">.</span><span class="n">errors</span><span class="p">(</span><span class="n">opg_with_metadata</span><span class="p">))</span>
 
         <span class="n">opg_hash</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell</span><span class="o">.</span><span class="n">injection</span><span class="o">.</span><span class="n">operation</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
             <span class="n">operation</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">binary_payload</span><span class="p">(),</span>
@@ -523,7 +516,8 @@
 
         <span class="k">raise</span> <span class="ne">TimeoutError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Operation </span><span class="si">{</span><span class="n">opg_hash</span><span class="si">}</span><span class="s1"> got </span><span class="si">{</span><span class="n">confirmations</span><span class="si">}</span><span class="s1"> confirmations in </span><span class="si">{</span><span class="n">num_blocks_wait</span><span class="si">}</span><span class="s1"> blocks&#39;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="OperationGroup.result"><a class="viewcode-back" href="../../../operation_groups.html#pytezos.operation.group.OperationGroup.result">[docs]</a>    <span class="k">def</span> <span class="nf">result</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">OperationResult</span><span class="p">]:</span>
+<div class="viewcode-block" id="OperationGroup.result"><a class="viewcode-back" href="../../../operation_groups.html#pytezos.operation.group.OperationGroup.result">[docs]</a>    <span class="nd">@deprecated</span><span class="p">(</span><span class="n">deprecated_in</span><span class="o">=</span><span class="s1">&#39;3.1.0&#39;</span><span class="p">,</span> <span class="n">removed_in</span><span class="o">=</span><span class="s1">&#39;4.0.0&#39;</span><span class="p">,</span> <span class="n">details</span><span class="o">=</span><span class="s1">&#39;use `run_operation()` instead&#39;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">result</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">OperationResult</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;Parse the preapply result.</span>
 
 <span class="sd">        :rtype: List[OperationResult]</span>

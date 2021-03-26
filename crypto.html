@@ -176,6 +176,17 @@
 <dd><p>Represents a public or secret key for Tezos. Ed25519, Secp256k1 and P256
 are supported.</p>
 <dl class="py method">
+<dt id="pytezos.crypto.key.Key.blinded_public_key_hash">
+<code class="sig-name descname"><span class="pre">blinded_public_key_hash</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">str</span><a class="reference internal" href="_modules/pytezos/crypto/key.html#Key.blinded_public_key_hash"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.crypto.key.Key.blinded_public_key_hash" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates base58 encoded commitment out of activation code (required) and public key hash</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>blinded public key hash</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt id="pytezos.crypto.key.Key.from_alias">
 <em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">from_alias</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">alias</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">passphrase</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">bytes</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tezos_client_dir</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'~/.tezos-client'</span></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#pytezos.crypto.key.Key" title="pytezos.crypto.key.Key"><span class="pre">pytezos.crypto.key.Key</span></a><a class="reference internal" href="_modules/pytezos/crypto/key.html#Key.from_alias"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.crypto.key.Key.from_alias" title="Permalink to this definition">¶</a></dt>
 <dd><p>Import secret key from tezos-client keychain.</p>
@@ -210,11 +221,11 @@ if not set value from from PYTEZOS_PASSPHRASE env variable will be used or promt
 
 <dl class="py method">
 <dt id="pytezos.crypto.key.Key.from_faucet">
-<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">from_faucet</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#pytezos.crypto.key.Key" title="pytezos.crypto.key.Key"><span class="pre">pytezos.crypto.key.Key</span></a><a class="reference internal" href="_modules/pytezos/crypto/key.html#Key.from_faucet"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.crypto.key.Key.from_faucet" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">from_faucet</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#pytezos.crypto.key.Key" title="pytezos.crypto.key.Key"><span class="pre">pytezos.crypto.key.Key</span></a><a class="reference internal" href="_modules/pytezos/crypto/key.html#Key.from_faucet"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.crypto.key.Key.from_faucet" title="Permalink to this definition">¶</a></dt>
 <dd><p>Import key from a faucet file: <a class="reference external" href="https://faucet.tzalpha.net/">https://faucet.tzalpha.net/</a></p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>path</strong> – path to the json file</p>
+<dd class="field-odd"><p><strong>source</strong> – path to the json file</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p><a class="reference internal" href="#pytezos.crypto.key.Key" title="pytezos.crypto.key.Key">Key</a></p>
