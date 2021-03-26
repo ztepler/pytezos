@@ -283,6 +283,22 @@ More info <a class="reference external" href="https://tezos.gitlab.io/master/whi
 </dd></dl>
 
 <dl class="py method">
+<dt id="pytezos.client.PyTezosClient.check_message">
+<code class="sig-name descname"><span class="pre">check_message</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">public_key</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">signature</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'genesis'</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">None</span><a class="reference internal" href="_modules/pytezos/client.html#PyTezosClient.check_message"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.client.PyTezosClient.check_message" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check message signature</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>message</strong> – Signed operation</p></li>
+<li><p><strong>public_key</strong> – Signer’s public key</p></li>
+<li><p><strong>signature</strong> – Message signature</p></li>
+<li><p><strong>block</strong> – Specify block, defaults to genesis</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt id="pytezos.client.PyTezosClient.contract">
 <code class="sig-name descname"><span class="pre">contract</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">address</span></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#pytezos.contract.interface.ContractInterface" title="pytezos.contract.interface.ContractInterface"><span class="pre">pytezos.contract.interface.ContractInterface</span></a><a class="reference internal" href="_modules/pytezos/client.html#PyTezosClient.contract"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.client.PyTezosClient.contract" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get a high-level interface for a given smart contract id.</p>
@@ -371,6 +387,20 @@ More info <a class="reference external" href="https://tezos.gitlab.io/master/whi
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>level</strong> – Endorsed level</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>dict or OperationGroup</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.client.PyTezosClient.failing_noop">
+<code class="sig-name descname"><span class="pre">failing_noop</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arbitrary</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pytezos.client.PyTezosClient.failing_noop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Operation to sign arbitrary data without the risk it will be used onchain.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>arbitrary</strong> – Message to sign</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>dict or OperationGroup</p>
@@ -496,6 +526,23 @@ More info <a class="reference external" href="https://tezos.stackexchange.com/qu
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>dict or OperationGroup</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.client.PyTezosClient.sign_message">
+<code class="sig-name descname"><span class="pre">sign_message</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'genesis'</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">str</span><a class="reference internal" href="_modules/pytezos/client.html#PyTezosClient.sign_message"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.client.PyTezosClient.sign_message" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sign arbitrary message with guarantee that resulting operation won’t be used onchain.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>message</strong> – Message to sign</p></li>
+<li><p><strong>block</strong> – Specify block, defaults to genesis</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Base58-encoded signature (non-generic)</p>
 </dd>
 </dl>
 </dd></dl>

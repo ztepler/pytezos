@@ -329,8 +329,22 @@ More info <a class="reference external" href="https://tezos.gitlab.io/master/whi
 </dd></dl>
 
 <dl class="py method">
+<dt id="pytezos.operation.group.OperationGroup.failing_noop">
+<code class="sig-name descname"><span class="pre">failing_noop</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arbitrary</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pytezos.operation.group.OperationGroup.failing_noop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Operation to sign arbitrary data without the risk it will be used onchain.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>arbitrary</strong> – Message to sign</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>dict or OperationGroup</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt id="pytezos.operation.group.OperationGroup.fill">
-<code class="sig-name descname"><span class="pre">fill</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">counter</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ttl</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/operation/group.html#OperationGroup.fill"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.operation.group.OperationGroup.fill" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">fill</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">counter</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ttl</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#pytezos.operation.group.OperationGroup" title="pytezos.operation.group.OperationGroup"><span class="pre">pytezos.operation.group.OperationGroup</span></a><a class="reference internal" href="_modules/pytezos/operation/group.html#OperationGroup.fill"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.operation.group.OperationGroup.fill" title="Permalink to this definition">¶</a></dt>
 <dd><p>Try to fill all fields left unfilled, use approximate fees
 (not optimal, use <cite>autofill</cite> to simulate operation and get precise values).</p>
 <dl class="field-list simple">
@@ -389,6 +403,20 @@ More info <a class="reference external" href="https://tezos.gitlab.io/master/whi
 <dt id="pytezos.operation.group.OperationGroup.json_payload">
 <code class="sig-name descname"><span class="pre">json_payload</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">dict</span><a class="reference internal" href="_modules/pytezos/operation/group.html#OperationGroup.json_payload"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.operation.group.OperationGroup.json_payload" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get JSON payload used for the injection.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.operation.group.OperationGroup.message">
+<code class="sig-name descname"><span class="pre">message</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">block</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'genesis'</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">bytes</span><a class="reference internal" href="_modules/pytezos/operation/group.html#OperationGroup.message"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.operation.group.OperationGroup.message" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get payload for the failing noop operation</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>block</strong> – Specify operation branch (default is genesis)</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Message bytes</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -531,7 +559,7 @@ More info <a class="reference external" href="https://tezos.stackexchange.com/qu
 
 <dl class="py method">
 <dt id="pytezos.operation.group.OperationGroup.sign">
-<code class="sig-name descname"><span class="pre">sign</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/operation/group.html#OperationGroup.sign"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.operation.group.OperationGroup.sign" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">sign</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#pytezos.operation.group.OperationGroup" title="pytezos.operation.group.OperationGroup"><span class="pre">pytezos.operation.group.OperationGroup</span></a><a class="reference internal" href="_modules/pytezos/operation/group.html#OperationGroup.sign"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.operation.group.OperationGroup.sign" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sign the operation group with the key specified by <cite>using</cite>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
@@ -808,6 +836,11 @@ If the receiver is a smart contract, then optional parameters may be passed.</p>
 </dd>
 </dl>
 </dd></dl>
+
+<dl class="py function">
+<dt id="pytezos.operation.forge.forge_failing_noop">
+<code class="sig-prename descclassname"><span class="pre">pytezos.operation.forge.</span></code><code class="sig-name descname"><span class="pre">forge_failing_noop</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">content</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/operation/forge.html#forge_failing_noop"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.operation.forge.forge_failing_noop" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="py function">
 <dt id="pytezos.operation.forge.forge_operation">
