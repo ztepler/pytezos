@@ -741,6 +741,17 @@ If the receiver is a smart contract, then optional parameters may be passed.</p>
 </dl>
 </dd></dl>
 
+<dl class="py attribute">
+<dt id="pytezos.contract.interface.ContractInterface.metadata">
+<code class="sig-name descname"><span class="pre">metadata</span></code><a class="headerlink" href="#pytezos.contract.interface.ContractInterface.metadata" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get TZIP-016 contract metadata, if exists</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>ContractMetadata</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py method">
 <dt id="pytezos.contract.interface.ContractInterface.operation_result">
 <code class="sig-name descname"><span class="pre">operation_result</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">operation_group</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#pytezos.contract.result.ContractCallResult" title="pytezos.contract.result.ContractCallResult"><span class="pre">pytezos.contract.result.ContractCallResult</span></a><span class="p"><span class="pre">]</span></span><a class="reference internal" href="_modules/pytezos/contract/interface.html#ContractInterface.operation_result"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.contract.interface.ContractInterface.operation_result" title="Permalink to this definition">¶</a></dt>
@@ -935,6 +946,17 @@ Also, if address is undefined you can specify RPC endpoint, and private key.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt id="pytezos.contract.call.ContractCall.callback_view">
+<code class="sig-name descname"><span class="pre">callback_view</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/contract/call.html#ContractCall.callback_view"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.contract.call.ContractCall.callback_view" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get return value of an on-chain callback method</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Decoded parameters of a callback</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt id="pytezos.contract.call.ContractCall.cmdline">
 <code class="sig-name descname"><span class="pre">cmdline</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/contract/call.html#ContractCall.cmdline"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.contract.call.ContractCall.cmdline" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generate command line for tezos client.</p>
@@ -1008,7 +1030,7 @@ Also, if address is undefined you can specify RPC endpoint, and private key.</p>
 <li><p><strong>amount</strong> – patch AMOUNT</p></li>
 <li><p><strong>balance</strong> – patch BALANCE</p></li>
 <li><p><strong>chain_id</strong> – patch CHAIN_ID</p></li>
-<li><p><strong>gas_limit</strong> – restrict max comsumed gas</p></li>
+<li><p><strong>gas_limit</strong> – restrict max consumed gas</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
@@ -1029,14 +1051,22 @@ Also, if address is undefined you can specify RPC endpoint, and private key.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="pytezos.contract.call.ContractCall.view">
-<code class="sig-name descname"><span class="pre">view</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/contract/call.html#ContractCall.view"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.contract.call.ContractCall.view" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get return value of a view method.</p>
+<dt id="pytezos.contract.call.ContractCall.storage_view">
+<code class="sig-name descname"><span class="pre">storage_view</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/contract/call.html#ContractCall.storage_view"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.contract.call.ContractCall.storage_view" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get return value of an off-chain storage view.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>Decoded parameters of a callback</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.contract.call.ContractCall.view">
+<code class="sig-name descname"><span class="pre">view</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/contract/call.html#ContractCall.view"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.contract.call.ContractCall.view" title="Permalink to this definition">¶</a></dt>
+<dd><div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version 3.0.4: </span>This will be removed in 3.1.0. Use callback_view instead</p>
+</div>
 </dd></dl>
 
 <dl class="py method">

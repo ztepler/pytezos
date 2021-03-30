@@ -183,8 +183,8 @@
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">res</span> <span class="o">=</span> <span class="p">[</span>
             <span class="nb">super</span><span class="p">(</span><span class="n">ContractEntrypoint</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">(),</span>
-            <span class="sa">f</span><span class="s1">&#39;.entrypoint  # </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">entrypoint</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
-            <span class="sa">f</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Builtin</span><span class="se">\n</span><span class="s1">(*args, **kwargs)  # build transaction parameters (see typedef)&#39;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s1">&#39;.entrypoint</span><span class="se">\t</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">entrypoint</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Builtin</span><span class="se">\n</span><span class="s1">(*args, **kwargs)</span><span class="se">\t</span><span class="s1"># build transaction parameters (see typedef)&#39;</span><span class="p">,</span>
             <span class="sa">f</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Typedef</span><span class="se">\n</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__doc__</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
             <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Helpers&#39;</span><span class="p">,</span>
             <span class="n">get_class_docstring</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">)</span>
@@ -208,8 +208,10 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">py_obj</span> <span class="o">=</span> <span class="kc">None</span>
 
-        <span class="k">return</span> <span class="n">ContractCall</span><span class="p">(</span><span class="n">context</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">,</span>
-                            <span class="n">parameters</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">py_obj</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">mode</span><span class="p">))</span></div>
+        <span class="k">return</span> <span class="n">ContractCall</span><span class="p">(</span>
+            <span class="n">context</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">,</span>
+            <span class="n">parameters</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">py_obj</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">mode</span><span class="p">),</span>
+        <span class="p">)</span></div>
 
 <div class="viewcode-block" id="ContractEntrypoint.decode"><a class="viewcode-back" href="../../../high_level.html#pytezos.contract.entrypoint.ContractEntrypoint.decode">[docs]</a>    <span class="k">def</span> <span class="nf">decode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">entrypoint</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot; Convert from Michelson to Python type system</span>
@@ -240,7 +242,7 @@
                 <span class="o">.</span><span class="n">to_parameters</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="n">mode</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">mode</span><span class="p">)</span>
         <span class="k">except</span> <span class="n">MichelsonRuntimeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__doc__</span><span class="p">)</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Unexpected arguments: </span><span class="si">{</span><span class="n">pformat</span><span class="p">(</span><span class="n">py_obj</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="o">*</span><span class="n">e</span><span class="o">.</span><span class="n">args</span><span class="p">)</span></div></div>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Unexpected arguments: </span><span class="si">{</span><span class="n">pformat</span><span class="p">(</span><span class="n">py_obj</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="o">*</span><span class="n">e</span><span class="o">.</span><span class="n">args</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span></div></div>
 </pre></div>
 
            </div>

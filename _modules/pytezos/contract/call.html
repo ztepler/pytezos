@@ -197,7 +197,7 @@
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">res</span> <span class="o">=</span> <span class="p">[</span>
             <span class="nb">super</span><span class="p">(</span><span class="n">ContractCall</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">(),</span>
-            <span class="sa">f</span><span class="s1">&#39;.amount  # </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">amount</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s1">&#39;.amount</span><span class="se">\t</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">amount</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
             <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Parameters&#39;</span><span class="p">,</span>
             <span class="n">pformat</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">),</span>
             <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Helpers&#39;</span><span class="p">,</span>
@@ -303,7 +303,7 @@
 <span class="sd">        :param amount: patch AMOUNT</span>
 <span class="sd">        :param balance: patch BALANCE</span>
 <span class="sd">        :param chain_id: patch CHAIN_ID</span>
-<span class="sd">        :param gas_limit: restrict max comsumed gas</span>
+<span class="sd">        :param gas_limit: restrict max consumed gas</span>
 <span class="sd">        :rtype: ContractCallResult</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">storage_ty</span> <span class="o">=</span> <span class="n">StorageSection</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">storage_expr</span><span class="p">)</span>
@@ -353,8 +353,16 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_operation</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="ContractCall.view"><a class="viewcode-back" href="../../../high_level.html#pytezos.contract.call.ContractCall.view">[docs]</a>    <span class="k">def</span> <span class="nf">view</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Get return value of a view method.</span>
+<div class="viewcode-block" id="ContractCall.storage_view"><a class="viewcode-back" href="../../../high_level.html#pytezos.contract.call.ContractCall.storage_view">[docs]</a>    <span class="k">def</span> <span class="nf">storage_view</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Get return value of an off-chain storage view.</span>
+
+<span class="sd">        :returns: Decoded parameters of a callback</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">interpret</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">res</span><span class="o">.</span><span class="n">storage</span>  <span class="c1"># type: ignore</span></div>
+
+<div class="viewcode-block" id="ContractCall.callback_view"><a class="viewcode-back" href="../../../high_level.html#pytezos.contract.call.ContractCall.callback_view">[docs]</a>    <span class="k">def</span> <span class="nf">callback_view</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Get return value of an on-chain callback method</span>
 
 <span class="sd">        :returns: Decoded parameters of a callback</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -373,7 +381,11 @@
         <span class="k">if</span> <span class="n">error</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">stdout</span><span class="p">))</span>
             <span class="k">raise</span> <span class="n">error</span>
-        <span class="k">return</span> <span class="n">res</span></div></div>
+        <span class="k">return</span> <span class="n">res</span></div>
+
+<div class="viewcode-block" id="ContractCall.view"><a class="viewcode-back" href="../../../high_level.html#pytezos.contract.call.ContractCall.view">[docs]</a>    <span class="nd">@deprecated</span><span class="p">(</span><span class="n">deprecated_in</span><span class="o">=</span><span class="s1">&#39;3.0.4&#39;</span><span class="p">,</span> <span class="n">removed_in</span><span class="o">=</span><span class="s1">&#39;3.1.0&#39;</span><span class="p">,</span> <span class="n">details</span><span class="o">=</span><span class="s1">&#39;Use callback_view instead&#39;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">view</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">callback_view</span><span class="p">()</span></div></div>
 </pre></div>
 
            </div>
