@@ -160,9 +160,11 @@
             
   <h1>Source code for pytezos.contract.interface</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">from</span> <span class="nn">decimal</span> <span class="kn">import</span> <span class="n">Decimal</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">lru_cache</span>
 <span class="kn">from</span> <span class="nn">os.path</span> <span class="kn">import</span> <span class="n">exists</span><span class="p">,</span> <span class="n">expanduser</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">cast</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">cast</span>
 <span class="kn">from</span> <span class="nn">urllib.parse</span> <span class="kn">import</span> <span class="n">urlparse</span>
 
 <span class="kn">import</span> <span class="nn">requests</span>
@@ -171,19 +173,32 @@
 
 <span class="kn">from</span> <span class="nn">pytezos.context.mixin</span> <span class="kn">import</span> <span class="n">ContextMixin</span>  <span class="c1"># type: ignore</span>
 <span class="kn">from</span> <span class="nn">pytezos.context.mixin</span> <span class="kn">import</span> <span class="n">ExecutionContext</span>
+<span class="kn">from</span> <span class="nn">pytezos.contract.call</span> <span class="kn">import</span> <span class="n">ContractCall</span>
 <span class="kn">from</span> <span class="nn">pytezos.contract.data</span> <span class="kn">import</span> <span class="n">ContractData</span>
 <span class="kn">from</span> <span class="nn">pytezos.contract.entrypoint</span> <span class="kn">import</span> <span class="n">ContractEntrypoint</span>
 <span class="kn">from</span> <span class="nn">pytezos.contract.metadata</span> <span class="kn">import</span> <span class="n">ContractMetadata</span>
 <span class="kn">from</span> <span class="nn">pytezos.contract.result</span> <span class="kn">import</span> <span class="n">ContractCallResult</span>
+<span class="kn">from</span> <span class="nn">pytezos.contract.token_metadata</span> <span class="kn">import</span> <span class="n">ContractTokenMetadata</span>
 <span class="kn">from</span> <span class="nn">pytezos.crypto.key</span> <span class="kn">import</span> <span class="n">Key</span>
 <span class="kn">from</span> <span class="nn">pytezos.jupyter</span> <span class="kn">import</span> <span class="n">get_class_docstring</span>
 <span class="kn">from</span> <span class="nn">pytezos.logging</span> <span class="kn">import</span> <span class="n">logger</span>
 <span class="kn">from</span> <span class="nn">pytezos.michelson.format</span> <span class="kn">import</span> <span class="n">micheline_to_michelson</span>
+<span class="kn">from</span> <span class="nn">pytezos.michelson.micheline</span> <span class="kn">import</span> <span class="n">MichelsonRuntimeError</span>
 <span class="kn">from</span> <span class="nn">pytezos.michelson.parse</span> <span class="kn">import</span> <span class="n">michelson_to_micheline</span>
 <span class="kn">from</span> <span class="nn">pytezos.michelson.program</span> <span class="kn">import</span> <span class="n">MichelsonProgram</span>
 <span class="kn">from</span> <span class="nn">pytezos.michelson.types.base</span> <span class="kn">import</span> <span class="n">generate_pydoc</span>
 <span class="kn">from</span> <span class="nn">pytezos.operation.group</span> <span class="kn">import</span> <span class="n">OperationGroup</span>
 <span class="kn">from</span> <span class="nn">pytezos.rpc</span> <span class="kn">import</span> <span class="n">ShellQuery</span>
+
+
+<span class="k">class</span> <span class="nc">ContractTokenMetadataProxy</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Get TZIP-21 contract token metadata by token_id</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fn</span> <span class="o">=</span> <span class="n">fn</span>
+
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fn</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="ContractInterface"><a class="viewcode-back" href="../../../high_level.html#pytezos.contract.interface.ContractInterface">[docs]</a><span class="k">class</span> <span class="nc">ContractInterface</span><span class="p">(</span><span class="n">ContextMixin</span><span class="p">):</span>
@@ -193,8 +208,11 @@
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">ExecutionContext</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">context</span><span class="o">=</span><span class="n">context</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">entrypoints</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">program</span><span class="o">.</span><span class="n">parameter</span><span class="o">.</span><span class="n">list_entrypoints</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">entrypoint</span><span class="p">,</span> <span class="n">ty</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">entrypoints</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">entrypoint</span> <span class="o">==</span> <span class="s1">&#39;token_metadata&#39;</span><span class="p">:</span>
+                <span class="k">continue</span>
             <span class="n">attr</span> <span class="o">=</span> <span class="n">ContractEntrypoint</span><span class="p">(</span><span class="n">context</span><span class="o">=</span><span class="n">context</span><span class="p">,</span> <span class="n">entrypoint</span><span class="o">=</span><span class="n">entrypoint</span><span class="p">)</span>
             <span class="n">attr</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">=</span> <span class="n">generate_pydoc</span><span class="p">(</span><span class="n">ty</span><span class="p">,</span> <span class="n">entrypoint</span><span class="p">)</span>
             <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">entrypoint</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span>
@@ -341,6 +359,7 @@
         <span class="n">key</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Key</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">block_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">mode</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">ipfs_gateway</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;ContractInterface&#39;</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Change the block at which the current contract is inspected.</span>
 <span class="sd">        Also, if address is undefined you can specify RPC endpoint, and private key.</span>
@@ -359,6 +378,7 @@
                 <span class="n">address</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">address</span><span class="p">,</span>
                 <span class="n">block_id</span><span class="o">=</span><span class="n">block_id</span><span class="p">,</span>
                 <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">,</span>
+                <span class="n">ipfs_gateway</span><span class="o">=</span><span class="n">ipfs_gateway</span><span class="p">,</span>
             <span class="p">)</span>
         <span class="p">)</span></div>
 
@@ -414,6 +434,71 @@
             <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;Unknown metadata URL scheme&#39;</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">metadata</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">token_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ContractTokenMetadataProxy</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot; Get TZIP-021 contract token metadata proxy</span>
+
+<span class="sd">        :rtype: ContractTokenMetadataProxy</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">ContractTokenMetadataProxy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_token_metadata</span><span class="p">)</span>
+
+    <span class="nd">@lru_cache</span>
+    <span class="k">def</span> <span class="nf">_get_token_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">token_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ContractTokenMetadata</span><span class="p">]:</span>
+        <span class="n">token_metadata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_token_metadata_from_view</span><span class="p">(</span><span class="n">token_id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">token_metadata</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">token_metadata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_token_metadata_from_storage</span><span class="p">(</span><span class="n">token_id</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">token_metadata</span>
+
+    <span class="k">def</span> <span class="nf">_get_token_metadata_from_storage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">token_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ContractTokenMetadata</span><span class="p">]:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Trying to fetch token </span><span class="si">%s</span><span class="s1"> metadata from storage&#39;</span><span class="p">,</span> <span class="n">token_id</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">token_metadata_url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">storage</span><span class="p">[</span><span class="s1">&#39;token_metadata&#39;</span><span class="p">][</span><span class="n">token_id</span><span class="p">][</span><span class="s1">&#39;token_info&#39;</span><span class="p">][</span><span class="s1">&#39;&#39;</span><span class="p">]()</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
+        <span class="c1"># FIXME: Dirty</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">KeyError</span><span class="p">,</span> <span class="ne">AssertionError</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Storage doesn</span><span class="se">\&#39;</span><span class="s1">t contain metadata URL for token </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">token_id</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">None</span>
+    
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Trying to fetch contract token metadata from `</span><span class="si">%s</span><span class="s1">`&#39;</span><span class="p">,</span> <span class="n">token_metadata_url</span><span class="p">)</span>
+        <span class="n">parsed_url</span> <span class="o">=</span> <span class="n">urlparse</span><span class="p">(</span><span class="n">token_metadata_url</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">parsed_url</span><span class="o">.</span><span class="n">scheme</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;http&#39;</span><span class="p">,</span> <span class="s1">&#39;https&#39;</span><span class="p">):</span>
+            <span class="n">token_metadata</span> <span class="o">=</span> <span class="n">ContractTokenMetadata</span><span class="o">.</span><span class="n">from_url</span><span class="p">(</span><span class="n">token_metadata_url</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">parsed_url</span><span class="o">.</span><span class="n">scheme</span> <span class="o">==</span> <span class="s1">&#39;ipfs&#39;</span><span class="p">:</span>
+            <span class="n">token_metadata</span> <span class="o">=</span> <span class="n">ContractTokenMetadata</span><span class="o">.</span><span class="n">from_ipfs</span><span class="p">(</span><span class="n">parsed_url</span><span class="o">.</span><span class="n">netloc</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">parsed_url</span><span class="o">.</span><span class="n">scheme</span> <span class="o">==</span> <span class="s1">&#39;tezos-storage&#39;</span><span class="p">:</span>
+            <span class="n">parts</span> <span class="o">=</span> <span class="n">parsed_url</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">storage</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">storage</span>
+            <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="n">context</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_spawn_context</span><span class="p">(</span><span class="n">address</span><span class="o">=</span><span class="n">parsed_url</span><span class="o">.</span><span class="n">netloc</span><span class="p">)</span>
+                <span class="n">storage</span> <span class="o">=</span> <span class="n">ContractInterface</span><span class="o">.</span><span class="n">from_context</span><span class="p">(</span><span class="n">context</span><span class="p">)</span><span class="o">.</span><span class="n">storage</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;Unknown metadata URL scheme&#39;</span><span class="p">)</span>
+            <span class="n">token_metadata_json</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">storage</span><span class="p">[</span><span class="s1">&#39;metadata&#39;</span><span class="p">][</span><span class="n">parts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]()</span><span class="o">.</span><span class="n">decode</span><span class="p">())</span>
+            <span class="n">token_metadata</span> <span class="o">=</span> <span class="n">ContractTokenMetadata</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span><span class="n">token_metadata_json</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">parsed_url</span><span class="o">.</span><span class="n">scheme</span> <span class="o">==</span> <span class="s1">&#39;sha256&#39;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;Unknown metadata URL scheme&#39;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">token_metadata</span>
+
+    <span class="k">def</span> <span class="nf">_get_token_metadata_from_view</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">token_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ContractTokenMetadata</span><span class="p">]:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Trying to fetch token </span><span class="si">%s</span><span class="s1"> metadata from off-chain view&#39;</span><span class="p">,</span> <span class="n">token_id</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">token_metadata_json</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">tokenMetadata</span><span class="p">(</span><span class="n">token_id</span><span class="p">)</span><span class="o">.</span><span class="n">storage_view</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">return</span> <span class="n">ContractTokenMetadata</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span><span class="n">token_metadata_json</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;There</span><span class="se">\&#39;</span><span class="s1">s no off-chain view named `token_metadata`&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">except</span> <span class="n">MichelsonRuntimeError</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Off-chain view has no token metadata for token_id </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">token_id</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">None</span>
 
     <span class="nd">@cached_property</span>
     <span class="k">def</span> <span class="nf">metadata_url</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
