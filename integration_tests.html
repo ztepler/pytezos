@@ -4,7 +4,8 @@
 <html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8">
-  
+  <meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <title>Michelson integration tests &mdash; PyTezos  documentation</title>
@@ -83,7 +84,7 @@
               
             
             
-              <p class="caption"><span class="caption-text">Contents</span></p>
+              <p><span class="caption-text">Contents</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="quick_start.html">Quick start</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Michelson integration tests</a><ul>
@@ -168,9 +169,9 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="michelson-integration-tests">
+  <section id="michelson-integration-tests">
 <h1>Michelson integration tests<a class="headerlink" href="#michelson-integration-tests" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="basics">
+<section id="basics">
 <h2>Basics<a class="headerlink" href="#basics" title="Permalink to this headline">¶</a></h2>
 <p>Make sure you are familiar with the unittest package, if not - check out the docs: <a class="reference external" href="https://docs.python.org/3/library/unittest.html">https://docs.python.org/3/library/unittest.html</a></p>
 <p>Michelson tests are mostly based on two high-level interfaces:</p>
@@ -184,16 +185,16 @@
 <li><p><a class="reference internal" href="high_level.html#pytezos.contract.call.ContractCall.run_code" title="pytezos.contract.call.ContractCall.run_code"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pytezos.contract.call.ContractCall.run_code()</span></code></a> which uses standard RPC endpoint (i.e. remote Michelson interpreter)</p></li>
 <li><p><a class="reference internal" href="high_level.html#pytezos.contract.call.ContractCall.interpret" title="pytezos.contract.call.ContractCall.interpret"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pytezos.contract.call.ContractCall.interpret()</span></code></a> that uses built-in interpreter which is not guaranteed to behave exactly as the reference one</p></li>
 </ul>
-</div>
-<div class="section" id="step-by-step-guide">
+</section>
+<section id="step-by-step-guide">
 <h2>Step by step guide<a class="headerlink" href="#step-by-step-guide" title="Permalink to this headline">¶</a></h2>
 <p>Read this Medium article: <a class="reference external" href="https://medium.com/tezoscommons/testing-michelson-contracts-with-pytezos-513718499e93">https://medium.com/tezoscommons/testing-michelson-contracts-with-pytezos-513718499e93</a></p>
-</div>
-<div class="section" id="test-samples">
+</section>
+<section id="test-samples">
 <h2>Test samples<a class="headerlink" href="#test-samples" title="Permalink to this headline">¶</a></h2>
 <p>Check out test examples in this repo: <a class="reference external" href="https://github.com/baking-bad/pytezos/tree/master/examples">https://github.com/baking-bad/pytezos/tree/master/examples</a></p>
-</div>
-<div class="section" id="projects-using-pytezos">
+</section>
+<section id="projects-using-pytezos">
 <h2>Projects using PyTezos<a class="headerlink" href="#projects-using-pytezos" title="Permalink to this headline">¶</a></h2>
 <p>See how PyTezos testing engine is used in production:</p>
 <ul class="simple">
@@ -206,8 +207,8 @@
 <li><p>Equisafe NYX
 <a class="reference external" href="https://gitlab.com/equisafe/nyx/-/tree/master/tests">https://gitlab.com/equisafe/nyx/-/tree/master/tests</a></p></li>
 </ul>
-</div>
-</div>
+</section>
+</section>
 
 
            </div>

@@ -4,7 +4,8 @@
 <html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8">
-  
+  <meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <title>Michelson instructions &mdash; PyTezos  documentation</title>
@@ -83,7 +84,7 @@
               
             
             
-              <p class="caption"><span class="caption-text">Contents</span></p>
+              <p><span class="caption-text">Contents</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="quick_start.html">Quick start</a></li>
 <li class="toctree-l1"><a class="reference internal" href="integration_tests.html">Michelson integration tests</a></li>
@@ -176,9 +177,9 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="michelson-instructions">
+  <section id="michelson-instructions">
 <h1>Michelson instructions<a class="headerlink" href="#michelson-instructions" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="module-pytezos.michelson.instructions.base">
+<section id="module-pytezos.michelson.instructions.base">
 <span id="base-class"></span><h2>Base Class<a class="headerlink" href="#module-pytezos.michelson.instructions.base" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pytezos.michelson.instructions.base.MichelsonInstruction">
@@ -240,8 +241,8 @@
 <code class="sig-prename descclassname"><span class="pre">pytezos.michelson.instructions.base.</span></code><code class="sig-name descname"><span class="pre">format_stdout</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prim</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inputs</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outputs</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/michelson/instructions/base.html#format_stdout"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.michelson.instructions.base.format_stdout" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-</div>
-<div class="section" id="module-pytezos.michelson.instructions.adt">
+</section>
+<section id="module-pytezos.michelson.instructions.adt">
 <span id="adt-operations"></span><h2>ADT operations<a class="headerlink" href="#module-pytezos.michelson.instructions.adt" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pytezos.michelson.instructions.adt.CarInstruction">
@@ -398,8 +399,8 @@
 <code class="sig-prename descclassname"><span class="pre">pytezos.michelson.instructions.adt.</span></code><code class="sig-name descname"><span class="pre">execute_cxr</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prim</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stack</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="repl.html#pytezos.michelson.stack.MichelsonStack" title="pytezos.michelson.stack.MichelsonStack"><span class="pre">pytezos.michelson.stack.MichelsonStack</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">stdout</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/michelson/instructions/adt.html#execute_cxr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.michelson.instructions.adt.execute_cxr" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-</div>
-<div class="section" id="module-pytezos.michelson.instructions.arithmetic">
+</section>
+<section id="module-pytezos.michelson.instructions.arithmetic">
 <span id="arithmetic-operations"></span><h2>Arithmetic operations<a class="headerlink" href="#module-pytezos.michelson.instructions.arithmetic" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pytezos.michelson.instructions.arithmetic.AbsInstruction">
@@ -556,8 +557,8 @@
 <code class="sig-prename descclassname"><span class="pre">pytezos.michelson.instructions.arithmetic.</span></code><code class="sig-name descname"><span class="pre">execute_shift</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prim</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stack</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="repl.html#pytezos.michelson.stack.MichelsonStack" title="pytezos.michelson.stack.MichelsonStack"><span class="pre">pytezos.michelson.stack.MichelsonStack</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">stdout</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shift</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/michelson/instructions/arithmetic.html#execute_shift"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.michelson.instructions.arithmetic.execute_shift" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-</div>
-<div class="section" id="module-pytezos.michelson.instructions.boolean">
+</section>
+<section id="module-pytezos.michelson.instructions.boolean">
 <span id="boolean-operations"></span><h2>Boolean operations<a class="headerlink" href="#module-pytezos.michelson.instructions.boolean" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pytezos.michelson.instructions.boolean.AndInstruction">
@@ -624,8 +625,8 @@
 <code class="sig-prename descclassname"><span class="pre">pytezos.michelson.instructions.boolean.</span></code><code class="sig-name descname"><span class="pre">execute_boolean_add</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prim</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stack</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="repl.html#pytezos.michelson.stack.MichelsonStack" title="pytezos.michelson.stack.MichelsonStack"><span class="pre">pytezos.michelson.stack.MichelsonStack</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">stdout</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Callable</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/michelson/instructions/boolean.html#execute_boolean_add"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.michelson.instructions.boolean.execute_boolean_add" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-</div>
-<div class="section" id="module-pytezos.michelson.instructions.compare">
+</section>
+<section id="module-pytezos.michelson.instructions.compare">
 <span id="comparison-operations"></span><h2>Comparison operations<a class="headerlink" href="#module-pytezos.michelson.instructions.compare" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pytezos.michelson.instructions.compare.CompareInstruction">
@@ -742,8 +743,8 @@
 <code class="sig-prename descclassname"><span class="pre">pytezos.michelson.instructions.compare.</span></code><code class="sig-name descname"><span class="pre">execute_zero_compare</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prim</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stack</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="repl.html#pytezos.michelson.stack.MichelsonStack" title="pytezos.michelson.stack.MichelsonStack"><span class="pre">pytezos.michelson.stack.MichelsonStack</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">stdout</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compare</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/michelson/instructions/compare.html#execute_zero_compare"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.michelson.instructions.compare.execute_zero_compare" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-</div>
-<div class="section" id="module-pytezos.michelson.instructions.control">
+</section>
+<section id="module-pytezos.michelson.instructions.control">
 <span id="control-flow-operations"></span><h2>Control flow operations<a class="headerlink" href="#module-pytezos.michelson.instructions.control" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pytezos.michelson.instructions.control.ApplyInstruction">
@@ -960,8 +961,8 @@
 <code class="sig-prename descclassname"><span class="pre">pytezos.michelson.instructions.control.</span></code><code class="sig-name descname"><span class="pre">execute_dip</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prim</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stack</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="repl.html#pytezos.michelson.stack.MichelsonStack" title="pytezos.michelson.stack.MichelsonStack"><span class="pre">pytezos.michelson.stack.MichelsonStack</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">stdout</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">count</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">body</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Type</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#pytezos.michelson.instructions.base.MichelsonInstruction" title="pytezos.michelson.instructions.base.MichelsonInstruction"><span class="pre">pytezos.michelson.instructions.base.MichelsonInstruction</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">pytezos.context.abstract.AbstractContext</span></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#pytezos.michelson.instructions.base.MichelsonInstruction" title="pytezos.michelson.instructions.base.MichelsonInstruction"><span class="pre">pytezos.michelson.instructions.base.MichelsonInstruction</span></a><a class="reference internal" href="_modules/pytezos/michelson/instructions/control.html#execute_dip"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.michelson.instructions.control.execute_dip" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-</div>
-<div class="section" id="module-pytezos.michelson.instructions.crypto">
+</section>
+<section id="module-pytezos.michelson.instructions.crypto">
 <span id="crypto-operations"></span><h2>Crypto operations<a class="headerlink" href="#module-pytezos.michelson.instructions.crypto" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pytezos.michelson.instructions.crypto.Blake2bInstruction">
@@ -1113,8 +1114,8 @@
 <code class="sig-prename descclassname"><span class="pre">pytezos.michelson.instructions.crypto.</span></code><code class="sig-name descname"><span class="pre">execute_hash</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prim</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stack</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="repl.html#pytezos.michelson.stack.MichelsonStack" title="pytezos.michelson.stack.MichelsonStack"><span class="pre">pytezos.michelson.stack.MichelsonStack</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">stdout</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hash_digest</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">bytes</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><span class="pre">bytes</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/michelson/instructions/crypto.html#execute_hash"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.michelson.instructions.crypto.execute_hash" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-</div>
-<div class="section" id="module-pytezos.michelson.instructions.generic">
+</section>
+<section id="module-pytezos.michelson.instructions.generic">
 <span id="generic-operations"></span><h2>Generic operations<a class="headerlink" href="#module-pytezos.michelson.instructions.generic" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pytezos.michelson.instructions.generic.ConcatInstruction">
@@ -1221,8 +1222,8 @@
 
 </dd></dl>
 
-</div>
-<div class="section" id="module-pytezos.michelson.instructions.stack">
+</section>
+<section id="module-pytezos.michelson.instructions.stack">
 <span id="stack-operations"></span><h2>Stack operations<a class="headerlink" href="#module-pytezos.michelson.instructions.stack" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pytezos.michelson.instructions.stack.CastIntruction">
@@ -1374,8 +1375,8 @@
 
 </dd></dl>
 
-</div>
-<div class="section" id="module-pytezos.michelson.instructions.struct">
+</section>
+<section id="module-pytezos.michelson.instructions.struct">
 <span id="operations-with-structures"></span><h2>Operations with structures<a class="headerlink" href="#module-pytezos.michelson.instructions.struct" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pytezos.michelson.instructions.struct.ConsInstruction">
@@ -1542,8 +1543,8 @@
 
 </dd></dl>
 
-</div>
-<div class="section" id="module-pytezos.michelson.instructions.tezos">
+</section>
+<section id="module-pytezos.michelson.instructions.tezos">
 <span id="tezos-specific-operations"></span><h2>Tezos-specific operations<a class="headerlink" href="#module-pytezos.michelson.instructions.tezos" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pytezos.michelson.instructions.tezos.AddressInstruction">
@@ -1805,8 +1806,8 @@
 <code class="sig-prename descclassname"><span class="pre">pytezos.michelson.instructions.tezos.</span></code><code class="sig-name descname"><span class="pre">get_entrypoint_type</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">pytezos.context.abstract.AbstractContext</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">address</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Type</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="types.html#pytezos.michelson.types.base.MichelsonType" title="pytezos.michelson.types.base.MichelsonType"><span class="pre">pytezos.michelson.types.base.MichelsonType</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="_modules/pytezos/michelson/instructions/tezos.html#get_entrypoint_type"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.michelson.instructions.tezos.get_entrypoint_type" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-</div>
-<div class="section" id="module-pytezos.michelson.instructions.ticket">
+</section>
+<section id="module-pytezos.michelson.instructions.ticket">
 <span id="ticket-operations"></span><h2>Ticket operations<a class="headerlink" href="#module-pytezos.michelson.instructions.ticket" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pytezos.michelson.instructions.ticket.JoinTicketsInstruction">
@@ -1868,8 +1869,8 @@
 
 </dd></dl>
 
-</div>
-</div>
+</section>
+</section>
 
 
            </div>

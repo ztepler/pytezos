@@ -81,7 +81,7 @@
               
             
             
-              <p class="caption"><span class="caption-text">Contents</span></p>
+              <p><span class="caption-text">Contents</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="quick_start.html">Quick start</a></li>
 <li class="toctree-l1"><a class="reference internal" href="integration_tests.html">Michelson integration tests</a></li>
@@ -343,7 +343,7 @@
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="code.html#pytezos.michelson.macros.PxrNode.annots">annots (pytezos.michelson.macros.PxrNode attribute)</a>
+      <li><a href="code.html#pytezos.michelson.macros.PxrNode.annots">annots() (pytezos.michelson.macros.PxrNode property)</a>
 </li>
       <li><a href="rpc_queries.html#pytezos.rpc.protocol.OperationListListQuery.anonymous">anonymous() (pytezos.rpc.protocol.OperationListListQuery property)</a>
 </li>
@@ -352,13 +352,13 @@
       <li><a href="instructions.html#pytezos.michelson.instructions.base.MichelsonInstruction.args">args (pytezos.michelson.instructions.base.MichelsonInstruction attribute)</a>
 
       <ul>
-        <li><a href="code.html#pytezos.michelson.macros.PxrNode.args">(pytezos.michelson.macros.PxrNode attribute)</a>
-</li>
         <li><a href="types.html#pytezos.michelson.types.base.MichelsonType.args">(pytezos.michelson.types.base.MichelsonType attribute)</a>
 </li>
         <li><a href="rpc_queries.html#pytezos.rpc.node.RpcError.args">(pytezos.rpc.node.RpcError attribute)</a>
 </li>
       </ul></li>
+      <li><a href="code.html#pytezos.michelson.macros.PxrNode.args">args() (pytezos.michelson.macros.PxrNode property)</a>
+</li>
       <li><a href="instructions.html#pytezos.michelson.instructions.base.MichelsonInstruction.as_micheline_expr">as_micheline_expr() (pytezos.michelson.instructions.base.MichelsonInstruction class method)</a>
 
       <ul>
@@ -655,7 +655,7 @@
         <li><a href="rpc_queries.html#pytezos.rpc.shell.InvalidBlockQuery.delete">(pytezos.rpc.shell.InvalidBlockQuery method)</a>
 </li>
       </ul></li>
-      <li><a href="code.html#pytezos.michelson.macros.PxrNode.depth">depth (pytezos.michelson.macros.PxrNode attribute)</a>
+      <li><a href="code.html#pytezos.michelson.macros.PxrNode.depth">depth() (pytezos.michelson.macros.PxrNode property)</a>
 </li>
       <li><a href="rpc_queries.html#pytezos.rpc.shell.DescribeQuery">DescribeQuery (class in pytezos.rpc.shell)</a>
 </li>
@@ -1685,7 +1685,7 @@
 </li>
       <li><a href="types.html#pytezos.michelson.types.sum.OrType.is_right">is_right() (pytezos.michelson.types.sum.OrType method)</a>
 </li>
-      <li><a href="code.html#pytezos.michelson.macros.PxrNode.is_root">is_root (pytezos.michelson.macros.PxrNode attribute)</a>
+      <li><a href="code.html#pytezos.michelson.macros.PxrNode.is_root">is_root() (pytezos.michelson.macros.PxrNode property)</a>
 </li>
       <li><a href="crypto.html#pytezos.crypto.encoding.is_sig">is_sig() (in module pytezos.crypto.encoding)</a>
 </li>
@@ -3047,6 +3047,8 @@
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="rpc_queries.html#pytezos.rpc.node.retry">retry() (in module pytezos.rpc.node)</a>
+</li>
       <li><a href="high_level.html#pytezos.client.PyTezosClient.reveal">reveal() (pytezos.client.PyTezosClient method)</a>
 
       <ul>
@@ -3074,7 +3076,11 @@
 </li>
       </ul></li>
       <li><a href="high_level.html#pytezos.contract.call.ContractCall.run_operation">run_operation() (pytezos.contract.call.ContractCall method)</a>
+
+      <ul>
+        <li><a href="operation_groups.html#pytezos.operation.group.OperationGroup.run_operation">(pytezos.operation.group.OperationGroup method)</a>
 </li>
+      </ul></li>
       <li><a href="repl.html#pytezos.michelson.repl.Interpreter.run_tzt">run_tzt() (pytezos.michelson.repl.Interpreter static method)</a>
 </li>
       <li><a href="repl.html#pytezos.michelson.repl.Interpreter.run_view">run_view() (pytezos.michelson.repl.Interpreter static method)</a>

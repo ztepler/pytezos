@@ -4,7 +4,8 @@
 <html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8">
-  
+  <meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <title>RPC query engine &mdash; PyTezos  documentation</title>
@@ -83,7 +84,7 @@
               
             
             
-              <p class="caption"><span class="caption-text">Contents</span></p>
+              <p><span class="caption-text">Contents</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="quick_start.html">Quick start</a></li>
 <li class="toctree-l1"><a class="reference internal" href="integration_tests.html">Michelson integration tests</a></li>
@@ -169,9 +170,9 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="rpc-query-engine">
+  <section id="rpc-query-engine">
 <h1>RPC query engine<a class="headerlink" href="#rpc-query-engine" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="module-pytezos.rpc.shell">
+<section id="module-pytezos.rpc.shell">
 <span id="shell-level-endpoints"></span><h2>Shell-level endpoints<a class="headerlink" href="#module-pytezos.rpc.shell" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pytezos.rpc.shell.BlockInjectionQuery">
@@ -567,8 +568,8 @@ and signed by the client.</p>
 <code class="sig-prename descclassname"><span class="pre">pytezos.rpc.shell.</span></code><code class="sig-name descname"><span class="pre">make_operation_result</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/rpc/shell.html#make_operation_result"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.rpc.shell.make_operation_result" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-</div>
-<div class="section" id="module-pytezos.rpc.protocol">
+</section>
+<section id="module-pytezos.rpc.protocol">
 <span id="protocol-specific-endpoints"></span><h2>Protocol-specific endpoints<a class="headerlink" href="#module-pytezos.rpc.protocol" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pytezos.rpc.protocol.BigMapGetQuery">
@@ -1028,8 +1029,8 @@ or the list of predecessors for a given list of blocks.</p>
 <code class="sig-prename descclassname"><span class="pre">pytezos.rpc.protocol.</span></code><code class="sig-name descname"><span class="pre">to_timestamp</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">v</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/rpc/protocol.html#to_timestamp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.rpc.protocol.to_timestamp" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-</div>
-<div class="section" id="module-pytezos.rpc.helpers">
+</section>
+<section id="module-pytezos.rpc.helpers">
 <span id="rpc-helpers"></span><h2>RPC Helpers<a class="headerlink" href="#module-pytezos.rpc.helpers" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pytezos.rpc.helpers.BakingRightsQuery">
@@ -1660,8 +1661,8 @@ and return the resulting fitness and context hash.</p>
 
 </dd></dl>
 
-</div>
-<div class="section" id="module-pytezos.rpc.search">
+</section>
+<section id="module-pytezos.rpc.search">
 <span id="interval-search"></span><h2>Interval search<a class="headerlink" href="#module-pytezos.rpc.search" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pytezos.rpc.search.BlockSliceQuery">
@@ -1814,8 +1815,8 @@ and return the resulting fitness and context hash.</p>
 <code class="sig-prename descclassname"><span class="pre">pytezos.rpc.search.</span></code><code class="sig-name descname"><span class="pre">walk_state_change_interval</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">head</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">last</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">get</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Callable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">equals</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Callable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">head_value</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">last_value</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Generator</span><a class="reference internal" href="_modules/pytezos/rpc/search.html#walk_state_change_interval"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.rpc.search.walk_state_change_interval" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-</div>
-<div class="section" id="module-pytezos.rpc.node">
+</section>
+<section id="module-pytezos.rpc.node">
 <span id="node-wrapper-and-errors"></span><h2>Node wrapper and errors<a class="headerlink" href="#module-pytezos.rpc.node" title="Permalink to this headline">¶</a></h2>
 <dl class="py exception">
 <dt id="pytezos.rpc.node.RpcError">
@@ -1910,6 +1911,11 @@ set self.__traceback__ to tb and return self.</p>
 <dd></dd></dl>
 
 <dl class="py function">
+<dt id="pytezos.rpc.node.retry">
+<code class="sig-prename descclassname"><span class="pre">pytezos.rpc.node.</span></code><code class="sig-name descname"><span class="pre">retry</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fn</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/rpc/node.html#retry"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.rpc.node.retry" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
 <dt id="pytezos.rpc.node.urljoin">
 <code class="sig-prename descclassname"><span class="pre">pytezos.rpc.node.</span></code><code class="sig-name descname"><span class="pre">urljoin</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/rpc/node.html#urljoin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.rpc.node.urljoin" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -1945,8 +1951,8 @@ to an account, or a parameter was supplied of the wrong type</p>
 <dd><p>Catch all tez errors</p>
 </dd></dl>
 
-</div>
-</div>
+</section>
+</section>
 
 
            </div>

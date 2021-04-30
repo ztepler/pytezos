@@ -4,7 +4,8 @@
 <html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8">
-  
+  <meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <title>Building and parsing operations &mdash; PyTezos  documentation</title>
@@ -83,7 +84,7 @@
               
             
             
-              <p class="caption"><span class="caption-text">Contents</span></p>
+              <p><span class="caption-text">Contents</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="quick_start.html">Quick start</a></li>
 <li class="toctree-l1"><a class="reference internal" href="integration_tests.html">Michelson integration tests</a></li>
@@ -168,9 +169,9 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="building-and-parsing-operations">
+  <section id="building-and-parsing-operations">
 <h1>Building and parsing operations<a class="headerlink" href="#building-and-parsing-operations" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="operation-group">
+<section id="operation-group">
 <h2>Operation group<a class="headerlink" href="#operation-group" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pytezos.operation.group.OperationGroup">
@@ -527,7 +528,21 @@ More info <a class="reference external" href="https://tezos.gitlab.io/master/whi
 
 <dl class="py method">
 <dt id="pytezos.operation.group.OperationGroup.run">
-<code class="sig-name descname"><span class="pre">run</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">block_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'head'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/operation/group.html#OperationGroup.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.operation.group.OperationGroup.run" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">run</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">block_id</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'head'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/operation/group.html#OperationGroup.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.operation.group.OperationGroup.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Simulate operation without signature checks.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>block_id</strong> – Specify a level at which this operation should be applied (default is head)</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>RPC response from <cite>run_operation</cite></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.operation.group.OperationGroup.run_operation">
+<code class="sig-name descname"><span class="pre">run_operation</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">block_id</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'head'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/operation/group.html#OperationGroup.run_operation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.operation.group.OperationGroup.run_operation" title="Permalink to this definition">¶</a></dt>
 <dd><p>Simulate operation without signature checks.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -594,8 +609,8 @@ If the receiver is a smart contract, then optional parameters may be passed.</p>
 
 </dd></dl>
 
-</div>
-<div class="section" id="operation-result">
+</section>
+<section id="operation-result">
 <h2>Operation result<a class="headerlink" href="#operation-result" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pytezos.operation.result.OperationResult">
@@ -755,8 +770,8 @@ If the receiver is a smart contract, then optional parameters may be passed.</p>
 
 </dd></dl>
 
-</div>
-<div class="section" id="module-pytezos.operation.fees">
+</section>
+<section id="module-pytezos.operation.fees">
 <span id="fees-and-limits"></span><h2>Fees and limits<a class="headerlink" href="#module-pytezos.operation.fees" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
 <dt id="pytezos.operation.fees.calculate_fee">
@@ -813,8 +828,8 @@ If the receiver is a smart contract, then optional parameters may be passed.</p>
 </dl>
 </dd></dl>
 
-</div>
-<div class="section" id="module-pytezos.operation.forge">
+</section>
+<section id="module-pytezos.operation.forge">
 <span id="local-forge"></span><h2>Local forge<a class="headerlink" href="#module-pytezos.operation.forge" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
 <dt id="pytezos.operation.forge.forge_activate_account">
@@ -884,8 +899,8 @@ If the receiver is a smart contract, then optional parameters may be passed.</p>
 <code class="sig-prename descclassname"><span class="pre">pytezos.operation.forge.</span></code><code class="sig-name descname"><span class="pre">has_parameters</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">content</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/operation/forge.html#has_parameters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.operation.forge.has_parameters" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-</div>
-</div>
+</section>
+</section>
 
 
            </div>

@@ -81,7 +81,7 @@
               
             
             
-              <p class="caption"><span class="caption-text">Contents</span></p>
+              <p><span class="caption-text">Contents</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../quick_start.html">Quick start</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../integration_tests.html">Michelson integration tests</a></li>
@@ -441,9 +441,9 @@
 
 <span class="sd">        :rtype: ContractTokenMetadataProxy</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">ContractTokenMetadataProxy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_token_metadata</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ContractTokenMetadataProxy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_token_metadata</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
 
-    <span class="nd">@lru_cache</span>
+    <span class="nd">@lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">_get_token_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">token_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ContractTokenMetadata</span><span class="p">]:</span>
         <span class="n">token_metadata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_token_metadata_from_view</span><span class="p">(</span><span class="n">token_id</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">token_metadata</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>

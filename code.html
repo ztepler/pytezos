@@ -4,7 +4,8 @@
 <html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8">
-  
+  <meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <title>Working with Michelson code &mdash; PyTezos  documentation</title>
@@ -83,7 +84,7 @@
               
             
             
-              <p class="caption"><span class="caption-text">Contents</span></p>
+              <p><span class="caption-text">Contents</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="quick_start.html">Quick start</a></li>
 <li class="toctree-l1"><a class="reference internal" href="integration_tests.html">Michelson integration tests</a></li>
@@ -171,34 +172,34 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="working-with-michelson-code">
+  <section id="working-with-michelson-code">
 <h1>Working with Michelson code<a class="headerlink" href="#working-with-michelson-code" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="module-pytezos.michelson.macros">
+<section id="module-pytezos.michelson.macros">
 <span id="expanding-macros"></span><h2>Expanding macros<a class="headerlink" href="#module-pytezos.michelson.macros" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pytezos.michelson.macros.PxrNode">
 <em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">pytezos.michelson.macros.</span></code><code class="sig-name descname"><span class="pre">PxrNode</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">depth</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annots</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_root</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pytezos.michelson.macros.PxrNode" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="py attribute">
+<dd><dl class="py method">
 <dt id="pytezos.michelson.macros.PxrNode.annots">
-<code class="sig-name descname"><span class="pre">annots</span></code><a class="headerlink" href="#pytezos.michelson.macros.PxrNode.annots" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">annots</span></code><a class="headerlink" href="#pytezos.michelson.macros.PxrNode.annots" title="Permalink to this definition">¶</a></dt>
 <dd><p>Alias for field number 1</p>
 </dd></dl>
 
-<dl class="py attribute">
+<dl class="py method">
 <dt id="pytezos.michelson.macros.PxrNode.args">
-<code class="sig-name descname"><span class="pre">args</span></code><a class="headerlink" href="#pytezos.michelson.macros.PxrNode.args" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">args</span></code><a class="headerlink" href="#pytezos.michelson.macros.PxrNode.args" title="Permalink to this definition">¶</a></dt>
 <dd><p>Alias for field number 2</p>
 </dd></dl>
 
-<dl class="py attribute">
+<dl class="py method">
 <dt id="pytezos.michelson.macros.PxrNode.depth">
-<code class="sig-name descname"><span class="pre">depth</span></code><a class="headerlink" href="#pytezos.michelson.macros.PxrNode.depth" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">depth</span></code><a class="headerlink" href="#pytezos.michelson.macros.PxrNode.depth" title="Permalink to this definition">¶</a></dt>
 <dd><p>Alias for field number 0</p>
 </dd></dl>
 
-<dl class="py attribute">
+<dl class="py method">
 <dt id="pytezos.michelson.macros.PxrNode.is_root">
-<code class="sig-name descname"><span class="pre">is_root</span></code><a class="headerlink" href="#pytezos.michelson.macros.PxrNode.is_root" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">is_root</span></code><a class="headerlink" href="#pytezos.michelson.macros.PxrNode.is_root" title="Permalink to this definition">¶</a></dt>
 <dd><p>Alias for field number 3</p>
 </dd></dl>
 
@@ -423,8 +424,8 @@
 <code class="sig-prename descclassname"><span class="pre">pytezos.michelson.macros.</span></code><code class="sig-name descname"><span class="pre">traverse_pxr_tree</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annots</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">produce</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/michelson/macros.html#traverse_pxr_tree"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.michelson.macros.traverse_pxr_tree" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-</div>
-<div class="section" id="module-pytezos.michelson.parse">
+</section>
+<section id="module-pytezos.michelson.parse">
 <span id="parsing-ast"></span><h2>Parsing AST<a class="headerlink" href="#module-pytezos.michelson.parse" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pytezos.michelson.parse.MichelsonParser">
@@ -585,7 +586,7 @@
 
 <dl class="py class">
 <dt id="pytezos.michelson.parse.Sequence">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">pytezos.michelson.parse.</span></code><code class="sig-name descname"><span class="pre">Sequence</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iterable</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">/</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/michelson/parse.html#Sequence"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.michelson.parse.Sequence" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">pytezos.michelson.parse.</span></code><code class="sig-name descname"><span class="pre">Sequence</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="pre">iterable=()</span></em>, <em class="sig-param"><span class="pre">/</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/michelson/parse.html#Sequence"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.michelson.parse.Sequence" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py class">
@@ -685,8 +686,8 @@
 </dl>
 </dd></dl>
 
-</div>
-<div class="section" id="module-pytezos.michelson.format">
+</section>
+<section id="module-pytezos.michelson.format">
 <span id="code-formatter"></span><h2>Code formatter<a class="headerlink" href="#module-pytezos.michelson.format" title="Permalink to this headline">¶</a></h2>
 <dl class="py exception">
 <dt id="pytezos.michelson.format.MichelsonFormatterError">
@@ -719,8 +720,8 @@
 </dl>
 </dd></dl>
 
-</div>
-<div class="section" id="module-pytezos.michelson.sections.parameter">
+</section>
+<section id="module-pytezos.michelson.sections.parameter">
 <span id="parameter-section"></span><h2>Parameter section<a class="headerlink" href="#module-pytezos.michelson.sections.parameter" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pytezos.michelson.sections.parameter.ParameterSection">
@@ -807,8 +808,8 @@
 
 </dd></dl>
 
-</div>
-<div class="section" id="module-pytezos.michelson.sections.storage">
+</section>
+<section id="module-pytezos.michelson.sections.storage">
 <span id="storage-section"></span><h2>Storage section<a class="headerlink" href="#module-pytezos.michelson.sections.storage" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pytezos.michelson.sections.storage.StorageSection">
@@ -875,8 +876,8 @@
 
 </dd></dl>
 
-</div>
-<div class="section" id="module-pytezos.michelson.sections.code">
+</section>
+<section id="module-pytezos.michelson.sections.code">
 <span id="code-section"></span><h2>Code section<a class="headerlink" href="#module-pytezos.michelson.sections.code" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pytezos.michelson.sections.code.CodeSection">
@@ -898,8 +899,8 @@
 
 </dd></dl>
 
-</div>
-<div class="section" id="module-pytezos.michelson.program">
+</section>
+<section id="module-pytezos.michelson.program">
 <span id="script-wrapper"></span><h2>Script wrapper<a class="headerlink" href="#module-pytezos.michelson.program" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pytezos.michelson.program.MichelsonProgram">
@@ -1036,8 +1037,8 @@
 
 </dd></dl>
 
-</div>
-</div>
+</section>
+</section>
 
 
            </div>
