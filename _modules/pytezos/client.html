@@ -161,7 +161,7 @@
   <h1>Source code for pytezos.client</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">from</span> <span class="nn">decimal</span> <span class="kn">import</span> <span class="n">Decimal</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">from</span> <span class="nn">pytezos.block.header</span> <span class="kn">import</span> <span class="n">BlockHeader</span>
 <span class="kn">from</span> <span class="nn">pytezos.context.mixin</span> <span class="kn">import</span> <span class="n">ContextMixin</span>  <span class="c1"># type: ignore</span>
@@ -171,8 +171,10 @@
 <span class="kn">from</span> <span class="nn">pytezos.jupyter</span> <span class="kn">import</span> <span class="n">get_class_docstring</span><span class="p">,</span> <span class="n">is_interactive</span>
 <span class="kn">from</span> <span class="nn">pytezos.logging</span> <span class="kn">import</span> <span class="n">logger</span>
 <span class="kn">from</span> <span class="nn">pytezos.operation.content</span> <span class="kn">import</span> <span class="n">ContentMixin</span>
-<span class="kn">from</span> <span class="nn">pytezos.operation.group</span> <span class="kn">import</span> <span class="n">OperationGroup</span>
+<span class="kn">from</span> <span class="nn">pytezos.operation.group</span> <span class="kn">import</span> <span class="n">OperationGroup</span><span class="p">,</span> <span class="n">validation_passes</span>
+<span class="kn">from</span> <span class="nn">pytezos.operation.result</span> <span class="kn">import</span> <span class="n">OperationResult</span>
 <span class="kn">from</span> <span class="nn">pytezos.rpc</span> <span class="kn">import</span> <span class="n">ShellQuery</span>
+<span class="kn">from</span> <span class="nn">pytezos.rpc.node</span> <span class="kn">import</span> <span class="n">RpcError</span>
 <span class="kn">from</span> <span class="nn">pytezos.sandbox.parameters</span> <span class="kn">import</span> <span class="n">get_protocol_parameters</span>
 
 
@@ -350,7 +352,70 @@
         <span class="n">pk</span><span class="o">.</span><span class="n">verify</span><span class="p">(</span>
             <span class="n">signature</span><span class="o">=</span><span class="n">signature</span><span class="p">,</span>
             <span class="n">message</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">failing_noop</span><span class="p">(</span><span class="n">message</span><span class="p">)</span><span class="o">.</span><span class="n">message</span><span class="p">(</span><span class="n">block</span><span class="o">=</span><span class="n">block</span><span class="p">),</span>
-        <span class="p">)</span></div></div>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="PyTezosClient.wait"><a class="viewcode-back" href="../../high_level.html#pytezos.client.PyTezosClient.wait">[docs]</a>    <span class="k">def</span> <span class="nf">wait</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="o">*</span><span class="n">operation_groups</span><span class="p">:</span> <span class="n">OperationGroup</span><span class="p">,</span>
+        <span class="n">min_confirmations</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">num_blocks_wait</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
+        <span class="n">time_between_blocks</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">prev_hash</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">OperationGroup</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Wait for multiple injected operations to get enough confirmations</span>
+
+<span class="sd">        :param min_confirmations: number of block injections to wait for before returning</span>
+<span class="sd">        :param num_blocks_wait: number of blocks to wait for injection</span>
+<span class="sd">        :param time_between_blocks: override the corresponding parameter from constants</span>
+<span class="sd">        :param prev_hash: Current block hash (optional). If not set, current head is used.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Waiting for </span><span class="si">%s</span><span class="s1"> confirmations in </span><span class="si">%s</span><span class="s1"> blocks&#39;</span><span class="p">,</span> <span class="n">min_confirmations</span><span class="p">,</span> <span class="n">num_blocks_wait</span><span class="p">)</span>
+        <span class="n">confirmations</span> <span class="o">=</span> <span class="p">{</span><span class="n">opg</span><span class="o">.</span><span class="n">opg_hash</span><span class="p">:</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">opg</span> <span class="ow">in</span> <span class="n">operation_groups</span><span class="p">}</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_blocks_wait</span><span class="p">):</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Waiting for the next block&#39;</span><span class="p">)</span>
+            <span class="n">prev_hash</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell</span><span class="o">.</span><span class="n">wait_next_block</span><span class="p">(</span><span class="n">time_between_blocks</span><span class="o">=</span><span class="n">time_between_blocks</span><span class="p">,</span> <span class="n">prev_hash</span><span class="o">=</span><span class="n">prev_hash</span><span class="p">)</span>
+            <span class="n">block_operations</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell</span><span class="o">.</span><span class="n">blocks</span><span class="p">[</span><span class="n">prev_hash</span><span class="p">]</span><span class="o">.</span><span class="n">operations</span><span class="o">.</span><span class="n">managers</span><span class="p">()</span>
+
+            <span class="k">for</span> <span class="n">opg</span> <span class="ow">in</span> <span class="n">operation_groups</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">confirmations</span><span class="p">[</span><span class="n">opg</span><span class="o">.</span><span class="n">opg_hash</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">res</span> <span class="o">=</span> <span class="nb">next</span><span class="p">((</span><span class="n">item</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">block_operations</span> <span class="k">if</span> <span class="n">item</span><span class="p">[</span><span class="s1">&#39;hash&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">opg</span><span class="o">.</span><span class="n">opg_hash</span><span class="p">),</span> <span class="kc">None</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">res</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Operation </span><span class="si">%s</span><span class="s1"> was included in block </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">opg</span><span class="o">.</span><span class="n">opg_hash</span><span class="p">,</span> <span class="n">prev_hash</span><span class="p">)</span>
+                        <span class="n">confirmations</span><span class="p">[</span><span class="n">opg</span><span class="o">.</span><span class="n">opg_hash</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+                        <span class="k">if</span> <span class="ow">not</span> <span class="n">OperationResult</span><span class="o">.</span><span class="n">is_applied</span><span class="p">(</span><span class="n">res</span><span class="p">):</span>
+                            <span class="k">raise</span> <span class="n">RpcError</span><span class="o">.</span><span class="n">from_errors</span><span class="p">(</span><span class="n">OperationResult</span><span class="o">.</span><span class="n">errors</span><span class="p">(</span><span class="n">res</span><span class="p">))</span> <span class="kn">from</span> <span class="bp">None</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">confirmations</span><span class="p">[</span><span class="n">opg</span><span class="o">.</span><span class="n">opg_hash</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Got </span><span class="si">%s</span><span class="s1">/</span><span class="si">%s</span><span class="s1"> confirmations for </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span>
+                                <span class="n">confirmations</span><span class="p">[</span><span class="n">opg</span><span class="o">.</span><span class="n">opg_hash</span><span class="p">],</span> <span class="n">min_confirmations</span><span class="p">,</span> <span class="n">opg</span><span class="o">.</span><span class="n">opg_hash</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">value</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">confirmations</span><span class="o">.</span><span class="n">values</span><span class="p">()):</span>
+                <span class="n">pending_operations</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell</span><span class="o">.</span><span class="n">mempool</span><span class="o">.</span><span class="n">pending_operations</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+                <span class="k">for</span> <span class="n">opg</span> <span class="ow">in</span> <span class="n">operation_groups</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">confirmations</span><span class="p">[</span><span class="n">opg</span><span class="o">.</span><span class="n">opg_hash</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="n">res</span> <span class="o">=</span> <span class="nb">next</span><span class="p">((</span><span class="n">item</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">pending_operations</span> <span class="k">if</span> <span class="n">item</span><span class="p">[</span><span class="s1">&#39;hash&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">opg</span><span class="o">.</span><span class="n">opg_hash</span><span class="p">),</span> <span class="kc">None</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="n">res</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Operation </span><span class="si">%s</span><span class="s1"> is still in mempool&#39;</span><span class="p">,</span> <span class="n">opg</span><span class="o">.</span><span class="n">opg_hash</span><span class="p">)</span>
+                            <span class="k">if</span> <span class="ow">not</span> <span class="n">OperationResult</span><span class="o">.</span><span class="n">is_applied</span><span class="p">(</span><span class="n">res</span><span class="p">):</span>
+                                <span class="k">raise</span> <span class="n">RpcError</span><span class="o">.</span><span class="n">from_errors</span><span class="p">(</span><span class="n">OperationResult</span><span class="o">.</span><span class="n">errors</span><span class="p">(</span><span class="n">res</span><span class="p">))</span> <span class="kn">from</span> <span class="bp">None</span>
+
+            <span class="k">for</span> <span class="n">opg</span> <span class="ow">in</span> <span class="n">operation_groups</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">confirmations</span><span class="p">[</span><span class="n">opg</span><span class="o">.</span><span class="n">opg_hash</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">confirmations</span><span class="p">[</span><span class="n">opg</span><span class="o">.</span><span class="n">opg_hash</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell</span><span class="o">.</span><span class="n">get_confirmations</span><span class="p">(</span>
+                        <span class="n">opg_hash</span><span class="o">=</span><span class="n">opg</span><span class="o">.</span><span class="n">opg_hash</span><span class="p">,</span>
+                        <span class="n">kind</span><span class="o">=</span><span class="n">opg</span><span class="o">.</span><span class="n">contents</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;kind&#39;</span><span class="p">],</span>
+                        <span class="n">branch</span><span class="o">=</span><span class="n">opg</span><span class="o">.</span><span class="n">branch</span><span class="p">,</span>
+                        <span class="n">head</span><span class="o">=</span><span class="n">prev_hash</span>
+                    <span class="p">)</span>
+                    <span class="k">if</span> <span class="n">confirmations</span><span class="p">[</span><span class="n">opg</span><span class="o">.</span><span class="n">opg_hash</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Operation </span><span class="si">{</span><span class="n">opg</span><span class="o">.</span><span class="n">opg_hash</span><span class="si">}</span><span class="s1"> is not found&#39;</span><span class="p">)</span> <span class="kn">from</span> <span class="bp">None</span>
+
+            <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="n">value</span> <span class="o">&gt;=</span> <span class="n">min_confirmations</span> <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">confirmations</span><span class="o">.</span><span class="n">values</span><span class="p">()):</span>
+                <span class="k">return</span> <span class="n">operation_groups</span>
+
+        <span class="n">required_confirmations</span> <span class="o">=</span> <span class="n">min_confirmations</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">operation_groups</span><span class="p">)</span>
+        <span class="n">gathered_confirmations</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">confirmations</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+        <span class="k">raise</span> <span class="ne">TimeoutError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Operations got </span><span class="si">{</span><span class="n">gathered_confirmations</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">required_confirmations</span><span class="si">}</span><span class="s1"> confirmations in </span><span class="si">{</span><span class="n">num_blocks_wait</span><span class="si">}</span><span class="s1"> blocks&#39;</span><span class="p">)</span></div></div>
 </pre></div>
 
            </div>

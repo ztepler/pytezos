@@ -159,7 +159,7 @@
            <div itemprop="articleBody">
             
   <h1>Source code for pytezos.rpc.search</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Generator</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Generator</span><span class="p">,</span> <span class="n">Tuple</span>
 
 <span class="kn">from</span> <span class="nn">pytezos.crypto.encoding</span> <span class="kn">import</span> <span class="n">is_bh</span>
 <span class="kn">from</span> <span class="nn">pytezos.jupyter</span> <span class="kn">import</span> <span class="n">get_attr_docstring</span>
@@ -274,7 +274,7 @@
                 <span class="k">elif</span> <span class="n">x</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
                     <span class="k">return</span> <span class="n">x</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="k">assert</span> <span class="kc">False</span>
+                    <span class="k">return</span> <span class="mi">1</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_getitem</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">header</span><span class="p">()[</span><span class="s1">&#39;level&#39;</span><span class="p">]</span>
 
@@ -360,11 +360,11 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_start</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">levels</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="n">head</span><span class="p">,</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">last</span> <span class="o">-</span> <span class="mi">1</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">levels</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="n">last</span><span class="p">,</span> <span class="n">head</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">levels</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="n">last</span><span class="p">,</span> <span class="n">head</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">block_level</span> <span class="ow">in</span> <span class="n">levels</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Looking for operation %s in block %s...&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">operation_group_hash</span><span class="p">,</span> <span class="n">block_level</span><span class="p">))</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;checking level %s...&#39;</span> <span class="o">%</span> <span class="n">block_level</span><span class="p">)</span>
                 <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_getitem</span><span class="p">(</span><span class="n">block_level</span><span class="p">)</span><span class="o">.</span><span class="n">operations</span><span class="p">[</span><span class="n">operation_group_hash</span><span class="p">]()</span>
             <span class="k">except</span> <span class="ne">StopIteration</span><span class="p">:</span>
                 <span class="k">continue</span>

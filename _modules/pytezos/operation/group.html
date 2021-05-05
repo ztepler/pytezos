@@ -175,9 +175,9 @@
 <span class="kn">from</span> <span class="nn">pytezos.operation.content</span> <span class="kn">import</span> <span class="n">ContentMixin</span>
 <span class="kn">from</span> <span class="nn">pytezos.operation.fees</span> <span class="kn">import</span> <span class="n">calculate_fee</span><span class="p">,</span> <span class="n">default_fee</span><span class="p">,</span> <span class="n">default_gas_limit</span><span class="p">,</span> <span class="n">default_storage_limit</span>
 <span class="kn">from</span> <span class="nn">pytezos.operation.forge</span> <span class="kn">import</span> <span class="n">forge_operation_group</span>
-<span class="kn">from</span> <span class="nn">pytezos.operation.kind</span> <span class="kn">import</span> <span class="n">validation_passes</span>
 <span class="kn">from</span> <span class="nn">pytezos.operation.result</span> <span class="kn">import</span> <span class="n">OperationResult</span>
 <span class="kn">from</span> <span class="nn">pytezos.rpc.errors</span> <span class="kn">import</span> <span class="n">RpcError</span>
+<span class="kn">from</span> <span class="nn">pytezos.rpc.kind</span> <span class="kn">import</span> <span class="n">validation_passes</span>
 
 
 <div class="viewcode-block" id="OperationGroup"><a class="viewcode-back" href="../../../operation_groups.html#pytezos.operation.group.OperationGroup">[docs]</a><span class="k">class</span> <span class="nc">OperationGroup</span><span class="p">(</span><span class="n">ContextMixin</span><span class="p">,</span> <span class="n">ContentMixin</span><span class="p">):</span>
@@ -193,6 +193,8 @@
         <span class="n">chain_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">branch</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">signature</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">opg_hash</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="c1"># TODO: metadata {balance_updates, operation_result}</span>
     <span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">context</span><span class="o">=</span><span class="n">context</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">contents</span> <span class="o">=</span> <span class="n">contents</span> <span class="ow">or</span> <span class="p">[]</span>
@@ -200,6 +202,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">chain_id</span> <span class="o">=</span> <span class="n">chain_id</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">branch</span> <span class="o">=</span> <span class="n">branch</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">signature</span> <span class="o">=</span> <span class="n">signature</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">opg_hash</span> <span class="o">=</span> <span class="n">opg_hash</span>
 
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">res</span> <span class="o">=</span> <span class="p">[</span>
@@ -219,6 +222,7 @@
             <span class="n">chain_id</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;chain_id&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">chain_id</span><span class="p">),</span>
             <span class="n">branch</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;branch&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">branch</span><span class="p">),</span>
             <span class="n">signature</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;signature&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">signature</span><span class="p">),</span>
+            <span class="n">opg_hash</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;opg_hash&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">opg_hash</span><span class="p">)</span>
         <span class="p">)</span>
 
 <div class="viewcode-block" id="OperationGroup.json_payload"><a class="viewcode-back" href="../../../operation_groups.html#pytezos.operation.group.OperationGroup.json_payload">[docs]</a>    <span class="k">def</span> <span class="nf">json_payload</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
@@ -348,7 +352,7 @@
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">contents</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">contents</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;kind&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;failing_noop&#39;</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;Use for signing messages only&#39;</span><span class="p">)</span>
 
-        <span class="n">branch</span> <span class="o">=</span> <span class="n">block</span> <span class="k">if</span> <span class="n">is_bh</span><span class="p">(</span><span class="n">block</span><span class="p">)</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell</span><span class="o">.</span><span class="n">blocks</span><span class="p">[</span><span class="n">block</span><span class="p">]</span><span class="o">.</span><span class="n">hash</span><span class="p">()</span>
+        <span class="n">branch</span> <span class="o">=</span> <span class="n">block</span> <span class="k">if</span> <span class="n">is_bh</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">block</span><span class="p">))</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell</span><span class="o">.</span><span class="n">blocks</span><span class="p">[</span><span class="n">block</span><span class="p">]</span><span class="o">.</span><span class="n">hash</span><span class="p">()</span>
         <span class="k">return</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x03</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="nb">bytes</span><span class="o">.</span><span class="n">fromhex</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_spawn</span><span class="p">(</span><span class="n">branch</span><span class="o">=</span><span class="n">branch</span><span class="p">)</span><span class="o">.</span><span class="n">forge</span><span class="p">())</span></div>
 
 <div class="viewcode-block" id="OperationGroup.autofill"><a class="viewcode-back" href="../../../operation_groups.html#pytezos.operation.group.OperationGroup.autofill">[docs]</a>    <span class="k">def</span> <span class="nf">autofill</span><span class="p">(</span>
@@ -464,6 +468,26 @@
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_operation</span><span class="p">()</span></div>
 
+<div class="viewcode-block" id="OperationGroup.send"><a class="viewcode-back" href="../../../operation_groups.html#pytezos.operation.group.OperationGroup.send">[docs]</a>    <span class="k">def</span> <span class="nf">send</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+             <span class="n">gas_reserve</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">DEFAULT_GAS_RESERVE</span><span class="p">,</span>
+             <span class="n">burn_reserve</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">DEFAULT_BURN_RESERVE</span><span class="p">,</span>
+             <span class="n">min_confirmations</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+             <span class="n">ttl</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;OperationGroup&#39;</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param gas_reserve: Add a safe reserve for dynamically calculated gas limit (default is 100).</span>
+<span class="sd">        :param burn_reserve: Add a safe reserve for dynamically calculated storage limit (default is 100).</span>
+<span class="sd">        :param min_confirmations: number of block injections to wait for before returning (default is 0, i.e. async mode)</span>
+<span class="sd">        :param ttl: Number of blocks to wait in the mempool before removal (default is 5 for public network, 60 for sandbox)</span>
+<span class="sd">        :return: OperationGroup with hash filled</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">ttl</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">ttl</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">get_operations_ttl</span><span class="p">()</span>
+
+        <span class="n">opg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">autofill</span><span class="p">(</span><span class="n">gas_reserve</span><span class="o">=</span><span class="n">gas_reserve</span><span class="p">,</span> <span class="n">burn_reserve</span><span class="o">=</span><span class="n">burn_reserve</span><span class="p">,</span> <span class="n">ttl</span><span class="o">=</span><span class="n">ttl</span><span class="p">)</span><span class="o">.</span><span class="n">sign</span><span class="p">()</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">opg</span><span class="o">.</span><span class="n">inject</span><span class="p">(</span><span class="n">min_confirmations</span><span class="o">=</span><span class="n">min_confirmations</span><span class="p">,</span> <span class="n">num_blocks_wait</span><span class="o">=</span><span class="n">ttl</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">opg</span><span class="o">.</span><span class="n">_spawn</span><span class="p">(</span><span class="n">opg_hash</span><span class="o">=</span><span class="n">res</span><span class="p">[</span><span class="s1">&#39;hash&#39;</span><span class="p">])</span></div>
+
 <div class="viewcode-block" id="OperationGroup.inject"><a class="viewcode-back" href="../../../operation_groups.html#pytezos.operation.group.OperationGroup.inject">[docs]</a>    <span class="k">def</span> <span class="nf">inject</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">check_result</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
@@ -480,10 +504,6 @@
 <span class="sd">        :param min_confirmations: number of block injections to wait for before returning</span>
 <span class="sd">        :returns: operation group with metadata (raw RPC response)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;_async&#39;</span><span class="p">):</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;`_async` argument is deprecated, use `min_confirmations` instead&#39;</span><span class="p">)</span>
-            <span class="n">min_confirmations</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">if</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;_async&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">True</span> <span class="k">else</span> <span class="mi">1</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
 
         <span class="n">opg_hash</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell</span><span class="o">.</span><span class="n">injection</span><span class="o">.</span><span class="n">operation</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>

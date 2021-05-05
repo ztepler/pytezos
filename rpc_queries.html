@@ -428,6 +428,11 @@ and signed by the client.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt id="pytezos.rpc.shell.PendingOperationsQuery.flatten">
+<code class="sig-name descname"><span class="pre">flatten</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="_modules/pytezos/rpc/shell.html#PendingOperationsQuery.flatten"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.rpc.shell.PendingOperationsQuery.flatten" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
 <dt id="pytezos.rpc.shell.PendingOperationsQuery.path">
 <em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">path</span></code><a class="headerlink" href="#pytezos.rpc.shell.PendingOperationsQuery.path" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -523,6 +528,25 @@ and signed by the client.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt id="pytezos.rpc.shell.ShellQuery.get_confirmations">
+<code class="sig-name descname"><span class="pre">get_confirmations</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">opg_hash</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kind</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">branch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">head</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">int</span><a class="reference internal" href="_modules/pytezos/rpc/shell.html#ShellQuery.get_confirmations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.rpc.shell.ShellQuery.get_confirmations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the number of blocks applied after the operation was included in chain</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>opg_hash</strong> – Operation group hash</p></li>
+<li><p><strong>kind</strong> – Operation kind (‘transaction’, ‘origination’, etc)</p></li>
+<li><p><strong>branch</strong> – Block ID one should stop the search at</p></li>
+<li><p><strong>head</strong> – Block ID one should start the search from</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Number of confirmations (0 if not found)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt id="pytezos.rpc.shell.ShellQuery.head">
 <em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">head</span></code><a class="headerlink" href="#pytezos.rpc.shell.ShellQuery.head" title="Permalink to this definition">¶</a></dt>
 <dd><p>Shortcut for <cite>blocks.head</cite></p>
@@ -547,12 +571,12 @@ and signed by the client.</p>
 
 <dl class="py method">
 <dt id="pytezos.rpc.shell.ShellQuery.wait_next_block">
-<code class="sig-name descname"><span class="pre">wait_next_block</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">delay_sec</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block_hash</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_between_blocks</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iterations</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/rpc/shell.html#ShellQuery.wait_next_block"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.rpc.shell.ShellQuery.wait_next_block" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">wait_next_block</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">delay_sec</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prev_hash</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_between_blocks</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iterations</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/rpc/shell.html#ShellQuery.wait_next_block"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.rpc.shell.ShellQuery.wait_next_block" title="Permalink to this definition">¶</a></dt>
 <dd><p>Wait until next block is finalized.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>block_hash</strong> – Current block hash (optional). If not set, current head is used.</p></li>
+<li><p><strong>prev_hash</strong> – Current block hash (optional). If not set, current head is used.</p></li>
 <li><p><strong>time_between_blocks</strong> – override the corresponding parameter from constants</p></li>
 <li><p><strong>max_iterations</strong> – Manually set the number of iterations</p></li>
 <li><p><strong>delay_sec</strong> – Sleep delay</p></li>

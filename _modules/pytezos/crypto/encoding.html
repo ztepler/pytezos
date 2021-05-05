@@ -257,13 +257,13 @@
             <span class="k">for</span> <span class="n">encoding</span> <span class="ow">in</span> <span class="n">base58_encodings</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">==</span> <span class="n">encoding</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">and</span> <span class="n">v</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">encoding</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
         <span class="p">)</span>
-    <span class="k">except</span> <span class="ne">StopIteration</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Invalid encoding, prefix or length mismatch.&#39;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">StopIteration</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Invalid encoding, prefix or length mismatch.&#39;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
 
     <span class="k">return</span> <span class="n">base58</span><span class="o">.</span><span class="n">b58decode_check</span><span class="p">(</span><span class="n">v</span><span class="p">)[</span><span class="n">prefix_len</span><span class="p">:]</span></div>
 
 
-<div class="viewcode-block" id="base58_encode"><a class="viewcode-back" href="../../../crypto.html#pytezos.crypto.encoding.base58_encode">[docs]</a><span class="k">def</span>     <span class="nf">base58_encode</span><span class="p">(</span><span class="n">v</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">prefix</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+<div class="viewcode-block" id="base58_encode"><a class="viewcode-back" href="../../../crypto.html#pytezos.crypto.encoding.base58_encode">[docs]</a><span class="k">def</span> <span class="nf">base58_encode</span><span class="p">(</span><span class="n">v</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">prefix</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot; Encode data using Base58 with checksum and add an according binary prefix in the end.</span>
 
 <span class="sd">    :param v: Array of bytes</span>
@@ -276,21 +276,23 @@
             <span class="k">for</span> <span class="n">encoding</span> <span class="ow">in</span> <span class="n">base58_encodings</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">==</span> <span class="n">encoding</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="ow">and</span> <span class="n">prefix</span> <span class="o">==</span> <span class="n">encoding</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="p">)</span>
-    <span class="k">except</span> <span class="ne">StopIteration</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Invalid encoding, prefix or length mismatch.&#39;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">StopIteration</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Invalid encoding, prefix or length mismatch.&#39;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
 
     <span class="k">return</span> <span class="n">base58</span><span class="o">.</span><span class="n">b58encode_check</span><span class="p">(</span><span class="n">encoding</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="n">v</span><span class="p">)</span></div>
 
 
-<span class="k">def</span> <span class="nf">_validate</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">prefixes</span><span class="p">:</span> <span class="nb">list</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">_validate</span><span class="p">(</span><span class="n">v</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">],</span> <span class="n">prefixes</span><span class="p">:</span> <span class="nb">list</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span>
     <span class="n">v</span> <span class="o">=</span> <span class="n">scrub_input</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
-    <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">v</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">prefixes</span><span class="p">)):</span>
+    <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">startswith</span><span class="p">,</span> <span class="n">prefixes</span><span class="p">)):</span>
         <span class="n">base58_decode</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Unknown prefix.&#39;</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="validate_pkh"><a class="viewcode-back" href="../../../crypto.html#pytezos.crypto.encoding.validate_pkh">[docs]</a><span class="k">def</span> <span class="nf">validate_pkh</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+<div class="viewcode-block" id="validate_pkh"><a class="viewcode-back" href="../../../crypto.html#pytezos.crypto.encoding.validate_pkh">[docs]</a><span class="k">def</span> <span class="nf">validate_pkh</span><span class="p">(</span><span class="n">v</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">]):</span>
     <span class="sd">&quot;&quot;&quot; Ensure parameter is a public key hash (starts with b&#39;tz1&#39;, b&#39;tz2&#39;, b&#39;tz3&#39;)</span>
 
 <span class="sd">    :param v: string or bytes</span>
@@ -299,7 +301,7 @@
     <span class="k">return</span> <span class="n">_validate</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">prefixes</span><span class="o">=</span><span class="p">[</span><span class="sa">b</span><span class="s1">&#39;tz1&#39;</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;tz2&#39;</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;tz3&#39;</span><span class="p">])</span></div>
 
 
-<div class="viewcode-block" id="validate_sig"><a class="viewcode-back" href="../../../crypto.html#pytezos.crypto.encoding.validate_sig">[docs]</a><span class="k">def</span> <span class="nf">validate_sig</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+<div class="viewcode-block" id="validate_sig"><a class="viewcode-back" href="../../../crypto.html#pytezos.crypto.encoding.validate_sig">[docs]</a><span class="k">def</span> <span class="nf">validate_sig</span><span class="p">(</span><span class="n">v</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">]):</span>
     <span class="sd">&quot;&quot;&quot; Ensure parameter is a signature (starts with b&#39;edsig&#39;, b&#39;spsig&#39;, b&#39;p2sig&#39;, b&#39;sig&#39;)</span>
 
 <span class="sd">    :param v: string or bytes</span>
@@ -308,7 +310,7 @@
     <span class="k">return</span> <span class="n">_validate</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">prefixes</span><span class="o">=</span><span class="p">[</span><span class="sa">b</span><span class="s1">&#39;edsig&#39;</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;spsig&#39;</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;p2sig&#39;</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;sig&#39;</span><span class="p">])</span></div>
 
 
-<div class="viewcode-block" id="is_pkh"><a class="viewcode-back" href="../../../crypto.html#pytezos.crypto.encoding.is_pkh">[docs]</a><span class="k">def</span> <span class="nf">is_pkh</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<div class="viewcode-block" id="is_pkh"><a class="viewcode-back" href="../../../crypto.html#pytezos.crypto.encoding.is_pkh">[docs]</a><span class="k">def</span> <span class="nf">is_pkh</span><span class="p">(</span><span class="n">v</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot; Check if value is a public key hash.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
@@ -318,7 +320,7 @@
     <span class="k">return</span> <span class="kc">True</span></div>
 
 
-<div class="viewcode-block" id="is_sig"><a class="viewcode-back" href="../../../crypto.html#pytezos.crypto.encoding.is_sig">[docs]</a><span class="k">def</span> <span class="nf">is_sig</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<div class="viewcode-block" id="is_sig"><a class="viewcode-back" href="../../../crypto.html#pytezos.crypto.encoding.is_sig">[docs]</a><span class="k">def</span> <span class="nf">is_sig</span><span class="p">(</span><span class="n">v</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot; Check if value is a signature.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
@@ -328,7 +330,7 @@
     <span class="k">return</span> <span class="kc">True</span></div>
 
 
-<div class="viewcode-block" id="is_bh"><a class="viewcode-back" href="../../../crypto.html#pytezos.crypto.encoding.is_bh">[docs]</a><span class="k">def</span> <span class="nf">is_bh</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<div class="viewcode-block" id="is_bh"><a class="viewcode-back" href="../../../crypto.html#pytezos.crypto.encoding.is_bh">[docs]</a><span class="k">def</span> <span class="nf">is_bh</span><span class="p">(</span><span class="n">v</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot; Check if value is a block hash.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
@@ -348,7 +350,7 @@
     <span class="k">return</span> <span class="kc">True</span></div>
 
 
-<div class="viewcode-block" id="is_kt"><a class="viewcode-back" href="../../../crypto.html#pytezos.crypto.encoding.is_kt">[docs]</a><span class="k">def</span> <span class="nf">is_kt</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<div class="viewcode-block" id="is_kt"><a class="viewcode-back" href="../../../crypto.html#pytezos.crypto.encoding.is_kt">[docs]</a><span class="k">def</span> <span class="nf">is_kt</span><span class="p">(</span><span class="n">v</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot; Check if value is a KT address.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
@@ -358,18 +360,17 @@
     <span class="k">return</span> <span class="kc">True</span></div>
 
 
-<div class="viewcode-block" id="is_public_key"><a class="viewcode-back" href="../../../crypto.html#pytezos.crypto.encoding.is_public_key">[docs]</a><span class="k">def</span> <span class="nf">is_public_key</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<div class="viewcode-block" id="is_public_key"><a class="viewcode-back" href="../../../crypto.html#pytezos.crypto.encoding.is_public_key">[docs]</a><span class="k">def</span> <span class="nf">is_public_key</span><span class="p">(</span><span class="n">v</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot; Check if value is a public key.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
-        <span class="c1"># FIXME: Should this function return True for private keys?</span>
         <span class="n">_validate</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">prefixes</span><span class="o">=</span><span class="p">[</span><span class="sa">b</span><span class="s2">&quot;edsk&quot;</span><span class="p">,</span> <span class="sa">b</span><span class="s2">&quot;edpk&quot;</span><span class="p">,</span> <span class="sa">b</span><span class="s2">&quot;spsk&quot;</span><span class="p">,</span> <span class="sa">b</span><span class="s2">&quot;p2sk&quot;</span><span class="p">,</span> <span class="sa">b</span><span class="s2">&quot;sppk&quot;</span><span class="p">,</span> <span class="sa">b</span><span class="s2">&quot;p2pk&quot;</span><span class="p">])</span>
     <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">):</span>
         <span class="k">return</span> <span class="kc">False</span>
     <span class="k">return</span> <span class="kc">True</span></div>
 
 
-<div class="viewcode-block" id="is_chain_id"><a class="viewcode-back" href="../../../crypto.html#pytezos.crypto.encoding.is_chain_id">[docs]</a><span class="k">def</span> <span class="nf">is_chain_id</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<div class="viewcode-block" id="is_chain_id"><a class="viewcode-back" href="../../../crypto.html#pytezos.crypto.encoding.is_chain_id">[docs]</a><span class="k">def</span> <span class="nf">is_chain_id</span><span class="p">(</span><span class="n">v</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot; Check if value is a chain id.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
@@ -379,10 +380,12 @@
     <span class="k">return</span> <span class="kc">True</span></div>
 
 
-<div class="viewcode-block" id="is_address"><a class="viewcode-back" href="../../../crypto.html#pytezos.crypto.encoding.is_address">[docs]</a><span class="k">def</span> <span class="nf">is_address</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<div class="viewcode-block" id="is_address"><a class="viewcode-back" href="../../../crypto.html#pytezos.crypto.encoding.is_address">[docs]</a><span class="k">def</span> <span class="nf">is_address</span><span class="p">(</span><span class="n">v</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot; Check if value is a tz/KT address</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">address</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;%&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
+    <span class="n">address</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;%&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">is_kt</span><span class="p">(</span><span class="n">address</span><span class="p">)</span> <span class="ow">or</span> <span class="n">is_pkh</span><span class="p">(</span><span class="n">address</span><span class="p">)</span></div>
 </pre></div>
 
