@@ -22,7 +22,7 @@ import docker  # type: ignore
 
 from pytezos import ContractInterface, __version__, pytezos
 from pytezos.cli.github import create_deployment, create_deployment_status
-from pytezos.config import DEFAULT_SMARTPY_IMAGE, PyTezosConfig, SmartPyConfig
+from pytezos.config import DEFAULT_LIGO_IMAGE, DEFAULT_SMARTPY_IMAGE, DEFAULT_SMARTPY_PROTOCOL, PyTezosConfig, SmartPyConfig
 from pytezos.context.mixin import default_network  # type: ignore
 from pytezos.logging import logger
 from pytezos.michelson.types.base import generate_pydoc
@@ -358,9 +358,12 @@ def compile(
                 script=path,
                 output_directory=f'build/{name}',
                 detach=False,
-                protocol='florence',
-                image=config.smartpy.image
+                protocol=config.smartpy.protocol,
+                image=config.smartpy.image,
             )
+        elif type_ == ContractType.ligo:
+            ...
+
         else:
             raise NotImplementedError
 
@@ -395,15 +398,20 @@ def init(
     name = _input('Project name', os.path.split(os.getcwd())[1])
     description = _input('Description', None)
     license = _input('License', None)
-    smartpy_image = _input('SmartPy Docker image', DEFAULT_SMARTPY_IMAGE)
     config = PyTezosConfig(
         name=name,
         description=description,
         license=license,
-        smartpy=SmartPyConfig(
-            image=smartpy_image,
-        ),
     )
+
+    if click.confirm(b('Configure SmartPy compiler?')):
+        smartpy_image = _input('SmartPy Docker image', DEFAULT_SMARTPY_IMAGE)
+        smartpy_protocol = _input('SmartPy protocol', DEFAULT_SMARTPY_PROTOCOL)
+        config.smartpy = SmartPyConfig(
+            image=smartpy_image,
+            protocol=smartpy_protocol,
+        )
+
     config.save()
 
 
@@ -447,82 +455,82 @@ def sandbox(
         except KeyboardInterrupt:
             break
 
-@cli.command(help='Update Ligo compiler (docker pull ligolang/ligo)')
-@click.option('--tag', '-t', type=str, help='Version or tag to pull', default='0.13.0')
-@click.pass_context
-def update_ligo(
-    _ctx,
-    tag: str,
+
+def run_container(
+    image: str,
+    command: str,
+    copy_source: Optional[List[str]] = None,
+    copy_destination: Optional[str] = None,
+    mounts: Optional[List[docker.types.Mount]] = None,
 ):
+
+    if copy_source is None:
+        copy_source = []
+    if mounts is None:
+        mounts = []
+
     client = get_docker_client()
-
-    logger.info(f'Pulling ligolang/ligo{(":" + tag) if tag else ""}, please stay put.')
-    for line in client.api.pull('ligolang/ligo', tag=tag, stream=True, decode=True):
-        logger.info(line)
-    logger.info('Pulled Ligo compiler image successfully!')
-
-
-def run_ligo_container(
-    tag: str = '0.13.0',
-    command: str = '',
-    files_to_add: List[str] = [],
-):
     try:
-        client = get_docker_client()
-        container = client.containers.create(
-            image=f'ligolang/ligo:{tag}',
-            command=command,
-            detach=True,
-        )
+        client.images.get(image)
+    except docker.errors.ImageNotFound:
+        for line in client.api.pull(image, stream=True, decode=True):
+            logger.info(line)
+
+    container = client.containers.create(
+        image=image,
+        command=command,
+        detach=True,
+        mounts=mounts,
+    )
+
+    if copy_source and copy_destination:
         buffer = io.BytesIO()
         with tarfile.open(fileobj=buffer, mode='w:gz') as archive:
-            for filename in files_to_add:
-                with open(filename, 'rb') as current_file:
-                    current_file_data = current_file.read()
-                    current_file_buffer = io.BytesIO(initial_bytes=current_file_data)
-                    _, short_filename = split(filename)
-                    archive.add(filename, arcname=short_filename)
+            for filename in copy_source:
+                _, short_filename = split(filename)
+                archive.add(filename, arcname=short_filename)
         buffer.seek(0)
         container.put_archive(
-            '/root/',
+            copy_destination,
             buffer,
         )
-        container.start()
-        return container
-    except docker.errors.ImageNotFound:
-        logger.error('Ligo compiler not found. Please run update-ligo first.')
+
+    container.start()
+    return container
+
 
 
 @cli.command(help='Compile contract using Ligo compiler.')
-@click.option('--tag', '-t', type=str, help='Version or tag of Ligo compiler', default='0.13.0')
+@click.option('--image', '-i', type=str, help='Version or tag of Ligo compiler', default=DEFAULT_LIGO_IMAGE)
 @click.option('--path', '-p', type=str, help='Path to contract')
 @click.option('--entry-point', '-ep', type=str, help='Entrypoint for the invocation')
 @click.option('--detach', '-d', type=bool, help='Run container in detached mode', default=False)
 @click.pass_context
 def ligo_compile_contract(
     _ctx,
-    tag: str,
+    image: str,
     path: str,
     entry_point: str,
     detach: bool,
 ):
     path = get_local_contract_path(path, extension='ligo')
-    if path:
-        _, contract_name = split(path)
-        container = run_ligo_container(
-            tag=tag,
-            command=f'compile-contract {contract_name} "{entry_point}"',
-            files_to_add=[path,]
-        )
-        if not detach:
-            for line in container.logs(stream=True):
-                print(line.decode('utf-8').rstrip())
-    else:
-        logger.error('No local contract found. Please ensure a valid contract is present or specify path.')
+    if not path:
+        raise Exception
+
+    _, contract_name = split(path)
+    container = run_container(
+        image=image,
+        command=f'compile-contract {contract_name} "{entry_point}"',
+        copy_source=[path],
+        copy_destination='/root/',
+    )
+    if not detach:
+        for line in container.logs(stream=True):
+            print(line.decode('utf-8').rstrip())
 
 
 @cli.command(help='Define initial storage using Ligo compiler.')
-@click.option('--tag', '-t', type=str, help='Version or tag of Ligo compiler', default='0.13.0')
+@click.option('--image', '-t', type=str, help='Version or tag of Ligo compiler', default=DEFAULT_LIGO_IMAGE)
 @click.option('--path', '-p', type=str, help='Path to contract')
 @click.option('--entry-point', '-ep', type=str, help='Entrypoint for the storage', default='')
 @click.option('--expression', '-ex', type=str, help='Expression for the storage', default='')
@@ -530,53 +538,55 @@ def ligo_compile_contract(
 @click.pass_context
 def ligo_compile_storage(
     _ctx,
-    tag: str,
+    image: str,
     path: str,
     entry_point: str,
     expression: str,
     detach: bool,
 ):
     path = get_local_contract_path(path, extension='ligo')
-    if path:
-        container = run_ligo_container(
-            tag=tag,
-            command=f'compile-storage {path} "{entry_point}" "{expression}"',
-            files_to_add=[path,],
-        )
-        if not detach:
-            for line in container.logs(stream=True):
-                print(line.decode('utf-8').rstrip())
-    else:
-        logger.error('No local contract found. Please ensure a valid contract is present or specify path.')
+    if not path:
+        raise Exception
+
+    container = run_container(
+        image=image,
+        command=f'compile-storage {path} "{entry_point}" "{expression}"',
+        copy_source=[path],
+        copy_destination='root',
+    )
+    if not detach:
+        for line in container.logs(stream=True):
+            print(line.decode('utf-8').rstrip())
 
 
 @cli.command(help='Invoke a contract with a parameter using Ligo compiler.')
-@click.option('--tag', '-t', type=str, help='Version or tag of Ligo compiler', default='0.13.0')
+@click.option('--image', '-i', type=str, help='Version or tag of Ligo compiler', default=DEFAULT_LIGO_IMAGE)
 @click.option('--path', '-p', type=str, help='Path to contract')
 @click.option('--entry-point', '-ep', type=str, help='Entrypoint for the invocation')
 @click.option('--expression', '-ex', type=str, help='Expression for the invocation')
 @click.option('--detach', '-d', type=bool, help='Run container in detached mode', default=False)
 @click.pass_context
-def ligo_invoke_contract(
+def ligo_compile_parameter(
     _ctx,
-    tag: str,
+    image: str,
     path: str,
     entry_point: str,
     expression: str,
     detach: bool,
 ):
     path = get_local_contract_path(path, extension='ligo')
-    if path:
-        container = run_ligo_container(
-            tag=tag,
-            command=f'compile-parameter {path} "{entry_point}" "{expression}"',
-            files_to_add=[path,],
-        )
-        if not detach:
-            for line in container.logs(stream=True):
-                print(line.decode('utf-8').rstrip())
-    else:
-        logger.error('No local contract found. Please ensure a valid contract is present or specify path.')
+    if not path:
+        raise Exception
+
+    container = run_container(
+        image=image,
+        command=f'compile-parameter {path} "{entry_point}" "{expression}"',
+        copy_source=[path],
+        copy_destination='root',
+    )
+    if not detach:
+        for line in container.logs(stream=True):
+            print(line.decode('utf-8').rstrip())
 
 
 if __name__ == '__main__':

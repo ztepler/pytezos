@@ -3,15 +3,19 @@ from typing import Optional
 from pydantic import BaseModel
 from ruamel.yaml import YAML
 
+CONFIG_NAME = 'pytezos.yml'
+DEFAULT_LIGO_IMAGE = 'ligolang/ligo:0.13.0'
 DEFAULT_SMARTPY_IMAGE = 'bakingbad/smartpy-cli:latest'
+DEFAULT_SMARTPY_PROTOCOL = 'florence'
 
 
 class LigoConfig(BaseModel):
-    ...
+    image: str = DEFAULT_LIGO_IMAGE
 
 
 class SmartPyConfig(BaseModel):
     image: str = DEFAULT_SMARTPY_IMAGE
+    protocol: str = DEFAULT_SMARTPY_PROTOCOL
 
 
 
@@ -26,7 +30,7 @@ class PyTezosConfig(BaseModel):
     @classmethod
     def load(cls) -> 'PyTezosConfig':
 
-        config_path = os.path.join(os.getcwd(), 'pytezos.yml')
+        config_path = os.path.join(os.getcwd(), CONFIG_NAME)
 
         # _logger.info('Loading config from %s', filename)
         with open(config_path) as file:
@@ -48,7 +52,7 @@ class PyTezosConfig(BaseModel):
     def save(self):
         yaml = YAML()
         yaml.indent(4)
-        config_path = os.path.join(os.getcwd(), 'pytezos.yml')
+        config_path = os.path.join(os.getcwd(), CONFIG_NAME)
         config_dict = self.dict()
         with open(config_path, 'w+') as file:
             YAML().dump(config_dict, file)
