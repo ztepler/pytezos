@@ -3,10 +3,9 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
-  <meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
-
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>RPC query engine &mdash; PyTezos  documentation</title>
   
@@ -19,8 +18,12 @@
   
     <link rel="shortcut icon" href="_static/favicon.ico"/>
   
+
   
   
+
+  
+    <link rel="canonical" href="https://pytezos.org/rpc_queries.html" />
 
   
   <!--[if lt IE 9]>
@@ -53,7 +56,7 @@
           
 
           
-            <a href="contents.html" class="icon icon-home" alt="Documentation Home"> PyTezos
+            <a href="contents.html" class="icon icon-home"> PyTezos
           
 
           
@@ -84,11 +87,11 @@
               
             
             
-              <p><span class="caption-text">Contents</span></p>
+              <p class="caption"><span class="caption-text">Contents</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="quick_start.html">Quick start</a></li>
 <li class="toctree-l1"><a class="reference internal" href="integration_tests.html">Michelson integration tests</a></li>
-<li class="toctree-l1"><a class="reference internal" href="pytezos_cli.html">Pytezos CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pytezos_cli.html">PyTezos CLI</a></li>
 <li class="toctree-l1"><a class="reference internal" href="high_level.html">High-level interfaces</a></li>
 <li class="toctree-l1"><a class="reference internal" href="crypto.html">Cryptography</a></li>
 <li class="toctree-l1"><a class="reference internal" href="operation_groups.html">Building and parsing operations</a></li>
@@ -105,6 +108,7 @@
 <li class="toctree-l1"><a class="reference internal" href="code.html">Working with Michelson code</a></li>
 <li class="toctree-l1"><a class="reference internal" href="repl.html">Michelson REPL</a></li>
 <li class="toctree-l1"><a class="reference internal" href="inspect_proposals.html">Inspecting proposals</a></li>
+<li class="toctree-l1"><a class="reference internal" href="michelson_kernel.html">Michelson IPython kernel</a></li>
 </ul>
 
             
@@ -145,6 +149,8 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -156,7 +162,7 @@
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="_sources/rpc_queries.rst.txt" rel="nofollow"> View page source</a>
           
         
@@ -170,9 +176,9 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <section id="rpc-query-engine">
+  <div class="section" id="rpc-query-engine">
 <h1>RPC query engine<a class="headerlink" href="#rpc-query-engine" title="Permalink to this headline">¶</a></h1>
-<section id="module-pytezos.rpc.shell">
+<div class="section" id="module-pytezos.rpc.shell">
 <span id="shell-level-endpoints"></span><h2>Shell-level endpoints<a class="headerlink" href="#module-pytezos.rpc.shell" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pytezos.rpc.shell.BlockInjectionQuery">
@@ -191,23 +197,23 @@
 <dl class="py method">
 <dt id="pytezos.rpc.shell.BlockInjectionQuery.post">
 <code class="sig-name descname"><span class="pre">post</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">block</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timestamp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_async</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chain</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/rpc/shell.html#BlockInjectionQuery.post"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.rpc.shell.BlockInjectionQuery.post" title="Permalink to this definition">¶</a></dt>
-<dd><p>Inject a block in the node and broadcast it.
-The <cite>operations</cite> embedded in <cite>blockHeader</cite> might be pre-validated using a contextual RPCs from the latest block
+<dd><p>Inject a block in the node and broadcast it.</p>
+<p>The <cite>operations</cite> embedded in <cite>blockHeader</cite> might be pre-validated using a contextual RPCs from the latest block
 (e.g. ‘/blocks/head/context/preapply’).</p>
+<p>block format:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="nb">hex</span><span class="o">-</span><span class="n">encoded</span> <span class="n">block</span> <span class="n">header</span><span class="o">&gt;</span><span class="p">,</span>
+    <span class="s2">&quot;operations&quot;</span><span class="p">:</span> <span class="p">[</span> <span class="p">[</span> <span class="p">{</span>
+    <span class="s2">&quot;branch&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">block_hash</span><span class="o">&gt;</span><span class="p">,</span>
+    <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="nb">hex</span><span class="o">-</span><span class="n">encoded</span> <span class="n">operation</span><span class="o">&gt;</span>
+    <span class="p">}</span> <span class="o">...</span> <span class="p">]</span> <span class="o">...</span> <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>block</strong> – <p>Json input
-{</p>
-<blockquote>
-<div><p>”data”: &lt;hex-encoded block header&gt;,
-“operations”: [ [ {
-“branch”: &lt;block_hash&gt;,
-“data”: &lt;hex-encoded operation&gt;
-} … ] … ]</p>
-</div></blockquote>
-<p>}</p>
-</p></li>
+<li><p><strong>block</strong> – JSON input</p></li>
 <li><p><strong>_async</strong> – By default, the RPC will wait for the block to be validated before answering,         set True if you don’t want to.</p></li>
 <li><p><strong>force</strong> – </p></li>
 <li><p><strong>chain</strong> – Optionally you can specify the chain (main/test)</p></li>
@@ -273,10 +279,10 @@ The <cite>operations</cite> embedded in <cite>blockHeader</cite> might be pre-va
 <dd><p>Get RPCs documentation and input/output schema.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>recurse</strong> – Show information for child elements, default is True.</p>
+<dd class="field-odd"><p><strong>recurse</strong> – Show information for child elements, default is True.
+In some cases doesn’t work without this flag.</p>
 </dd>
 </dl>
-<p>In some cases doesn’t work without this flag.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -327,7 +333,8 @@ The <cite>operations</cite> embedded in <cite>blockHeader</cite> might be pre-va
 <dd><p>Set operation filter rules.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>configuration</strong> – a JSON dictionary, known keys are <cite>minimal_fees</cite>, <cite>minimal_nanotez_per_gas_unit</cite>,         <cite>minimal_nanotez_per_byte</cite></p>
+<dd class="field-odd"><p><strong>configuration</strong> – a JSON dictionary, known keys are <cite>minimal_fees</cite>, <cite>minimal_nanotez_per_gas_unit</cite>,
+<cite>minimal_nanotez_per_byte</cite></p>
 </dd>
 </dl>
 </dd></dl>
@@ -406,7 +413,8 @@ and signed by the client.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>operation</strong> – Hex-encoded operation data or bytes</p></li>
-<li><p><strong>_async</strong> – By default, the RPC will wait for the operation to be (pre-)validated before answering,         set True if you don’t want to.</p></li>
+<li><p><strong>_async</strong> – By default, the RPC will wait for the operation to be (pre-)validated before answering,
+set True if you don’t want to.</p></li>
 <li><p><strong>chain</strong> – Optionally you can specify the chain</p></li>
 </ul>
 </dd>
@@ -429,7 +437,7 @@ and signed by the client.</p>
 
 <dl class="py method">
 <dt id="pytezos.rpc.shell.PendingOperationsQuery.flatten">
-<code class="sig-name descname"><span class="pre">flatten</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="_modules/pytezos/rpc/shell.html#PendingOperationsQuery.flatten"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.rpc.shell.PendingOperationsQuery.flatten" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">flatten</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="_modules/pytezos/rpc/shell.html#PendingOperationsQuery.flatten"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.rpc.shell.PendingOperationsQuery.flatten" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -457,26 +465,22 @@ and signed by the client.</p>
 <dt id="pytezos.rpc.shell.ProtocolInjectionQuery.post">
 <code class="sig-name descname"><span class="pre">post</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">protocol</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_async</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/rpc/shell.html#ProtocolInjectionQuery.post"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.rpc.shell.ProtocolInjectionQuery.post" title="Permalink to this definition">¶</a></dt>
 <dd><p>Inject a protocol in node.</p>
+<p>protocol format:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>{
+    &quot;expected_env_version&quot;: &lt;integer&gt;,
+    &quot;components&quot;: [{
+        &quot;name&quot;: &lt;unistring&gt;,
+        &quot;interface&quot;?: &lt;hex-encoded data&gt;,
+        &quot;implementation&quot;: &lt;hex-encoded data&gt; }
+         ...
+    ]}
+}
+</pre></div>
+</div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>protocol</strong> – <p>Json input
-{</p>
-<blockquote>
-<div><p>”expected_env_version”: &lt;integer&gt;,
-“components”: [{</p>
-<blockquote>
-<div><p>”name”: &lt;unistring&gt;,
-“interface”?: &lt;hex-encoded data&gt;,
-“implementation”: &lt;hex-encoded data&gt; }</p>
-<blockquote>
-<div><p>…</p>
-</div></blockquote>
-</div></blockquote>
-<p>]}</p>
-</div></blockquote>
-<p>}</p>
-</p></li>
+<li><p><strong>protocol</strong> – JSON input</p></li>
 <li><p><strong>_async</strong> – </p></li>
 <li><p><strong>force</strong> – </p></li>
 </ul>
@@ -592,8 +596,8 @@ and signed by the client.</p>
 <code class="sig-prename descclassname"><span class="pre">pytezos.rpc.shell.</span></code><code class="sig-name descname"><span class="pre">make_operation_result</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/rpc/shell.html#make_operation_result"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.rpc.shell.make_operation_result" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-</section>
-<section id="module-pytezos.rpc.protocol">
+</div>
+<div class="section" id="module-pytezos.rpc.protocol">
 <span id="protocol-specific-endpoints"></span><h2>Protocol-specific endpoints<a class="headerlink" href="#module-pytezos.rpc.protocol" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pytezos.rpc.protocol.BigMapGetQuery">
@@ -613,20 +617,21 @@ and signed by the client.</p>
 <dt id="pytezos.rpc.protocol.BigMapGetQuery.post">
 <code class="sig-name descname"><span class="pre">post</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/rpc/protocol.html#BigMapGetQuery.post"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.rpc.protocol.BigMapGetQuery.post" title="Permalink to this definition">¶</a></dt>
 <dd><p>Access the value associated with a key in the big map storage of the michelson.</p>
-<dl>
-<dt>:param query</dt><dd><dl class="simple">
-<dt>{</dt><dd><p>key: { $key_type : &lt;key&gt; },
-type: { “prim” : $key_prim }</p>
-</dd>
-</dl>
-<p>}
-$key_type: Provided key encoding, e.g. “string”, “bytes” for hex-encoded string, “int”
-key_prim: Expected high-level data type, e.g. “address”, “nat”, “mutez” (see storage section in code)</p>
-</dd>
-</dl>
+<p>query format:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>{
+    key: { $key_type : &lt;key&gt; },
+    type: { &quot;prim&quot; : $key_prim }
+}
+</pre></div>
+</div>
+<p>$key_type: Provided key encoding, e.g. “string”, “bytes” for hex-encoded string, “int”
+$key_prim: Expected high-level data type, e.g. “address”, “nat”, “mutez” (see storage section in code)</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>Micheline expression</p>
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>query</strong> – JSON input</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Micheline expression</p>
 </dd>
 </dl>
 </dd></dl>
@@ -701,14 +706,15 @@ key_prim: Expected high-level data type, e.g. “address”, “nat”, “mutez
 <dd><dl class="py method">
 <dt id="pytezos.rpc.protocol.BlocksQuery.__call__">
 <code class="sig-name descname"><span class="pre">__call__</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">length</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">head</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_date</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/rpc/protocol.html#BlocksQuery.__call__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.rpc.protocol.BlocksQuery.__call__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Lists known heads of the blockchain sorted with decreasing fitness.
-Optional arguments allows to returns the list of predecessors for known heads
+<dd><p>List known heads of the blockchain sorted with decreasing fitness.</p>
+<p>Optional arguments allows to returns the list of predecessors for known heads
 or the list of predecessors for a given list of blocks.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>length</strong> – The requested number of predecessors to returns (per requested head).</p></li>
-<li><p><strong>head</strong> – An empty argument requests blocks from the current heads.         A non empty list allow to request specific fragment of the chain.</p></li>
+<li><p><strong>head</strong> – An empty argument requests blocks from the current heads.
+A non empty list allow to request specific fragment of the chain.</p></li>
 <li><p><strong>min_date</strong> – When <cite>min_date</cite> is provided, heads with a timestamp before <cite>min_date</cite> are filtered out</p></li>
 </ul>
 </dd>
@@ -863,16 +869,15 @@ or the list of predecessors for a given list of blocks.</p>
 <dt id="pytezos.rpc.protocol.EndorsingPower.post">
 <code class="sig-name descname"><span class="pre">post</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">endorsement_operation</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/rpc/protocol.html#EndorsingPower.post"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.rpc.protocol.EndorsingPower.post" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the endorsing power of an endorsement operation, that is, the number of slots that the op has.</p>
-<dl>
-<dt>:param endorsement_operation</dt><dd><dl class="simple">
-<dt>{</dt><dd><p>“branch”: $block_hash,
-“contents”: [ $operation.alpha.contents … ],
-“signature”: $Signature</p>
-</dd>
-</dl>
-<p>}</p>
-</dd>
-</dl>
+<p>endorsement_operation format:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>{
+    &quot;branch&quot;: $block_hash,
+    &quot;contents&quot;: [ $operation.alpha.contents ... ],
+    &quot;signature&quot;: $Signature
+}
+</pre></div>
+</div>
+<p>:param endorsement_operation</p>
 </dd></dl>
 
 </dd></dl>
@@ -1053,8 +1058,8 @@ or the list of predecessors for a given list of blocks.</p>
 <code class="sig-prename descclassname"><span class="pre">pytezos.rpc.protocol.</span></code><code class="sig-name descname"><span class="pre">to_timestamp</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">v</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/rpc/protocol.html#to_timestamp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.rpc.protocol.to_timestamp" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-</section>
-<section id="module-pytezos.rpc.helpers">
+</div>
+<div class="section" id="module-pytezos.rpc.helpers">
 <span id="rpc-helpers"></span><h2>RPC Helpers<a class="headerlink" href="#module-pytezos.rpc.helpers" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pytezos.rpc.helpers.BakingRightsQuery">
@@ -1062,8 +1067,8 @@ or the list of predecessors for a given list of blocks.</p>
 <dd><dl class="py method">
 <dt id="pytezos.rpc.helpers.BakingRightsQuery.__call__">
 <code class="sig-name descname"><span class="pre">__call__</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cycle</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delegate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_priority</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_all</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/rpc/helpers.html#BakingRightsQuery.__call__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.rpc.helpers.BakingRightsQuery.__call__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Retrieves the list of delegates allowed to bake a block.
-By default, it gives the best baking priorities for bakers that have at least one opportunity
+<dd><p>Retrieve the list of delegates allowed to bake a block.</p>
+<p>By default, it gives the best baking priorities for bakers that have at least one opportunity
 below the 64th priority for the next block.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1072,11 +1077,14 @@ below the 64th priority for the next block.</p>
 <li><p><strong>cycle</strong> – Specify the (valid) levels in the past or future at which the baking rights have to be returned.</p></li>
 <li><p><strong>delegate</strong> – Restrict the results to the given delegates.</p></li>
 <li><p><strong>max_priority</strong> – </p></li>
-<li><p><strong>_all</strong> – If parameter <cite>all</cite> is set, all the baking opportunities for each baker at each level are returned,         instead of just the first one.</p></li>
+<li><p><strong>_all</strong> – If parameter <cite>all</cite> is set, all the baking opportunities for each baker at each level are returned,
+instead of just the first one.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Returns the list of baking slots. Also returns the minimal timestamps that correspond to these slots.         The timestamps are omitted for levels in the past, and are only estimates for levels later that the next block,         based on the hypothesis that all predecessor blocks were baked at the first priority.</p>
+<dd class="field-even"><p>Returns the list of baking slots. Also returns the minimal timestamps that correspond to these slots.
+The timestamps are omitted for levels in the past, and are only estimates for levels later that the next block,
+based on the hypothesis that all predecessor blocks were baked at the first priority.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1106,23 +1114,23 @@ below the 64th priority for the next block.</p>
 <dt id="pytezos.rpc.helpers.ForgeBlockHeaderQuery.post">
 <code class="sig-name descname"><span class="pre">post</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">block_header</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/rpc/helpers.html#ForgeBlockHeaderQuery.post"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.rpc.helpers.ForgeBlockHeaderQuery.post" title="Permalink to this definition">¶</a></dt>
 <dd><p>Forge block header.</p>
+<p>block_header format:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;level&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">integer</span><span class="o">&gt;</span><span class="p">,</span>
+    <span class="s2">&quot;proto&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">integer</span><span class="o">&gt;</span><span class="p">,</span>
+    <span class="s2">&quot;predecessor&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">block</span> <span class="nb">hash</span><span class="o">&gt;</span><span class="p">,</span>
+    <span class="s2">&quot;timestamp&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">timestamp</span><span class="o">&gt;</span><span class="p">,</span>
+    <span class="s2">&quot;validation_pass&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">integer</span><span class="o">&gt;</span><span class="p">,</span>
+    <span class="s2">&quot;operations_hash&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">Operation_list_list_hash</span><span class="o">&gt;</span><span class="p">,</span>
+    <span class="s2">&quot;fitness&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">integer</span> <span class="p">(</span><span class="nb">hex</span><span class="p">)</span><span class="o">&gt;</span><span class="p">,</span>
+    <span class="s2">&quot;context&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">Context_hash</span><span class="o">&gt;</span><span class="p">,</span>
+    <span class="s2">&quot;protocol_data&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="nb">hex</span> <span class="n">encoded</span><span class="o">&gt;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>block_header</strong> – <p>Json input
-{</p>
-<blockquote>
-<div><p>”level”: &lt;integer&gt;,
-“proto”: &lt;integer&gt;,
-“predecessor”: &lt;block hash&gt;,
-“timestamp”: &lt;timestamp&gt;,
-“validation_pass”: &lt;integer&gt;,
-“operations_hash”: &lt;Operation_list_list_hash&gt;,
-“fitness”: &lt;integer (hex)&gt;,
-“context”: &lt;Context_hash&gt;,
-“protocol_data”: &lt;hex encoded&gt;</p>
-</div></blockquote>
-<p>}</p>
-</p>
+<dd class="field-odd"><p><strong>block_header</strong> – JSON input</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>{ “block”: &lt;hex encoded&gt; }</p>
@@ -1150,16 +1158,16 @@ below the 64th priority for the next block.</p>
 <dt id="pytezos.rpc.helpers.ForgeOperationsQuery.post">
 <code class="sig-name descname"><span class="pre">post</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">operation</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/rpc/helpers.html#ForgeOperationsQuery.post"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.rpc.helpers.ForgeOperationsQuery.post" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get raw bytes encoding of an unsigned operation</p>
+<p>operation format:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;branch&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">block</span> <span class="nb">hash</span><span class="o">&gt;</span><span class="p">,</span>
+    <span class="s2">&quot;contents&quot;</span><span class="p">:</span> <span class="p">[{</span> <span class="o">&lt;</span><span class="n">operation_content</span><span class="o">&gt;</span> <span class="p">}]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>operation</strong> – <p>Json input
-{</p>
-<blockquote>
-<div><p>”branch”: &lt;block hash&gt;,
-“contents”: [{ &lt;operation_content&gt; }]</p>
-</div></blockquote>
-<p>}</p>
-</p>
+<dd class="field-odd"><p><strong>operation</strong> – JSON input</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>Hex string</p>
@@ -1187,17 +1195,17 @@ below the 64th priority for the next block.</p>
 <dt id="pytezos.rpc.helpers.ForgeProtocolDataQuery.post">
 <code class="sig-name descname"><span class="pre">post</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">protocol_data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/rpc/helpers.html#ForgeProtocolDataQuery.post"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.rpc.helpers.ForgeProtocolDataQuery.post" title="Permalink to this definition">¶</a></dt>
 <dd><p>Forge the protocol-specific part of a block header.</p>
+<p>protocol_data format:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;priority&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">integer</span><span class="o">&gt;</span><span class="p">,</span>
+    <span class="s2">&quot;nonce_hash&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">Base58</span> <span class="n">nonce</span> <span class="nb">hash</span><span class="o">&gt;</span><span class="p">,</span>  <span class="o">//</span> <span class="n">optional</span>
+    <span class="s2">&quot;proof_of_work_nonce&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="nb">hex</span> <span class="n">encoded</span><span class="o">&gt;</span>  <span class="o">//</span> <span class="n">optional</span>
+<span class="p">}</span>
+</pre></div>
+</div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>protocol_data</strong> – <p>Json input
-{</p>
-<blockquote>
-<div><p>”priority”: &lt;integer&gt;,
-“nonce_hash”: &lt;Base58 nonce hash&gt;,  // optional
-“proof_of_work_nonce”: &lt;hex encoded&gt;  // optional</p>
-</div></blockquote>
-<p>}</p>
-</p>
+<dd class="field-odd"><p><strong>protocol_data</strong> – JSON input</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>{ “protocol_data”: &lt;hex encoded&gt; }</p>
@@ -1224,27 +1232,27 @@ below the 64th priority for the next block.</p>
 <dl class="py method">
 <dt id="pytezos.rpc.helpers.ParseBlockQuery.post">
 <code class="sig-name descname"><span class="pre">post</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">block_header</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/rpc/helpers.html#ParseBlockQuery.post"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.rpc.helpers.ParseBlockQuery.post" title="Permalink to this definition">¶</a></dt>
-<dd><p>Retrieves protocol-specific part of a block header and signature.</p>
+<dd><p>Retrieve protocol-specific part of a block header and signature.</p>
+<p>block_header format:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;level&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">integer</span><span class="o">&gt;</span><span class="p">,</span>
+    <span class="s2">&quot;proto&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">integer</span><span class="o">&gt;</span><span class="p">,</span>
+    <span class="s2">&quot;predecessor&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">block</span> <span class="nb">hash</span><span class="o">&gt;</span><span class="p">,</span>
+    <span class="s2">&quot;timestamp&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">timestamp</span><span class="o">&gt;</span><span class="p">,</span>
+    <span class="s2">&quot;validation_pass&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">integer</span><span class="o">&gt;</span><span class="p">,</span>
+    <span class="s2">&quot;operations_hash&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">Operation_list_list_hash</span><span class="o">&gt;</span><span class="p">,</span>
+    <span class="s2">&quot;fitness&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">integer</span> <span class="p">(</span><span class="nb">hex</span><span class="p">)</span><span class="o">&gt;</span><span class="p">,</span>
+    <span class="s2">&quot;context&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">Context_hash</span><span class="o">&gt;</span><span class="p">,</span>
+    <span class="s2">&quot;protocol_data&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="nb">hex</span> <span class="n">encoded</span><span class="o">&gt;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>block_header</strong> – <p>Json input
-{</p>
-<blockquote>
-<div><p>”level”: &lt;integer&gt;,
-“proto”: &lt;integer&gt;,
-“predecessor”: &lt;block hash&gt;,
-“timestamp”: &lt;timestamp&gt;,
-“validation_pass”: &lt;integer&gt;,
-“operations_hash”: &lt;Operation_list_list_hash&gt;,
-“fitness”: &lt;integer (hex)&gt;,
-“context”: &lt;Context_hash&gt;,
-“protocol_data”: &lt;hex encoded&gt;</p>
-</div></blockquote>
-<p>}</p>
-</p>
+<dd class="field-odd"><p><strong>block_header</strong> – JSON input</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Json object</p>
+<dd class="field-even"><p>JSON object</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1268,25 +1276,23 @@ below the 64th priority for the next block.</p>
 <dl class="py method">
 <dt id="pytezos.rpc.helpers.ParseOperationsQuery.post">
 <code class="sig-name descname"><span class="pre">post</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">operations</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/rpc/helpers.html#ParseOperationsQuery.post"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.rpc.helpers.ParseOperationsQuery.post" title="Permalink to this definition">¶</a></dt>
-<dd><p>Extracts contents and signatures from the forged and optionally signed operations (bulk).</p>
+<dd><p>Extract contents and signatures from the forged and optionally signed operations (bulk).</p>
+<p>operations format:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;operations&quot;</span><span class="p">:</span> <span class="p">[</span> <span class="p">{</span>
+        <span class="s2">&quot;branch&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">block_hash</span><span class="o">&gt;</span><span class="p">,</span>
+        <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="nb">hex</span> <span class="n">encoded</span><span class="o">&gt;</span>
+    <span class="p">}</span> <span class="o">...</span> <span class="p">],</span>
+    <span class="s2">&quot;check_signature&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">boolean</span><span class="o">&gt;</span>  <span class="o">//</span> <span class="n">optional</span>
+<span class="p">}</span>
+</pre></div>
+</div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>operations</strong> – <p>Json input
-{</p>
-<blockquote>
-<div><dl class="simple">
-<dt>”operations”: [ {</dt><dd><p>“branch”: &lt;block_hash&gt;,
-“data”: &lt;hex encoded&gt;</p>
-</dd>
-</dl>
-<p>} … ],
-“check_signature”: &lt;boolean&gt;  // optional</p>
-</div></blockquote>
-<p>}</p>
-</p>
+<dd class="field-odd"><p><strong>operations</strong> – JSON input</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Json object</p>
+<dd class="field-even"><p>JSON object</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1312,38 +1318,34 @@ below the 64th priority for the next block.</p>
 <code class="sig-name descname"><span class="pre">post</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">block</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sort</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timestamp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/rpc/helpers.html#PreapplyBlockQuery.post"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.rpc.helpers.PreapplyBlockQuery.post" title="Permalink to this definition">¶</a></dt>
 <dd><p>Simulate the validation of a block that would contain the given operations
 and return the resulting fitness and context hash.</p>
+<p>block format:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;protocol_data&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;protocol&quot;</span><span class="p">:</span> <span class="s2">&quot;Pt24m4xiPbLDhVgVfABUjirbmda3yohdN82Sp9FeuAXJ4eV9otd&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;priority&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">integer</span><span class="o">&gt;</span><span class="p">,</span>
+        <span class="s2">&quot;proof_of_work_nonce&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="nb">hex</span> <span class="n">encoded</span><span class="o">&gt;</span>
+        <span class="s2">&quot;seed_nonce_hash&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">Base58</span> <span class="n">encoded</span><span class="o">&gt;</span><span class="p">,</span>  <span class="o">//</span> <span class="n">optional</span>
+        <span class="s2">&quot;signature&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">Base58</span> <span class="n">encoded</span><span class="o">&gt;</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;operations&quot;</span><span class="p">:</span> <span class="p">[</span> <span class="p">[</span> <span class="p">{</span>
+        <span class="s2">&quot;protocol&quot;</span><span class="p">:</span> <span class="s2">&quot;Pt24m4xiPbLDhVgVfABUjirbmda3yohdN82Sp9FeuAXJ4eV9otd&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;branch&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">block_hash</span><span class="o">&gt;</span><span class="p">,</span>
+        <span class="s2">&quot;contents&quot;</span><span class="p">:</span> <span class="p">[</span> <span class="p">{}</span> <span class="o">...</span> <span class="p">],</span>  <span class="o">//</span> <span class="n">kind</span><span class="o">-</span><span class="n">specific</span>
+        <span class="s2">&quot;signature&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">Base58</span> <span class="n">encoded</span><span class="o">&gt;</span>
+    <span class="p">}</span><span class="o">...</span> <span class="p">]</span> <span class="o">...</span> <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>block</strong> – <p>Json input
-{</p>
-<blockquote>
-<div><dl class="simple">
-<dt>”protocol_data”: {</dt><dd><p>“protocol”: “Pt24m4xiPbLDhVgVfABUjirbmda3yohdN82Sp9FeuAXJ4eV9otd”,
-“priority”: &lt;integer&gt;,
-“proof_of_work_nonce”: &lt;hex encoded&gt;
-“seed_nonce_hash”: &lt;Base58 encoded&gt;,  // optional
-“signature”: &lt;Base58 encoded&gt;</p>
-</dd>
-</dl>
-<p>},
-“operations”: [ [ {</p>
-<blockquote>
-<div><p>”protocol”: “Pt24m4xiPbLDhVgVfABUjirbmda3yohdN82Sp9FeuAXJ4eV9otd”,
-“branch”: &lt;block_hash&gt;,
-“contents”: [ {} … ],  // kind-specific
-“signature”: &lt;Base58 encoded&gt;</p>
-</div></blockquote>
-<p>}… ] … ]</p>
-</div></blockquote>
-<p>}</p>
-</p></li>
+<li><p><strong>block</strong> – JSON input</p></li>
 <li><p><strong>sort</strong> – by what?</p></li>
 <li><p><strong>timestamp</strong> – timestamp</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Json object</p>
+<dd class="field-even"><p>JSON object</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1368,21 +1370,21 @@ and return the resulting fitness and context hash.</p>
 <dt id="pytezos.rpc.helpers.PreapplyOperationsQuery.post">
 <code class="sig-name descname"><span class="pre">post</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">operations</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/rpc/helpers.html#PreapplyOperationsQuery.post"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.rpc.helpers.PreapplyOperationsQuery.post" title="Permalink to this definition">¶</a></dt>
 <dd><p>Simulate the validation of operation(s).</p>
+<p>operations format:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">[{</span>
+    <span class="s2">&quot;protocol&quot;</span><span class="p">:</span> <span class="s2">&quot;Pt24m4xiPbLDhVgVfABUjirbmda3yohdN82Sp9FeuAXJ4eV9otd&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;branch&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">block_hash</span><span class="o">&gt;</span><span class="p">,</span>
+    <span class="s2">&quot;contents&quot;</span><span class="p">:</span> <span class="p">[</span> <span class="p">{}</span> <span class="o">...</span> <span class="p">],</span>  <span class="o">//</span> <span class="n">kind</span><span class="o">-</span><span class="n">specific</span>
+    <span class="s2">&quot;signature&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">Base58</span> <span class="n">encoded</span><span class="o">&gt;</span>
+<span class="p">}]</span>
+</pre></div>
+</div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>operations</strong> – <p>Json input
-[{</p>
-<blockquote>
-<div><p>”protocol”: “Pt24m4xiPbLDhVgVfABUjirbmda3yohdN82Sp9FeuAXJ4eV9otd”,
-“branch”: &lt;block_hash&gt;,
-“contents”: [ {} … ],  // kind-specific
-“signature”: &lt;Base58 encoded&gt;</p>
-</div></blockquote>
-<p>}]</p>
-</p>
+<dd class="field-odd"><p><strong>operations</strong> – JSON input</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Json array (operations with metadata)</p>
+<dd class="field-even"><p>JSON array (operations with metadata)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1463,18 +1465,18 @@ and return the resulting fitness and context hash.</p>
 <dl class="py method">
 <dt id="pytezos.rpc.helpers.ScriptsPackDataQuery.post">
 <code class="sig-name descname"><span class="pre">post</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">expression</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/rpc/helpers.html#ScriptsPackDataQuery.post"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.rpc.helpers.ScriptsPackDataQuery.post" title="Permalink to this definition">¶</a></dt>
-<dd><p>Computes the serialized version of some data expression using the same algorithm as script instruction PACK.</p>
+<dd><p>Compute the serialized version of some data expression using the same algorithm as script instruction PACK.</p>
+<p>expression format:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">michelson</span> <span class="n">expression</span><span class="o">&gt;</span><span class="p">,</span>
+    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">michelson</span> <span class="n">expression</span><span class="o">&gt;</span><span class="p">,</span>
+    <span class="s2">&quot;gas&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">bignum</span><span class="o">&gt;</span>  <span class="o">//</span> <span class="n">optional</span>
+<span class="p">}</span>
+</pre></div>
+</div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>expression</strong> – <p>Json input
-{</p>
-<blockquote>
-<div><p>”data”: &lt;michelson expression&gt;,
-“type”: &lt;michelson expression&gt;,
-“gas”: &lt;bignum&gt;  // optional</p>
-</div></blockquote>
-<p>}</p>
-</p>
+<dd class="field-odd"><p><strong>expression</strong> – JSON input</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>Packed data (hex encoded)</p>
@@ -1502,23 +1504,23 @@ and return the resulting fitness and context hash.</p>
 <dt id="pytezos.rpc.helpers.ScriptsRunCodeQuery.post">
 <code class="sig-name descname"><span class="pre">post</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">invocation</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/rpc/helpers.html#ScriptsRunCodeQuery.post"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.rpc.helpers.ScriptsRunCodeQuery.post" title="Permalink to this definition">¶</a></dt>
 <dd><p>Run a piece of code in the current context.</p>
+<p>invocation format:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;script&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">michelson</span> <span class="n">expression</span><span class="o">&gt;</span><span class="p">,</span>
+    <span class="s2">&quot;storage&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">michelson</span> <span class="n">expression</span><span class="o">&gt;</span><span class="p">,</span>
+    <span class="s2">&quot;entrypoint&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;</span><span class="p">,</span>
+    <span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">michelson</span> <span class="n">expression</span><span class="o">&gt;</span><span class="p">,</span>
+    <span class="s2">&quot;chain_id&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">base58</span> <span class="n">encoded</span><span class="o">&gt;</span><span class="p">,</span>
+    <span class="s2">&quot;amount&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">mutez</span><span class="o">&gt;</span><span class="p">,</span>
+    <span class="s2">&quot;source&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">account</span> <span class="n">address</span><span class="o">&gt;</span><span class="p">,</span>  <span class="o">//</span> <span class="n">optional</span>
+    <span class="s2">&quot;payer&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">account</span> <span class="n">address</span><span class="o">&gt;</span><span class="p">,</span>  <span class="o">//</span> <span class="n">optional</span>
+    <span class="s2">&quot;gas&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">bignum</span><span class="o">&gt;</span>  <span class="o">//</span> <span class="n">optional</span>
+<span class="p">}</span>
+</pre></div>
+</div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>invocation</strong> – <p>Json input
-{</p>
-<blockquote>
-<div><p>”script”: &lt;michelson expression&gt;,
-“storage”: &lt;michelson expression&gt;,
-“entrypoint”: &lt;string&gt;,
-“input”: &lt;michelson expression&gt;,
-“chain_id”: &lt;base58 encoded&gt;,
-“amount”: &lt;mutez&gt;,
-“source”: &lt;account address&gt;,  // optional
-“payer”: &lt;account address&gt;,  // optional
-“gas”: &lt;bignum&gt;  // optional</p>
-</div></blockquote>
-<p>}</p>
-</p>
+<dd class="field-odd"><p><strong>invocation</strong> – JSON input</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>Resulting storage, spawned operations, and bigmap diff</p>
@@ -1546,20 +1548,20 @@ and return the resulting fitness and context hash.</p>
 <dt id="pytezos.rpc.helpers.ScriptsRunOperationQuery.post">
 <code class="sig-name descname"><span class="pre">post</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">operation</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/rpc/helpers.html#ScriptsRunOperationQuery.post"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.rpc.helpers.ScriptsRunOperationQuery.post" title="Permalink to this definition">¶</a></dt>
 <dd><p>Run an operation without signature checks.</p>
+<p>operation format:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;branch&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">block_hash</span><span class="o">&gt;</span><span class="p">,</span>
+    <span class="s2">&quot;contents&quot;</span><span class="p">:</span> <span class="p">[</span> <span class="p">{}</span> <span class="o">...</span> <span class="p">],</span>  <span class="o">//</span> <span class="n">kind</span><span class="o">-</span><span class="n">specific</span>
+    <span class="s2">&quot;signature&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">Base58</span> <span class="n">encoded</span><span class="o">&gt;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>operation</strong> – <p>Json input
-{</p>
-<blockquote>
-<div><p>”branch”: &lt;block_hash&gt;,
-“contents”: [ {} … ],  // kind-specific
-“signature”: &lt;Base58 encoded&gt;</p>
-</div></blockquote>
-<p>}</p>
-</p>
+<dd class="field-odd"><p><strong>operation</strong> – JSON input</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Json object (operation with metadata)</p>
+<dd class="field-even"><p>JSON object (operation with metadata)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1584,23 +1586,23 @@ and return the resulting fitness and context hash.</p>
 <dt id="pytezos.rpc.helpers.ScriptsTraceCodeQuery.post">
 <code class="sig-name descname"><span class="pre">post</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">invocation</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/rpc/helpers.html#ScriptsTraceCodeQuery.post"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.rpc.helpers.ScriptsTraceCodeQuery.post" title="Permalink to this definition">¶</a></dt>
 <dd><p>Run a piece of code in the current context, keeping a trace.</p>
+<p>invocation format:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;script&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">michelson</span> <span class="n">expression</span><span class="o">&gt;</span><span class="p">,</span>
+    <span class="s2">&quot;storage&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">michelson</span> <span class="n">expression</span><span class="o">&gt;</span><span class="p">,</span>
+    <span class="s2">&quot;entrypoint&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;</span><span class="p">,</span>
+    <span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">michelson</span> <span class="n">expression</span><span class="o">&gt;</span><span class="p">,</span>
+    <span class="s2">&quot;chain_id&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">base58</span> <span class="n">encoded</span><span class="o">&gt;</span><span class="p">,</span>
+    <span class="s2">&quot;amount&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">mutez</span><span class="o">&gt;</span><span class="p">,</span>
+    <span class="s2">&quot;source&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">account</span> <span class="n">address</span><span class="o">&gt;</span><span class="p">,</span>  <span class="o">//</span> <span class="n">optional</span>
+    <span class="s2">&quot;payer&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">account</span> <span class="n">address</span><span class="o">&gt;</span><span class="p">,</span>  <span class="o">//</span> <span class="n">optional</span>
+    <span class="s2">&quot;gas&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">bignum</span><span class="o">&gt;</span>  <span class="o">//</span> <span class="n">optional</span>
+<span class="p">}</span>
+</pre></div>
+</div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>invocation</strong> – <p>Json input
-{</p>
-<blockquote>
-<div><p>”script”: &lt;michelson expression&gt;,
-“storage”: &lt;michelson expression&gt;,
-“entrypoint”: &lt;string&gt;,
-“input”: &lt;michelson expression&gt;,
-“chain_id”: &lt;base58 encoded&gt;,
-“amount”: &lt;mutez&gt;,
-“source”: &lt;account address&gt;,  // optional
-“payer”: &lt;account address&gt;,  // optional
-“gas”: &lt;bignum&gt;  // optional</p>
-</div></blockquote>
-<p>}</p>
-</p>
+<dd class="field-odd"><p><strong>invocation</strong> – JSON input</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>Resulting storage, spawned operations, bigmap diff, and trace</p>
@@ -1628,19 +1630,19 @@ and return the resulting fitness and context hash.</p>
 <dt id="pytezos.rpc.helpers.ScriptsTypecheckCodeQuery.post">
 <code class="sig-name descname"><span class="pre">post</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">expression</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/rpc/helpers.html#ScriptsTypecheckCodeQuery.post"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.rpc.helpers.ScriptsTypecheckCodeQuery.post" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check that some data expression is well formed and of a given type in the current context.</p>
+<p>expression format:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;program&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">michelson</span> <span class="n">expression</span><span class="o">&gt;</span><span class="p">,</span>
+    <span class="s2">&quot;gas&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">bignum</span><span class="o">&gt;</span>  <span class="o">//</span> <span class="n">optional</span>
+<span class="p">}</span>
+</pre></div>
+</div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>expression</strong> – <p>Json input
-{</p>
-<blockquote>
-<div><p>”program”: &lt;michelson expression&gt;,
-“gas”: &lt;bignum&gt;  // optional</p>
-</div></blockquote>
-<p>}</p>
-</p>
+<dd class="field-odd"><p><strong>expression</strong> – JSON input</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Json object</p>
+<dd class="field-even"><p>JSON object</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1665,28 +1667,28 @@ and return the resulting fitness and context hash.</p>
 <dt id="pytezos.rpc.helpers.ScriptsTypecheckDataQuery.post">
 <code class="sig-name descname"><span class="pre">post</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">expression</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/rpc/helpers.html#ScriptsTypecheckDataQuery.post"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.rpc.helpers.ScriptsTypecheckDataQuery.post" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check that some data expression is well formed and of a given type in the current context.</p>
+<p>expression format:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">michelson</span> <span class="n">expression</span><span class="o">&gt;</span><span class="p">,</span>
+    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">michelson</span> <span class="n">expression</span><span class="o">&gt;</span><span class="p">,</span>
+    <span class="s2">&quot;gas&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">bignum</span><span class="o">&gt;</span>  <span class="o">//</span> <span class="n">optional</span>
+<span class="p">}</span>
+</pre></div>
+</div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>expression</strong> – <p>Json input
-{</p>
-<blockquote>
-<div><p>”data”: &lt;michelson expression&gt;,
-“type”: &lt;michelson expression&gt;,
-“gas”: &lt;bignum&gt;  // optional</p>
-</div></blockquote>
-<p>}</p>
-</p>
+<dd class="field-odd"><p><strong>expression</strong> – JSON input</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Json object</p>
+<dd class="field-even"><p>JSON object</p>
 </dd>
 </dl>
 </dd></dl>
 
 </dd></dl>
 
-</section>
-<section id="module-pytezos.rpc.search">
+</div>
+<div class="section" id="module-pytezos.rpc.search">
 <span id="interval-search"></span><h2>Interval search<a class="headerlink" href="#module-pytezos.rpc.search" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pytezos.rpc.search.BlockSliceQuery">
@@ -1839,8 +1841,8 @@ and return the resulting fitness and context hash.</p>
 <code class="sig-prename descclassname"><span class="pre">pytezos.rpc.search.</span></code><code class="sig-name descname"><span class="pre">walk_state_change_interval</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">head</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">last</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">get</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Callable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">equals</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Callable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">head_value</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">last_value</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Generator</span><a class="reference internal" href="_modules/pytezos/rpc/search.html#walk_state_change_interval"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.rpc.search.walk_state_change_interval" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-</section>
-<section id="module-pytezos.rpc.node">
+</div>
+<div class="section" id="module-pytezos.rpc.node">
 <span id="node-wrapper-and-errors"></span><h2>Node wrapper and errors<a class="headerlink" href="#module-pytezos.rpc.node" title="Permalink to this headline">¶</a></h2>
 <dl class="py exception">
 <dt id="pytezos.rpc.node.RpcError">
@@ -1852,13 +1854,15 @@ and return the resulting fitness and context hash.</p>
 
 <dl class="py method">
 <dt id="pytezos.rpc.node.RpcError.from_errors">
-<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">from_errors</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">errors</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/rpc/node.html#RpcError.from_errors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.rpc.node.RpcError.from_errors" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">from_errors</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">errors</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#pytezos.rpc.node.RpcError" title="pytezos.rpc.node.RpcError"><span class="pre">pytezos.rpc.node.RpcError</span></a><a class="reference internal" href="_modules/pytezos/rpc/node.html#RpcError.from_errors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.rpc.node.RpcError.from_errors" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create RpcError from “errors” section of response JSON.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="pytezos.rpc.node.RpcError.from_response">
-<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">from_response</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">res</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">requests.models.Response</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/rpc/node.html#RpcError.from_response"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.rpc.node.RpcError.from_response" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">from_response</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">res</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">requests.models.Response</span></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#pytezos.rpc.node.RpcError" title="pytezos.rpc.node.RpcError"><span class="pre">pytezos.rpc.node.RpcError</span></a><a class="reference internal" href="_modules/pytezos/rpc/node.html#RpcError.from_response"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.rpc.node.RpcError.from_response" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create RpcError from requests Response.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="pytezos.rpc.node.RpcError.with_traceback">
@@ -1871,78 +1875,97 @@ set self.__traceback__ to tb and return self.</p>
 
 <dl class="py class">
 <dt id="pytezos.rpc.node.RpcMultiNode">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">pytezos.rpc.node.</span></code><code class="sig-name descname"><span class="pre">RpcMultiNode</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uri</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/rpc/node.html#RpcMultiNode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.rpc.node.RpcMultiNode" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="py method">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">pytezos.rpc.node.</span></code><code class="sig-name descname"><span class="pre">RpcMultiNode</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uri</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/rpc/node.html#RpcMultiNode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.rpc.node.RpcMultiNode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Request proxy for multiple nodes chosen for each request in round-robin order.</p>
+<dl class="py method">
 <dt id="pytezos.rpc.node.RpcMultiNode.delete">
-<code class="sig-name descname"><span class="pre">delete</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pytezos.rpc.node.RpcMultiNode.delete" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">delete</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">requests.models.Response</span><a class="headerlink" href="#pytezos.rpc.node.RpcMultiNode.delete" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt id="pytezos.rpc.node.RpcMultiNode.get">
-<code class="sig-name descname"><span class="pre">get</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pytezos.rpc.node.RpcMultiNode.get" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">get</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">requests.models.Response</span><a class="headerlink" href="#pytezos.rpc.node.RpcMultiNode.get" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt id="pytezos.rpc.node.RpcMultiNode.post">
-<code class="sig-name descname"><span class="pre">post</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">json</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pytezos.rpc.node.RpcMultiNode.post" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">post</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">json</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">requests.models.Response</span><span class="p"><span class="pre">,</span> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#pytezos.rpc.node.RpcMultiNode.post" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt id="pytezos.rpc.node.RpcMultiNode.put">
-<code class="sig-name descname"><span class="pre">put</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pytezos.rpc.node.RpcMultiNode.put" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">put</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">requests.models.Response</span><a class="headerlink" href="#pytezos.rpc.node.RpcMultiNode.put" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt id="pytezos.rpc.node.RpcMultiNode.request">
-<code class="sig-name descname"><span class="pre">request</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">requests.models.Response</span><a class="reference internal" href="_modules/pytezos/rpc/node.html#RpcMultiNode.request"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.rpc.node.RpcMultiNode.request" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="sig-name descname"><span class="pre">request</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">requests.models.Response</span><a class="reference internal" href="_modules/pytezos/rpc/node.html#RpcMultiNode.request"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.rpc.node.RpcMultiNode.request" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform HTTP request to node.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>method</strong> – one of GET/POST/PUT/DELETE</p></li>
+<li><p><strong>path</strong> – path to endpoint</p></li>
+<li><p><strong>kwargs</strong> – requests.request arguments</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="#pytezos.rpc.node.RpcError" title="pytezos.rpc.node.RpcError"><strong>RpcError</strong></a> – node has returned an error</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>node response</p>
+</dd>
+</dl>
+</dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt id="pytezos.rpc.node.RpcNode">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">pytezos.rpc.node.</span></code><code class="sig-name descname"><span class="pre">RpcNode</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uri</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/rpc/node.html#RpcNode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.rpc.node.RpcNode" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="py method">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">pytezos.rpc.node.</span></code><code class="sig-name descname"><span class="pre">RpcNode</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uri</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/rpc/node.html#RpcNode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.rpc.node.RpcNode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Request proxy for a single Tezos node.</p>
+<dl class="py method">
 <dt id="pytezos.rpc.node.RpcNode.delete">
-<code class="sig-name descname"><span class="pre">delete</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/rpc/node.html#RpcNode.delete"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.rpc.node.RpcNode.delete" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">delete</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">requests.models.Response</span><a class="reference internal" href="_modules/pytezos/rpc/node.html#RpcNode.delete"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.rpc.node.RpcNode.delete" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt id="pytezos.rpc.node.RpcNode.get">
-<code class="sig-name descname"><span class="pre">get</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/rpc/node.html#RpcNode.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.rpc.node.RpcNode.get" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">get</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">requests.models.Response</span><a class="reference internal" href="_modules/pytezos/rpc/node.html#RpcNode.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.rpc.node.RpcNode.get" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt id="pytezos.rpc.node.RpcNode.post">
-<code class="sig-name descname"><span class="pre">post</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">json</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/rpc/node.html#RpcNode.post"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.rpc.node.RpcNode.post" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">post</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">json</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">requests.models.Response</span><span class="p"><span class="pre">,</span> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="_modules/pytezos/rpc/node.html#RpcNode.post"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.rpc.node.RpcNode.post" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt id="pytezos.rpc.node.RpcNode.put">
-<code class="sig-name descname"><span class="pre">put</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/rpc/node.html#RpcNode.put"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.rpc.node.RpcNode.put" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">put</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">requests.models.Response</span><a class="reference internal" href="_modules/pytezos/rpc/node.html#RpcNode.put"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.rpc.node.RpcNode.put" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt id="pytezos.rpc.node.RpcNode.request">
-<code class="sig-name descname"><span class="pre">request</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">requests.models.Response</span><a class="reference internal" href="_modules/pytezos/rpc/node.html#RpcNode.request"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.rpc.node.RpcNode.request" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
+<code class="sig-name descname"><span class="pre">request</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">requests.models.Response</span><a class="reference internal" href="_modules/pytezos/rpc/node.html#RpcNode.request"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.rpc.node.RpcNode.request" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform HTTP request to node.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>method</strong> – one of GET/POST/PUT/DELETE</p></li>
+<li><p><strong>path</strong> – path to endpoint</p></li>
+<li><p><strong>kwargs</strong> – requests.request arguments</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="#pytezos.rpc.node.RpcError" title="pytezos.rpc.node.RpcError"><strong>RpcError</strong></a> – node has returned an error</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>node response</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="py function">
-<dt id="pytezos.rpc.node.gen_error_variants">
-<code class="sig-prename descclassname"><span class="pre">pytezos.rpc.node.</span></code><code class="sig-name descname"><span class="pre">gen_error_variants</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">error_id</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">list</span><a class="reference internal" href="_modules/pytezos/rpc/node.html#gen_error_variants"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.rpc.node.gen_error_variants" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt id="pytezos.rpc.node.retry">
-<code class="sig-prename descclassname"><span class="pre">pytezos.rpc.node.</span></code><code class="sig-name descname"><span class="pre">retry</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fn</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/rpc/node.html#retry"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.rpc.node.retry" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt id="pytezos.rpc.node.urljoin">
-<code class="sig-prename descclassname"><span class="pre">pytezos.rpc.node.</span></code><code class="sig-name descname"><span class="pre">urljoin</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/rpc/node.html#urljoin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.rpc.node.urljoin" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+</dd></dl>
 
 <span class="target" id="module-pytezos.rpc.errors"></span><dl class="py exception">
 <dt id="pytezos.rpc.errors.MichelsonBadContractParameter">
@@ -1975,45 +1998,37 @@ to an account, or a parameter was supplied of the wrong type</p>
 <dd><p>Catch all tez errors</p>
 </dd></dl>
 
-</section>
-</section>
+</div>
+</div>
 
 
            </div>
            
           </div>
           <footer>
-  
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="types.html" class="btn btn-neutral float-right" title="Michelson types" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="operation_groups.html" class="btn btn-neutral float-left" title="Building and parsing operations" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
+        <a href="types.html" class="btn btn-neutral float-right" title="Michelson types" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="operation_groups.html" class="btn btn-neutral float-left" title="Building and parsing operations" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; Copyright 2020, Baking Bad
+        &#169; Copyright 2020, Baking Bad.
 
     </p>
   </div>
     
     
     
-    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     
     provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 

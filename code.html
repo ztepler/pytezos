@@ -3,10 +3,9 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
-  <meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
-
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>Working with Michelson code &mdash; PyTezos  documentation</title>
   
@@ -19,8 +18,12 @@
   
     <link rel="shortcut icon" href="_static/favicon.ico"/>
   
+
   
   
+
+  
+    <link rel="canonical" href="https://pytezos.org/code.html" />
 
   
   <!--[if lt IE 9]>
@@ -53,7 +56,7 @@
           
 
           
-            <a href="contents.html" class="icon icon-home" alt="Documentation Home"> PyTezos
+            <a href="contents.html" class="icon icon-home"> PyTezos
           
 
           
@@ -84,11 +87,11 @@
               
             
             
-              <p><span class="caption-text">Contents</span></p>
+              <p class="caption"><span class="caption-text">Contents</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="quick_start.html">Quick start</a></li>
 <li class="toctree-l1"><a class="reference internal" href="integration_tests.html">Michelson integration tests</a></li>
-<li class="toctree-l1"><a class="reference internal" href="pytezos_cli.html">Pytezos CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pytezos_cli.html">PyTezos CLI</a></li>
 <li class="toctree-l1"><a class="reference internal" href="high_level.html">High-level interfaces</a></li>
 <li class="toctree-l1"><a class="reference internal" href="crypto.html">Cryptography</a></li>
 <li class="toctree-l1"><a class="reference internal" href="operation_groups.html">Building and parsing operations</a></li>
@@ -107,6 +110,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="repl.html">Michelson REPL</a></li>
 <li class="toctree-l1"><a class="reference internal" href="inspect_proposals.html">Inspecting proposals</a></li>
+<li class="toctree-l1"><a class="reference internal" href="michelson_kernel.html">Michelson IPython kernel</a></li>
 </ul>
 
             
@@ -147,6 +151,8 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -158,7 +164,7 @@
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="_sources/code.rst.txt" rel="nofollow"> View page source</a>
           
         
@@ -172,9 +178,9 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <section id="working-with-michelson-code">
+  <div class="section" id="working-with-michelson-code">
 <h1>Working with Michelson code<a class="headerlink" href="#working-with-michelson-code" title="Permalink to this headline">¶</a></h1>
-<section id="module-pytezos.michelson.macros">
+<div class="section" id="module-pytezos.michelson.macros">
 <span id="expanding-macros"></span><h2>Expanding macros<a class="headerlink" href="#module-pytezos.michelson.macros" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pytezos.michelson.macros.PxrNode">
@@ -424,8 +430,8 @@
 <code class="sig-prename descclassname"><span class="pre">pytezos.michelson.macros.</span></code><code class="sig-name descname"><span class="pre">traverse_pxr_tree</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annots</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">produce</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/michelson/macros.html#traverse_pxr_tree"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.michelson.macros.traverse_pxr_tree" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-</section>
-<section id="module-pytezos.michelson.parse">
+</div>
+<div class="section" id="module-pytezos.michelson.parse">
 <span id="parsing-ast"></span><h2>Parsing AST<a class="headerlink" href="#module-pytezos.michelson.parse" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pytezos.michelson.parse.MichelsonParser">
@@ -686,8 +692,8 @@
 </dl>
 </dd></dl>
 
-</section>
-<section id="module-pytezos.michelson.format">
+</div>
+<div class="section" id="module-pytezos.michelson.format">
 <span id="code-formatter"></span><h2>Code formatter<a class="headerlink" href="#module-pytezos.michelson.format" title="Permalink to this headline">¶</a></h2>
 <dl class="py exception">
 <dt id="pytezos.michelson.format.MichelsonFormatterError">
@@ -720,8 +726,8 @@
 </dl>
 </dd></dl>
 
-</section>
-<section id="module-pytezos.michelson.sections.parameter">
+</div>
+<div class="section" id="module-pytezos.michelson.sections.parameter">
 <span id="parameter-section"></span><h2>Parameter section<a class="headerlink" href="#module-pytezos.michelson.sections.parameter" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pytezos.michelson.sections.parameter.ParameterSection">
@@ -808,8 +814,8 @@
 
 </dd></dl>
 
-</section>
-<section id="module-pytezos.michelson.sections.storage">
+</div>
+<div class="section" id="module-pytezos.michelson.sections.storage">
 <span id="storage-section"></span><h2>Storage section<a class="headerlink" href="#module-pytezos.michelson.sections.storage" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pytezos.michelson.sections.storage.StorageSection">
@@ -876,8 +882,8 @@
 
 </dd></dl>
 
-</section>
-<section id="module-pytezos.michelson.sections.code">
+</div>
+<div class="section" id="module-pytezos.michelson.sections.code">
 <span id="code-section"></span><h2>Code section<a class="headerlink" href="#module-pytezos.michelson.sections.code" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pytezos.michelson.sections.code.CodeSection">
@@ -899,21 +905,23 @@
 
 </dd></dl>
 
-</section>
-<section id="module-pytezos.michelson.program">
+</div>
+<div class="section" id="module-pytezos.michelson.program">
 <span id="script-wrapper"></span><h2>Script wrapper<a class="headerlink" href="#module-pytezos.michelson.program" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pytezos.michelson.program.MichelsonProgram">
 <em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">pytezos.michelson.program.</span></code><code class="sig-name descname"><span class="pre">MichelsonProgram</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">entrypoint</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameter</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#pytezos.michelson.sections.parameter.ParameterSection" title="pytezos.michelson.sections.parameter.ParameterSection"><span class="pre">pytezos.michelson.sections.parameter.ParameterSection</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">storage</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#pytezos.michelson.sections.storage.StorageSection" title="pytezos.michelson.sections.storage.StorageSection"><span class="pre">pytezos.michelson.sections.storage.StorageSection</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/michelson/program.html#MichelsonProgram"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.michelson.program.MichelsonProgram" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="py method">
+<dd><p>Michelson .tz contract interpreter interface</p>
+<dl class="py method">
 <dt id="pytezos.michelson.program.MichelsonProgram.as_micheline_expr">
-<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">as_micheline_expr</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/michelson/program.html#MichelsonProgram.as_micheline_expr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.michelson.program.MichelsonProgram.as_micheline_expr" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">as_micheline_expr</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="_modules/pytezos/michelson/program.html#MichelsonProgram.as_micheline_expr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.michelson.program.MichelsonProgram.as_micheline_expr" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt id="pytezos.michelson.program.MichelsonProgram.begin">
-<code class="sig-name descname"><span class="pre">begin</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stack</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="repl.html#pytezos.michelson.stack.MichelsonStack" title="pytezos.michelson.stack.MichelsonStack"><span class="pre">pytezos.michelson.stack.MichelsonStack</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">stdout</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="repl.html#pytezos.context.impl.ExecutionContext" title="pytezos.context.impl.ExecutionContext"><span class="pre">pytezos.context.impl.ExecutionContext</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/michelson/program.html#MichelsonProgram.begin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.michelson.program.MichelsonProgram.begin" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="sig-name descname"><span class="pre">begin</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stack</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="repl.html#pytezos.michelson.stack.MichelsonStack" title="pytezos.michelson.stack.MichelsonStack"><span class="pre">pytezos.michelson.stack.MichelsonStack</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">stdout</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="repl.html#pytezos.context.impl.ExecutionContext" title="pytezos.context.impl.ExecutionContext"><span class="pre">pytezos.context.impl.ExecutionContext</span></a></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">None</span><a class="reference internal" href="_modules/pytezos/michelson/program.html#MichelsonProgram.begin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.michelson.program.MichelsonProgram.begin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prepare stack for contract execution</p>
+</dd></dl>
 
 <dl class="py attribute">
 <dt id="pytezos.michelson.program.MichelsonProgram.code">
@@ -923,17 +931,20 @@
 <dl class="py method">
 <dt id="pytezos.michelson.program.MichelsonProgram.create">
 <em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">create</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sequence</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Type</span><span class="p"><span class="pre">[</span></span><span class="pre">pytezos.michelson.micheline.MichelineSequence</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Type</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#pytezos.michelson.program.MichelsonProgram" title="pytezos.michelson.program.MichelsonProgram"><span class="pre">pytezos.michelson.program.MichelsonProgram</span></a><span class="p"><span class="pre">]</span></span><a class="reference internal" href="_modules/pytezos/michelson/program.html#MichelsonProgram.create"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.michelson.program.MichelsonProgram.create" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Create MichelsonProgram type from micheline</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="pytezos.michelson.program.MichelsonProgram.end">
 <code class="sig-name descname"><span class="pre">end</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stack</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="repl.html#pytezos.michelson.stack.MichelsonStack" title="pytezos.michelson.stack.MichelsonStack"><span class="pre">pytezos.michelson.stack.MichelsonStack</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">stdout</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'readable'</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><span class="pre">Any</span><span class="p"><span class="pre">,</span> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><a class="reference internal" href="types.html#pytezos.michelson.types.pair.PairType" title="pytezos.michelson.types.pair.PairType"><span class="pre">pytezos.michelson.types.pair.PairType</span></a><span class="p"><span class="pre">]</span></span><a class="reference internal" href="_modules/pytezos/michelson/program.html#MichelsonProgram.end"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.michelson.program.MichelsonProgram.end" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Finish contract execution</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="pytezos.michelson.program.MichelsonProgram.execute">
 <code class="sig-name descname"><span class="pre">execute</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stack</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="repl.html#pytezos.michelson.stack.MichelsonStack" title="pytezos.michelson.stack.MichelsonStack"><span class="pre">pytezos.michelson.stack.MichelsonStack</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">stdout</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="repl.html#pytezos.context.impl.ExecutionContext" title="pytezos.context.impl.ExecutionContext"><span class="pre">pytezos.context.impl.ExecutionContext</span></a></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="instructions.html#pytezos.michelson.instructions.base.MichelsonInstruction" title="pytezos.michelson.instructions.base.MichelsonInstruction"><span class="pre">pytezos.michelson.instructions.base.MichelsonInstruction</span></a><a class="reference internal" href="_modules/pytezos/michelson/program.html#MichelsonProgram.execute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.michelson.program.MichelsonProgram.execute" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Execute contract in interpreter</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="pytezos.michelson.program.MichelsonProgram.instantiate">
@@ -942,8 +953,9 @@
 
 <dl class="py method">
 <dt id="pytezos.michelson.program.MichelsonProgram.load">
-<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">load</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="repl.html#pytezos.context.impl.ExecutionContext" title="pytezos.context.impl.ExecutionContext"><span class="pre">pytezos.context.impl.ExecutionContext</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">with_code</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/michelson/program.html#MichelsonProgram.load"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.michelson.program.MichelsonProgram.load" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">load</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="repl.html#pytezos.context.impl.ExecutionContext" title="pytezos.context.impl.ExecutionContext"><span class="pre">pytezos.context.impl.ExecutionContext</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">with_code</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Type</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#pytezos.michelson.program.MichelsonProgram" title="pytezos.michelson.program.MichelsonProgram"><span class="pre">pytezos.michelson.program.MichelsonProgram</span></a><span class="p"><span class="pre">]</span></span><a class="reference internal" href="_modules/pytezos/michelson/program.html#MichelsonProgram.load"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.michelson.program.MichelsonProgram.load" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create MichelsonProgram type from filled context</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="pytezos.michelson.program.MichelsonProgram.match">
@@ -965,15 +977,17 @@
 <dl class="py class">
 <dt id="pytezos.michelson.program.TztMichelsonProgram">
 <em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">pytezos.michelson.program.</span></code><code class="sig-name descname"><span class="pre">TztMichelsonProgram</span></code><a class="reference internal" href="_modules/pytezos/michelson/program.html#TztMichelsonProgram"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.michelson.program.TztMichelsonProgram" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="py method">
+<dd><p>Michelson .tzt contract interpreter interface</p>
+<dl class="py method">
 <dt id="pytezos.michelson.program.TztMichelsonProgram.as_micheline_expr">
-<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">as_micheline_expr</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/michelson/program.html#TztMichelsonProgram.as_micheline_expr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.michelson.program.TztMichelsonProgram.as_micheline_expr" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">as_micheline_expr</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="_modules/pytezos/michelson/program.html#TztMichelsonProgram.as_micheline_expr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.michelson.program.TztMichelsonProgram.as_micheline_expr" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt id="pytezos.michelson.program.TztMichelsonProgram.begin">
-<code class="sig-name descname"><span class="pre">begin</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stack</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="repl.html#pytezos.michelson.stack.MichelsonStack" title="pytezos.michelson.stack.MichelsonStack"><span class="pre">pytezos.michelson.stack.MichelsonStack</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">stdout</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="repl.html#pytezos.context.impl.ExecutionContext" title="pytezos.context.impl.ExecutionContext"><span class="pre">pytezos.context.impl.ExecutionContext</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/michelson/program.html#TztMichelsonProgram.begin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.michelson.program.TztMichelsonProgram.begin" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="sig-name descname"><span class="pre">begin</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stack</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="repl.html#pytezos.michelson.stack.MichelsonStack" title="pytezos.michelson.stack.MichelsonStack"><span class="pre">pytezos.michelson.stack.MichelsonStack</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">stdout</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="repl.html#pytezos.context.impl.ExecutionContext" title="pytezos.context.impl.ExecutionContext"><span class="pre">pytezos.context.impl.ExecutionContext</span></a></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">None</span><a class="reference internal" href="_modules/pytezos/michelson/program.html#TztMichelsonProgram.begin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.michelson.program.TztMichelsonProgram.begin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prepare stack for contract execution</p>
+</dd></dl>
 
 <dl class="py attribute">
 <dt id="pytezos.michelson.program.TztMichelsonProgram.big_maps">
@@ -988,17 +1002,20 @@
 <dl class="py method">
 <dt id="pytezos.michelson.program.TztMichelsonProgram.create">
 <em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">create</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sequence</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Type</span><span class="p"><span class="pre">[</span></span><span class="pre">pytezos.michelson.micheline.MichelineSequence</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Type</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#pytezos.michelson.program.TztMichelsonProgram" title="pytezos.michelson.program.TztMichelsonProgram"><span class="pre">pytezos.michelson.program.TztMichelsonProgram</span></a><span class="p"><span class="pre">]</span></span><a class="reference internal" href="_modules/pytezos/michelson/program.html#TztMichelsonProgram.create"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.michelson.program.TztMichelsonProgram.create" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Create TztMichelsonProgram type from micheline</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="pytezos.michelson.program.TztMichelsonProgram.end">
 <code class="sig-name descname"><span class="pre">end</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stack</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="repl.html#pytezos.michelson.stack.MichelsonStack" title="pytezos.michelson.stack.MichelsonStack"><span class="pre">pytezos.michelson.stack.MichelsonStack</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">stdout</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="repl.html#pytezos.context.impl.ExecutionContext" title="pytezos.context.impl.ExecutionContext"><span class="pre">pytezos.context.impl.ExecutionContext</span></a></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">None</span><a class="reference internal" href="_modules/pytezos/michelson/program.html#TztMichelsonProgram.end"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.michelson.program.TztMichelsonProgram.end" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Finish contract execution</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="pytezos.michelson.program.TztMichelsonProgram.execute">
 <code class="sig-name descname"><span class="pre">execute</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stack</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="repl.html#pytezos.michelson.stack.MichelsonStack" title="pytezos.michelson.stack.MichelsonStack"><span class="pre">pytezos.michelson.stack.MichelsonStack</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">stdout</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="repl.html#pytezos.context.impl.ExecutionContext" title="pytezos.context.impl.ExecutionContext"><span class="pre">pytezos.context.impl.ExecutionContext</span></a></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="instructions.html#pytezos.michelson.instructions.base.MichelsonInstruction" title="pytezos.michelson.instructions.base.MichelsonInstruction"><span class="pre">pytezos.michelson.instructions.base.MichelsonInstruction</span></a><a class="reference internal" href="_modules/pytezos/michelson/program.html#TztMichelsonProgram.execute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.michelson.program.TztMichelsonProgram.execute" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Execute contract in interpreter</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="pytezos.michelson.program.TztMichelsonProgram.fill_context">
@@ -1018,7 +1035,8 @@
 <dl class="py method">
 <dt id="pytezos.michelson.program.TztMichelsonProgram.load">
 <em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">load</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="repl.html#pytezos.context.impl.ExecutionContext" title="pytezos.context.impl.ExecutionContext"><span class="pre">pytezos.context.impl.ExecutionContext</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">with_code</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/michelson/program.html#TztMichelsonProgram.load"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.michelson.program.TztMichelsonProgram.load" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Create TztMichelsonProgram type from filled context</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="pytezos.michelson.program.TztMichelsonProgram.match">
@@ -1037,45 +1055,37 @@
 
 </dd></dl>
 
-</section>
-</section>
+</div>
+</div>
 
 
            </div>
            
           </div>
           <footer>
-  
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="repl.html" class="btn btn-neutral float-right" title="Michelson REPL" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="instructions.html" class="btn btn-neutral float-left" title="Michelson instructions" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
+        <a href="repl.html" class="btn btn-neutral float-right" title="Michelson REPL" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="instructions.html" class="btn btn-neutral float-left" title="Michelson instructions" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; Copyright 2020, Baking Bad
+        &#169; Copyright 2020, Baking Bad.
 
     </p>
   </div>
     
     
     
-    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     
     provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 

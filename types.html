@@ -3,10 +3,9 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
-  <meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
-
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>Michelson types &mdash; PyTezos  documentation</title>
   
@@ -19,8 +18,12 @@
   
     <link rel="shortcut icon" href="_static/favicon.ico"/>
   
+
   
   
+
+  
+    <link rel="canonical" href="https://pytezos.org/types.html" />
 
   
   <!--[if lt IE 9]>
@@ -53,7 +56,7 @@
           
 
           
-            <a href="contents.html" class="icon icon-home" alt="Documentation Home"> PyTezos
+            <a href="contents.html" class="icon icon-home"> PyTezos
           
 
           
@@ -84,11 +87,11 @@
               
             
             
-              <p><span class="caption-text">Contents</span></p>
+              <p class="caption"><span class="caption-text">Contents</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="quick_start.html">Quick start</a></li>
 <li class="toctree-l1"><a class="reference internal" href="integration_tests.html">Michelson integration tests</a></li>
-<li class="toctree-l1"><a class="reference internal" href="pytezos_cli.html">Pytezos CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pytezos_cli.html">PyTezos CLI</a></li>
 <li class="toctree-l1"><a class="reference internal" href="high_level.html">High-level interfaces</a></li>
 <li class="toctree-l1"><a class="reference internal" href="crypto.html">Cryptography</a></li>
 <li class="toctree-l1"><a class="reference internal" href="operation_groups.html">Building and parsing operations</a></li>
@@ -114,6 +117,7 @@
 <li class="toctree-l1"><a class="reference internal" href="code.html">Working with Michelson code</a></li>
 <li class="toctree-l1"><a class="reference internal" href="repl.html">Michelson REPL</a></li>
 <li class="toctree-l1"><a class="reference internal" href="inspect_proposals.html">Inspecting proposals</a></li>
+<li class="toctree-l1"><a class="reference internal" href="michelson_kernel.html">Michelson IPython kernel</a></li>
 </ul>
 
             
@@ -154,6 +158,8 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -165,7 +171,7 @@
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="_sources/types.rst.txt" rel="nofollow"> View page source</a>
           
         
@@ -179,9 +185,9 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <section id="michelson-types">
+  <div class="section" id="michelson-types">
 <h1>Michelson types<a class="headerlink" href="#michelson-types" title="Permalink to this headline">¶</a></h1>
-<section id="module-pytezos.michelson.types.base">
+<div class="section" id="module-pytezos.michelson.types.base">
 <span id="base-class"></span><h2>Base class<a class="headerlink" href="#module-pytezos.michelson.types.base" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pytezos.michelson.types.base.MichelsonType">
@@ -348,8 +354,8 @@
 <em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">pytezos.michelson.types.base.</span></code><code class="sig-name descname"><span class="pre">undefined</span></code><a class="reference internal" href="_modules/pytezos/michelson/types/base.html#undefined"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.michelson.types.base.undefined" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-</section>
-<section id="module-pytezos.michelson.types.core">
+</div>
+<div class="section" id="module-pytezos.michelson.types.core">
 <span id="core-types"></span><h2>Core types<a class="headerlink" href="#module-pytezos.michelson.types.core" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pytezos.michelson.types.core.BoolType">
@@ -641,8 +647,8 @@
 <em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">pytezos.michelson.types.core.</span></code><code class="sig-name descname"><span class="pre">unit</span></code><a class="reference internal" href="_modules/pytezos/michelson/types/core.html#unit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.michelson.types.core.unit" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-</section>
-<section id="module-pytezos.michelson.types.domain">
+</div>
+<div class="section" id="module-pytezos.michelson.types.domain">
 <span id="domain-types"></span><h2>Domain types<a class="headerlink" href="#module-pytezos.michelson.types.domain" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pytezos.michelson.types.domain.AddressType">
@@ -979,8 +985,8 @@
 
 </dd></dl>
 
-</section>
-<section id="module-pytezos.michelson.types.big_map">
+</div>
+<div class="section" id="module-pytezos.michelson.types.big_map">
 <span id="big-map-type"></span><h2>Big map type<a class="headerlink" href="#module-pytezos.michelson.types.big_map" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pytezos.michelson.types.big_map.BigMapType">
@@ -1077,8 +1083,8 @@
 <code class="sig-prename descclassname"><span class="pre">pytezos.michelson.types.big_map.</span></code><code class="sig-name descname"><span class="pre">big_map_diff_to_lazy_diff</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">big_map_diff</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/michelson/types/big_map.html#big_map_diff_to_lazy_diff"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.michelson.types.big_map.big_map_diff_to_lazy_diff" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-</section>
-<section id="module-pytezos.michelson.types.bls">
+</div>
+<div class="section" id="module-pytezos.michelson.types.bls">
 <span id="bls-types"></span><h2>BLS types<a class="headerlink" href="#module-pytezos.michelson.types.bls" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pytezos.michelson.types.bls.BLS12_381_FrType">
@@ -1185,8 +1191,8 @@
 
 </dd></dl>
 
-</section>
-<section id="module-pytezos.michelson.types.list">
+</div>
+<div class="section" id="module-pytezos.michelson.types.list">
 <span id="list-type"></span><h2>List type<a class="headerlink" href="#module-pytezos.michelson.types.list" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pytezos.michelson.types.list.ListType">
@@ -1268,8 +1274,8 @@
 
 </dd></dl>
 
-</section>
-<section id="module-pytezos.michelson.types.map">
+</div>
+<div class="section" id="module-pytezos.michelson.types.map">
 <span id="map-type"></span><h2>Map type<a class="headerlink" href="#module-pytezos.michelson.types.map" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pytezos.michelson.types.map.EltLiteral">
@@ -1381,8 +1387,8 @@
 
 </dd></dl>
 
-</section>
-<section id="module-pytezos.michelson.types.operation">
+</div>
+<div class="section" id="module-pytezos.michelson.types.operation">
 <span id="operation-type"></span><h2>Operation type<a class="headerlink" href="#module-pytezos.michelson.types.operation" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pytezos.michelson.types.operation.OperationType">
@@ -1414,8 +1420,8 @@
 
 </dd></dl>
 
-</section>
-<section id="module-pytezos.michelson.types.option">
+</div>
+<div class="section" id="module-pytezos.michelson.types.option">
 <span id="option-type"></span><h2>Option type<a class="headerlink" href="#module-pytezos.michelson.types.option" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pytezos.michelson.types.option.NoneLiteral">
@@ -1517,8 +1523,8 @@
 
 </dd></dl>
 
-</section>
-<section id="module-pytezos.michelson.types.pair">
+</div>
+<div class="section" id="module-pytezos.michelson.types.pair">
 <span id="pair-type"></span><h2>Pair type<a class="headerlink" href="#module-pytezos.michelson.types.pair" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pytezos.michelson.types.pair.PairLiteral">
@@ -1630,8 +1636,8 @@
 
 </dd></dl>
 
-</section>
-<section id="module-pytezos.michelson.types.sapling">
+</div>
+<div class="section" id="module-pytezos.michelson.types.sapling">
 <span id="sapling-type"></span><h2>Sapling type<a class="headerlink" href="#module-pytezos.michelson.types.sapling" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pytezos.michelson.types.sapling.SaplingStateType">
@@ -1693,8 +1699,8 @@
 
 </dd></dl>
 
-</section>
-<section id="module-pytezos.michelson.types.set">
+</div>
+<div class="section" id="module-pytezos.michelson.types.set">
 <span id="set-type"></span><h2>Set type<a class="headerlink" href="#module-pytezos.michelson.types.set" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pytezos.michelson.types.set.SetType">
@@ -1771,8 +1777,8 @@
 
 </dd></dl>
 
-</section>
-<section id="module-pytezos.michelson.types.sum">
+</div>
+<div class="section" id="module-pytezos.michelson.types.sum">
 <span id="or-type"></span><h2>Or type<a class="headerlink" href="#module-pytezos.michelson.types.sum" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pytezos.michelson.types.sum.LeftLiteral">
@@ -1899,8 +1905,8 @@
 
 </dd></dl>
 
-</section>
-<section id="module-pytezos.michelson.types.ticket">
+</div>
+<div class="section" id="module-pytezos.michelson.types.ticket">
 <span id="ticket-type"></span><h2>Ticket type<a class="headerlink" href="#module-pytezos.michelson.types.ticket" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pytezos.michelson.types.ticket.TicketType">
@@ -1977,45 +1983,37 @@
 
 </dd></dl>
 
-</section>
-</section>
+</div>
+</div>
 
 
            </div>
            
           </div>
           <footer>
-  
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="instructions.html" class="btn btn-neutral float-right" title="Michelson instructions" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="rpc_queries.html" class="btn btn-neutral float-left" title="RPC query engine" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
+        <a href="instructions.html" class="btn btn-neutral float-right" title="Michelson instructions" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="rpc_queries.html" class="btn btn-neutral float-left" title="RPC query engine" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; Copyright 2020, Baking Bad
+        &#169; Copyright 2020, Baking Bad.
 
     </p>
   </div>
     
     
     
-    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     
     provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 

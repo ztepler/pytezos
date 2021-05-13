@@ -3,9 +3,9 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>pytezos.operation.result &mdash; PyTezos  documentation</title>
   
@@ -18,8 +18,12 @@
   
     <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
   
+
   
   
+
+  
+    <link rel="canonical" href="https://pytezos.org/_modules/pytezos/operation/result.html" />
 
   
   <!--[if lt IE 9]>
@@ -50,7 +54,7 @@
           
 
           
-            <a href="../../../contents.html" class="icon icon-home" alt="Documentation Home"> PyTezos
+            <a href="../../../contents.html" class="icon icon-home"> PyTezos
           
 
           
@@ -81,11 +85,11 @@
               
             
             
-              <p><span class="caption-text">Contents</span></p>
+              <p class="caption"><span class="caption-text">Contents</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../quick_start.html">Quick start</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../integration_tests.html">Michelson integration tests</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../pytezos_cli.html">Pytezos CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pytezos_cli.html">PyTezos CLI</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../high_level.html">High-level interfaces</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../crypto.html">Cryptography</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../operation_groups.html">Building and parsing operations</a></li>
@@ -95,6 +99,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../code.html">Working with Michelson code</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../repl.html">Michelson REPL</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../inspect_proposals.html">Inspecting proposals</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../michelson_kernel.html">Michelson IPython kernel</a></li>
 </ul>
 
             
@@ -120,6 +125,8 @@
         <div class="rst-content">
         
           
+
+
 
 
 
@@ -161,14 +168,13 @@
   <h1>Source code for pytezos.operation.result</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">functools</span>
 <span class="kn">import</span> <span class="nn">operator</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">List</span>
 
 <span class="kn">from</span> <span class="nn">pytezos.rpc.errors</span> <span class="kn">import</span> <span class="n">RpcError</span>
 
 
 <div class="viewcode-block" id="OperationResult"><a class="viewcode-back" href="../../../operation_groups.html#pytezos.operation.result.OperationResult">[docs]</a><span class="k">class</span> <span class="nc">OperationResult</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot; Operation result representation + useful parsing helpers for operation group</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Operation result representation + useful parsing helpers for operation group&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">props</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">props</span> <span class="o">=</span> <span class="n">props</span>
@@ -179,12 +185,12 @@
         <span class="n">res</span> <span class="o">=</span> <span class="p">[</span>
             <span class="nb">super</span><span class="p">(</span><span class="n">OperationResult</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">(),</span>
             <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Properties&#39;</span><span class="p">,</span>
-            <span class="o">*</span><span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="sa">f</span><span class="s1">&#39;.</span><span class="si">{</span><span class="n">x</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">props</span><span class="p">))</span>
+            <span class="o">*</span><span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="sa">f</span><span class="s1">&#39;.</span><span class="si">{</span><span class="n">x</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">props</span><span class="p">)),</span>
         <span class="p">]</span>
         <span class="k">return</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
 
 <div class="viewcode-block" id="OperationResult.iter_contents"><a class="viewcode-back" href="../../../operation_groups.html#pytezos.operation.result.OperationResult.iter_contents">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">iter_contents</span><span class="p">(</span><span class="n">operation_group</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">iter_contents</span><span class="p">(</span><span class="n">operation_group</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
         <span class="sd">&quot;&quot;&quot; Lazily iterate operation group contents including internal operations.</span>
 
 <span class="sd">        :param operation_group: {&quot;branch&quot;: &quot;B...&quot;, &quot;contents&quot;: [...], ...} \</span>
@@ -199,7 +205,7 @@
                 <span class="k">yield</span> <span class="p">{</span><span class="s1">&#39;internal&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">result</span><span class="p">}</span></div>
 
 <div class="viewcode-block" id="OperationResult.iter_results"><a class="viewcode-back" href="../../../operation_groups.html#pytezos.operation.result.OperationResult.iter_results">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">iter_results</span><span class="p">(</span><span class="n">operation_group</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">iter_results</span><span class="p">(</span><span class="n">operation_group</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
         <span class="sd">&quot;&quot;&quot; Lazily iterate operation results including internal operation results.</span>
 
 <span class="sd">        :param operation_group: {&quot;branch&quot;: &quot;B...&quot;, &quot;contents&quot;: [...], ...} \</span>
@@ -213,48 +219,58 @@
                 <span class="k">yield</span> <span class="n">content</span><span class="p">[</span><span class="s1">&#39;metadata&#39;</span><span class="p">][</span><span class="s1">&#39;operation_result&#39;</span><span class="p">]</span></div>
 
 <div class="viewcode-block" id="OperationResult.consumed_gas"><a class="viewcode-back" href="../../../operation_groups.html#pytezos.operation.result.OperationResult.consumed_gas">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">consumed_gas</span><span class="p">(</span><span class="n">operation_group</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">consumed_gas</span><span class="p">(</span><span class="n">operation_group</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot; Get total consumed gas for an operation group (recursively).</span>
 
 <span class="sd">        :param operation_group: {&quot;branch&quot;: &quot;B...&quot;, &quot;contents&quot;: [...], ...} \</span>
 <span class="sd">        OR a single content {&quot;kind&quot;: &quot;transaction&quot;, ...}</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;consumed_gas&#39;</span><span class="p">,</span> <span class="s1">&#39;0&#39;</span><span class="p">)),</span>
-                       <span class="n">OperationResult</span><span class="o">.</span><span class="n">iter_results</span><span class="p">(</span><span class="n">operation_group</span><span class="p">)))</span></div>
+        <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span>
+            <span class="nb">map</span><span class="p">(</span>
+                <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;consumed_gas&#39;</span><span class="p">,</span> <span class="s1">&#39;0&#39;</span><span class="p">)),</span>
+                <span class="n">OperationResult</span><span class="o">.</span><span class="n">iter_results</span><span class="p">(</span><span class="n">operation_group</span><span class="p">),</span>
+            <span class="p">),</span>
+        <span class="p">)</span></div>
 
 <div class="viewcode-block" id="OperationResult.paid_storage_size_diff"><a class="viewcode-back" href="../../../operation_groups.html#pytezos.operation.result.OperationResult.paid_storage_size_diff">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">paid_storage_size_diff</span><span class="p">(</span><span class="n">operation_group</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">paid_storage_size_diff</span><span class="p">(</span><span class="n">operation_group</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot; Get total paid storage size diff for an operation group (recursively).</span>
 
 <span class="sd">        :param operation_group: {&quot;branch&quot;: &quot;B...&quot;, &quot;contents&quot;: [...], ...} \</span>
 <span class="sd">        OR a single content {&quot;kind&quot;: &quot;transaction&quot;, ...}</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;paid_storage_size_diff&#39;</span><span class="p">,</span> <span class="s1">&#39;0&#39;</span><span class="p">)),</span>
-                       <span class="n">OperationResult</span><span class="o">.</span><span class="n">iter_results</span><span class="p">(</span><span class="n">operation_group</span><span class="p">)))</span></div>
+        <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span>
+            <span class="nb">map</span><span class="p">(</span>
+                <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;paid_storage_size_diff&#39;</span><span class="p">,</span> <span class="s1">&#39;0&#39;</span><span class="p">)),</span>
+                <span class="n">OperationResult</span><span class="o">.</span><span class="n">iter_results</span><span class="p">(</span><span class="n">operation_group</span><span class="p">),</span>
+            <span class="p">),</span>
+        <span class="p">)</span></div>
 
 <div class="viewcode-block" id="OperationResult.burned"><a class="viewcode-back" href="../../../operation_groups.html#pytezos.operation.result.OperationResult.burned">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">burned</span><span class="p">(</span><span class="n">operation_group</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">burned</span><span class="p">(</span><span class="n">operation_group</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot; Get total burned (due to account allocations) for an operation group (recursively).</span>
 
 <span class="sd">        :param operation_group: {&quot;branch&quot;: &quot;B...&quot;, &quot;contents&quot;: [...], ...} \</span>
 <span class="sd">        OR a single content {&quot;kind&quot;: &quot;transaction&quot;, ...}</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span>
-            <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mi">257</span> <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;allocated_destination_contract&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">x</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;originated_contracts&#39;</span><span class="p">)</span> <span class="k">else</span> <span class="mi">0</span><span class="p">,</span>
-            <span class="n">OperationResult</span><span class="o">.</span><span class="n">iter_results</span><span class="p">(</span><span class="n">operation_group</span><span class="p">)))</span></div>
+        <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span>
+            <span class="nb">map</span><span class="p">(</span>
+                <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mi">257</span> <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;allocated_destination_contract&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">x</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;originated_contracts&#39;</span><span class="p">)</span> <span class="k">else</span> <span class="mi">0</span><span class="p">,</span>
+                <span class="n">OperationResult</span><span class="o">.</span><span class="n">iter_results</span><span class="p">(</span><span class="n">operation_group</span><span class="p">),</span>
+            <span class="p">)</span>
+        <span class="p">)</span></div>
 
 <div class="viewcode-block" id="OperationResult.is_applied"><a class="viewcode-back" href="../../../operation_groups.html#pytezos.operation.result.OperationResult.is_applied">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">is_applied</span><span class="p">(</span><span class="n">operation_group</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">is_applied</span><span class="p">(</span><span class="n">operation_group</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot; Check if ALL operations in a group are applied.</span>
 
 <span class="sd">        :param operation_group: {&quot;branch&quot;: &quot;B...&quot;, &quot;contents&quot;: [...], ...} \</span>
 <span class="sd">        OR a single content {&quot;kind&quot;: &quot;transaction&quot;, ...}</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="nb">all</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="s1">&#39;status&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;applied&#39;</span><span class="p">,</span>
-                       <span class="n">OperationResult</span><span class="o">.</span><span class="n">iter_results</span><span class="p">(</span><span class="n">operation_group</span><span class="p">)))</span></div>
+        <span class="k">return</span> <span class="nb">all</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="s1">&#39;status&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;applied&#39;</span><span class="p">,</span> <span class="n">OperationResult</span><span class="o">.</span><span class="n">iter_results</span><span class="p">(</span><span class="n">operation_group</span><span class="p">)))</span></div>
 
 <div class="viewcode-block" id="OperationResult.errors"><a class="viewcode-back" href="../../../operation_groups.html#pytezos.operation.result.OperationResult.errors">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">errors</span><span class="p">(</span><span class="n">operation_group</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">errors</span><span class="p">(</span><span class="n">operation_group</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
         <span class="sd">&quot;&quot;&quot; Collect errors from all operation results in a group.</span>
 
 <span class="sd">        :param operation_group: {&quot;branch&quot;: &quot;B...&quot;, &quot;contents&quot;: [...], ...} \</span>
@@ -262,13 +278,12 @@
 <span class="sd">        :returns: list of errors [{&quot;id&quot;: &quot;&quot;, ...}]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">all_errors</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;errors&quot;</span><span class="p">,</span> <span class="p">[])</span> <span class="k">if</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;status&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;applied&quot;</span> <span class="k">else</span> <span class="p">[]</span>
-            <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">OperationResult</span><span class="o">.</span><span class="n">iter_results</span><span class="p">(</span><span class="n">operation_group</span><span class="p">)</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;errors&quot;</span><span class="p">,</span> <span class="p">[])</span> <span class="k">if</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;status&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;applied&quot;</span> <span class="k">else</span> <span class="p">[]</span> <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">OperationResult</span><span class="o">.</span><span class="n">iter_results</span><span class="p">(</span><span class="n">operation_group</span><span class="p">)</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">functools</span><span class="o">.</span><span class="n">reduce</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">iconcat</span><span class="p">,</span> <span class="n">all_errors</span><span class="p">,</span> <span class="p">[])</span></div>
 
 <div class="viewcode-block" id="OperationResult.originated_contracts"><a class="viewcode-back" href="../../../operation_groups.html#pytezos.operation.result.OperationResult.originated_contracts">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">originated_contracts</span><span class="p">(</span><span class="n">operation_group</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">originated_contracts</span><span class="p">(</span><span class="n">operation_group</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot; Collect originated contract addresses from all operation results in a group.</span>
 
 <span class="sd">        :param operation_group: {&quot;branch&quot;: &quot;B...&quot;, &quot;contents&quot;: [...], ...} \</span>
@@ -281,7 +296,7 @@
         <span class="k">return</span> <span class="n">originated_contracts</span></div>
 
 <div class="viewcode-block" id="OperationResult.get_contents"><a class="viewcode-back" href="../../../operation_groups.html#pytezos.operation.result.OperationResult.get_contents">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">get_contents</span><span class="p">(</span><span class="n">operation_group</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="o">**</span><span class="n">predicates</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get_contents</span><span class="p">(</span><span class="n">operation_group</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="o">**</span><span class="n">predicates</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
         <span class="k">def</span> <span class="nf">match</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
             <span class="k">return</span> <span class="nb">all</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">pred</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">pred</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">==</span> <span class="n">pred</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">predicates</span><span class="o">.</span><span class="n">items</span><span class="p">()))</span>
 
@@ -291,7 +306,7 @@
             <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="n">match</span><span class="p">,</span> <span class="n">OperationResult</span><span class="o">.</span><span class="n">iter_contents</span><span class="p">(</span><span class="n">operation_group</span><span class="p">)))</span></div>
 
 <div class="viewcode-block" id="OperationResult.get_result"><a class="viewcode-back" href="../../../operation_groups.html#pytezos.operation.result.OperationResult.get_result">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">get_result</span><span class="p">(</span><span class="n">content</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get_result</span><span class="p">(</span><span class="n">content</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
         <span class="k">if</span> <span class="n">content</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;metadata&#39;</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">content</span><span class="p">[</span><span class="s1">&#39;metadata&#39;</span><span class="p">][</span><span class="s1">&#39;operation_result&#39;</span><span class="p">]</span>
         <span class="k">elif</span> <span class="n">content</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;result&#39;</span><span class="p">):</span>
@@ -300,7 +315,7 @@
             <span class="k">assert</span> <span class="kc">False</span><span class="p">,</span> <span class="n">content</span></div>
 
 <div class="viewcode-block" id="OperationResult.from_operation_group"><a class="viewcode-back" href="../../../operation_groups.html#pytezos.operation.result.OperationResult.from_operation_group">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">from_operation_group</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">operation_group</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="o">**</span><span class="n">predicates</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="s1">&#39;OperationResult&#39;</span><span class="p">]:</span>
+    <span class="k">def</span> <span class="nf">from_operation_group</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">operation_group</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="o">**</span><span class="n">predicates</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="s1">&#39;OperationResult&#39;</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot; Initialize with operation group contents.</span>
 
 <span class="sd">        :param operation_group: operation_group: {&quot;branch&quot;: &quot;B...&quot;, &quot;contents&quot;: [...], ...} \</span>
@@ -322,8 +337,8 @@
         <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">dispatch</span><span class="p">,</span> <span class="n">contents</span><span class="p">))</span></div>
 
 <div class="viewcode-block" id="OperationResult.from_origination"><a class="viewcode-back" href="../../../operation_groups.html#pytezos.operation.result.OperationResult.from_origination">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">from_origination</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">content</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Initialize with origination content.</span>
+    <span class="k">def</span> <span class="nf">from_origination</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">content</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="s1">&#39;OperationResult&#39;</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Initialize with origination content.</span>
 
 <span class="sd">        :param content:</span>
 <span class="sd">        :rtype: OperationResult</span>
@@ -331,12 +346,12 @@
         <span class="n">operation_result</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">get_result</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
             <span class="n">storage</span><span class="o">=</span><span class="n">content</span><span class="p">[</span><span class="s1">&#39;script&#39;</span><span class="p">][</span><span class="s1">&#39;storage&#39;</span><span class="p">],</span>
-            <span class="n">originated_contracts</span><span class="o">=</span><span class="n">operation_result</span><span class="p">[</span><span class="s1">&#39;originated_contracts&#39;</span><span class="p">]</span>
+            <span class="n">originated_contracts</span><span class="o">=</span><span class="n">operation_result</span><span class="p">[</span><span class="s1">&#39;originated_contracts&#39;</span><span class="p">],</span>
         <span class="p">)</span></div>
 
 <div class="viewcode-block" id="OperationResult.from_transaction"><a class="viewcode-back" href="../../../operation_groups.html#pytezos.operation.result.OperationResult.from_transaction">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">from_transaction</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">content</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Initialize with transaction content.</span>
+    <span class="k">def</span> <span class="nf">from_transaction</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">content</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="s1">&#39;OperationResult&#39;</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Initialize with transaction content.</span>
 
 <span class="sd">        :param content:</span>
 <span class="sd">        :rtype: OperationResult</span>
@@ -347,7 +362,7 @@
             <span class="n">storage</span><span class="o">=</span><span class="n">operation_result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;storage&#39;</span><span class="p">),</span>
             <span class="n">lazy_diff</span><span class="o">=</span><span class="n">operation_result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;lazy_diff&#39;</span><span class="p">,</span> <span class="p">[]),</span>
             <span class="c1"># TODO: if it is already an internal operation, we should think... (build a tree?)</span>
-            <span class="n">operations</span><span class="o">=</span><span class="bp">cls</span><span class="o">.</span><span class="n">get_contents</span><span class="p">(</span><span class="n">content</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="n">content</span><span class="p">[</span><span class="s1">&#39;destination&#39;</span><span class="p">])</span>
+            <span class="n">operations</span><span class="o">=</span><span class="bp">cls</span><span class="o">.</span><span class="n">get_contents</span><span class="p">(</span><span class="n">content</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="n">content</span><span class="p">[</span><span class="s1">&#39;destination&#39;</span><span class="p">]),</span>
         <span class="p">)</span></div></div>
 </pre></div>
 
@@ -355,28 +370,25 @@
            
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; Copyright 2020, Baking Bad
+        &#169; Copyright 2020, Baking Bad.
 
     </p>
   </div>
     
     
     
-    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     
     provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 

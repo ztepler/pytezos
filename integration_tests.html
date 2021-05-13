@@ -3,10 +3,9 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
-  <meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
-
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>Michelson integration tests &mdash; PyTezos  documentation</title>
   
@@ -19,8 +18,12 @@
   
     <link rel="shortcut icon" href="_static/favicon.ico"/>
   
+
   
   
+
+  
+    <link rel="canonical" href="https://pytezos.org/integration_tests.html" />
 
   
   <!--[if lt IE 9]>
@@ -38,7 +41,7 @@
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Pytezos CLI" href="pytezos_cli.html" />
+    <link rel="next" title="PyTezos CLI" href="pytezos_cli.html" />
     <link rel="prev" title="Quick start" href="quick_start.html" /> 
 </head>
 
@@ -53,7 +56,7 @@
           
 
           
-            <a href="contents.html" class="icon icon-home" alt="Documentation Home"> PyTezos
+            <a href="contents.html" class="icon icon-home"> PyTezos
           
 
           
@@ -84,17 +87,19 @@
               
             
             
-              <p><span class="caption-text">Contents</span></p>
+              <p class="caption"><span class="caption-text">Contents</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="quick_start.html">Quick start</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Michelson integration tests</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#basics">Basics</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#step-by-step-guide">Step by step guide</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#test-samples">Test samples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#loading-contract">Loading contract</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#calling-contract-entrypoints">Calling contract entrypoints</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#deploying-contract-to-sandboxed-node">Deploying contract to sandboxed node</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#examples">Examples</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#projects-using-pytezos">Projects using PyTezos</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="pytezos_cli.html">Pytezos CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pytezos_cli.html">PyTezos CLI</a></li>
 <li class="toctree-l1"><a class="reference internal" href="high_level.html">High-level interfaces</a></li>
 <li class="toctree-l1"><a class="reference internal" href="crypto.html">Cryptography</a></li>
 <li class="toctree-l1"><a class="reference internal" href="operation_groups.html">Building and parsing operations</a></li>
@@ -104,6 +109,7 @@
 <li class="toctree-l1"><a class="reference internal" href="code.html">Working with Michelson code</a></li>
 <li class="toctree-l1"><a class="reference internal" href="repl.html">Michelson REPL</a></li>
 <li class="toctree-l1"><a class="reference internal" href="inspect_proposals.html">Inspecting proposals</a></li>
+<li class="toctree-l1"><a class="reference internal" href="michelson_kernel.html">Michelson IPython kernel</a></li>
 </ul>
 
             
@@ -144,6 +150,8 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -155,7 +163,7 @@
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="_sources/integration_tests.rst.txt" rel="nofollow"> View page source</a>
           
         
@@ -169,32 +177,195 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <section id="michelson-integration-tests">
+  <div class="section" id="michelson-integration-tests">
 <h1>Michelson integration tests<a class="headerlink" href="#michelson-integration-tests" title="Permalink to this headline">¶</a></h1>
-<section id="basics">
-<h2>Basics<a class="headerlink" href="#basics" title="Permalink to this headline">¶</a></h2>
-<p>Make sure you are familiar with the unittest package, if not - check out the docs: <a class="reference external" href="https://docs.python.org/3/library/unittest.html">https://docs.python.org/3/library/unittest.html</a></p>
-<p>Michelson tests are mostly based on two high-level interfaces:</p>
-<ul class="simple">
-<li><p><a class="reference internal" href="high_level.html#pytezos.contract.interface.ContractInterface" title="pytezos.contract.interface.ContractInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">pytezos.contract.interface.ContractInterface</span></code></a> as a top-level entity</p></li>
-<li><p><a class="reference internal" href="high_level.html#pytezos.contract.call.ContractCall" title="pytezos.contract.call.ContractCall"><code class="xref py py-class docutils literal notranslate"><span class="pre">pytezos.contract.call.ContractCall</span></code></a> for simulating contract calls</p></li>
-<li><p><a class="reference internal" href="high_level.html#pytezos.contract.result.ContractCallResult" title="pytezos.contract.result.ContractCallResult"><code class="xref py py-class docutils literal notranslate"><span class="pre">pytezos.contract.result.ContractCallResult</span></code></a> for handling call results</p></li>
-</ul>
-<p>There are also two options of executing Michelson scripts:</p>
-<ul class="simple">
-<li><p><a class="reference internal" href="high_level.html#pytezos.contract.call.ContractCall.run_code" title="pytezos.contract.call.ContractCall.run_code"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pytezos.contract.call.ContractCall.run_code()</span></code></a> which uses standard RPC endpoint (i.e. remote Michelson interpreter)</p></li>
-<li><p><a class="reference internal" href="high_level.html#pytezos.contract.call.ContractCall.interpret" title="pytezos.contract.call.ContractCall.interpret"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pytezos.contract.call.ContractCall.interpret()</span></code></a> that uses built-in interpreter which is not guaranteed to behave exactly as the reference one</p></li>
-</ul>
-</section>
-<section id="step-by-step-guide">
+<div class="section" id="step-by-step-guide">
 <h2>Step by step guide<a class="headerlink" href="#step-by-step-guide" title="Permalink to this headline">¶</a></h2>
 <p>Read this Medium article: <a class="reference external" href="https://medium.com/tezoscommons/testing-michelson-contracts-with-pytezos-513718499e93">https://medium.com/tezoscommons/testing-michelson-contracts-with-pytezos-513718499e93</a></p>
-</section>
-<section id="test-samples">
-<h2>Test samples<a class="headerlink" href="#test-samples" title="Permalink to this headline">¶</a></h2>
-<p>Check out test examples in this repo: <a class="reference external" href="https://github.com/baking-bad/pytezos/tree/master/examples">https://github.com/baking-bad/pytezos/tree/master/examples</a></p>
-</section>
-<section id="projects-using-pytezos">
+</div>
+<div class="section" id="loading-contract">
+<h2>Loading contract<a class="headerlink" href="#loading-contract" title="Permalink to this headline">¶</a></h2>
+<p>First step in testing contracts is to create <a class="reference internal" href="high_level.html#pytezos.contract.interface.ContractInterface" title="pytezos.contract.interface.ContractInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">pytezos.contract.interface.ContractInterface</span></code></a> from Michelson code, .tz file or existing deployed contract.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">os.path</span> <span class="kn">import</span> <span class="n">dirname</span><span class="p">,</span> <span class="n">join</span>
+<span class="kn">from</span> <span class="nn">pytezos</span> <span class="kn">import</span> <span class="n">ContractInterface</span><span class="p">,</span> <span class="n">pytezos</span>
+
+<span class="n">contract_michelson</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">  parameter string;</span>
+<span class="s2">  storage string;</span>
+<span class="s2">  code { DUP;</span>
+<span class="s2">        DIP { CAR ; NIL string ; SWAP ; CONS } ;</span>
+<span class="s2">        CDR ; CONS ;</span>
+<span class="s2">        CONCAT ;</span>
+<span class="s2">        NIL operation; PAIR }</span>
+<span class="s2">&quot;&quot;&quot;</span>
+
+<span class="c1"># From blockchain</span>
+<span class="n">contract</span> <span class="o">=</span> <span class="n">pytezos</span><span class="o">.</span><span class="n">contract</span><span class="p">(</span><span class="s1">&#39;KT1...&#39;</span><span class="p">)</span>
+
+<span class="c1"># From michelson</span>
+<span class="n">contract</span> <span class="o">=</span> <span class="n">ContractInterface</span><span class="o">.</span><span class="n">from_michelson</span><span class="p">(</span><span class="n">contract_michelson</span><span class="p">)</span>
+
+<span class="c1"># From file</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;my_contract.tz&#39;</span><span class="p">,</span> <span class="s1">&#39;w+&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+  <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">contract_michelson</span><span class="p">)</span>
+<span class="n">contract</span> <span class="o">=</span> <span class="n">ContractInterface</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="s1">&#39;my_contract.tz&#39;</span><span class="p">)</span>
+
+<span class="c1"># From URL</span>
+<span class="n">contract</span> <span class="o">=</span> <span class="n">ContractInterface</span><span class="o">.</span><span class="n">from_url</span><span class="p">(</span><span class="s1">&#39;https://raw.githubusercontent.com/atomex-me/atomex-michelson/master/src/atomex.tz&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="calling-contract-entrypoints">
+<h2>Calling contract entrypoints<a class="headerlink" href="#calling-contract-entrypoints" title="Permalink to this headline">¶</a></h2>
+<p>Entrypoints are accessed by name of contract attributes. Call them with parameters to create <a class="reference internal" href="high_level.html#pytezos.contract.call.ContractCall" title="pytezos.contract.call.ContractCall"><code class="xref py py-class docutils literal notranslate"><span class="pre">pytezos.contract.call.ContractCall</span></code></a> wrapper.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create call to `default` entrypoint</span>
+<span class="n">call</span> <span class="o">=</span> <span class="n">contract</span><span class="o">.</span><span class="n">default</span><span class="p">(</span><span class="s2">&quot;foo&quot;</span><span class="p">)</span>
+
+<span class="c1"># Add amount to transaction</span>
+<span class="n">call</span> <span class="o">=</span> <span class="n">call</span><span class="o">.</span><span class="n">with_amount</span><span class="p">(</span><span class="s1">&#39;0.01&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Now you can call <cite>inject</cite> method to send operation to blockchain. But we’re interested in simulating contract calls without interacting with public blockchain. There are several methods to do this:</p>
+<ul class="simple">
+<li><p>Use remote node interpreter</p></li>
+<li><p>Use built-in Michelson interpreter (result may vary from node interpreter)</p></li>
+<li><p>Interact with real contract deployed on sandboxed node</p></li>
+</ul>
+<p>Let’s talk about the first two methods.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Node interpreter</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">call</span><span class="o">.</span><span class="n">run_code</span><span class="p">(</span><span class="n">storage</span><span class="o">=</span><span class="s2">&quot;foo&quot;</span><span class="p">)</span>
+
+<span class="c1"># Built-in interpreter</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">call</span><span class="o">.</span><span class="n">interpret</span><span class="p">(</span><span class="n">storage</span><span class="o">=</span><span class="s2">&quot;foo&quot;</span><span class="p">)</span>
+
+<span class="c1"># In both cases you could patch SENDER, AMOUNT and other context variables</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">call</span><span class="o">.</span><span class="n">interpret</span><span class="p">(</span><span class="n">storage</span><span class="o">=</span><span class="s2">&quot;foo&quot;</span><span class="p">,</span> <span class="n">balance</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Each method will return <a class="reference internal" href="high_level.html#pytezos.contract.result.ContractCallResult" title="pytezos.contract.result.ContractCallResult"><code class="xref py py-class docutils literal notranslate"><span class="pre">pytezos.contract.result.ContractCallResult</span></code></a> instance. Now let’s ensure our call has modified storage correctly.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">assert</span> <span class="n">result</span><span class="o">.</span><span class="n">storage</span> <span class="o">==</span> <span class="s2">&quot;foobar&quot;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="deploying-contract-to-sandboxed-node">
+<h2>Deploying contract to sandboxed node<a class="headerlink" href="#deploying-contract-to-sandboxed-node" title="Permalink to this headline">¶</a></h2>
+<p>Another option is to deploy contract to sandboxed node and interact with it with real transactions. PyTezos has <a class="reference internal" href="#pytezos.sandbox.node.SandboxedNodeTestCase" title="pytezos.sandbox.node.SandboxedNodeTestCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">pytezos.sandbox.node.SandboxedNodeTestCase</span></code></a> helper to simplify spinning up sandboxed node in Docker. Use <cite>self.client</cite> interact with it from within your tests.</p>
+<dl class="py class">
+<dt id="pytezos.sandbox.node.SandboxedNodeTestCase">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">pytezos.sandbox.node.</span></code><code class="sig-name descname"><span class="pre">SandboxedNodeTestCase</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">methodName</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'runTest'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/sandbox/node.html#SandboxedNodeTestCase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.sandbox.node.SandboxedNodeTestCase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform tests with sanboxed node in Docker container.</p>
+<dl class="py attribute">
+<dt id="pytezos.sandbox.node.SandboxedNodeTestCase.IMAGE">
+<code class="sig-name descname"><span class="pre">IMAGE</span></code><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><em class="property"> <span class="pre">=</span> <span class="pre">'bakingbad/sandboxed-node:v9.0-rc1-1'</span></em><a class="headerlink" href="#pytezos.sandbox.node.SandboxedNodeTestCase.IMAGE" title="Permalink to this definition">¶</a></dt>
+<dd><p>Docker image to use</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="pytezos.sandbox.node.SandboxedNodeTestCase.PORT">
+<code class="sig-name descname"><span class="pre">PORT</span></code><em class="property"><span class="pre">:</span> <span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><em class="property"> <span class="pre">=</span> <span class="pre">None</span></em><a class="headerlink" href="#pytezos.sandbox.node.SandboxedNodeTestCase.PORT" title="Permalink to this definition">¶</a></dt>
+<dd><p>Port to expose to host machine</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="pytezos.sandbox.node.SandboxedNodeTestCase.PROTOCOL">
+<code class="sig-name descname"><span class="pre">PROTOCOL</span></code><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><em class="property"> <span class="pre">=</span> <span class="pre">'PtEdo2ZkT9oKpimTah6x2embF25oss54njMuPzkJTEi5RqfdZFA'</span></em><a class="headerlink" href="#pytezos.sandbox.node.SandboxedNodeTestCase.PROTOCOL" title="Permalink to this definition">¶</a></dt>
+<dd><p>Hash of protocol to activate</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.sandbox.node.SandboxedNodeTestCase.activate">
+<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">activate</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">protocol_alias</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reset</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="operation_groups.html#pytezos.operation.group.OperationGroup" title="pytezos.operation.group.OperationGroup"><span class="pre">pytezos.operation.group.OperationGroup</span></a><a class="reference internal" href="_modules/pytezos/sandbox/node.html#SandboxedNodeTestCase.activate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.sandbox.node.SandboxedNodeTestCase.activate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Activate protocol.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.sandbox.node.SandboxedNodeTestCase.bake_block">
+<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">bake_block</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">min_fee</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="operation_groups.html#pytezos.operation.group.OperationGroup" title="pytezos.operation.group.OperationGroup"><span class="pre">pytezos.operation.group.OperationGroup</span></a><a class="reference internal" href="_modules/pytezos/sandbox/node.html#SandboxedNodeTestCase.bake_block"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.sandbox.node.SandboxedNodeTestCase.bake_block" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bake new block.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>min_fee</strong> – minimum fee of operation to be included in block</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.sandbox.node.SandboxedNodeTestCase.client">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">client</span></code><a class="headerlink" href="#pytezos.sandbox.node.SandboxedNodeTestCase.client" title="Permalink to this definition">¶</a></dt>
+<dd><p>PyTezos client to interact with sandboxed node.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.sandbox.node.SandboxedNodeTestCase.get_node_url">
+<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">get_node_url</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">str</span><a class="reference internal" href="_modules/pytezos/sandbox/node.html#SandboxedNodeTestCase.get_node_url"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.sandbox.node.SandboxedNodeTestCase.get_node_url" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get sandboxed node URL.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.sandbox.node.SandboxedNodeTestCase.setUpClass">
+<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">setUpClass</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">None</span><a class="reference internal" href="_modules/pytezos/sandbox/node.html#SandboxedNodeTestCase.setUpClass"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.sandbox.node.SandboxedNodeTestCase.setUpClass" title="Permalink to this definition">¶</a></dt>
+<dd><p>Spin up sandboxed node container and activate protocol.</p>
+</dd></dl>
+
+</dd></dl>
+
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pytezos</span> <span class="kn">import</span> <span class="n">ContractInterface</span>
+<span class="kn">from</span> <span class="nn">pytezos.sandbox.node</span> <span class="kn">import</span> <span class="n">SandboxedNodeTestCase</span>
+<span class="kn">from</span> <span class="nn">pytezos.contract.result</span> <span class="kn">import</span> <span class="n">ContractCallResult</span>
+
+<span class="n">contract_michelson</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">    parameter string;</span>
+<span class="s2">    storage string;</span>
+<span class="s2">    code { DUP;</span>
+<span class="s2">        DIP { CAR ; NIL string ; SWAP ; CONS } ;</span>
+<span class="s2">        CDR ; CONS ;</span>
+<span class="s2">        CONCAT ;</span>
+<span class="s2">        NIL operation; PAIR }</span>
+<span class="s2">&quot;&quot;&quot;</span>
+
+<span class="k">class</span> <span class="nc">SandboxedContractTest</span><span class="p">(</span><span class="n">SandboxedNodeTestCase</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">test_deploy_contract</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Create client</span>
+        <span class="n">client</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">using</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;bootstrap1&#39;</span><span class="p">)</span>
+        <span class="n">client</span><span class="o">.</span><span class="n">reveal</span><span class="p">()</span>
+
+        <span class="c1"># Originate contract with initial storage</span>
+        <span class="n">contract</span> <span class="o">=</span> <span class="n">ContractInterface</span><span class="o">.</span><span class="n">from_michelson</span><span class="p">(</span><span class="n">contract_michelson</span><span class="p">)</span>
+        <span class="n">opg</span> <span class="o">=</span> <span class="n">contract</span><span class="o">.</span><span class="n">using</span><span class="p">(</span><span class="n">shell</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_node_url</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="s1">&#39;bootstrap1&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">originate</span><span class="p">(</span><span class="n">initial_storage</span><span class="o">=</span><span class="s2">&quot;foo&quot;</span><span class="p">)</span>
+        <span class="n">opg</span> <span class="o">=</span> <span class="n">opg</span><span class="o">.</span><span class="n">fill</span><span class="p">()</span><span class="o">.</span><span class="n">sign</span><span class="p">()</span><span class="o">.</span><span class="n">inject</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">bake_block</span><span class="p">()</span>
+
+        <span class="c1"># Find originated contract address by operation hash</span>
+        <span class="n">opg</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">shell</span><span class="o">.</span><span class="n">blocks</span><span class="p">[</span><span class="s1">&#39;head&#39;</span><span class="p">:]</span><span class="o">.</span><span class="n">find_operation</span><span class="p">(</span><span class="n">opg</span><span class="p">[</span><span class="s1">&#39;hash&#39;</span><span class="p">])</span>
+        <span class="n">contract_address</span> <span class="o">=</span> <span class="n">opg</span><span class="p">[</span><span class="s1">&#39;contents&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;metadata&#39;</span><span class="p">][</span><span class="s1">&#39;operation_result&#39;</span><span class="p">][</span><span class="s1">&#39;originated_contracts&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="c1"># Load originated contract from blockchain</span>
+        <span class="n">originated_contract</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">contract</span><span class="p">(</span><span class="n">contract_address</span><span class="p">)</span><span class="o">.</span><span class="n">using</span><span class="p">(</span><span class="n">shell</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_node_url</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="s1">&#39;bootstrap1&#39;</span><span class="p">)</span>
+
+        <span class="c1"># Perform real contract call</span>
+        <span class="n">call</span> <span class="o">=</span> <span class="n">originated_contract</span><span class="o">.</span><span class="n">default</span><span class="p">(</span><span class="s2">&quot;bar&quot;</span><span class="p">)</span>
+        <span class="n">opg</span> <span class="o">=</span> <span class="n">call</span><span class="o">.</span><span class="n">inject</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">bake_block</span><span class="p">()</span>
+
+        <span class="c1"># Get injected operation and convert to ContractCallResult</span>
+        <span class="n">opg</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">shell</span><span class="o">.</span><span class="n">blocks</span><span class="p">[</span><span class="s1">&#39;head&#39;</span><span class="p">:]</span><span class="o">.</span><span class="n">find_operation</span><span class="p">(</span><span class="n">opg</span><span class="p">[</span><span class="s1">&#39;hash&#39;</span><span class="p">])</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">ContractCallResult</span><span class="o">.</span><span class="n">from_operation_group</span><span class="p">(</span><span class="n">opg</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">({</span><span class="s1">&#39;string&#39;</span><span class="p">:</span> <span class="s1">&#39;foobar&#39;</span><span class="p">},</span> <span class="n">result</span><span class="o">.</span><span class="n">storage</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Sandboxed node will be rolled back to genesis block between run of multiple testcases.</p>
+</div>
+<div class="section" id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Contract tests: <a class="reference external" href="https://github.com/baking-bad/pytezos/tree/master/tests/contract_tests">https://github.com/baking-bad/pytezos/tree/master/tests/contract_tests</a></p></li>
+<li><p>Tests with sandboxed node: <a class="reference external" href="https://github.com/baking-bad/pytezos/tree/master/tests/sandbox_tests">https://github.com/baking-bad/pytezos/tree/master/tests/sandbox_tests</a></p></li>
+</ul>
+</div>
+<div class="section" id="projects-using-pytezos">
 <h2>Projects using PyTezos<a class="headerlink" href="#projects-using-pytezos" title="Permalink to this headline">¶</a></h2>
 <p>See how PyTezos testing engine is used in production:</p>
 <ul class="simple">
@@ -207,45 +378,37 @@
 <li><p>Equisafe NYX
 <a class="reference external" href="https://gitlab.com/equisafe/nyx/-/tree/master/tests">https://gitlab.com/equisafe/nyx/-/tree/master/tests</a></p></li>
 </ul>
-</section>
-</section>
+</div>
+</div>
 
 
            </div>
            
           </div>
           <footer>
-  
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="pytezos_cli.html" class="btn btn-neutral float-right" title="Pytezos CLI" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="quick_start.html" class="btn btn-neutral float-left" title="Quick start" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
+        <a href="pytezos_cli.html" class="btn btn-neutral float-right" title="PyTezos CLI" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="quick_start.html" class="btn btn-neutral float-left" title="Quick start" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; Copyright 2020, Baking Bad
+        &#169; Copyright 2020, Baking Bad.
 
     </p>
   </div>
     
     
     
-    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     
     provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 

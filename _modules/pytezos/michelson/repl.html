@@ -3,9 +3,9 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>pytezos.michelson.repl &mdash; PyTezos  documentation</title>
   
@@ -18,8 +18,12 @@
   
     <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
   
+
   
   
+
+  
+    <link rel="canonical" href="https://pytezos.org/_modules/pytezos/michelson/repl.html" />
 
   
   <!--[if lt IE 9]>
@@ -50,7 +54,7 @@
           
 
           
-            <a href="../../../contents.html" class="icon icon-home" alt="Documentation Home"> PyTezos
+            <a href="../../../contents.html" class="icon icon-home"> PyTezos
           
 
           
@@ -81,11 +85,11 @@
               
             
             
-              <p><span class="caption-text">Contents</span></p>
+              <p class="caption"><span class="caption-text">Contents</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../quick_start.html">Quick start</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../integration_tests.html">Michelson integration tests</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../pytezos_cli.html">Pytezos CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pytezos_cli.html">PyTezos CLI</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../high_level.html">High-level interfaces</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../crypto.html">Cryptography</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../operation_groups.html">Building and parsing operations</a></li>
@@ -95,6 +99,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../code.html">Working with Michelson code</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../repl.html">Michelson REPL</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../inspect_proposals.html">Inspecting proposals</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../michelson_kernel.html">Michelson IPython kernel</a></li>
 </ul>
 
             
@@ -120,6 +125,8 @@
         <div class="rst-content">
         
           
+
+
 
 
 
@@ -175,6 +182,8 @@
 
 <div class="viewcode-block" id="InterpreterResult"><a class="viewcode-back" href="../../../repl.html#pytezos.michelson.repl.InterpreterResult">[docs]</a><span class="nd">@dataclass</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">InterpreterResult</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Result of running contract in interpreter&quot;&quot;&quot;</span>
+
     <span class="n">operations</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">storage</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">lazy_diff</span> <span class="o">=</span> <span class="kc">None</span>
@@ -193,14 +202,17 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">extra_primitives</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">debug</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="p">):</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">stack</span> <span class="o">=</span> <span class="n">MichelsonStack</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">context</span> <span class="o">=</span> <span class="n">ExecutionContext</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">debug</span> <span class="o">=</span> <span class="n">debug</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">parser</span> <span class="o">=</span> <span class="n">MichelsonParser</span><span class="p">(</span><span class="n">debug</span><span class="o">=</span><span class="n">debug</span><span class="p">,</span> <span class="n">extra_primitives</span><span class="o">=</span><span class="n">extra_primitives</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Interpreter.execute"><a class="viewcode-back" href="../../../repl.html#pytezos.michelson.repl.Interpreter.execute">[docs]</a>    <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">code</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">InterpreterResult</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Execute some code preserving current context and stack&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Execute some code preserving current context and stack</span>
+
+<span class="sd">        :param code: Michelson code</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">result</span> <span class="o">=</span> <span class="n">InterpreterResult</span><span class="p">(</span><span class="n">stdout</span><span class="o">=</span><span class="p">[])</span>
         <span class="n">stack_backup</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stack</span><span class="p">)</span>
         <span class="n">context_backup</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">)</span>
@@ -222,6 +234,7 @@
         <span class="k">return</span> <span class="n">result</span></div>
 
 <div class="viewcode-block" id="Interpreter.reset"><a class="viewcode-back" href="../../../repl.html#pytezos.michelson.repl.Interpreter.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Reset interpreter&#39;s stack and context&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">stack</span> <span class="o">=</span> <span class="n">MichelsonStack</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">context</span> <span class="o">=</span> <span class="n">ExecutionContext</span><span class="p">()</span></div>
 
@@ -229,7 +242,7 @@
     <span class="k">def</span> <span class="nf">run_code</span><span class="p">(</span>
         <span class="n">parameter</span><span class="p">,</span>
         <span class="n">storage</span><span class="p">,</span>
-        <span class="n">script</span><span class="p">,</span>
+        <span class="n">script</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">entrypoint</span><span class="o">=</span><span class="s1">&#39;default&#39;</span><span class="p">,</span>
         <span class="n">output_mode</span><span class="o">=</span><span class="s1">&#39;readable&#39;</span><span class="p">,</span>
         <span class="n">amount</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -240,6 +253,20 @@
         <span class="n">block_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="n">Any</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">Optional</span><span class="p">[</span><span class="ne">Exception</span><span class="p">]]:</span>
+        <span class="sd">&quot;&quot;&quot;Execute contract in interpreter</span>
+
+<span class="sd">        :param parameter: parameter expression</span>
+<span class="sd">        :param storage: storage expression</span>
+<span class="sd">        :param script: contract&#39;s Michelson code</span>
+<span class="sd">        :param entrypoint: contract entrypoint</span>
+<span class="sd">        :param output_mode: one of readable/optimized/legacy_optimized</span>
+<span class="sd">        :param amount: patch AMOUNT</span>
+<span class="sd">        :param chain_id: patch CHAIN_ID</span>
+<span class="sd">        :param source: patch SOURCE</span>
+<span class="sd">        :param sender: patch SENDER</span>
+<span class="sd">        :param balance: patch BALANCE</span>
+<span class="sd">        :param block_id: set block ID</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">context</span> <span class="o">=</span> <span class="n">ExecutionContext</span><span class="p">(</span>
             <span class="n">amount</span><span class="o">=</span><span class="n">amount</span><span class="p">,</span>
             <span class="n">chain_id</span><span class="o">=</span><span class="n">chain_id</span><span class="p">,</span>
@@ -269,11 +296,19 @@
 
 <div class="viewcode-block" id="Interpreter.run_view"><a class="viewcode-back" href="../../../repl.html#pytezos.michelson.repl.Interpreter.run_view">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">run_view</span><span class="p">(</span>
-        <span class="n">entrypoint</span><span class="p">,</span>
+        <span class="n">entrypoint</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">parameter</span><span class="p">,</span>
         <span class="n">storage</span><span class="p">,</span>
         <span class="n">context</span><span class="p">:</span> <span class="n">ExecutionContext</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">Optional</span><span class="p">[</span><span class="ne">Exception</span><span class="p">]]:</span>
+        <span class="sd">&quot;&quot;&quot;Execute view of contract loaded in context</span>
+
+<span class="sd">        :param entrypoint: contract entrypoint</span>
+<span class="sd">        :param parameter: parameter section</span>
+<span class="sd">        :param storage: storage section</span>
+<span class="sd">        :param context: execution context</span>
+<span class="sd">        :returns: [operations, stdout, error]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">ctx</span> <span class="o">=</span> <span class="n">ExecutionContext</span><span class="p">(</span>
             <span class="n">shell</span><span class="o">=</span><span class="n">context</span><span class="o">.</span><span class="n">shell</span><span class="p">,</span>
             <span class="n">key</span><span class="o">=</span><span class="n">context</span><span class="o">.</span><span class="n">key</span><span class="p">,</span>
@@ -299,7 +334,7 @@
 
 <div class="viewcode-block" id="Interpreter.run_tzt"><a class="viewcode-back" href="../../../repl.html#pytezos.michelson.repl.Interpreter.run_tzt">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">run_tzt</span><span class="p">(</span>
-        <span class="n">script</span><span class="p">,</span>
+        <span class="n">script</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">amount</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">chain_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">source</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -308,6 +343,16 @@
         <span class="n">block_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Execute TZT test suite code</span>
+
+<span class="sd">        :param script: test contract&#39;s Michelson code</span>
+<span class="sd">        :param amount: patch AMOUNT</span>
+<span class="sd">        :param chain_id: patch CHAIN_ID</span>
+<span class="sd">        :param source: patch SOURCE</span>
+<span class="sd">        :param sender: patch SENDER</span>
+<span class="sd">        :param balance: patch BALANCE</span>
+<span class="sd">        :param block_id: set block ID</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">context</span> <span class="o">=</span> <span class="n">ExecutionContext</span><span class="p">(</span>
             <span class="n">amount</span><span class="o">=</span><span class="n">amount</span><span class="p">,</span>
             <span class="n">chain_id</span><span class="o">=</span><span class="n">chain_id</span><span class="p">,</span>
@@ -335,28 +380,25 @@
            
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; Copyright 2020, Baking Bad
+        &#169; Copyright 2020, Baking Bad.
 
     </p>
   </div>
     
     
     
-    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     
     provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 

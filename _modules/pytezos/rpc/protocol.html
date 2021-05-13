@@ -3,9 +3,9 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>pytezos.rpc.protocol &mdash; PyTezos  documentation</title>
   
@@ -18,8 +18,12 @@
   
     <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
   
+
   
   
+
+  
+    <link rel="canonical" href="https://pytezos.org/_modules/pytezos/rpc/protocol.html" />
 
   
   <!--[if lt IE 9]>
@@ -50,7 +54,7 @@
           
 
           
-            <a href="../../../contents.html" class="icon icon-home" alt="Documentation Home"> PyTezos
+            <a href="../../../contents.html" class="icon icon-home"> PyTezos
           
 
           
@@ -81,11 +85,11 @@
               
             
             
-              <p><span class="caption-text">Contents</span></p>
+              <p class="caption"><span class="caption-text">Contents</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../quick_start.html">Quick start</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../integration_tests.html">Michelson integration tests</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../pytezos_cli.html">Pytezos CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pytezos_cli.html">PyTezos CLI</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../high_level.html">High-level interfaces</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../crypto.html">Cryptography</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../operation_groups.html">Building and parsing operations</a></li>
@@ -95,6 +99,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../code.html">Working with Michelson code</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../repl.html">Michelson REPL</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../inspect_proposals.html">Inspecting proposals</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../michelson_kernel.html">Michelson IPython kernel</a></li>
 </ul>
 
             
@@ -120,6 +125,8 @@
         <div class="rst-content">
         
           
+
+
 
 
 
@@ -161,7 +168,7 @@
   <h1>Source code for pytezos.rpc.protocol</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
 <span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">count</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">Tuple</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Iterator</span>
 
 <span class="kn">import</span> <span class="nn">bson</span>  <span class="c1"># type: ignore</span>
 <span class="kn">import</span> <span class="nn">pendulum</span>
@@ -184,15 +191,15 @@
 
 
 <div class="viewcode-block" id="BlocksQuery"><a class="viewcode-back" href="../../../rpc_queries.html#pytezos.rpc.protocol.BlocksQuery">[docs]</a><span class="k">class</span> <span class="nc">BlocksQuery</span><span class="p">(</span><span class="n">RpcQuery</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s1">&#39;/chains/</span><span class="si">{}</span><span class="s1">/blocks&#39;</span><span class="p">):</span>
-
 <div class="viewcode-block" id="BlocksQuery.__call__"><a class="viewcode-back" href="../../../rpc_queries.html#pytezos.rpc.protocol.BlocksQuery.__call__">[docs]</a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">head</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">min_date</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Lists known heads of the blockchain sorted with decreasing fitness.</span>
+        <span class="sd">&quot;&quot;&quot;List known heads of the blockchain sorted with decreasing fitness.</span>
+
 <span class="sd">        Optional arguments allows to returns the list of predecessors for known heads</span>
 <span class="sd">        or the list of predecessors for a given list of blocks.</span>
 
 <span class="sd">        :param length: The requested number of predecessors to returns (per requested head).</span>
-<span class="sd">        :param head: An empty argument requests blocks from the current heads. \</span>
-<span class="sd">        A non empty list allow to request specific fragment of the chain.</span>
+<span class="sd">        :param head: An empty argument requests blocks from the current heads.</span>
+<span class="sd">            A non empty list allow to request specific fragment of the chain.</span>
 <span class="sd">        :param min_date: When `min_date` is provided, heads with a timestamp before `min_date` are filtered out</span>
 <span class="sd">        :rtype: list[list[str]]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -202,20 +209,24 @@
         <span class="k">if</span> <span class="n">min_date</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">min_date</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
             <span class="n">min_date</span> <span class="o">=</span> <span class="n">to_timestamp</span><span class="p">(</span><span class="n">min_date</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">BlocksQuery</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__call__</span><span class="p">(</span>
-            <span class="n">length</span><span class="o">=</span><span class="n">length</span><span class="p">,</span> <span class="n">head</span><span class="o">=</span><span class="n">head</span><span class="p">,</span> <span class="n">min_date</span><span class="o">=</span><span class="n">min_date</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__call__</span><span class="p">(</span>
+            <span class="n">length</span><span class="o">=</span><span class="n">length</span><span class="p">,</span>
+            <span class="n">head</span><span class="o">=</span><span class="n">head</span><span class="p">,</span>
+            <span class="n">min_date</span><span class="o">=</span><span class="n">min_date</span><span class="p">,</span>
+        <span class="p">)</span></div>
 
     <span class="k">def</span> <span class="nf">_get_block</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">block_id</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;BlockQuery&#39;</span><span class="p">:</span>
         <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">BlocksQuery</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__getitem__</span><span class="p">(</span><span class="n">block_id</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">block_id</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Construct block query or get a block range.</span>
+        <span class="sd">&quot;&quot;&quot;Construct block query or get a block range.</span>
+
+<span class="sd">        block_id could be one of:</span>
+<span class="sd">        - int: Block level or offset from the head if negative;</span>
+<span class="sd">        - str: Block hash (base58) or special names (head, genesis), expressions like `head~1` etc;</span>
+<span class="sd">        - slice [:]: First value (start) must be int, second (stop) can be any Block ID or empty.</span>
 
 <span class="sd">        :param block_id: Block identity or block range</span>
-
-<span class="sd">          - int: Block level or offset from the head if negative;</span>
-<span class="sd">          - str: Block hash (base58) or special names (head, genesis), expressions like `head~1` etc;</span>
-<span class="sd">          - slice [:]: First value (start) must be int, second (stop) can be any Block ID or empty.</span>
 <span class="sd">        :rtype: BlockQuery or BlockSliceQuery</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">block_id</span><span class="p">,</span> <span class="nb">slice</span><span class="p">):</span>
@@ -229,7 +240,7 @@
                 <span class="n">stop</span><span class="o">=</span><span class="n">block_id</span><span class="o">.</span><span class="n">stop</span><span class="p">,</span>
                 <span class="n">node</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="p">,</span>
                 <span class="n">path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_wild_path</span><span class="p">,</span>
-                <span class="n">params</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_params</span>
+                <span class="n">params</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_params</span><span class="p">,</span>
             <span class="p">)</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">block_id</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="n">block_id</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
@@ -240,7 +251,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">current_voting_period</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Get block range for the current voting period.</span>
+        <span class="sd">&quot;&quot;&quot;Get block range for the current voting period.</span>
 
 <span class="sd">        :rtype: BlockSliceQuery</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -250,12 +261,12 @@
             <span class="n">stop</span><span class="o">=</span><span class="s1">&#39;head&#39;</span><span class="p">,</span>
             <span class="n">node</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="p">,</span>
             <span class="n">path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_wild_path</span><span class="p">,</span>
-            <span class="n">params</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_params</span>
+            <span class="n">params</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_params</span><span class="p">,</span>
         <span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">current_cycle</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Get block range for the current cycle.</span>
+        <span class="sd">&quot;&quot;&quot;Get block range for the current cycle.</span>
 
 <span class="sd">        :rtype: BlockSliceQuery</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -265,15 +276,14 @@
             <span class="n">stop</span><span class="o">=</span><span class="s1">&#39;head&#39;</span><span class="p">,</span>
             <span class="n">node</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="p">,</span>
             <span class="n">path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_wild_path</span><span class="p">,</span>
-            <span class="n">params</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_params</span>
+            <span class="n">params</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_params</span><span class="p">,</span>
         <span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="BlockQuery"><a class="viewcode-back" href="../../../rpc_queries.html#pytezos.rpc.protocol.BlockQuery">[docs]</a><span class="k">class</span> <span class="nc">BlockQuery</span><span class="p">(</span><span class="n">RpcQuery</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s1">&#39;/chains/</span><span class="si">{}</span><span class="s1">/blocks/</span><span class="si">{}</span><span class="s1">&#39;</span><span class="p">):</span>
-
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">predecessor</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Query previous block.</span>
+        <span class="sd">&quot;&quot;&quot;Query previous block.</span>
 
 <span class="sd">        :rtype: BlockQuery</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -281,20 +291,18 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">baker</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Query block producer (baker).</span>
+        <span class="sd">&quot;&quot;&quot;Query block producer (baker).</span>
 
 <span class="sd">        :rtype: ContractQuery</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">contracts</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">()[</span><span class="s1">&#39;baker&#39;</span><span class="p">]]</span>
 
 <div class="viewcode-block" id="BlockQuery.voting_period"><a class="viewcode-back" href="../../../rpc_queries.html#pytezos.rpc.protocol.BlockQuery.voting_period">[docs]</a>    <span class="k">def</span> <span class="nf">voting_period</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot; Get voting period for this block from metadata.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Get voting period for this block from metadata.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">()[</span><span class="s1">&#39;level&#39;</span><span class="p">][</span><span class="s1">&#39;voting_period&#39;</span><span class="p">]</span></div>
 
 <div class="viewcode-block" id="BlockQuery.level"><a class="viewcode-back" href="../../../rpc_queries.html#pytezos.rpc.protocol.BlockQuery.level">[docs]</a>    <span class="k">def</span> <span class="nf">level</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot; Get level for this block from metadata.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Get level for this block from metadata.&quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">()[</span><span class="s1">&#39;level&#39;</span><span class="p">][</span><span class="s1">&#39;level&#39;</span><span class="p">]</span>
         <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
@@ -303,23 +311,19 @@
             <span class="k">return</span> <span class="mi">0</span></div>
 
 <div class="viewcode-block" id="BlockQuery.cycle"><a class="viewcode-back" href="../../../rpc_queries.html#pytezos.rpc.protocol.BlockQuery.cycle">[docs]</a>    <span class="k">def</span> <span class="nf">cycle</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot; Get cycle for this block from metadata.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Get cycle for this block from metadata.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">()[</span><span class="s1">&#39;level&#39;</span><span class="p">][</span><span class="s1">&#39;cycle&#39;</span><span class="p">]</span></div>
 
 <div class="viewcode-block" id="BlockQuery.protocol_parameters"><a class="viewcode-back" href="../../../rpc_queries.html#pytezos.rpc.protocol.BlockQuery.protocol_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">protocol_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Get decoded protocol parameters if they do exist in the header</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Get decoded protocol parameters if they do exist in the header&quot;&quot;&quot;</span>
         <span class="n">pp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;content&#39;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;protocol_parameters&#39;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">pp</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">bson</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="nb">bytes</span><span class="o">.</span><span class="n">fromhex</span><span class="p">(</span><span class="n">pp</span><span class="p">)[</span><span class="mi">4</span><span class="p">:])</span></div></div>
 
 
 <div class="viewcode-block" id="ContractQuery"><a class="viewcode-back" href="../../../rpc_queries.html#pytezos.rpc.protocol.ContractQuery">[docs]</a><span class="k">class</span> <span class="nc">ContractQuery</span><span class="p">(</span><span class="n">RpcQuery</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s1">&#39;/chains/</span><span class="si">{}</span><span class="s1">/blocks/</span><span class="si">{}</span><span class="s1">/context/contracts/</span><span class="si">{}</span><span class="s1">&#39;</span><span class="p">):</span>
-
 <div class="viewcode-block" id="ContractQuery.public_key"><a class="viewcode-back" href="../../../rpc_queries.html#pytezos.rpc.protocol.ContractQuery.public_key">[docs]</a>    <span class="k">def</span> <span class="nf">public_key</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot; Retrieve the contract manager&#39;s public key (base58 encoded)</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Retrieve the contract manager&#39;s public key (base58 encoded)&quot;&quot;&quot;</span>
         <span class="n">pkh</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_params</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">pkh</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;KT&#39;</span><span class="p">):</span>
             <span class="n">pkh</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">manager_key</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;manager&#39;</span><span class="p">)</span>
@@ -331,12 +335,11 @@
         <span class="k">return</span> <span class="n">pk</span></div>
 
 <div class="viewcode-block" id="ContractQuery.count"><a class="viewcode-back" href="../../../rpc_queries.html#pytezos.rpc.protocol.ContractQuery.count">[docs]</a>    <span class="k">def</span> <span class="nf">count</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot; Get contract counter iterator: it returns incremented value on each call.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Get contract counter iterator: it returns incremented value on each call.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">count</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">counter</span><span class="p">())</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="ContractQuery.code"><a class="viewcode-back" href="../../../rpc_queries.html#pytezos.rpc.protocol.ContractQuery.code">[docs]</a>    <span class="k">def</span> <span class="nf">code</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Get contract code.</span>
+        <span class="sd">&quot;&quot;&quot;Get contract code.</span>
 
 <span class="sd">        :returns: Micheline expression</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -344,30 +347,34 @@
 
 
 <div class="viewcode-block" id="BigMapGetQuery"><a class="viewcode-back" href="../../../rpc_queries.html#pytezos.rpc.protocol.BigMapGetQuery">[docs]</a><span class="k">class</span> <span class="nc">BigMapGetQuery</span><span class="p">(</span><span class="n">RpcQuery</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s1">&#39;/chains/</span><span class="si">{}</span><span class="s1">/blocks/</span><span class="si">{}</span><span class="s1">/context/contracts/</span><span class="si">{}</span><span class="s1">/big_map_get&#39;</span><span class="p">):</span>
-
 <div class="viewcode-block" id="BigMapGetQuery.post"><a class="viewcode-back" href="../../../rpc_queries.html#pytezos.rpc.protocol.BigMapGetQuery.post">[docs]</a>    <span class="k">def</span> <span class="nf">post</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Access the value associated with a key in the big map storage of the michelson.</span>
+        <span class="sd">&quot;&quot;&quot;Access the value associated with a key in the big map storage of the michelson.</span>
 
-<span class="sd">        :param query</span>
+<span class="sd">        query format:</span>
+
+<span class="sd">        .. code-block:: python</span>
+
 <span class="sd">            {</span>
 <span class="sd">                key: { $key_type : &lt;key&gt; },</span>
 <span class="sd">                type: { &quot;prim&quot; : $key_prim }</span>
 <span class="sd">            }</span>
-<span class="sd">            $key_type: Provided key encoding, e.g. &quot;string&quot;, &quot;bytes&quot; for hex-encoded string, &quot;int&quot;</span>
-<span class="sd">            key_prim: Expected high-level data type, e.g. &quot;address&quot;, &quot;nat&quot;, &quot;mutez&quot; (see storage section in code)</span>
+
+<span class="sd">        $key_type: Provided key encoding, e.g. &quot;string&quot;, &quot;bytes&quot; for hex-encoded string, &quot;int&quot;</span>
+<span class="sd">        $key_prim: Expected high-level data type, e.g. &quot;address&quot;, &quot;nat&quot;, &quot;mutez&quot; (see storage section in code)</span>
+
+<span class="sd">        :param query: JSON input</span>
 <span class="sd">        :returns: Micheline expression</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_post</span><span class="p">(</span><span class="n">json</span><span class="o">=</span><span class="n">query</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="ContextRawBytesQuery"><a class="viewcode-back" href="../../../rpc_queries.html#pytezos.rpc.protocol.ContextRawBytesQuery">[docs]</a><span class="k">class</span> <span class="nc">ContextRawBytesQuery</span><span class="p">(</span><span class="n">RpcQuery</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s1">&#39;/chains/</span><span class="si">{}</span><span class="s1">/blocks/</span><span class="si">{}</span><span class="s1">/context/raw/bytes&#39;</span><span class="p">):</span>
-
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mi">60</span><span class="p">)</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">ContextRawBytesQuery</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
 <div class="viewcode-block" id="ContextRawBytesQuery.__call__"><a class="viewcode-back" href="../../../rpc_queries.html#pytezos.rpc.protocol.ContextRawBytesQuery.__call__">[docs]</a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">depth</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
-        <span class="sd">&quot;&quot;&quot; Return the raw context.</span>
+        <span class="sd">&quot;&quot;&quot;Return the raw context.</span>
 
 <span class="sd">        :param depth: Context is a tree structure, default depth is 1</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -375,39 +382,39 @@
 
 
 <div class="viewcode-block" id="ContextRawJsonQuery"><a class="viewcode-back" href="../../../rpc_queries.html#pytezos.rpc.protocol.ContextRawJsonQuery">[docs]</a><span class="k">class</span> <span class="nc">ContextRawJsonQuery</span><span class="p">(</span><span class="n">RpcQuery</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s1">&#39;/chains/</span><span class="si">{}</span><span class="s1">/blocks/</span><span class="si">{}</span><span class="s1">/context/raw/json&#39;</span><span class="p">):</span>
-
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mi">60</span><span class="p">)</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">ContextRawJsonQuery</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="ContextSeedQuery"><a class="viewcode-back" href="../../../rpc_queries.html#pytezos.rpc.protocol.ContextSeedQuery">[docs]</a><span class="k">class</span> <span class="nc">ContextSeedQuery</span><span class="p">(</span><span class="n">RpcQuery</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s1">&#39;/chains/</span><span class="si">{}</span><span class="s1">/blocks/</span><span class="si">{}</span><span class="s1">/context/seed&#39;</span><span class="p">):</span>
-
 <div class="viewcode-block" id="ContextSeedQuery.post"><a class="viewcode-back" href="../../../rpc_queries.html#pytezos.rpc.protocol.ContextSeedQuery.post">[docs]</a>    <span class="k">def</span> <span class="nf">post</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Get seed of the cycle to which the block belongs.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Get seed of the cycle to which the block belongs.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_post</span><span class="p">()</span></div></div>
 
 
 <div class="viewcode-block" id="EndorsingPower"><a class="viewcode-back" href="../../../rpc_queries.html#pytezos.rpc.protocol.EndorsingPower">[docs]</a><span class="k">class</span> <span class="nc">EndorsingPower</span><span class="p">(</span><span class="n">RpcQuery</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s1">&#39;/chains/</span><span class="si">{}</span><span class="s1">/blocks/</span><span class="si">{}</span><span class="s1">/endorsing_power&#39;</span><span class="p">):</span>
-
 <div class="viewcode-block" id="EndorsingPower.post"><a class="viewcode-back" href="../../../rpc_queries.html#pytezos.rpc.protocol.EndorsingPower.post">[docs]</a>    <span class="k">def</span> <span class="nf">post</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">endorsement_operation</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Get the endorsing power of an endorsement operation, that is, the number of slots that the op has.</span>
+        <span class="sd">&quot;&quot;&quot;Get the endorsing power of an endorsement operation, that is, the number of slots that the op has.</span>
 
-<span class="sd">        :param endorsement_operation</span>
+<span class="sd">        endorsement_operation format:</span>
+
+<span class="sd">        .. code-block:: python</span>
+
 <span class="sd">            {</span>
 <span class="sd">                &quot;branch&quot;: $block_hash,</span>
 <span class="sd">                &quot;contents&quot;: [ $operation.alpha.contents ... ],</span>
 <span class="sd">                &quot;signature&quot;: $Signature</span>
 <span class="sd">            }</span>
+
+<span class="sd">        :param endorsement_operation</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_post</span><span class="p">({</span><span class="s1">&#39;sendorsement_operation&#39;</span><span class="p">:</span> <span class="n">endorsement_operation</span><span class="p">})</span></div></div>
 
 
 <div class="viewcode-block" id="OperationListListQuery"><a class="viewcode-back" href="../../../rpc_queries.html#pytezos.rpc.protocol.OperationListListQuery">[docs]</a><span class="k">class</span> <span class="nc">OperationListListQuery</span><span class="p">(</span><span class="n">RpcQuery</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;/chains/</span><span class="si">{}</span><span class="s1">/blocks/</span><span class="si">{}</span><span class="s1">/operations&#39;</span><span class="p">]):</span>
-
     <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Find operation by hash.</span>
+        <span class="sd">&quot;&quot;&quot;Find operation by hash.</span>
 
 <span class="sd">        :param item: Operation group hash (base58)</span>
 <span class="sd">        :rtype: OperationQuery</span>
@@ -431,7 +438,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">endorsements</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Operations with content of type: `endorsement`.</span>
+        <span class="sd">&quot;&quot;&quot;Operations with content of type: `endorsement`.</span>
 
 <span class="sd">        :rtype: OperationListQuery</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -439,7 +446,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">votes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Operations with content of type: `proposal`, `ballot`.</span>
+        <span class="sd">&quot;&quot;&quot;Operations with content of type: `proposal`, `ballot`.</span>
 
 <span class="sd">        :rtype: OperationListQuery</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -447,7 +454,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">anonymous</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Operations with content of type: `seed_nonce_revelation`, `double_endorsement_evidence`,</span>
+        <span class="sd">&quot;&quot;&quot;Operations with content of type: `seed_nonce_revelation`, `double_endorsement_evidence`,</span>
 <span class="sd">            `double_baking_evidence`, `activate_account`.</span>
 
 <span class="sd">        :rtype: OperationListQuery</span>
@@ -456,70 +463,80 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">managers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Operations with content of type: `reveal`, `transaction`, `origination`, `delegation`.</span>
+        <span class="sd">&quot;&quot;&quot;Operations with content of type: `reveal`, `transaction`, `origination`, `delegation`.</span>
 
 <span class="sd">        :rtype: OperationListQuery</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
 
 <div class="viewcode-block" id="OperationListListQuery.find_upvotes"><a class="viewcode-back" href="../../../rpc_queries.html#pytezos.rpc.protocol.OperationListListQuery.find_upvotes">[docs]</a>    <span class="k">def</span> <span class="nf">find_upvotes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">proposal_id</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot; Find operations of kind `proposal` for given proposal.</span>
+        <span class="sd">&quot;&quot;&quot;Find operations of kind `proposal` for given proposal.</span>
 
 <span class="sd">        :param proposal_id: Proposal hash (base58)</span>
 <span class="sd">        :returns: list of operation contents</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+
         <span class="k">def</span> <span class="nf">is_upvote</span><span class="p">(</span><span class="n">op</span><span class="p">):</span>
-            <span class="k">return</span> <span class="nb">any</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span>
-                <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="s1">&#39;kind&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;proposal&#39;</span> <span class="ow">and</span> <span class="n">proposal_id</span> <span class="ow">in</span> <span class="n">x</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;proposals&#39;</span><span class="p">,</span> <span class="p">[]),</span>
-                <span class="n">op</span><span class="p">[</span><span class="s1">&#39;contents&#39;</span><span class="p">]))</span>
+            <span class="k">return</span> <span class="nb">any</span><span class="p">(</span>
+                <span class="nb">map</span><span class="p">(</span>
+                    <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="s1">&#39;kind&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;proposal&#39;</span> <span class="ow">and</span> <span class="n">proposal_id</span> <span class="ow">in</span> <span class="n">x</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;proposals&#39;</span><span class="p">,</span> <span class="p">[]),</span>
+                    <span class="n">op</span><span class="p">[</span><span class="s1">&#39;contents&#39;</span><span class="p">],</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+
         <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="n">is_upvote</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">votes</span><span class="p">()))</span></div>
 
 <div class="viewcode-block" id="OperationListListQuery.find_ballots"><a class="viewcode-back" href="../../../rpc_queries.html#pytezos.rpc.protocol.OperationListListQuery.find_ballots">[docs]</a>    <span class="k">def</span> <span class="nf">find_ballots</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">proposal_id</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot; Find operations of kind `ballot`.</span>
+        <span class="sd">&quot;&quot;&quot;Find operations of kind `ballot`.</span>
 
 <span class="sd">        :param proposal_id: Proposal hash (optional)</span>
 <span class="sd">        :returns: list of operation contents</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+
         <span class="k">def</span> <span class="nf">is_ballot</span><span class="p">(</span><span class="n">op</span><span class="p">):</span>
-            <span class="k">return</span> <span class="nb">any</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span>
-                <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="s1">&#39;kind&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;ballot&#39;</span> <span class="ow">and</span> <span class="p">(</span><span class="n">proposal_id</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">proposal_id</span> <span class="o">==</span> <span class="n">x</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;proposal&#39;</span><span class="p">)),</span>
-                <span class="n">op</span><span class="p">[</span><span class="s1">&#39;contents&#39;</span><span class="p">]))</span>
+            <span class="k">return</span> <span class="nb">any</span><span class="p">(</span>
+                <span class="nb">map</span><span class="p">(</span>
+                    <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="s1">&#39;kind&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;ballot&#39;</span> <span class="ow">and</span> <span class="p">(</span><span class="n">proposal_id</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">proposal_id</span> <span class="o">==</span> <span class="n">x</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;proposal&#39;</span><span class="p">)),</span>
+                    <span class="n">op</span><span class="p">[</span><span class="s1">&#39;contents&#39;</span><span class="p">],</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+
         <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="n">is_ballot</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">votes</span><span class="p">()))</span></div>
 
 <div class="viewcode-block" id="OperationListListQuery.find_origination"><a class="viewcode-back" href="../../../rpc_queries.html#pytezos.rpc.protocol.OperationListListQuery.find_origination">[docs]</a>    <span class="k">def</span> <span class="nf">find_origination</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">contract_id</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Find origination of the contract.</span>
+        <span class="sd">&quot;&quot;&quot;Find origination of the contract.</span>
 
 <span class="sd">        :param contract_id: Contract ID (KT-address)</span>
 <span class="sd">        :returns: operation content</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+
         <span class="k">def</span> <span class="nf">is_origination</span><span class="p">(</span><span class="n">op</span><span class="p">):</span>
             <span class="k">def</span> <span class="nf">is_it</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-                <span class="k">return</span> <span class="n">x</span><span class="p">[</span><span class="s1">&#39;kind&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;origination&#39;</span> \
-                       <span class="ow">and</span> <span class="n">contract_id</span> <span class="ow">in</span> <span class="n">x</span><span class="p">[</span><span class="s1">&#39;metadata&#39;</span><span class="p">][</span><span class="s1">&#39;operation_result&#39;</span><span class="p">][</span><span class="s1">&#39;originated_contracts&#39;</span><span class="p">]</span>
-            <span class="k">return</span> <span class="nb">any</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">is_it</span><span class="p">,</span> <span class="n">op</span><span class="p">[</span><span class="s1">&#39;contents&#39;</span><span class="p">]))</span>
+                <span class="k">return</span> <span class="n">x</span><span class="p">[</span><span class="s1">&#39;kind&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;origination&#39;</span> <span class="ow">and</span> <span class="n">contract_id</span> <span class="ow">in</span> <span class="n">x</span><span class="p">[</span><span class="s1">&#39;metadata&#39;</span><span class="p">][</span><span class="s1">&#39;operation_result&#39;</span><span class="p">][</span><span class="s1">&#39;originated_contracts&#39;</span><span class="p">]</span>
+
+            <span class="k">return</span> <span class="nb">any</span><span class="p">(</span>
+                <span class="nb">map</span><span class="p">(</span>
+                    <span class="n">is_it</span><span class="p">,</span>
+                    <span class="n">op</span><span class="p">[</span><span class="s1">&#39;contents&#39;</span><span class="p">],</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+
         <span class="k">return</span> <span class="nb">next</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="n">is_origination</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">managers</span><span class="p">()))</span></div></div>
 
 
 <div class="viewcode-block" id="OperationQuery"><a class="viewcode-back" href="../../../rpc_queries.html#pytezos.rpc.protocol.OperationQuery">[docs]</a><span class="k">class</span> <span class="nc">OperationQuery</span><span class="p">(</span><span class="n">RpcQuery</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;/chains/</span><span class="si">{}</span><span class="s1">/blocks/</span><span class="si">{}</span><span class="s1">/operations/</span><span class="si">{}</span><span class="s1">/</span><span class="si">{}</span><span class="s1">&#39;</span><span class="p">]):</span>
-
 <div class="viewcode-block" id="OperationQuery.unsigned"><a class="viewcode-back" href="../../../rpc_queries.html#pytezos.rpc.protocol.OperationQuery.unsigned">[docs]</a>    <span class="k">def</span> <span class="nf">unsigned</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot; Get operation group data without metadata and signature.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Get operation group data without metadata and signature.&quot;&quot;&quot;</span>
         <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="p">()</span>
         <span class="k">return</span> <span class="p">{</span>
             <span class="s1">&#39;branch&#39;</span><span class="p">:</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;branch&#39;</span><span class="p">],</span>
-            <span class="s1">&#39;contents&#39;</span><span class="p">:</span> <span class="p">[</span>
-                <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">content</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="o">!=</span> <span class="s1">&#39;metadata&#39;</span><span class="p">}</span>
-                <span class="k">for</span> <span class="n">content</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;contents&#39;</span><span class="p">]</span>
-            <span class="p">]</span>
+            <span class="s1">&#39;contents&#39;</span><span class="p">:</span> <span class="p">[{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">content</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="o">!=</span> <span class="s1">&#39;metadata&#39;</span><span class="p">}</span> <span class="k">for</span> <span class="n">content</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;contents&#39;</span><span class="p">]],</span>
         <span class="p">}</span></div></div>
 
 
 <div class="viewcode-block" id="ProposalQuery"><a class="viewcode-back" href="../../../rpc_queries.html#pytezos.rpc.protocol.ProposalQuery">[docs]</a><span class="k">class</span> <span class="nc">ProposalQuery</span><span class="p">(</span><span class="n">RpcQuery</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s1">&#39;/chains/</span><span class="si">{}</span><span class="s1">/blocks/</span><span class="si">{}</span><span class="s1">/votes/proposals/</span><span class="si">{}</span><span class="s1">&#39;</span><span class="p">):</span>
-
 <div class="viewcode-block" id="ProposalQuery.__call__"><a class="viewcode-back" href="../../../rpc_queries.html#pytezos.rpc.protocol.ProposalQuery.__call__">[docs]</a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
-        <span class="sd">&quot;&quot;&quot; Roll count for this proposal.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Roll count for this proposal.&quot;&quot;&quot;</span>
         <span class="n">proposals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span><span class="p">()</span>
         <span class="n">proposal_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_params</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
         <span class="n">roll_count</span> <span class="o">=</span> <span class="nb">next</span><span class="p">((</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">proposals</span> <span class="k">if</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">proposal_id</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span>
@@ -527,9 +544,8 @@
 
 
 <div class="viewcode-block" id="ProposalsQuery"><a class="viewcode-back" href="../../../rpc_queries.html#pytezos.rpc.protocol.ProposalsQuery">[docs]</a><span class="k">class</span> <span class="nc">ProposalsQuery</span><span class="p">(</span><span class="n">RpcQuery</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s1">&#39;/chains/</span><span class="si">{}</span><span class="s1">/blocks/</span><span class="si">{}</span><span class="s1">/votes/proposals&#39;</span><span class="p">):</span>
-
     <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">proposal_id</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ProposalQuery</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot; Roll count for the selected proposal.</span>
+        <span class="sd">&quot;&quot;&quot;Roll count for the selected proposal.</span>
 
 <span class="sd">        :param proposal_id: Base58-encoded proposal ID</span>
 <span class="sd">        :rtype: ProposalQuery</span>
@@ -537,12 +553,12 @@
         <span class="k">return</span> <span class="n">ProposalQuery</span><span class="p">(</span>
             <span class="n">path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_wild_path</span> <span class="o">+</span> <span class="s1">&#39;/</span><span class="si">{}</span><span class="s1">&#39;</span><span class="p">,</span>
             <span class="n">params</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_params</span> <span class="o">+</span> <span class="p">[</span><span class="n">proposal_id</span><span class="p">],</span>
-            <span class="n">node</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">node</span>
+            <span class="n">node</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="p">,</span>
         <span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">res</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="nb">super</span><span class="p">(</span><span class="n">ProposalsQuery</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">(),</span>
+            <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">(),</span>
             <span class="sa">f</span><span class="s1">&#39;[]</span><span class="si">{</span><span class="n">get_attr_docstring</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">,</span> <span class="s2">&quot;__getitem__&quot;</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
         <span class="p">]</span>
         <span class="k">return</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">res</span><span class="p">)</span></div>
@@ -552,28 +568,25 @@
            
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; Copyright 2020, Baking Bad
+        &#169; Copyright 2020, Baking Bad.
 
     </p>
   </div>
     
     
     
-    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     
     provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 

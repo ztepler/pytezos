@@ -3,9 +3,9 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>pytezos.contract.result &mdash; PyTezos  documentation</title>
   
@@ -18,8 +18,12 @@
   
     <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
   
+
   
   
+
+  
+    <link rel="canonical" href="https://pytezos.org/_modules/pytezos/contract/result.html" />
 
   
   <!--[if lt IE 9]>
@@ -50,7 +54,7 @@
           
 
           
-            <a href="../../../contents.html" class="icon icon-home" alt="Documentation Home"> PyTezos
+            <a href="../../../contents.html" class="icon icon-home"> PyTezos
           
 
           
@@ -81,11 +85,11 @@
               
             
             
-              <p><span class="caption-text">Contents</span></p>
+              <p class="caption"><span class="caption-text">Contents</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../quick_start.html">Quick start</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../integration_tests.html">Michelson integration tests</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../pytezos_cli.html">Pytezos CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pytezos_cli.html">PyTezos CLI</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../high_level.html">High-level interfaces</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../crypto.html">Cryptography</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../operation_groups.html">Building and parsing operations</a></li>
@@ -95,6 +99,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../code.html">Working with Michelson code</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../repl.html">Michelson REPL</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../inspect_proposals.html">Inspecting proposals</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../michelson_kernel.html">Michelson IPython kernel</a></li>
 </ul>
 
             
@@ -135,6 +140,8 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -159,7 +166,7 @@
            <div itemprop="articleBody">
             
   <h1>Source code for pytezos.contract.result</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span>
 
 <span class="kn">from</span> <span class="nn">pytezos.context.impl</span> <span class="kn">import</span> <span class="n">ExecutionContext</span>  <span class="c1"># type: ignore</span>
 <span class="kn">from</span> <span class="nn">pytezos.michelson.program</span> <span class="kn">import</span> <span class="n">MichelsonProgram</span>
@@ -167,18 +174,17 @@
 
 
 <div class="viewcode-block" id="ContractCallResult"><a class="viewcode-back" href="../../../high_level.html#pytezos.contract.result.ContractCallResult">[docs]</a><span class="k">class</span> <span class="nc">ContractCallResult</span><span class="p">(</span><span class="n">OperationResult</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Encapsulates the result of a contract invocation.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Encapsulates the result of a contract invocation.&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="ContractCallResult.from_run_operation"><a class="viewcode-back" href="../../../high_level.html#pytezos.contract.result.ContractCallResult.from_run_operation">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">from_run_operation</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">operation_group</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">ExecutionContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="s1">&#39;ContractCallResult&#39;</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot; Get a list of results from an operation group content with metadata.</span>
+    <span class="k">def</span> <span class="nf">from_run_operation</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">operation_group</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">context</span><span class="p">:</span> <span class="n">ExecutionContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="s1">&#39;ContractCallResult&#39;</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Get a list of results from an operation group content with metadata.</span>
 
 <span class="sd">        :param operation_group: {..., &quot;contents&quot;: [{..., kind: &quot;transaction&quot;, ...}]}</span>
 <span class="sd">        :param context: execution context</span>
 <span class="sd">        :rtype: ContractCallResult</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">results</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="s1">&#39;ContractCallResult&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="n">results</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="s1">&#39;OperationResult&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">content</span> <span class="ow">in</span> <span class="n">OperationResult</span><span class="o">.</span><span class="n">iter_contents</span><span class="p">(</span><span class="n">operation_group</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">content</span><span class="p">[</span><span class="s1">&#39;kind&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;transaction&#39;</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">content</span><span class="p">[</span><span class="s1">&#39;destination&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">context</span><span class="o">.</span><span class="n">address</span><span class="p">:</span>
@@ -208,10 +214,10 @@
         <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">decode_result</span><span class="p">,</span> <span class="n">results</span><span class="p">))</span></div>
 
 <div class="viewcode-block" id="ContractCallResult.from_run_code"><a class="viewcode-back" href="../../../high_level.html#pytezos.contract.result.ContractCallResult.from_run_code">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">from_run_code</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">response</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">ExecutionContext</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Parse a result of `run_code` execution.</span>
+    <span class="k">def</span> <span class="nf">from_run_code</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">response</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">ExecutionContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;ContractCallResult&#39;</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Parse a result of :py:meth:`pytezos.contract.call.ContractCall.run_code` execution.</span>
 
-<span class="sd">        :param response: RPC response (json)</span>
+<span class="sd">        :param response: RPC response (JSON)</span>
 <span class="sd">        :param parameters: {&quot;entrypoint&quot;: str, &quot;value&quot;: $Micheline}</span>
 <span class="sd">        :param context: execution context</span>
 <span class="sd">        :rtype: ContractCallResult</span>
@@ -224,7 +230,7 @@
             <span class="n">parameters</span><span class="o">=</span><span class="n">parameters</span><span class="o">.</span><span class="n">to_python_object</span><span class="p">(),</span>
             <span class="n">storage</span><span class="o">=</span><span class="n">extended_storage</span><span class="o">.</span><span class="n">to_python_object</span><span class="p">(</span><span class="n">lazy_diff</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
             <span class="n">lazy_diff</span><span class="o">=</span><span class="n">response</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;lazy_diff&#39;</span><span class="p">,</span> <span class="p">[]),</span>
-            <span class="n">operations</span><span class="o">=</span><span class="n">response</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;operations&#39;</span><span class="p">,</span> <span class="p">[])</span>
+            <span class="n">operations</span><span class="o">=</span><span class="n">response</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;operations&#39;</span><span class="p">,</span> <span class="p">[]),</span>
         <span class="p">)</span></div></div>
 </pre></div>
 
@@ -232,28 +238,25 @@
            
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; Copyright 2020, Baking Bad
+        &#169; Copyright 2020, Baking Bad.
 
     </p>
   </div>
     
     
     
-    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     
     provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 

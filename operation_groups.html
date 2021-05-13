@@ -3,10 +3,9 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
-  <meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
-
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>Building and parsing operations &mdash; PyTezos  documentation</title>
   
@@ -19,8 +18,12 @@
   
     <link rel="shortcut icon" href="_static/favicon.ico"/>
   
+
   
   
+
+  
+    <link rel="canonical" href="https://pytezos.org/operation_groups.html" />
 
   
   <!--[if lt IE 9]>
@@ -53,7 +56,7 @@
           
 
           
-            <a href="contents.html" class="icon icon-home" alt="Documentation Home"> PyTezos
+            <a href="contents.html" class="icon icon-home"> PyTezos
           
 
           
@@ -84,11 +87,11 @@
               
             
             
-              <p><span class="caption-text">Contents</span></p>
+              <p class="caption"><span class="caption-text">Contents</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="quick_start.html">Quick start</a></li>
 <li class="toctree-l1"><a class="reference internal" href="integration_tests.html">Michelson integration tests</a></li>
-<li class="toctree-l1"><a class="reference internal" href="pytezos_cli.html">Pytezos CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pytezos_cli.html">PyTezos CLI</a></li>
 <li class="toctree-l1"><a class="reference internal" href="high_level.html">High-level interfaces</a></li>
 <li class="toctree-l1"><a class="reference internal" href="crypto.html">Cryptography</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Building and parsing operations</a><ul>
@@ -104,6 +107,7 @@
 <li class="toctree-l1"><a class="reference internal" href="code.html">Working with Michelson code</a></li>
 <li class="toctree-l1"><a class="reference internal" href="repl.html">Michelson REPL</a></li>
 <li class="toctree-l1"><a class="reference internal" href="inspect_proposals.html">Inspecting proposals</a></li>
+<li class="toctree-l1"><a class="reference internal" href="michelson_kernel.html">Michelson IPython kernel</a></li>
 </ul>
 
             
@@ -144,6 +148,8 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -155,7 +161,7 @@
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="_sources/operation_groups.rst.txt" rel="nofollow"> View page source</a>
           
         
@@ -169,9 +175,9 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <section id="building-and-parsing-operations">
+  <div class="section" id="building-and-parsing-operations">
 <h1>Building and parsing operations<a class="headerlink" href="#building-and-parsing-operations" title="Permalink to this headline">¶</a></h1>
-<section id="operation-group">
+<div class="section" id="operation-group">
 <h2>Operation group<a class="headerlink" href="#operation-group" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pytezos.operation.group.OperationGroup">
@@ -180,9 +186,9 @@
 and also useful helpers for filling with precise fees, signing, forging, and injecting.</p>
 <dl class="py method">
 <dt id="pytezos.operation.group.OperationGroup.activate_account">
-<code class="sig-name descname"><span class="pre">activate_account</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">activation_code</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pkh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pytezos.operation.group.OperationGroup.activate_account" title="Permalink to this definition">¶</a></dt>
-<dd><p>Activate recommended allocations for contributions to the TF fundraiser.
-More info <a class="reference external" href="https://activate.tezos.com/">https://activate.tezos.com/</a></p>
+<code class="sig-name descname"><span class="pre">activate_account</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">activation_code</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pkh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#pytezos.operation.group.OperationGroup.activate_account" title="Permalink to this definition">¶</a></dt>
+<dd><p>Activate recommended allocations for contributions to the TF fundraiser.</p>
+<p>More info <a class="reference external" href="https://activate.tezos.com/">https://activate.tezos.com/</a></p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -207,10 +213,10 @@ More info <a class="reference external" href="https://activate.tezos.com/">https
 <li><p><strong>burn_reserve</strong> – Add a safe reserve for dynamically calculated storage limit (default is 100).</p></li>
 <li><p><strong>counter</strong> – Override counter value (for manual handling)</p></li>
 <li><p><strong>ttl</strong> – Number of blocks to wait in the mempool before removal (default is 5 for public network, 60 for sandbox)</p></li>
-<li><p><strong>fee</strong> – Explicitly set fee for operation. If not set fee will be calculated depeding on results of operation dry-run.</p></li>
-<li><p><strong>gas_limit</strong> – Explicitly set gas limit for operation. If not set gas limit will be calculated depeding on results of
+<li><p><strong>fee</strong> – Explicitly set fee for operation. If not set fee will be calculated depending on results of operation dry-run.</p></li>
+<li><p><strong>gas_limit</strong> – Explicitly set gas limit for operation. If not set gas limit will be calculated depending on results of
 operation dry-run.</p></li>
-<li><p><strong>storage_limit</strong> – Explicitly set storage limit for operation. If not set storage limit will be calculated depeding on
+<li><p><strong>storage_limit</strong> – Explicitly set storage limit for operation. If not set storage limit will be calculated depending on
 results of operation dry-run.</p></li>
 </ul>
 </dd>
@@ -222,9 +228,9 @@ results of operation dry-run.</p></li>
 
 <dl class="py method">
 <dt id="pytezos.operation.group.OperationGroup.ballot">
-<code class="sig-name descname"><span class="pre">ballot</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">proposal</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ballot</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">period</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pytezos.operation.group.OperationGroup.ballot" title="Permalink to this definition">¶</a></dt>
-<dd><p>Vote for a proposal in a given voting period.
-Can only be submitted during Testing_vote or Promotion_vote periods, and only once per period.
+<code class="sig-name descname"><span class="pre">ballot</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">proposal</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ballot</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">period</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#pytezos.operation.group.OperationGroup.ballot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Vote for a proposal in a given voting period.</p>
+<p>Can only be submitted during Testing_vote or Promotion_vote periods, and only once per period.
 More info <a class="reference external" href="https://tezos.gitlab.io/master/whitedoc/voting.html">https://tezos.gitlab.io/master/whitedoc/voting.html</a></p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -249,7 +255,7 @@ More info <a class="reference external" href="https://tezos.gitlab.io/master/whi
 
 <dl class="py method">
 <dt id="pytezos.operation.group.OperationGroup.delegation">
-<code class="sig-name descname"><span class="pre">delegation</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">delegate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">counter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fee</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gas_limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">storage_limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pytezos.operation.group.OperationGroup.delegation" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">delegation</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">delegate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">counter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fee</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gas_limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">storage_limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#pytezos.operation.group.OperationGroup.delegation" title="Permalink to this definition">¶</a></dt>
 <dd><p>Delegate funds or register yourself as a delegate.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -270,7 +276,7 @@ More info <a class="reference external" href="https://tezos.gitlab.io/master/whi
 
 <dl class="py method">
 <dt id="pytezos.operation.group.OperationGroup.double_baking_evidence">
-<code class="sig-name descname"><span class="pre">double_baking_evidence</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bh1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bh2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pytezos.operation.group.OperationGroup.double_baking_evidence" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">double_baking_evidence</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bh1</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bh2</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#pytezos.operation.group.OperationGroup.double_baking_evidence" title="Permalink to this definition">¶</a></dt>
 <dd><p>Provide evidence of double baking (two different blocks at the same height).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -287,25 +293,23 @@ More info <a class="reference external" href="https://tezos.gitlab.io/master/whi
 
 <dl class="py method">
 <dt id="pytezos.operation.group.OperationGroup.double_endorsement_evidence">
-<code class="sig-name descname"><span class="pre">double_endorsement_evidence</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">op1</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">op2</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pytezos.operation.group.OperationGroup.double_endorsement_evidence" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">double_endorsement_evidence</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">op1</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">op2</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#pytezos.operation.group.OperationGroup.double_endorsement_evidence" title="Permalink to this definition">¶</a></dt>
 <dd><p>Provide evidence of double endorsement (endorsing two different blocks at the same block height).</p>
+<p>Inline endorsement format:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>{
+    &quot;branch&quot;: $block_hash,
+    &quot;operations&quot;: {
+        &quot;kind&quot;: &quot;endorsement&quot;,
+        &quot;level&quot;: integer ∈ [-2^31-2, 2^31+2]
+    },
+    &quot;signature&quot;?: $Signature
+}
+</pre></div>
+</div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>op1</strong> – <p>Inline endorsement
-{</p>
-<blockquote>
-<div><p>”branch”: $block_hash,
-“operations”: {</p>
-<blockquote>
-<div><p>”kind”: “endorsement”,
-“level”: integer ∈ [-2^31-2, 2^31+2]</p>
-</div></blockquote>
-<p>},
-“signature”?: $Signature</p>
-</div></blockquote>
-<p>}</p>
-</p></li>
+<li><p><strong>op1</strong> – Inline endorsement</p></li>
 <li><p><strong>op2</strong> – Inline endorsement</p></li>
 </ul>
 </dd>
@@ -317,7 +321,7 @@ More info <a class="reference external" href="https://tezos.gitlab.io/master/whi
 
 <dl class="py method">
 <dt id="pytezos.operation.group.OperationGroup.endorsement">
-<code class="sig-name descname"><span class="pre">endorsement</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">level</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pytezos.operation.group.OperationGroup.endorsement" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">endorsement</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">level</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#pytezos.operation.group.OperationGroup.endorsement" title="Permalink to this definition">¶</a></dt>
 <dd><p>Endorse a block.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -331,7 +335,7 @@ More info <a class="reference external" href="https://tezos.gitlab.io/master/whi
 
 <dl class="py method">
 <dt id="pytezos.operation.group.OperationGroup.failing_noop">
-<code class="sig-name descname"><span class="pre">failing_noop</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arbitrary</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pytezos.operation.group.OperationGroup.failing_noop" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">failing_noop</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arbitrary</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#pytezos.operation.group.OperationGroup.failing_noop" title="Permalink to this definition">¶</a></dt>
 <dd><p>Operation to sign arbitrary data without the risk it will be used onchain.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -363,7 +367,7 @@ More info <a class="reference external" href="https://tezos.gitlab.io/master/whi
 
 <dl class="py method">
 <dt id="pytezos.operation.group.OperationGroup.forge">
-<code class="sig-name descname"><span class="pre">forge</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">validate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/operation/group.html#OperationGroup.forge"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.operation.group.OperationGroup.forge" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">forge</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">validate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">str</span><a class="reference internal" href="_modules/pytezos/operation/group.html#OperationGroup.forge"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.operation.group.OperationGroup.forge" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert json representation of the operation group into bytes.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -402,7 +406,7 @@ More info <a class="reference external" href="https://tezos.gitlab.io/master/whi
 
 <dl class="py method">
 <dt id="pytezos.operation.group.OperationGroup.json_payload">
-<code class="sig-name descname"><span class="pre">json_payload</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">dict</span><a class="reference internal" href="_modules/pytezos/operation/group.html#OperationGroup.json_payload"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.operation.group.OperationGroup.json_payload" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">json_payload</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="_modules/pytezos/operation/group.html#OperationGroup.json_payload"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.operation.group.OperationGroup.json_payload" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get JSON payload used for the injection.</p>
 </dd></dl>
 
@@ -422,7 +426,7 @@ More info <a class="reference external" href="https://tezos.gitlab.io/master/whi
 
 <dl class="py method">
 <dt id="pytezos.operation.group.OperationGroup.operation">
-<code class="sig-name descname"><span class="pre">operation</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">content</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/operation/group.html#OperationGroup.operation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.operation.group.OperationGroup.operation" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">operation</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">content</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#pytezos.operation.group.OperationGroup" title="pytezos.operation.group.OperationGroup"><span class="pre">pytezos.operation.group.OperationGroup</span></a><a class="reference internal" href="_modules/pytezos/operation/group.html#OperationGroup.operation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.operation.group.OperationGroup.operation" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create new operation group with extra content added.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -436,13 +440,14 @@ More info <a class="reference external" href="https://tezos.gitlab.io/master/whi
 
 <dl class="py method">
 <dt id="pytezos.operation.group.OperationGroup.origination">
-<code class="sig-name descname"><span class="pre">origination</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">script</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">balance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delegate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">counter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fee</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gas_limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">storage_limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pytezos.operation.group.OperationGroup.origination" title="Permalink to this definition">¶</a></dt>
-<dd><p>Deploy smart contract (scriptless KT accounts are not used for delegation since Babylon)</p>
+<code class="sig-name descname"><span class="pre">origination</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">script</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">balance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delegate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">counter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fee</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gas_limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">storage_limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#pytezos.operation.group.OperationGroup.origination" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deploy smart contract (scriptless KT accounts are not used for delegation since Babylon).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>script</strong> – {“code”: $Micheline, “storage”: $Micheline}</p></li>
-<li><p><strong>balance</strong> – Amount transferred on the balance, WARNING: there is no default way to withdraw funds.         More info: <a class="reference external" href="https://tezos.stackexchange.com/questions/1315/can-i-withdraw-funds-from-an-empty-smart-contract">https://tezos.stackexchange.com/questions/1315/can-i-withdraw-funds-from-an-empty-smart-contract</a></p></li>
+<li><p><strong>balance</strong> – Amount transferred on the balance, WARNING: there is no default way to withdraw funds.
+More info: <a class="reference external" href="https://tezos.stackexchange.com/questions/1315/can-i-withdraw-funds-from-an-empty-smart-contract">https://tezos.stackexchange.com/questions/1315/can-i-withdraw-funds-from-an-empty-smart-contract</a></p></li>
 <li><p><strong>delegate</strong> – Set contract delegate, default None</p></li>
 <li><p><strong>source</strong> – Address from which funds will be sent, leave None to use signatory address</p></li>
 <li><p><strong>counter</strong> – Current account counter, leave None for autocomplete</p></li>
@@ -473,9 +478,9 @@ More info <a class="reference external" href="https://tezos.gitlab.io/master/whi
 
 <dl class="py method">
 <dt id="pytezos.operation.group.OperationGroup.proposals">
-<code class="sig-name descname"><span class="pre">proposals</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">proposals</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">period</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pytezos.operation.group.OperationGroup.proposals" title="Permalink to this definition">¶</a></dt>
-<dd><p>Submit and/or upvote proposals to amend the protocol.
-Can only be submitted during a proposal period.
+<code class="sig-name descname"><span class="pre">proposals</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">proposals</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">period</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#pytezos.operation.group.OperationGroup.proposals" title="Permalink to this definition">¶</a></dt>
+<dd><p>Submit and/or upvote proposals to amend the protocol.</p>
+<p>Can only be submitted during a proposal period.
 More info <a class="reference external" href="https://tezos.gitlab.io/master/whitedoc/voting.html">https://tezos.gitlab.io/master/whitedoc/voting.html</a></p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -507,14 +512,15 @@ More info <a class="reference external" href="https://tezos.gitlab.io/master/whi
 
 <dl class="py method">
 <dt id="pytezos.operation.group.OperationGroup.reveal">
-<code class="sig-name descname"><span class="pre">reveal</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">public_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">counter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fee</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gas_limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">storage_limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pytezos.operation.group.OperationGroup.reveal" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">reveal</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">public_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">counter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fee</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gas_limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">storage_limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#pytezos.operation.group.OperationGroup.reveal" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reveal the public key associated with a tz address.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>public_key</strong> – Public key to reveal, Base58 encoded</p></li>
 <li><p><strong>source</strong> – Public key hash of the key revealed, leave None to use signatory address</p></li>
-<li><p><strong>counter</strong> – Current account counter, leave None for autocomplete         (More info <a class="reference external" href="https://tezos.stackexchange.com/questions/632/how-counter-grows">https://tezos.stackexchange.com/questions/632/how-counter-grows</a>)</p></li>
+<li><p><strong>counter</strong> – Current account counter, leave None for autocomplete
+(More info <a class="reference external" href="https://tezos.stackexchange.com/questions/632/how-counter-grows">https://tezos.stackexchange.com/questions/632/how-counter-grows</a>)</p></li>
 <li><p><strong>fee</strong> – Leave None for autocomplete</p></li>
 <li><p><strong>gas_limit</strong> – Leave None for autocomplete</p></li>
 <li><p><strong>storage_limit</strong> – Leave None for autocomplete</p></li>
@@ -556,9 +562,9 @@ More info <a class="reference external" href="https://tezos.gitlab.io/master/whi
 
 <dl class="py method">
 <dt id="pytezos.operation.group.OperationGroup.seed_nonce_revelation">
-<code class="sig-name descname"><span class="pre">seed_nonce_revelation</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">level</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nonce</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pytezos.operation.group.OperationGroup.seed_nonce_revelation" title="Permalink to this definition">¶</a></dt>
-<dd><p>Reveal the nonce committed operation in the previous cycle.
-More info <a class="reference external" href="https://tezos.stackexchange.com/questions/567/what-are-nonce-revelations">https://tezos.stackexchange.com/questions/567/what-are-nonce-revelations</a></p>
+<code class="sig-name descname"><span class="pre">seed_nonce_revelation</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">level</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nonce</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#pytezos.operation.group.OperationGroup.seed_nonce_revelation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reveal the nonce committed operation in the previous cycle.</p>
+<p>More info <a class="reference external" href="https://tezos.stackexchange.com/questions/567/what-are-nonce-revelations">https://tezos.stackexchange.com/questions/567/what-are-nonce-revelations</a></p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -603,9 +609,9 @@ More info <a class="reference external" href="https://tezos.stackexchange.com/qu
 
 <dl class="py method">
 <dt id="pytezos.operation.group.OperationGroup.transaction">
-<code class="sig-name descname"><span class="pre">transaction</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">destination</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">amount</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">counter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fee</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gas_limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">storage_limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pytezos.operation.group.OperationGroup.transaction" title="Permalink to this definition">¶</a></dt>
-<dd><p>Transfer tez to a given address (implicit or originated).
-If the receiver is a smart contract, then optional parameters may be passed.</p>
+<code class="sig-name descname"><span class="pre">transaction</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">destination</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">amount</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">counter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fee</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gas_limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">storage_limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#pytezos.operation.group.OperationGroup.transaction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transfer tez to a given address (implicit or originated).</p>
+<p>If the receiver is a smart contract, then optional parameters may be passed.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -627,8 +633,8 @@ If the receiver is a smart contract, then optional parameters may be passed.</p>
 
 </dd></dl>
 
-</section>
-<section id="operation-result">
+</div>
+<div class="section" id="operation-result">
 <h2>Operation result<a class="headerlink" href="#operation-result" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pytezos.operation.result.OperationResult">
@@ -636,7 +642,7 @@ If the receiver is a smart contract, then optional parameters may be passed.</p>
 <dd><p>Operation result representation + useful parsing helpers for operation group</p>
 <dl class="py method">
 <dt id="pytezos.operation.result.OperationResult.burned">
-<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">burned</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">operation_group</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">int</span><a class="reference internal" href="_modules/pytezos/operation/result.html#OperationResult.burned"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.operation.result.OperationResult.burned" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">burned</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">operation_group</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">int</span><a class="reference internal" href="_modules/pytezos/operation/result.html#OperationResult.burned"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.operation.result.OperationResult.burned" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get total burned (due to account allocations) for an operation group (recursively).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -647,7 +653,7 @@ If the receiver is a smart contract, then optional parameters may be passed.</p>
 
 <dl class="py method">
 <dt id="pytezos.operation.result.OperationResult.consumed_gas">
-<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">consumed_gas</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">operation_group</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">int</span><a class="reference internal" href="_modules/pytezos/operation/result.html#OperationResult.consumed_gas"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.operation.result.OperationResult.consumed_gas" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">consumed_gas</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">operation_group</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">int</span><a class="reference internal" href="_modules/pytezos/operation/result.html#OperationResult.consumed_gas"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.operation.result.OperationResult.consumed_gas" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get total consumed gas for an operation group (recursively).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -658,7 +664,7 @@ If the receiver is a smart contract, then optional parameters may be passed.</p>
 
 <dl class="py method">
 <dt id="pytezos.operation.result.OperationResult.errors">
-<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">errors</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">operation_group</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">list</span><a class="reference internal" href="_modules/pytezos/operation/result.html#OperationResult.errors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.operation.result.OperationResult.errors" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">errors</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">operation_group</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="_modules/pytezos/operation/result.html#OperationResult.errors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.operation.result.OperationResult.errors" title="Permalink to this definition">¶</a></dt>
 <dd><p>Collect errors from all operation results in a group.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -672,7 +678,7 @@ If the receiver is a smart contract, then optional parameters may be passed.</p>
 
 <dl class="py method">
 <dt id="pytezos.operation.result.OperationResult.from_operation_group">
-<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">from_operation_group</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">operation_group</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">predicates</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#pytezos.operation.result.OperationResult" title="pytezos.operation.result.OperationResult"><span class="pre">pytezos.operation.result.OperationResult</span></a><span class="p"><span class="pre">]</span></span><a class="reference internal" href="_modules/pytezos/operation/result.html#OperationResult.from_operation_group"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.operation.result.OperationResult.from_operation_group" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">from_operation_group</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">operation_group</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">predicates</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#pytezos.operation.result.OperationResult" title="pytezos.operation.result.OperationResult"><span class="pre">pytezos.operation.result.OperationResult</span></a><span class="p"><span class="pre">]</span></span><a class="reference internal" href="_modules/pytezos/operation/result.html#OperationResult.from_operation_group"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.operation.result.OperationResult.from_operation_group" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize with operation group contents.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -686,7 +692,7 @@ If the receiver is a smart contract, then optional parameters may be passed.</p>
 
 <dl class="py method">
 <dt id="pytezos.operation.result.OperationResult.from_origination">
-<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">from_origination</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">content</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/operation/result.html#OperationResult.from_origination"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.operation.result.OperationResult.from_origination" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">from_origination</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">content</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#pytezos.operation.result.OperationResult" title="pytezos.operation.result.OperationResult"><span class="pre">pytezos.operation.result.OperationResult</span></a><a class="reference internal" href="_modules/pytezos/operation/result.html#OperationResult.from_origination"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.operation.result.OperationResult.from_origination" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize with origination content.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -700,7 +706,7 @@ If the receiver is a smart contract, then optional parameters may be passed.</p>
 
 <dl class="py method">
 <dt id="pytezos.operation.result.OperationResult.from_transaction">
-<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">from_transaction</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">content</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/operation/result.html#OperationResult.from_transaction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.operation.result.OperationResult.from_transaction" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">from_transaction</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">content</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#pytezos.operation.result.OperationResult" title="pytezos.operation.result.OperationResult"><span class="pre">pytezos.operation.result.OperationResult</span></a><a class="reference internal" href="_modules/pytezos/operation/result.html#OperationResult.from_transaction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.operation.result.OperationResult.from_transaction" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize with transaction content.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -714,17 +720,17 @@ If the receiver is a smart contract, then optional parameters may be passed.</p>
 
 <dl class="py method">
 <dt id="pytezos.operation.result.OperationResult.get_contents">
-<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">get_contents</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">operation_group</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">predicates</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/operation/result.html#OperationResult.get_contents"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.operation.result.OperationResult.get_contents" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">get_contents</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">operation_group</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">predicates</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="_modules/pytezos/operation/result.html#OperationResult.get_contents"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.operation.result.OperationResult.get_contents" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt id="pytezos.operation.result.OperationResult.get_result">
-<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">get_result</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">content</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/operation/result.html#OperationResult.get_result"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.operation.result.OperationResult.get_result" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">get_result</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">content</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="_modules/pytezos/operation/result.html#OperationResult.get_result"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.operation.result.OperationResult.get_result" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt id="pytezos.operation.result.OperationResult.is_applied">
-<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">is_applied</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">operation_group</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">bool</span><a class="reference internal" href="_modules/pytezos/operation/result.html#OperationResult.is_applied"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.operation.result.OperationResult.is_applied" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">is_applied</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">operation_group</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">bool</span><a class="reference internal" href="_modules/pytezos/operation/result.html#OperationResult.is_applied"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.operation.result.OperationResult.is_applied" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check if ALL operations in a group are applied.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -735,7 +741,7 @@ If the receiver is a smart contract, then optional parameters may be passed.</p>
 
 <dl class="py method">
 <dt id="pytezos.operation.result.OperationResult.iter_contents">
-<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">iter_contents</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">operation_group</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/operation/result.html#OperationResult.iter_contents"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.operation.result.OperationResult.iter_contents" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">iter_contents</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">operation_group</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="_modules/pytezos/operation/result.html#OperationResult.iter_contents"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.operation.result.OperationResult.iter_contents" title="Permalink to this definition">¶</a></dt>
 <dd><p>Lazily iterate operation group contents including internal operations.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -749,7 +755,7 @@ If the receiver is a smart contract, then optional parameters may be passed.</p>
 
 <dl class="py method">
 <dt id="pytezos.operation.result.OperationResult.iter_results">
-<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">iter_results</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">operation_group</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/operation/result.html#OperationResult.iter_results"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.operation.result.OperationResult.iter_results" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">iter_results</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">operation_group</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="_modules/pytezos/operation/result.html#OperationResult.iter_results"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.operation.result.OperationResult.iter_results" title="Permalink to this definition">¶</a></dt>
 <dd><p>Lazily iterate operation results including internal operation results.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -763,7 +769,7 @@ If the receiver is a smart contract, then optional parameters may be passed.</p>
 
 <dl class="py method">
 <dt id="pytezos.operation.result.OperationResult.originated_contracts">
-<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">originated_contracts</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">operation_group</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">list</span><a class="reference internal" href="_modules/pytezos/operation/result.html#OperationResult.originated_contracts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.operation.result.OperationResult.originated_contracts" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">originated_contracts</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">operation_group</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="_modules/pytezos/operation/result.html#OperationResult.originated_contracts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.operation.result.OperationResult.originated_contracts" title="Permalink to this definition">¶</a></dt>
 <dd><p>Collect originated contract addresses from all operation results in a group.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -777,7 +783,7 @@ If the receiver is a smart contract, then optional parameters may be passed.</p>
 
 <dl class="py method">
 <dt id="pytezos.operation.result.OperationResult.paid_storage_size_diff">
-<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">paid_storage_size_diff</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">operation_group</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">int</span><a class="reference internal" href="_modules/pytezos/operation/result.html#OperationResult.paid_storage_size_diff"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.operation.result.OperationResult.paid_storage_size_diff" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">paid_storage_size_diff</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">operation_group</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">int</span><a class="reference internal" href="_modules/pytezos/operation/result.html#OperationResult.paid_storage_size_diff"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.operation.result.OperationResult.paid_storage_size_diff" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get total paid storage size diff for an operation group (recursively).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -788,8 +794,8 @@ If the receiver is a smart contract, then optional parameters may be passed.</p>
 
 </dd></dl>
 
-</section>
-<section id="module-pytezos.operation.fees">
+</div>
+<div class="section" id="module-pytezos.operation.fees">
 <span id="fees-and-limits"></span><h2>Fees and limits<a class="headerlink" href="#module-pytezos.operation.fees" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
 <dt id="pytezos.operation.fees.calculate_fee">
@@ -846,17 +852,17 @@ If the receiver is a smart contract, then optional parameters may be passed.</p>
 </dl>
 </dd></dl>
 
-</section>
-<section id="module-pytezos.operation.forge">
+</div>
+<div class="section" id="module-pytezos.operation.forge">
 <span id="local-forge"></span><h2>Local forge<a class="headerlink" href="#module-pytezos.operation.forge" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
 <dt id="pytezos.operation.forge.forge_activate_account">
-<code class="sig-prename descclassname"><span class="pre">pytezos.operation.forge.</span></code><code class="sig-name descname"><span class="pre">forge_activate_account</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">content</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/operation/forge.html#forge_activate_account"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.operation.forge.forge_activate_account" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">pytezos.operation.forge.</span></code><code class="sig-name descname"><span class="pre">forge_activate_account</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">content</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">bytes</span><a class="reference internal" href="_modules/pytezos/operation/forge.html#forge_activate_account"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.operation.forge.forge_activate_account" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt id="pytezos.operation.forge.forge_delegation">
-<code class="sig-prename descclassname"><span class="pre">pytezos.operation.forge.</span></code><code class="sig-name descname"><span class="pre">forge_delegation</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">content</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/operation/forge.html#forge_delegation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.operation.forge.forge_delegation" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">pytezos.operation.forge.</span></code><code class="sig-name descname"><span class="pre">forge_delegation</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">content</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">bytes</span><a class="reference internal" href="_modules/pytezos/operation/forge.html#forge_delegation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.operation.forge.forge_delegation" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
@@ -872,12 +878,12 @@ If the receiver is a smart contract, then optional parameters may be passed.</p>
 
 <dl class="py function">
 <dt id="pytezos.operation.forge.forge_failing_noop">
-<code class="sig-prename descclassname"><span class="pre">pytezos.operation.forge.</span></code><code class="sig-name descname"><span class="pre">forge_failing_noop</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">content</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/operation/forge.html#forge_failing_noop"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.operation.forge.forge_failing_noop" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">pytezos.operation.forge.</span></code><code class="sig-name descname"><span class="pre">forge_failing_noop</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">content</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">bytes</span><a class="reference internal" href="_modules/pytezos/operation/forge.html#forge_failing_noop"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.operation.forge.forge_failing_noop" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt id="pytezos.operation.forge.forge_operation">
-<code class="sig-prename descclassname"><span class="pre">pytezos.operation.forge.</span></code><code class="sig-name descname"><span class="pre">forge_operation</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">content</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">bytes</span><a class="reference internal" href="_modules/pytezos/operation/forge.html#forge_operation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.operation.forge.forge_operation" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">pytezos.operation.forge.</span></code><code class="sig-name descname"><span class="pre">forge_operation</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">content</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">bytes</span><a class="reference internal" href="_modules/pytezos/operation/forge.html#forge_operation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.operation.forge.forge_operation" title="Permalink to this definition">¶</a></dt>
 <dd><p>Forge operation content (locally).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -888,7 +894,7 @@ If the receiver is a smart contract, then optional parameters may be passed.</p>
 
 <dl class="py function">
 <dt id="pytezos.operation.forge.forge_operation_group">
-<code class="sig-prename descclassname"><span class="pre">pytezos.operation.forge.</span></code><code class="sig-name descname"><span class="pre">forge_operation_group</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">operation_group</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/operation/forge.html#forge_operation_group"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.operation.forge.forge_operation_group" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">pytezos.operation.forge.</span></code><code class="sig-name descname"><span class="pre">forge_operation_group</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">operation_group</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">bytes</span><a class="reference internal" href="_modules/pytezos/operation/forge.html#forge_operation_group"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.operation.forge.forge_operation_group" title="Permalink to this definition">¶</a></dt>
 <dd><p>Forge operation group (locally).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -899,63 +905,55 @@ If the receiver is a smart contract, then optional parameters may be passed.</p>
 
 <dl class="py function">
 <dt id="pytezos.operation.forge.forge_origination">
-<code class="sig-prename descclassname"><span class="pre">pytezos.operation.forge.</span></code><code class="sig-name descname"><span class="pre">forge_origination</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">content</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/operation/forge.html#forge_origination"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.operation.forge.forge_origination" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">pytezos.operation.forge.</span></code><code class="sig-name descname"><span class="pre">forge_origination</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">content</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">bytes</span><a class="reference internal" href="_modules/pytezos/operation/forge.html#forge_origination"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.operation.forge.forge_origination" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt id="pytezos.operation.forge.forge_reveal">
-<code class="sig-prename descclassname"><span class="pre">pytezos.operation.forge.</span></code><code class="sig-name descname"><span class="pre">forge_reveal</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">content</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/operation/forge.html#forge_reveal"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.operation.forge.forge_reveal" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">pytezos.operation.forge.</span></code><code class="sig-name descname"><span class="pre">forge_reveal</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">content</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">bytes</span><a class="reference internal" href="_modules/pytezos/operation/forge.html#forge_reveal"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.operation.forge.forge_reveal" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt id="pytezos.operation.forge.forge_transaction">
-<code class="sig-prename descclassname"><span class="pre">pytezos.operation.forge.</span></code><code class="sig-name descname"><span class="pre">forge_transaction</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">content</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/operation/forge.html#forge_transaction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.operation.forge.forge_transaction" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">pytezos.operation.forge.</span></code><code class="sig-name descname"><span class="pre">forge_transaction</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">content</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">bytes</span><a class="reference internal" href="_modules/pytezos/operation/forge.html#forge_transaction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.operation.forge.forge_transaction" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt id="pytezos.operation.forge.has_parameters">
-<code class="sig-prename descclassname"><span class="pre">pytezos.operation.forge.</span></code><code class="sig-name descname"><span class="pre">has_parameters</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">content</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/operation/forge.html#has_parameters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.operation.forge.has_parameters" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">pytezos.operation.forge.</span></code><code class="sig-name descname"><span class="pre">has_parameters</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">content</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">bool</span><a class="reference internal" href="_modules/pytezos/operation/forge.html#has_parameters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.operation.forge.has_parameters" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-</section>
-</section>
+</div>
+</div>
 
 
            </div>
            
           </div>
           <footer>
-  
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="rpc_queries.html" class="btn btn-neutral float-right" title="RPC query engine" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="crypto.html" class="btn btn-neutral float-left" title="Cryptography" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
+        <a href="rpc_queries.html" class="btn btn-neutral float-right" title="RPC query engine" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="crypto.html" class="btn btn-neutral float-left" title="Cryptography" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; Copyright 2020, Baking Bad
+        &#169; Copyright 2020, Baking Bad.
 
     </p>
   </div>
     
     
     
-    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     
     provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 
