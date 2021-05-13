@@ -1,5 +1,12 @@
+from enum import Enum
+from functools import partial
 import io
 
+import logging
+import os
+from pathlib import Path
+from posix import listdir
+import tarfile
 import sys
 import tarfile
 from glob import glob
@@ -8,12 +15,14 @@ from pprint import pformat
 import time
 from typing import List, Optional
 
+from typing import Iterator, Optional, List, Tuple, Union, Iterator
 
 import click
 import docker  # type: ignore
 
 from pytezos import ContractInterface, __version__, pytezos
 from pytezos.cli.github import create_deployment, create_deployment_status
+from pytezos.config import DEFAULT_SMARTPY_IMAGE, PyTezosConfig, SmartPyConfig
 from pytezos.context.mixin import default_network  # type: ignore
 from pytezos.logging import logger
 from pytezos.michelson.types.base import generate_pydoc
@@ -22,16 +31,10 @@ from pytezos.rpc.errors import RpcError
 from pytezos.sandbox.node import SandboxedNodeTestCase
 from pytezos.sandbox.parameters import EDO, FLORENCE
 
-kernel_js_path = join(dirname(dirname(__file__)), 'assets', 'kernel.js')
-kernel_json = {
-    "argv": ['pytezos', 'kernel', 'run', "-file", "{connection_file}"],
-    "display_name": "Michelson",
-    "language": "michelson",
-    "codemirror_mode": "michelson",
-}
 
-SMARTPY_CLI_IMAGE = 'bakingbad/smartpy-cli'
-
+r = partial(click.style, fg='red')
+g = partial(click.style, fg='green')
+b = partial(click.style, fg='blue')
 
 def make_bcd_link(network, address):
     return f'https://better-call.dev/{network}/{address}'
@@ -57,6 +60,30 @@ def get_contract(path):
     return contract
 
 
+class ContractType(Enum):
+    tz = 'tz'
+    smartpy = 'smartpy'
+    ligo = 'ligo'
+
+
+class ArtifactType(Enum):
+    contract = 'contract'
+    storage = 'storage'
+
+
+def discover_contracts(path: Optional[str] = None) -> Iterator[Tuple[ContractType, str, str]]:
+    contracts_directory = path or join(os.getcwd(), 'contracts')
+    for filename in listdir(contracts_directory):
+        contract_path = os.path.join(contracts_directory, filename)
+        name, ext = filename.rsplit('.')
+        if ext == 'py':
+            yield ContractType.smartpy, name, contract_path
+        elif ext == 'ligo':
+            yield ContractType.ligo, name, contract_path
+        elif ext == 'tz':
+            yield ContractType.tz, name, contract_path
+
+
 def get_docker_client():
     return docker.from_env()
 
@@ -65,7 +92,7 @@ def get_docker_client():
 @click.version_option(__version__)
 @click.pass_context
 def cli(*_args, **_kwargs):
-    pass
+    logging.basicConfig()
 
 
 @cli.command(help='Manage contract storage')
@@ -82,7 +109,7 @@ def storage(_ctx, action: str, path: Optional[str]) -> None:
         raise Exception('Action must be either `schema` or `default`')
 
 
-@cli.command(help='Manage contract storage')
+@cli.command(help='Manage contract parameter')
 @click.option('--action', '-a', type=str, default='schema', help='One of `schema`')
 @click.option('--path', '-p', type=str, default=None, help='Path to the .tz file, or the following uri: <network>:<KT-address>')
 @click.pass_context
@@ -193,48 +220,43 @@ def deploy(
             logger.info(status)
 
 
-@cli.command(help='Update containerized SmartPy CLI')
-@click.option('--tag', '-t', type=str, help='Version or tag to pull', default='latest')
-@click.pass_context
-def update_smartpy(ctx, tag):
-    client = get_docker_client()
-    logger.info('Will now pull latest SmartPy image, please stay put.')
-    for line in client.api.pull(f'{SMARTPY_CLI_IMAGE}:{tag}', stream=True, decode=True):
-        logger.info(line)
-    logger.info('Pulled SmartPy CLI image successfully!')
-
-
 def run_smartpy_container(
-    tag: str = 'latest',
+    image: str = DEFAULT_SMARTPY_IMAGE,
     command: str = '',
-    files_to_add: List[str] = [],
-    mounts: List[docker.types.Mount] = [],
-):
+    files_to_add: Optional[List[str]] = None,
+    mounts: Optional[List[docker.types.Mount]] = None,
+) -> docker.models.containers.Container:
+    if files_to_add is None:
+        files_to_add = []
+    if mounts is None:
+        mounts = []
+
+    client = get_docker_client()
+
     try:
-        client = get_docker_client()
-        container = client.containers.create(
-            image=f'{SMARTPY_CLI_IMAGE}:{tag}',
-            command=command,
-            detach=True,
-            mounts=mounts,
-        )
-        buffer = io.BytesIO()
-        with tarfile.open(fileobj=buffer, mode='w:gz') as archive:
-            for filename in files_to_add:
-                with open(filename, 'rb') as current_file:
-                    current_file_data = current_file.read()
-                    current_file_buffer = io.BytesIO(initial_bytes=current_file_data)
-                    _, short_filename = split(filename)
-                    archive.add(filename, arcname=short_filename)
-        buffer.seek(0)
-        container.put_archive(
-            '/root/smartpy-cli/',
-            buffer,
-        )
-        container.start()
-        return container
+        client.images.get(image)
     except docker.errors.ImageNotFound:
-        logger.error('SmartPy compiler not found. Please run update-smartpy first.')
+        for line in client.api.pull(image, stream=True, decode=True):
+            logger.info(line)
+
+    container = client.containers.create(
+        image=image,
+        command=command,
+        detach=True,
+        mounts=mounts,
+    )
+    buffer = io.BytesIO()
+    with tarfile.open(fileobj=buffer, mode='w:gz') as archive:
+        for filename in files_to_add:
+            _, short_filename = split(filename)
+            archive.add(filename, arcname=short_filename)
+    buffer.seek(0)
+    container.put_archive(
+        '/root/smartpy-cli/',
+        buffer,
+    )
+    container.start()
+    return container
 
 
 @cli.command(help='Run SmartPy CLI command "test"')
@@ -242,7 +264,7 @@ def run_smartpy_container(
 @click.option('--output-directory', '-o', type=str, help='Output directory', default='./smartpy-output')
 @click.option('--protocol', type=click.Choice(['delphi', 'edo', 'florence', 'proto10']), help='Protocol to use', default='edo')
 @click.option('--detach', '-d', type=bool, help='Run container in detached mode', default=False)
-@click.option('--tag', '-t', type=str, help='Version or tag of SmartPy to use', default='latest')
+@click.option('--image', '-i', type=str, help='Version or tag of SmartPy to use', default=DEFAULT_SMARTPY_IMAGE)
 @click.pass_context
 def smartpy_test(
     _ctx,
@@ -250,14 +272,17 @@ def smartpy_test(
     output_directory: str,
     detach: bool,
     protocol: str,
-    tag: str,
+    image: str,
 ):
-    client = get_docker_client()
+    output_directory = join(os.getcwd(), output_directory)
+    if not exists(output_directory):
+        os.mkdir(output_directory)
+
     path = get_local_contract_path(script, extension='py')
     if path:
         _, script_name = split(path)
         container = run_smartpy_container(
-            tag=tag,
+            image=image,
             command=f'test /root/smartpy-cli/{script_name} /root/output --protocol {protocol}',
             files_to_add=[path, ],
             mounts=[
@@ -282,7 +307,7 @@ def smartpy_test(
 @click.option('--output-directory', '-o', type=str, help='Output directory', default='./smartpy-output')
 @click.option('--detach', '-d', type=bool, help='Run container in detached mode', default=False)
 @click.option('--protocol', type=click.Choice(['delphi', 'edo', 'florence', 'proto10']), help='Protocol to use', default='edo')
-@click.option('--tag', '-t', type=str, help='Version or tag of SmartPy to use', default='latest')
+@click.option('--image', '-t', type=str, help='Version or tag of SmartPy to use', default=DEFAULT_SMARTPY_IMAGE)
 @click.pass_context
 def smartpy_compile(
     _ctx,
@@ -290,31 +315,97 @@ def smartpy_compile(
     output_directory: str,
     detach: bool,
     protocol: str,
-    tag: str,
+    image: str,
 ):
-    client = get_docker_client()
+    output_directory = join(os.getcwd(), output_directory)
+    if not exists(output_directory):
+        os.mkdir(output_directory)
+
     path = get_local_contract_path(script, extension='py')
-    if path:
-        _, script_name = split(path)
-        container = run_smartpy_container(
-            tag=tag,
-            command=f'compile /root/smartpy-cli/{script_name} /root/output --protocol {protocol}',
-            files_to_add=[path,],
-            mounts=[
-                docker.types.Mount(
-                    target='/root/output',
-                    source=output_directory,
-                    type='bind'
-                )
-            ]
-        )
-        if container is None:
-            raise Exception('Could not create container. Try running update-smartpy.')
-        if not detach:
-            for line in container.logs(stream=True):
-                print(line.decode('utf-8').rstrip())
-    else:
-        logger.error('No local script found. Please ensure a valid script is present or specify path.')
+    if not path:
+        raise Exception
+
+    click.echo(b('Compiling ') + g(script) + b(' with SmartPy'))
+    _, script_name = split(path)
+    container = run_smartpy_container(
+        image=image,
+        command=f'compile /root/smartpy-cli/{script_name} /root/output --protocol {protocol}',
+        files_to_add=[path,],
+        mounts=[
+            docker.types.Mount(
+                target='/root/output',
+                source=output_directory,
+                type='bind'
+            )
+        ]
+    )
+    if not detach:
+        for line in container.logs(stream=True):
+            print(line.decode('utf-8').rstrip())
+
+
+@cli.command(help='Compile project')
+@click.pass_context
+def compile(
+    ctx,
+):
+    config = PyTezosConfig.load()
+
+    for type_, name, path in discover_contracts():
+        if type_ == ContractType.smartpy:
+            ctx.invoke(
+                smartpy_compile,
+                script=path,
+                output_directory=f'build/{name}',
+                detach=False,
+                protocol='florence',
+                image=config.smartpy.image
+            )
+        else:
+            raise NotImplementedError
+
+
+@cli.command(help='Test project')
+@click.pass_context
+def test(
+    ctx,
+):
+    for type_, name, path in discover_contracts():
+        if type_ == ContractType.smartpy:
+            ctx.invoke(
+                smartpy_test,
+                script=path,
+                output_directory=f'build/{name}',
+                detach=False,
+                protocol='florence',
+            )
+        else:
+            raise NotImplementedError
+
+
+@cli.command(help='Init project')
+@click.pass_context
+def init(
+    ctx,
+):
+    def _input(option: str, default):
+        input_str = b(f'{option} [') + g(default or '') + b(']:')
+        return input(input_str) or default
+
+    name = _input('Project name', os.path.split(os.getcwd())[1])
+    description = _input('Description', None)
+    license = _input('License', None)
+    smartpy_image = _input('SmartPy Docker image', DEFAULT_SMARTPY_IMAGE)
+    config = PyTezosConfig(
+        name=name,
+        description=description,
+        license=license,
+        smartpy=SmartPyConfig(
+            image=smartpy_image,
+        ),
+    )
+    config.save()
+
 
 @cli.command(help='Run containerized sandbox node')
 @click.option('--image', type=str, help='Docker image to use', default=SandboxedNodeTestCase.IMAGE)
