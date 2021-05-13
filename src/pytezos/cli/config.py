@@ -1,9 +1,14 @@
+from enum import Enum
+from genericpath import exists
 import os
-from typing import Optional
+from pathlib import Path
+from typing import Dict, List, Optional
 from pydantic import BaseModel
 from ruamel.yaml import YAML
 
+
 CONFIG_NAME = 'pytezos.yml'
+LOCKFILE_NAME = 'pytezos.lock'
 DEFAULT_LIGO_IMAGE = 'ligolang/ligo:0.13.0'
 DEFAULT_SMARTPY_IMAGE = 'bakingbad/smartpy-cli:latest'
 DEFAULT_SMARTPY_PROTOCOL = 'florence'
@@ -56,3 +61,68 @@ class PyTezosConfig(BaseModel):
         config_dict = self.dict()
         with open(config_path, 'w+') as file:
             YAML().dump(config_dict, file)
+
+
+class SourceLang(Enum):
+    michelson = 'Michelson'
+    smartpy = 'SmartPy'
+    ligo = 'LIGO'
+
+
+ext_to_source_lang = {
+    '.tz': SourceLang.michelson,
+    '.py': SourceLang.smartpy,
+    '.ligo': SourceLang.ligo,
+    '.mligo': SourceLang.ligo,
+}
+
+class SourceType(Enum):
+    contract = 'contract'
+    storage = 'storage'
+    parameter = 'parameter'
+    lambda_ = 'lambda_'
+    metadata = 'metadata'
+
+response_to_source_type = {
+    'C': SourceType.contract,
+    'S': SourceType.storage,
+    'P': SourceType.parameter,
+    'L': SourceType.lambda_,
+    'M': SourceType.metadata,
+}
+
+
+class Source(BaseModel):
+    type: SourceType
+    lang: SourceLang
+    alias: str
+
+    class Config:
+        use_enum_values = True
+
+
+class PyTezosLockfile(BaseModel):
+    sources: Dict[str, Source] = {}
+    skipped: List[str] = []
+
+    @classmethod
+    def load(cls) -> 'PyTezosLockfile':
+
+        lockfile_path = os.path.join(os.getcwd(), LOCKFILE_NAME)
+
+        if not exists(lockfile_path):
+            Path(lockfile_path).touch()
+        with open(lockfile_path, 'r') as file:
+            raw_lockfile = file.read()
+
+        json_lockfile = YAML(typ='base').load(raw_lockfile) or {}
+        lockfile = cls(**json_lockfile)
+        return lockfile
+
+    def save(self) -> None:
+        yaml = YAML(typ='base')
+        yaml.indent(4)
+        lockfile_path = os.path.join(os.getcwd(), LOCKFILE_NAME)
+        lockfile_dict = self.dict()
+        with open(lockfile_path, 'w+') as file:
+            YAML().dump(lockfile_dict, file)

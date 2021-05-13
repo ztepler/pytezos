@@ -4,6 +4,7 @@ from functools import partial
 import io
 
 import logging
+from ntpath import splitext
 import os
 from posix import listdir
 import tarfile
@@ -22,7 +23,7 @@ import docker  # type: ignore
 from pytezos import ContractInterface, __version__, pytezos
 from pytezos.cli.cache import PyTezosCLICache
 from pytezos.cli.github import create_deployment, create_deployment_status
-from pytezos.config import DEFAULT_LIGO_IMAGE, DEFAULT_SMARTPY_IMAGE, DEFAULT_SMARTPY_PROTOCOL, LigoConfig, PyTezosConfig, SmartPyConfig
+from pytezos.cli.config import Source, response_to_source_type, DEFAULT_LIGO_IMAGE, DEFAULT_SMARTPY_IMAGE, ext_to_source_lang, DEFAULT_SMARTPY_PROTOCOL, LigoConfig, PyTezosConfig, PyTezosLockfile, SmartPyConfig, SourceLang
 from pytezos.context.mixin import default_network  # type: ignore
 from pytezos.logging import logger
 from pytezos.michelson.types.base import generate_pydoc
@@ -61,28 +62,18 @@ def create_directory(path: str):
     return path
 
 
-class ContractType(Enum):
-    tz = 'tz'
-    smartpy = 'smartpy'
-    ligo = 'ligo'
 
-
-class ArtifactType(Enum):
-    contract = 'contract'
-    storage = 'storage'
-
-
-def discover_contracts(path: Optional[str] = None) -> Iterator[Tuple[ContractType, str, str]]:
+def discover_contracts(path: Optional[str] = None) -> Iterator[Tuple[SourceLang, str, str]]:
     contracts_directory = path or join(os.getcwd(), 'contracts')
     for filename in listdir(contracts_directory):
         contract_path = os.path.join(contracts_directory, filename)
         name, ext = filename.rsplit('.')
         if ext == 'py':
-            yield ContractType.smartpy, name, contract_path
+            yield SourceLang.smartpy, name, contract_path
         elif ext == 'ligo':
-            yield ContractType.ligo, name, contract_path
+            yield SourceLang.ligo, name, contract_path
         elif ext == 'tz':
-            yield ContractType.tz, name, contract_path
+            yield SourceLang.michelson, name, contract_path
 
 
 def get_docker_client():
@@ -360,7 +351,7 @@ def compile(ctx):
     config = PyTezosConfig.load()
 
     for type_, name, path in discover_contracts():
-        if type_ == ContractType.smartpy:
+        if type_ == SourceLang.smartpy:
             ctx.invoke(
                 smartpy_compile,
                 path=path,
@@ -368,7 +359,7 @@ def compile(ctx):
                 protocol=config.smartpy.protocol,
                 image=config.smartpy.image,
             )
-        elif type_ == ContractType.ligo:
+        elif type_ == SourceLang.ligo:
             entrypoint = _input(g(split(path)[1]) + ' entrypoint', 'main')
             ctx.invoke(
                 ligo_compile_contract,
@@ -388,7 +379,7 @@ def test(
     ctx,
 ):
     for type_, name, path in discover_contracts():
-        if type_ == ContractType.smartpy:
+        if type_ == SourceLang.smartpy:
             ctx.invoke(
                 smartpy_test,
                 path=path,
@@ -426,6 +417,45 @@ def init(
         )
 
     config.save()
+
+
+@cli.command(help='Update project')
+@click.pass_context
+def update(
+    ctx,
+):
+    lockfile = PyTezosLockfile.load()
+    cwd = os.getcwd()
+    src_path = create_directory('src')
+
+    for root, dirs, files in os.walk(src_path):
+        for file in files:
+            name, ext = splitext(file)
+            relpath = os.path.join(root, file).replace(src_path, '')[1:]
+            source_lang = ext_to_source_lang.get(ext)
+            if not source_lang:
+                continue
+            if relpath in lockfile.skipped or relpath in lockfile.sources:
+                continue
+
+            print(b(f'Found {source_lang.value} source ') + g(relpath))
+            response = _input(
+                '(C)ontract (S)torage (P)arameter (L)ambda (M)etadata',
+                'skip'
+            ).capitalize()
+            source_type = response_to_source_type.get(response)
+            if source_type:
+                alias = _input('Source alias', relpath)
+                lockfile.sources[relpath] = Source(
+                    type=source_type,
+                    lang=source_lang,
+                    alias=alias,
+                )
+            else:
+                lockfile.skipped.append(relpath)
+
+    
+    lockfile.save()
 
 
 @cli.command(help='Run containerized sandbox node')
