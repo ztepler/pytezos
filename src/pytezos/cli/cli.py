@@ -22,7 +22,7 @@ import docker  # type: ignore
 
 from pytezos import ContractInterface, __version__, pytezos
 from pytezos.cli.github import create_deployment, create_deployment_status
-from pytezos.config import DEFAULT_LIGO_IMAGE, DEFAULT_SMARTPY_IMAGE, DEFAULT_SMARTPY_PROTOCOL, PyTezosConfig, SmartPyConfig
+from pytezos.config import DEFAULT_LIGO_IMAGE, DEFAULT_SMARTPY_IMAGE, DEFAULT_SMARTPY_PROTOCOL, LigoConfig, PyTezosConfig, SmartPyConfig
 from pytezos.context.mixin import default_network  # type: ignore
 from pytezos.logging import logger
 from pytezos.michelson.types.base import generate_pydoc
@@ -220,47 +220,8 @@ def deploy(
             logger.info(status)
 
 
-def run_smartpy_container(
-    image: str = DEFAULT_SMARTPY_IMAGE,
-    command: str = '',
-    files_to_add: Optional[List[str]] = None,
-    mounts: Optional[List[docker.types.Mount]] = None,
-) -> docker.models.containers.Container:
-    if files_to_add is None:
-        files_to_add = []
-    if mounts is None:
-        mounts = []
-
-    client = get_docker_client()
-
-    try:
-        client.images.get(image)
-    except docker.errors.ImageNotFound:
-        for line in client.api.pull(image, stream=True, decode=True):
-            logger.info(line)
-
-    container = client.containers.create(
-        image=image,
-        command=command,
-        detach=True,
-        mounts=mounts,
-    )
-    buffer = io.BytesIO()
-    with tarfile.open(fileobj=buffer, mode='w:gz') as archive:
-        for filename in files_to_add:
-            _, short_filename = split(filename)
-            archive.add(filename, arcname=short_filename)
-    buffer.seek(0)
-    container.put_archive(
-        '/root/smartpy-cli/',
-        buffer,
-    )
-    container.start()
-    return container
-
-
 @cli.command(help='Run SmartPy CLI command "test"')
-@click.option('--script', '-s', type=str, help='Path to script', default='script.py')
+@click.option('--path', '-p', type=str, help='Path to script', default='script.py')
 @click.option('--output-directory', '-o', type=str, help='Output directory', default='./smartpy-output')
 @click.option('--protocol', type=click.Choice(['delphi', 'edo', 'florence', 'proto10']), help='Protocol to use', default='edo')
 @click.option('--detach', '-d', type=bool, help='Run container in detached mode', default=False)
@@ -268,7 +229,7 @@ def run_smartpy_container(
 @click.pass_context
 def smartpy_test(
     _ctx,
-    script: str,
+    path: str,
     output_directory: str,
     detach: bool,
     protocol: str,
@@ -278,28 +239,27 @@ def smartpy_test(
     if not exists(output_directory):
         os.mkdir(output_directory)
 
-    path = get_local_contract_path(script, extension='py')
-    if path:
-        _, script_name = split(path)
-        container = run_smartpy_container(
-            image=image,
-            command=f'test /root/smartpy-cli/{script_name} /root/output --protocol {protocol}',
-            files_to_add=[path, ],
-            mounts=[
-                docker.types.Mount(
-                    target='/root/output',
-                    source=output_directory,
-                    type='bind'
-                )
-            ]
-        )
-        if container is None:
-            raise Exception('Could not create container. Try running update-smartpy.')
-        if not detach:
-            for line in container.logs(stream=True):
-                print(line.decode('utf-8').rstrip())
-    else:
-        logger.error('No local script found. Please ensure a valid script is present or specify path.')
+    path = get_local_contract_path(path, extension='py')
+    if not path:
+        raise Exception
+
+    _, contract_name = split(path)
+    container = run_container(
+        image=image,
+        command=f'test /root/smartpy-cli/{contract_name} /root/output --protocol {protocol}',
+        copy_source=[path],
+        copy_destination='/root/smartpy-cli/',
+        mounts=[
+            docker.types.Mount(
+                target='/root/output',
+                source=output_directory,
+                type='bind'
+            )
+        ]
+    )
+    if not detach:
+        for line in container.logs(stream=True):
+            print(line.decode('utf-8').rstrip())
 
 
 @cli.command(help='Run SmartPy CLI command "compile"')
@@ -327,10 +287,11 @@ def smartpy_compile(
 
     click.echo(b('Compiling ') + g(script) + b(' with SmartPy'))
     _, script_name = split(path)
-    container = run_smartpy_container(
+    container = run_container(
         image=image,
         command=f'compile /root/smartpy-cli/{script_name} /root/output --protocol {protocol}',
-        files_to_add=[path,],
+        copy_source=[path,],
+        copy_destination='/root/smartpy-cli/',
         mounts=[
             docker.types.Mount(
                 target='/root/output',
@@ -346,9 +307,7 @@ def smartpy_compile(
 
 @cli.command(help='Compile project')
 @click.pass_context
-def compile(
-    ctx,
-):
+def compile(ctx):
     config = PyTezosConfig.load()
 
     for type_, name, path in discover_contracts():
@@ -362,7 +321,15 @@ def compile(
                 image=config.smartpy.image,
             )
         elif type_ == ContractType.ligo:
-            ...
+            entrypoint = input(b('Enter entrypoint for ') + g(path) + b(': '))
+            ctx.invoke(
+                ligo_compile_contract,
+                path=path,
+                entrypoint=entrypoint,
+                output_directory=f'build/{name}',
+                detach=False,
+                image=config.ligo.image,
+            )
 
         else:
             raise NotImplementedError
@@ -410,6 +377,12 @@ def init(
         config.smartpy = SmartPyConfig(
             image=smartpy_image,
             protocol=smartpy_protocol,
+        )
+
+    if click.confirm(b('Configure LIGO compiler?')):
+        ligo_image = _input('LIGO Docker image', DEFAULT_LIGO_IMAGE)
+        config.ligo = LigoConfig(
+            image=ligo_image,
         )
 
     config.save()
@@ -503,44 +476,58 @@ def run_container(
 @cli.command(help='Compile contract using Ligo compiler.')
 @click.option('--image', '-i', type=str, help='Version or tag of Ligo compiler', default=DEFAULT_LIGO_IMAGE)
 @click.option('--path', '-p', type=str, help='Path to contract')
-@click.option('--entry-point', '-ep', type=str, help='Entrypoint for the invocation')
+@click.option('--entrypoint', '-e', type=str, help='Entrypoint for the invocation')
 @click.option('--detach', '-d', type=bool, help='Run container in detached mode', default=False)
 @click.pass_context
 def ligo_compile_contract(
     _ctx,
     image: str,
     path: str,
-    entry_point: str,
+    entrypoint: str,
+    output_directory: str,
     detach: bool,
 ):
+    output_directory = join(os.getcwd(), output_directory)
+    if not exists(output_directory):
+        os.mkdir(output_directory)
+
     path = get_local_contract_path(path, extension='ligo')
     if not path:
         raise Exception
 
+    click.echo(b('Compiling ') + g(path) + b(' with LIGO'))
     _, contract_name = split(path)
     container = run_container(
         image=image,
-        command=f'compile-contract {contract_name} "{entry_point}"',
+        command=f'compile-contract {contract_name} "{entrypoint}"',
         copy_source=[path],
         copy_destination='/root/',
+        mounts=[
+            docker.types.Mount(
+                target='/root/output',
+                source=output_directory,
+                type='bind'
+            )
+        ]
+
     )
-    if not detach:
+    with open(join(output_directory, 'contract.tz'), 'w+') as file:
         for line in container.logs(stream=True):
-            print(line.decode('utf-8').rstrip())
+            file.write(line.decode())
 
 
 @cli.command(help='Define initial storage using Ligo compiler.')
 @click.option('--image', '-t', type=str, help='Version or tag of Ligo compiler', default=DEFAULT_LIGO_IMAGE)
 @click.option('--path', '-p', type=str, help='Path to contract')
-@click.option('--entry-point', '-ep', type=str, help='Entrypoint for the storage', default='')
-@click.option('--expression', '-ex', type=str, help='Expression for the storage', default='')
+@click.option('--entrypoint', '-e', type=str, help='Entrypoint for the storage', default='')
+@click.option('--expression', '--exp', type=str, help='Expression for the storage', default='')
 @click.option('--detach', '-d', type=bool, help='Run container in detached mode', default=False)
 @click.pass_context
 def ligo_compile_storage(
     _ctx,
     image: str,
     path: str,
-    entry_point: str,
+    entrypoint: str,
     expression: str,
     detach: bool,
 ):
@@ -550,7 +537,7 @@ def ligo_compile_storage(
 
     container = run_container(
         image=image,
-        command=f'compile-storage {path} "{entry_point}" "{expression}"',
+        command=f'compile-storage {path} "{entrypoint}" "{expression}"',
         copy_source=[path],
         copy_destination='root',
     )
@@ -570,7 +557,7 @@ def ligo_compile_parameter(
     _ctx,
     image: str,
     path: str,
-    entry_point: str,
+    entrypoint: str,
     expression: str,
     detach: bool,
 ):
@@ -580,7 +567,7 @@ def ligo_compile_parameter(
 
     container = run_container(
         image=image,
-        command=f'compile-parameter {path} "{entry_point}" "{expression}"',
+        command=f'compile-parameter {path} "{entrypoint}" "{expression}"',
         copy_source=[path],
         copy_destination='root',
     )
