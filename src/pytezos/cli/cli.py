@@ -39,6 +39,10 @@ b = partial(click.style, fg='blue')
 def make_bcd_link(network, address):
     return f'https://better-call.dev/{network}/{address}'
 
+def _input(option: str, default):
+    input_str = b(f'{option} [') + g(default or '') + b(']:')
+    return input(input_str) or default
+
 
 def get_local_contract_path(path, extension='tz'):
     if path is None:
@@ -224,14 +228,12 @@ def deploy(
 @click.option('--path', '-p', type=str, help='Path to script', default='script.py')
 @click.option('--output-directory', '-o', type=str, help='Output directory', default='./smartpy-output')
 @click.option('--protocol', type=click.Choice(['delphi', 'edo', 'florence', 'proto10']), help='Protocol to use', default='edo')
-@click.option('--detach', '-d', type=bool, help='Run container in detached mode', default=False)
 @click.option('--image', '-i', type=str, help='Version or tag of SmartPy to use', default=DEFAULT_SMARTPY_IMAGE)
 @click.pass_context
 def smartpy_test(
     _ctx,
     path: str,
     output_directory: str,
-    detach: bool,
     protocol: str,
     image: str,
 ):
@@ -257,15 +259,13 @@ def smartpy_test(
             )
         ]
     )
-    if not detach:
-        for line in container.logs(stream=True):
-            print(line.decode('utf-8').rstrip())
+    for line in container.logs(stream=True):
+        print(line.decode('utf-8').rstrip())
 
 
 @cli.command(help='Run SmartPy CLI command "compile"')
 @click.option('--script', '-s', type=str, help='Path to script', default='script.py')
 @click.option('--output-directory', '-o', type=str, help='Output directory', default='./smartpy-output')
-@click.option('--detach', '-d', type=bool, help='Run container in detached mode', default=False)
 @click.option('--protocol', type=click.Choice(['delphi', 'edo', 'florence', 'proto10']), help='Protocol to use', default='edo')
 @click.option('--image', '-t', type=str, help='Version or tag of SmartPy to use', default=DEFAULT_SMARTPY_IMAGE)
 @click.pass_context
@@ -273,7 +273,6 @@ def smartpy_compile(
     _ctx,
     script: str,
     output_directory: str,
-    detach: bool,
     protocol: str,
     image: str,
 ):
@@ -300,9 +299,13 @@ def smartpy_compile(
             )
         ]
     )
-    if not detach:
+    result = container.wait()
+    if int(result['StatusCode']):
         for line in container.logs(stream=True):
             print(line.decode('utf-8').rstrip())
+        print(r("Can't compile " + script_name))
+
+    container.remove()
 
 
 @cli.command(help='Compile project')
@@ -316,18 +319,16 @@ def compile(ctx):
                 smartpy_compile,
                 script=path,
                 output_directory=f'build/{name}',
-                detach=False,
                 protocol=config.smartpy.protocol,
                 image=config.smartpy.image,
             )
         elif type_ == ContractType.ligo:
-            entrypoint = input(b('Enter entrypoint for ') + g(path) + b(': '))
+            entrypoint = _input(g(name) + ' entrypoint', 'main')
             ctx.invoke(
                 ligo_compile_contract,
                 path=path,
                 entrypoint=entrypoint,
                 output_directory=f'build/{name}',
-                detach=False,
                 image=config.ligo.image,
             )
 
@@ -346,7 +347,6 @@ def test(
                 smartpy_test,
                 script=path,
                 output_directory=f'build/{name}',
-                detach=False,
                 protocol='florence',
             )
         else:
@@ -358,10 +358,6 @@ def test(
 def init(
     ctx,
 ):
-    def _input(option: str, default):
-        input_str = b(f'{option} [') + g(default or '') + b(']:')
-        return input(input_str) or default
-
     name = _input('Project name', os.path.split(os.getcwd())[1])
     description = _input('Description', None)
     license = _input('License', None)
@@ -477,7 +473,6 @@ def run_container(
 @click.option('--image', '-i', type=str, help='Version or tag of Ligo compiler', default=DEFAULT_LIGO_IMAGE)
 @click.option('--path', '-p', type=str, help='Path to contract')
 @click.option('--entrypoint', '-e', type=str, help='Entrypoint for the invocation')
-@click.option('--detach', '-d', type=bool, help='Run container in detached mode', default=False)
 @click.pass_context
 def ligo_compile_contract(
     _ctx,
@@ -485,7 +480,6 @@ def ligo_compile_contract(
     path: str,
     entrypoint: str,
     output_directory: str,
-    detach: bool,
 ):
     output_directory = join(os.getcwd(), output_directory)
     if not exists(output_directory):
@@ -509,19 +503,18 @@ def ligo_compile_contract(
                 type='bind'
             )
         ]
-
     )
     with open(join(output_directory, 'contract.tz'), 'w+') as file:
         for line in container.logs(stream=True):
             file.write(line.decode())
-
+    container.wait()
+    container.remove()
 
 @cli.command(help='Define initial storage using Ligo compiler.')
 @click.option('--image', '-t', type=str, help='Version or tag of Ligo compiler', default=DEFAULT_LIGO_IMAGE)
 @click.option('--path', '-p', type=str, help='Path to contract')
 @click.option('--entrypoint', '-e', type=str, help='Entrypoint for the storage', default='')
 @click.option('--expression', '--exp', type=str, help='Expression for the storage', default='')
-@click.option('--detach', '-d', type=bool, help='Run container in detached mode', default=False)
 @click.pass_context
 def ligo_compile_storage(
     _ctx,
@@ -529,7 +522,6 @@ def ligo_compile_storage(
     path: str,
     entrypoint: str,
     expression: str,
-    detach: bool,
 ):
     path = get_local_contract_path(path, extension='ligo')
     if not path:
@@ -541,9 +533,8 @@ def ligo_compile_storage(
         copy_source=[path],
         copy_destination='root',
     )
-    if not detach:
-        for line in container.logs(stream=True):
-            print(line.decode('utf-8').rstrip())
+    for line in container.logs(stream=True):
+        print(line.decode('utf-8').rstrip())
 
 
 @cli.command(help='Invoke a contract with a parameter using Ligo compiler.')
@@ -551,7 +542,6 @@ def ligo_compile_storage(
 @click.option('--path', '-p', type=str, help='Path to contract')
 @click.option('--entry-point', '-ep', type=str, help='Entrypoint for the invocation')
 @click.option('--expression', '-ex', type=str, help='Expression for the invocation')
-@click.option('--detach', '-d', type=bool, help='Run container in detached mode', default=False)
 @click.pass_context
 def ligo_compile_parameter(
     _ctx,
@@ -559,7 +549,6 @@ def ligo_compile_parameter(
     path: str,
     entrypoint: str,
     expression: str,
-    detach: bool,
 ):
     path = get_local_contract_path(path, extension='ligo')
     if not path:
@@ -571,9 +560,8 @@ def ligo_compile_parameter(
         copy_source=[path],
         copy_destination='root',
     )
-    if not detach:
-        for line in container.logs(stream=True):
-            print(line.decode('utf-8').rstrip())
+    for line in container.logs(stream=True):
+        print(line.decode('utf-8').rstrip())
 
 
 if __name__ == '__main__':
