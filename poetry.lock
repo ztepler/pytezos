@@ -10,7 +10,7 @@ python-versions = "*"
 name = "appdirs"
 version = "1.4.4"
 description = "A small Python module for determining appropriate platform-specific dirs, e.g. a \"user data dir\"."
-category = "dev"
+category = "main"
 optional = false
 python-versions = "*"
 
@@ -463,6 +463,17 @@ python-versions = "*"
 
 [package.dependencies]
 six = "*"
+
+[[package]]
+name = "fcache"
+version = "0.4.7"
+description = "a dictionary-like, file-based cache module for Python"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+appdirs = "*"
 
 [[package]]
 name = "idna"
@@ -1785,7 +1796,7 @@ testing = ["pytest (>=4.6)", "pytest-checkdocs (>=1.2.3)", "pytest-flake8", "pyt
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "f22c50eb5dac823f5feb49fdf0acf5171ecdb110eca6c39b5e3c1c7c8e4633e4"
+content-hash = "dd66f41c01babe2d77fa976ebda2df0a4c8425a5614c01fc135c5e026ab9f9a1"
 
 [metadata.files]
 alabaster = [
@@ -2043,6 +2054,10 @@ fastecdsa = [
     {file = "fastecdsa-1.7.5-cp27-cp27m-macosx_10_13_x86_64.whl", hash = "sha256:0ac46a3a5a116eea4847d1560234057ecac812d5deb12ff76d98dd15ad6dab12"},
     {file = "fastecdsa-1.7.5-cp37-cp37m-macosx_10_13_x86_64.whl", hash = "sha256:4fed79ab9b15f47419c697f97d976a9ffaf648294605dd0ea4a038dbf23c88b4"},
     {file = "fastecdsa-1.7.5.tar.gz", hash = "sha256:bd3b7808cc2bea1e8b3c4dd5928ecfc14072403ab2a47580a7a8350800e6fedd"},
+]
+fcache = [
+    {file = "fcache-0.4.7-py2.py3-none-any.whl", hash = "sha256:36c2aab0ee6e0eccd69ff2b8da4f508f0464d94856c9469c22ba386a0c5e2ba4"},
+    {file = "fcache-0.4.7.tar.gz", hash = "sha256:a7d14a72e9b5dbf232184a70caf9ff39820583b7a42bc64424cd7d9487c63d86"},
 ]
 idna = [
     {file = "idna-2.10-py2.py3-none-any.whl", hash = "sha256:b97d804b1e9b523befed77c48dacec60e6dcb0b5391d57af6a65a312a90648c0"},

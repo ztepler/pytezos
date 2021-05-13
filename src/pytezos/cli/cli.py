@@ -1,16 +1,15 @@
+import atexit
 from enum import Enum
 from functools import partial
 import io
 
 import logging
 import os
-from pathlib import Path
 from posix import listdir
 import tarfile
 import sys
 import tarfile
-from glob import glob
-from os.path import abspath, dirname, exists, join, split
+from os.path import exists, join, split
 from pprint import pformat
 import time
 from typing import List, Optional
@@ -21,6 +20,7 @@ import click
 import docker  # type: ignore
 
 from pytezos import ContractInterface, __version__, pytezos
+from pytezos.cli.cache import PyTezosCLICache
 from pytezos.cli.github import create_deployment, create_deployment_status
 from pytezos.config import DEFAULT_LIGO_IMAGE, DEFAULT_SMARTPY_IMAGE, DEFAULT_SMARTPY_PROTOCOL, LigoConfig, PyTezosConfig, SmartPyConfig
 from pytezos.context.mixin import default_network  # type: ignore
@@ -149,8 +149,11 @@ def wait_container(
 @click.group()
 @click.version_option(__version__)
 @click.pass_context
-def cli(*_args, **_kwargs):
+def cli(ctx, *_args, **_kwargs):
     logging.basicConfig()
+    cache = PyTezosCLICache()
+    atexit.register(cache.sync)
+    ctx.obj = dict(cache=cache)
 
 
 @cli.command(help='Manage contract storage')
@@ -319,12 +322,15 @@ def smartpy_test(
 @click.option('--image', '-t', type=str, help='Version or tag of SmartPy to use', default=DEFAULT_SMARTPY_IMAGE)
 @click.pass_context
 def smartpy_compile(
-    _ctx,
+    ctx,
     path: str,
     output_directory: str,
     protocol: str,
     image: str,
 ):
+    if not ctx.obj['cache'].compilation_needed(path):
+        quit()
+
     output_directory = create_directory(output_directory)
     _, filename = split(path)
     click.echo(b('Compiling ') + g(filename) + b(' with SmartPy'))
@@ -342,7 +348,9 @@ def smartpy_compile(
             )
         ]
     )
-    wait_container(container, f'Failed to compile {filename}')
+    success = wait_container(container, f'Failed to compile {filename}')
+    if not success:
+        ctx.obj['cache'].compilation_failed(path)
     container.remove()
 
 
