@@ -1,9 +1,11 @@
 from enum import Enum
 from genericpath import exists
+import json
 import os
 from pathlib import Path
 from typing import Dict, List, Optional
 from pydantic import BaseModel
+from pydantic.json import pydantic_encoder
 from ruamel.yaml import YAML
 
 
@@ -63,16 +65,16 @@ class PyTezosConfig(BaseModel):
 
 
 class SourceLang(Enum):
-    michelson = 'Michelson'
-    smartpy = 'SmartPy'
-    ligo = 'LIGO'
+    Michelson = 'Michelson'
+    SmartPy = 'SmartPy'
+    LIGO = 'LIGO'
 
 
 ext_to_source_lang = {
-    '.tz': SourceLang.michelson,
-    '.py': SourceLang.smartpy,
-    '.ligo': SourceLang.ligo,
-    '.mligo': SourceLang.ligo,
+    '.tz': SourceLang.Michelson,
+    '.py': SourceLang.SmartPy,
+    '.ligo': SourceLang.LIGO,
+    '.mligo': SourceLang.LIGO,
 }
 
 
@@ -122,6 +124,7 @@ class PyTezosLockfile(BaseModel):
         yaml = YAML(typ='base')
         yaml.indent(4)
         lockfile_path = os.path.join(os.getcwd(), LOCKFILE_NAME)
-        lockfile_dict = self.dict()
+        # NOTE: Hack to dump enums as strings
+        lockfile_dict = json.loads(json.dumps(self, default=pydantic_encoder))
         with open(lockfile_path, 'w+') as file:
             YAML().dump(lockfile_dict, file)

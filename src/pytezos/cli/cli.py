@@ -75,19 +75,6 @@ def create_directory(path: str):
     return path
 
 
-def discover_contracts(path: Optional[str] = None) -> Iterator[Tuple[SourceLang, str, str]]:
-    contracts_directory = path or join(os.getcwd(), 'contracts')
-    for filename in listdir(contracts_directory):
-        contract_path = os.path.join(contracts_directory, filename)
-        name, ext = filename.rsplit('.')
-        if ext == 'py':
-            yield SourceLang.smartpy, name, contract_path
-        elif ext == 'ligo':
-            yield SourceLang.ligo, name, contract_path
-        elif ext == 'tz':
-            yield SourceLang.michelson, name, contract_path
-
-
 def get_docker_client():
     return docker.from_env()
 
@@ -364,10 +351,11 @@ def compile(ctx):
     lockfile = PyTezosLockfile.load()
 
     for path, source in lockfile.sources.items():
+        print(path, source)
         if source.type != SourceType.contract:
             continue
 
-        if source.lang == SourceLang.smartpy:
+        if source.lang == SourceLang.SmartPy:
             ctx.invoke(
                 smartpy_compile,
                 path=path,
@@ -375,7 +363,7 @@ def compile(ctx):
                 protocol=config.smartpy.protocol,
                 image=config.smartpy.image,
             )
-        elif source.lang == SourceLang.ligo:
+        elif source.lang == SourceLang.LIGO:
             ctx.invoke(
                 ligo_compile_contract,
                 path=path,
@@ -389,19 +377,19 @@ def compile(ctx):
             raise NotImplementedError
 
 
-@cli.command(help='Test project')
-@click.pass_context
-def test(
-    ctx,
-):
-    for type_, name, path in discover_contracts():
-        if type_ == SourceLang.smartpy:
-            ctx.invoke(
-                smartpy_test,
-                path=path,
-                output_directory=f'build/{name}',
-                protocol='florence',
-            )
+# @cli.command(help='Test project')
+# @click.pass_context
+# def test(
+#     ctx,
+# ):
+#     for type_, name, path in discover_contracts():
+#         if type_ == SourceLang.smartpy:
+#             ctx.invoke(
+#                 smartpy_test,
+#                 path=path,
+#                 output_directory=f'build/{name}',
+#                 protocol='florence',
+#             )
 
 
 @cli.command(help='Init project')
@@ -462,7 +450,7 @@ def update(
                 continue
 
             alias = _input('Source alias', name)
-            if source_lang == SourceLang.ligo:
+            if source_lang == SourceLang.LIGO:
                 entrypoint = _input('Entrypoint', 'main')
             else:
                 entrypoint = None
