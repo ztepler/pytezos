@@ -1,6 +1,7 @@
 import hashlib
 from fcache.cache import FileCache
 
+
 class PyTezosCLICache:
     def __init__(self) -> None:
         self._cache = FileCache('pytezos', flag='c')

@@ -4,18 +4,12 @@ from functools import partial
 import io
 
 import logging
-from ntpath import splitext
 import os
 from posix import listdir
 import tarfile
 import sys
-import tarfile
-from os.path import exists, join, split
-import sys
-import tarfile
+from os.path import exists, join, split, splitext
 import time
-from glob import glob
-from os.path import abspath, dirname, exists, join, split
 from pprint import pformat
 from typing import List, Optional
 
@@ -27,7 +21,20 @@ import docker  # type: ignore
 from pytezos import ContractInterface, __version__, pytezos
 from pytezos.cli.cache import PyTezosCLICache
 from pytezos.cli.github import create_deployment, create_deployment_status
-from pytezos.cli.config import Source, response_to_source_type, DEFAULT_LIGO_IMAGE, DEFAULT_SMARTPY_IMAGE, ext_to_source_lang, DEFAULT_SMARTPY_PROTOCOL, LigoConfig, PyTezosConfig, PyTezosLockfile, SmartPyConfig, SourceLang
+from pytezos.cli.config import (
+    Source,
+    SourceType,
+    response_to_source_type,
+    DEFAULT_LIGO_IMAGE,
+    DEFAULT_SMARTPY_IMAGE,
+    ext_to_source_lang,
+    DEFAULT_SMARTPY_PROTOCOL,
+    LigoConfig,
+    PyTezosConfig,
+    PyTezosLockfile,
+    SmartPyConfig,
+    SourceLang,
+)
 from pytezos.context.mixin import default_network  # type: ignore
 from pytezos.logging import logger
 from pytezos.michelson.types.base import generate_pydoc
@@ -41,8 +48,10 @@ r = partial(click.style, fg='red')
 g = partial(click.style, fg='green')
 b = partial(click.style, fg='blue')
 
+
 def make_bcd_link(network, address):
     return f'https://better-call.dev/{network}/{address}'
+
 
 def _input(option: str, default):
     input_str = b(f'{option} [') + g(default or '') + b(']: ')
@@ -64,7 +73,6 @@ def create_directory(path: str):
     if not exists(path):
         os.mkdir(path)
     return path
-
 
 
 def discover_contracts(path: Optional[str] = None) -> Iterator[Tuple[SourceLang, str, str]]:
@@ -302,9 +310,9 @@ def smartpy_test(
             docker.types.Mount(
                 target='/root/output',
                 source=output_directory,
-                type='bind'
+                type='bind',
             )
-        ]
+        ],
     )
     wait_container(container, f'Failed to test {filename}')
     container.remove()
@@ -333,15 +341,15 @@ def smartpy_compile(
     container = run_container(
         image=image,
         command=f'compile /root/smartpy-cli/{filename} /root/output --protocol {protocol}',
-        copy_source=[path,],
+        copy_source=[path],
         copy_destination='/root/smartpy-cli/',
         mounts=[
             docker.types.Mount(
                 target='/root/output',
                 source=output_directory,
-                type='bind'
+                type='bind',
             )
-        ]
+        ],
     )
     success = wait_container(container, f'Failed to compile {filename}')
     if not success:
@@ -353,23 +361,27 @@ def smartpy_compile(
 @click.pass_context
 def compile(ctx):
     config = PyTezosConfig.load()
+    lockfile = PyTezosLockfile.load()
 
-    for type_, name, path in discover_contracts():
-        if type_ == SourceLang.smartpy:
+    for path, source in lockfile.sources.items():
+        if source.type != SourceType.contract:
+            continue
+
+        if source.lang == SourceLang.smartpy:
             ctx.invoke(
                 smartpy_compile,
                 path=path,
-                output_directory=f'build/{name}',
+                output_directory=f'build/{source.alias}',
                 protocol=config.smartpy.protocol,
                 image=config.smartpy.image,
             )
-        elif type_ == SourceLang.ligo:
-            entrypoint = _input(g(split(path)[1]) + ' entrypoint', 'main')
+        elif source.lang == SourceLang.ligo:
             ctx.invoke(
                 ligo_compile_contract,
                 path=path,
-                entrypoint=entrypoint,
-                output_directory=f'build/{name}',
+                workdir=os.path.join(os.getcwd(), 'src'),
+                entrypoint=source.entrypoint,
+                output_directory=f'build/{source.alias}',
                 image=config.ligo.image,
             )
 
@@ -435,7 +447,7 @@ def update(
     for root, dirs, files in os.walk(src_path):
         for file in files:
             name, ext = splitext(file)
-            relpath = os.path.join(root, file).replace(src_path, '')[1:]
+            relpath = os.path.join(root, file).replace(cwd, '')[1:]
             source_lang = ext_to_source_lang.get(ext)
             if not source_lang:
                 continue
@@ -443,22 +455,24 @@ def update(
                 continue
 
             print(b(f'Found {source_lang.value} source ') + g(relpath))
-            response = _input(
-                '(C)ontract (S)torage (P)arameter (L)ambda (M)etadata',
-                'skip'
-            ).capitalize()
+            response = _input('(C)ontract (S)torage (P)arameter (L)ambda (M)etadata', 'skip').capitalize()
             source_type = response_to_source_type.get(response)
-            if source_type:
-                alias = _input('Source alias', relpath)
-                lockfile.sources[relpath] = Source(
-                    type=source_type,
-                    lang=source_lang,
-                    alias=alias,
-                )
-            else:
+            if not source_type:
                 lockfile.skipped.append(relpath)
+                continue
 
-    
+            alias = _input('Source alias', name)
+            if source_lang == SourceLang.ligo:
+                entrypoint = _input('Entrypoint', 'main')
+            else:
+                entrypoint = None
+            lockfile.sources[relpath] = Source(
+                type=source_type,
+                lang=source_lang,
+                alias=alias,
+                entrypoint=entrypoint,
+            )
+
     lockfile.save()
 
 
@@ -506,6 +520,7 @@ def sandbox(
 @cli.command(help='Compile contract using Ligo compiler.')
 @click.option('--image', '-i', type=str, help='Version or tag of Ligo compiler', default=DEFAULT_LIGO_IMAGE)
 @click.option('--path', '-p', type=str, help='Path to contract')
+@click.option('--workdir', '-w', type=str, default=None, help='Source directory root')
 @click.option('--entrypoint', '-e', type=str, help='Entrypoint for the invocation')
 @click.option('--output-directory', '-o', type=str, help='Output directory', default='./ligo-output')
 @click.pass_context
@@ -513,6 +528,7 @@ def ligo_compile_contract(
     _ctx,
     image: str,
     path: str,
+    workdir: Optional[str],
     entrypoint: str,
     output_directory: str,
 ):
@@ -520,23 +536,36 @@ def ligo_compile_contract(
     _, filename = split(path)
     click.echo(b('Compiling ') + g(filename) + b(' with LIGO'))
 
-    container = run_container(
-        image=image,
-        command=f'compile-contract {filename} "{entrypoint}"',
-        copy_source=[path],
-        copy_destination='/root/',
-        mounts=[
+    if workdir:
+        mounts = [
             docker.types.Mount(
-                target='/root/output',
-                source=output_directory,
-                type='bind'
+                target='/root/src',
+                source=workdir,
+                type='bind',
             )
         ]
+        command = f'compile-contract {path} "{entrypoint}"'
+    else:
+        mounts = [
+            docker.types.Mount(
+                target=f'/root/{filename}',
+                source=path,
+                type='bind',
+            )
+        ]
+        command = f'compile-contract {filename} "{entrypoint}"'
+
+    container = run_container(
+        image=image,
+        command=command,
+        copy_source=[path],
+        copy_destination='/root/',
+        mounts=mounts,
     )
     success = wait_container(container, f'Failed to compile {filename}')
     if success:
         with open(join(output_directory, 'contract.tz'), 'w+') as file:
-            for line in container.logs(stream=True):
+            for line in container.logs(stream=True, stderr=False):
                 file.write(line.decode())
     container.remove()
 
@@ -581,14 +610,7 @@ def ligo_compile_storage(
 @click.option('--expression', '-ex', type=str, help='Expression for the invocation')
 @click.option('--output-directory', '-o', type=str, help='Output directory', default='./ligo-output')
 @click.pass_context
-def ligo_compile_parameter(
-    _ctx,
-    image: str,
-    path: str,
-    entrypoint: str,
-    expression: str,
-    output_directory: str
-):
+def ligo_compile_parameter(_ctx, image: str, path: str, entrypoint: str, expression: str, output_directory: str):
     output_directory = create_directory(output_directory)
     _, filename = split(path)
     click.echo(b('Compiling ') + g(filename) + b(' with LIGO'))

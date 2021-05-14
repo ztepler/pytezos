@@ -23,7 +23,6 @@ class SmartPyConfig(BaseModel):
     protocol: str = DEFAULT_SMARTPY_PROTOCOL
 
 
-
 class PyTezosConfig(BaseModel):
     name: str
     description: Optional[str] = None
@@ -51,7 +50,7 @@ class PyTezosConfig(BaseModel):
         #     raw_config = raw_config.replace(placeholder, value or default_value)
 
         json_config = YAML(typ='base').load(raw_config)
-        config = cls(**json_config)
+        config = cls.parse_obj(json_config)
         return config
 
     def save(self):
@@ -76,12 +75,14 @@ ext_to_source_lang = {
     '.mligo': SourceLang.ligo,
 }
 
+
 class SourceType(Enum):
     contract = 'contract'
     storage = 'storage'
     parameter = 'parameter'
     lambda_ = 'lambda_'
     metadata = 'metadata'
+
 
 response_to_source_type = {
     'C': SourceType.contract,
@@ -96,9 +97,7 @@ class Source(BaseModel):
     type: SourceType
     lang: SourceLang
     alias: str
-
-    class Config:
-        use_enum_values = True
+    entrypoint: Optional[str] = None
 
 
 class PyTezosLockfile(BaseModel):
@@ -116,7 +115,7 @@ class PyTezosLockfile(BaseModel):
             raw_lockfile = file.read()
 
         json_lockfile = YAML(typ='base').load(raw_lockfile) or {}
-        lockfile = cls(**json_lockfile)
+        lockfile = cls.parse_obj(json_lockfile)
         return lockfile
 
     def save(self) -> None:
