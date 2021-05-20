@@ -7,10 +7,13 @@ from typing import Dict, List, Optional
 from pydantic import BaseModel
 from pydantic.json import pydantic_encoder
 from ruamel.yaml import YAML
+from pytezos.cli.utils import r
+import re
+from os import environ as env
 
 
+ENV_VARIABLE_REGEX = r'\${([\w]*):-(.*)}'
 CONFIG_NAME = 'pytezos.yml'
-LOCKFILE_NAME = 'pytezos.lock'
 DEFAULT_LIGO_IMAGE = 'ligolang/ligo:0.13.0'
 DEFAULT_SMARTPY_IMAGE = 'bakingbad/smartpy-cli:latest'
 DEFAULT_SMARTPY_PROTOCOL = 'florence'
@@ -25,6 +28,11 @@ class SmartPyConfig(BaseModel):
     protocol: str = DEFAULT_SMARTPY_PROTOCOL
 
 
+class GenericJobConfig(BaseModel):
+    description: str
+    path: str
+
+
 class PyTezosConfig(BaseModel):
     name: str
     description: Optional[str] = None
@@ -33,33 +41,36 @@ class PyTezosConfig(BaseModel):
     ligo: LigoConfig = LigoConfig()
     smartpy: SmartPyConfig = SmartPyConfig()
 
+    jobs: Dict[str, GenericJobConfig] = {}
+    scenarios: Dict[str, List[str]] = {}
+
     @classmethod
     def load(cls) -> 'PyTezosConfig':
 
         config_path = os.path.join(os.getcwd(), CONFIG_NAME)
 
-        # _logger.info('Loading config from %s', filename)
         with open(config_path) as file:
             raw_config = file.read()
 
-        # _logger.info('Substituting environment variables')
-        # for match in re.finditer(ENV_VARIABLE_REGEX, raw_config):
-        #     variable, default_value = match.group(1), match.group(2)
-        #     value = env.get(variable)
-        #     if not default_value and not value:
-        #         raise ConfigurationError(f'Environment variable `{variable}` is not set')
-        #     placeholder = '${' + variable + ':-' + default_value + '}'
-        #     raw_config = raw_config.replace(placeholder, value or default_value)
+        for match in re.finditer(ENV_VARIABLE_REGEX, raw_config):
+            variable, default_value = match.group(1), match.group(2)
+            value = env.get(variable)
+            if not default_value and not value:
+                print(r(f'Environment variable `{variable}` is not set'))
+                quit(1)
+            placeholder = '${' + variable + ':-' + default_value + '}'
+            raw_config = raw_config.replace(placeholder, value or default_value)
 
         json_config = YAML(typ='base').load(raw_config)
         config = cls.parse_obj(json_config)
         return config
 
-    def save(self):
-        yaml = YAML()
+    def save(self) -> None:
+        yaml = YAML(typ='base')
         yaml.indent(4)
         config_path = os.path.join(os.getcwd(), CONFIG_NAME)
-        config_dict = self.dict()
+        # NOTE: Hack to dump enums as strings
+        config_dict = json.loads(json.dumps(self, default=pydantic_encoder))
         with open(config_path, 'w+') as file:
             YAML().dump(config_dict, file)
 
@@ -100,31 +111,3 @@ class Source(BaseModel):
     lang: SourceLang
     alias: str
     entrypoint: Optional[str] = None
-
-
-class PyTezosLockfile(BaseModel):
-    sources: Dict[str, Source] = {}
-    skipped: List[str] = []
-
-    @classmethod
-    def load(cls) -> 'PyTezosLockfile':
-
-        lockfile_path = os.path.join(os.getcwd(), LOCKFILE_NAME)
-
-        if not exists(lockfile_path):
-            Path(lockfile_path).touch()
-        with open(lockfile_path, 'r') as file:
-            raw_lockfile = file.read()
-
-        json_lockfile = YAML(typ='base').load(raw_lockfile) or {}
-        lockfile = cls.parse_obj(json_lockfile)
-        return lockfile
-
-    def save(self) -> None:
-        yaml = YAML(typ='base')
-        yaml.indent(4)
-        lockfile_path = os.path.join(os.getcwd(), LOCKFILE_NAME)
-        # NOTE: Hack to dump enums as strings
-        lockfile_dict = json.loads(json.dumps(self, default=pydantic_encoder))
-        with open(lockfile_path, 'w+') as file:
-            YAML().dump(lockfile_dict, file)
