@@ -176,7 +176,7 @@
 
 <span class="kn">from</span> <span class="nn">pytezos.client</span> <span class="kn">import</span> <span class="n">PyTezosClient</span>
 <span class="kn">from</span> <span class="nn">pytezos.operation.group</span> <span class="kn">import</span> <span class="n">OperationGroup</span>
-<span class="kn">from</span> <span class="nn">pytezos.sandbox.parameters</span> <span class="kn">import</span> <span class="n">EDO</span>
+<span class="kn">from</span> <span class="nn">pytezos.sandbox.parameters</span> <span class="kn">import</span> <span class="n">FLORENCE</span>
 
 <span class="c1"># NOTE: Container object is a singleton which will be used in all tests inherited from class _SandboxedNodeTestCase</span>
 <span class="c1"># and stopped after all tests are completed.</span>
@@ -194,7 +194,7 @@
     <span class="n">PORT</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="s2">&quot;Port to expose to host machine&quot;</span>
 
-    <span class="n">PROTOCOL</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">EDO</span>
+    <span class="n">PROTOCOL</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">FLORENCE</span>
     <span class="s2">&quot;Hash of protocol to activate&quot;</span>
 
 <div class="viewcode-block" id="SandboxedNodeTestCase.setUpClass"><a class="viewcode-back" href="../../../integration_tests.html#pytezos.sandbox.node.SandboxedNodeTestCase.setUpClass">[docs]</a>    <span class="nd">@classmethod</span>
