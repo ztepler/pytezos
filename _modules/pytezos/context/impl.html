@@ -410,13 +410,17 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">big_maps_expr</span> <span class="o">=</span> <span class="n">expr</span></div>
 
 <div class="viewcode-block" id="ExecutionContext.get_big_map_value"><a class="viewcode-back" href="../../../repl.html#pytezos.context.impl.ExecutionContext.get_big_map_value">[docs]</a>    <span class="k">def</span> <span class="nf">get_big_map_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ptr</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">key_hash</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">tzt</span> <span class="ow">or</span> <span class="n">ptr</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">tzt</span> <span class="ow">or</span> <span class="p">(</span><span class="n">ptr</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">big_maps</span><span class="p">):</span>
             <span class="k">return</span> <span class="kc">None</span>
-        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;shell is undefined&#39;</span>
+        <span class="n">ptr</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">big_maps</span><span class="p">[</span><span class="n">ptr</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">ptr</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Shell is undefined, cannot connect to network&#39;</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell</span><span class="o">.</span><span class="n">blocks</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">block_id</span><span class="p">]</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">big_maps</span><span class="p">[</span><span class="n">ptr</span><span class="p">][</span><span class="n">key_hash</span><span class="p">]()</span>
         <span class="k">except</span> <span class="n">RpcError</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">None</span></div>
+            <span class="k">return</span> <span class="kc">None</span>  <span class="c1"># TODO: special exception/value | Key does not exist</span></div>
 
 <div class="viewcode-block" id="ExecutionContext.register_sapling_state"><a class="viewcode-back" href="../../../repl.html#pytezos.context.impl.ExecutionContext.register_sapling_state">[docs]</a>    <span class="k">def</span> <span class="nf">register_sapling_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ptr</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>

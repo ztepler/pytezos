@@ -300,14 +300,14 @@
         <span class="n">parameter</span><span class="p">,</span>
         <span class="n">storage</span><span class="p">,</span>
         <span class="n">context</span><span class="p">:</span> <span class="n">ExecutionContext</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">Optional</span><span class="p">[</span><span class="ne">Exception</span><span class="p">]]:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">Optional</span><span class="p">[</span><span class="ne">Exception</span><span class="p">]]:</span>
         <span class="sd">&quot;&quot;&quot;Execute view of contract loaded in context</span>
 
 <span class="sd">        :param entrypoint: contract entrypoint</span>
 <span class="sd">        :param parameter: parameter section</span>
 <span class="sd">        :param storage: storage section</span>
 <span class="sd">        :param context: execution context</span>
-<span class="sd">        :returns: [operations, stdout, error]</span>
+<span class="sd">        :returns: [operations, storage, stdout, error]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">ctx</span> <span class="o">=</span> <span class="n">ExecutionContext</span><span class="p">(</span>
             <span class="n">shell</span><span class="o">=</span><span class="n">context</span><span class="o">.</span><span class="n">shell</span><span class="p">,</span>
@@ -325,12 +325,11 @@
             <span class="n">res</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">stack</span><span class="p">,</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
             <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">pair</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">end</span><span class="p">(</span><span class="n">stack</span><span class="p">,</span> <span class="n">stdout</span><span class="p">)</span>
             <span class="n">operations</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">List</span><span class="p">[</span><span class="n">OperationType</span><span class="p">],</span> <span class="nb">list</span><span class="p">(</span><span class="n">pair</span><span class="o">.</span><span class="n">items</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="n">operations</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Multiple internal operations, not sure which one to pick&#39;</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">operations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">to_python_object</span><span class="p">(),</span> <span class="n">stdout</span><span class="p">,</span> <span class="kc">None</span>
+            <span class="n">storage</span> <span class="o">=</span> <span class="n">pair</span><span class="o">.</span><span class="n">items</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">return</span> <span class="p">[</span><span class="n">op</span><span class="o">.</span><span class="n">to_python_object</span><span class="p">()</span> <span class="k">for</span> <span class="n">op</span> <span class="ow">in</span> <span class="n">operations</span><span class="p">],</span> <span class="n">storage</span><span class="o">.</span><span class="n">to_python_object</span><span class="p">(),</span> <span class="n">stdout</span><span class="p">,</span> <span class="kc">None</span>
         <span class="k">except</span> <span class="n">MichelsonRuntimeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="n">stdout</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">format_stdout</span><span class="p">())</span>
-            <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">e</span></div>
+            <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">e</span></div>
 
 <div class="viewcode-block" id="Interpreter.run_tzt"><a class="viewcode-back" href="../../../repl.html#pytezos.michelson.repl.Interpreter.run_tzt">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">run_tzt</span><span class="p">(</span>
