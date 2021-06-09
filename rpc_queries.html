@@ -574,6 +574,26 @@ set True if you don’t want to.</p></li>
 </dd></dl>
 
 <dl class="py method">
+<dt id="pytezos.rpc.shell.ShellQuery.wait_blocks">
+<code class="sig-name descname"><span class="pre">wait_blocks</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">current_block_hash</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_blocks</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_priority</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yield_current</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_between_blocks</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Generator</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">None</span><span class="p"><span class="pre">,</span> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="_modules/pytezos/rpc/shell.html#ShellQuery.wait_blocks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.rpc.shell.ShellQuery.wait_blocks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Iterates over future blocks (waits and yields block hash)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>current_block_hash</strong> – hash of the current block (head)</p></li>
+<li><p><strong>max_blocks</strong> – number of blocks to iterate (not including the current one)</p></li>
+<li><p><strong>max_priority</strong> – wait for blocks with lower priority (increased timeout)</p></li>
+<li><p><strong>yield_current</strong> – yield current block hash at the very beginning</p></li>
+<li><p><strong>time_between_blocks</strong> – override protocol constant</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>block hashes</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt id="pytezos.rpc.shell.ShellQuery.wait_next_block">
 <code class="sig-name descname"><span class="pre">wait_next_block</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">delay_sec</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prev_hash</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_between_blocks</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iterations</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/rpc/shell.html#ShellQuery.wait_next_block"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.rpc.shell.ShellQuery.wait_next_block" title="Permalink to this definition">¶</a></dt>
 <dd><p>Wait until next block is finalized.</p>
@@ -585,6 +605,29 @@ set True if you don’t want to.</p></li>
 <li><p><strong>max_iterations</strong> – Manually set the number of iterations</p></li>
 <li><p><strong>delay_sec</strong> – Sleep delay</p></li>
 </ul>
+</dd>
+</dl>
+<div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version 3.2.2: </span>This will be removed in 4.0.0.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.rpc.shell.ShellQuery.wait_operations">
+<code class="sig-name descname"><span class="pre">wait_operations</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">opg_hashes</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ttl</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_confirmations</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_block_hash</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_between_blocks</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="_modules/pytezos/rpc/shell.html#ShellQuery.wait_operations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.rpc.shell.ShellQuery.wait_operations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wait for one or many operations gain enough confirmations</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>opg_hashes</strong> – list of operation hashes</p></li>
+<li><p><strong>ttl</strong> – max time-to-live value (in mempool)</p></li>
+<li><p><strong>min_confirmations</strong> – minimum number of blocks after inclusion to wait for</p></li>
+<li><p><strong>current_block_hash</strong> – current block hash (head)</p></li>
+<li><p><strong>time_between_blocks</strong> – override protocol constant</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>list of operation contents with metadata</p>
 </dd>
 </dl>
 </dd></dl>

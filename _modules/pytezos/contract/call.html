@@ -168,7 +168,7 @@
   <h1>Source code for pytezos.contract.call</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">decimal</span> <span class="kn">import</span> <span class="n">Decimal</span>
 <span class="kn">from</span> <span class="nn">pprint</span> <span class="kn">import</span> <span class="n">pformat</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">from</span> <span class="nn">deprecation</span> <span class="kn">import</span> <span class="n">deprecated</span>  <span class="c1"># type: ignore</span>
 
@@ -180,6 +180,7 @@
 <span class="kn">from</span> <span class="nn">pytezos.michelson.format</span> <span class="kn">import</span> <span class="n">micheline_to_michelson</span>
 <span class="kn">from</span> <span class="nn">pytezos.michelson.repl</span> <span class="kn">import</span> <span class="n">Interpreter</span>
 <span class="kn">from</span> <span class="nn">pytezos.michelson.sections.storage</span> <span class="kn">import</span> <span class="n">StorageSection</span>
+<span class="kn">from</span> <span class="nn">pytezos.operation</span> <span class="kn">import</span> <span class="n">DEFAULT_BURN_RESERVE</span><span class="p">,</span> <span class="n">DEFAULT_GAS_RESERVE</span>
 <span class="kn">from</span> <span class="nn">pytezos.operation.content</span> <span class="kn">import</span> <span class="n">format_mutez</span><span class="p">,</span> <span class="n">format_tez</span>
 <span class="kn">from</span> <span class="nn">pytezos.operation.group</span> <span class="kn">import</span> <span class="n">OperationGroup</span>
 
@@ -231,11 +232,29 @@
         <span class="p">)</span></div>
 
     <span class="nd">@property</span>  <span class="c1"># type: ignore</span>
-    <span class="nd">@deprecated</span><span class="p">(</span><span class="n">deprecated_in</span><span class="o">=</span><span class="s1">&#39;3.0.0&#39;</span><span class="p">,</span> <span class="n">removed_in</span><span class="o">=</span><span class="s1">&#39;3.1.0&#39;</span><span class="p">,</span> <span class="n">details</span><span class="o">=</span><span class="s1">&#39;use `as_transaction()` instead&#39;</span><span class="p">)</span>
+    <span class="nd">@deprecated</span><span class="p">(</span><span class="n">deprecated_in</span><span class="o">=</span><span class="s1">&#39;3.0.0&#39;</span><span class="p">,</span> <span class="n">removed_in</span><span class="o">=</span><span class="s1">&#39;4.0.0&#39;</span><span class="p">,</span> <span class="n">details</span><span class="o">=</span><span class="s1">&#39;use `as_transaction()` instead&#39;</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">operation_group</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OperationGroup</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">as_transaction</span><span class="p">()</span><span class="o">.</span><span class="n">fill</span><span class="p">()</span>
 
-<div class="viewcode-block" id="ContractCall.inject"><a class="viewcode-back" href="../../../high_level.html#pytezos.contract.call.ContractCall.inject">[docs]</a>    <span class="k">def</span> <span class="nf">inject</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_async</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">preapply</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">check_result</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">num_blocks_wait</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OperationGroup</span><span class="p">:</span>
+<div class="viewcode-block" id="ContractCall.send"><a class="viewcode-back" href="../../../high_level.html#pytezos.contract.call.ContractCall.send">[docs]</a>    <span class="k">def</span> <span class="nf">send</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">gas_reserve</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">DEFAULT_GAS_RESERVE</span><span class="p">,</span>
+        <span class="n">burn_reserve</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">DEFAULT_BURN_RESERVE</span><span class="p">,</span>
+        <span class="n">min_confirmations</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">ttl</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;OperationGroup&#39;</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Fill, sign, and broadcast the transaction</span>
+
+<span class="sd">        :param gas_reserve: Add a safe reserve for dynamically calculated gas limit (default is 100).</span>
+<span class="sd">        :param burn_reserve: Add a safe reserve for dynamically calculated storage limit (default is 100).</span>
+<span class="sd">        :param min_confirmations: number of block injections to wait for before returning (default is 0, i.e. async mode)</span>
+<span class="sd">        :param ttl: Number of blocks to wait in the mempool before removal (default is 5 for public network, 60 for sandbox)</span>
+<span class="sd">        :return: OperationGroup with hash filled</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">as_transaction</span><span class="p">()</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">gas_reserve</span><span class="o">=</span><span class="n">gas_reserve</span><span class="p">,</span> <span class="n">burn_reserve</span><span class="o">=</span><span class="n">burn_reserve</span><span class="p">,</span> <span class="n">min_confirmations</span><span class="o">=</span><span class="n">min_confirmations</span><span class="p">,</span> <span class="n">ttl</span><span class="o">=</span><span class="n">ttl</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ContractCall.inject"><a class="viewcode-back" href="../../../high_level.html#pytezos.contract.call.ContractCall.inject">[docs]</a>    <span class="nd">@deprecated</span><span class="p">(</span><span class="n">deprecated_in</span><span class="o">=</span><span class="s1">&#39;3.2.2&#39;</span><span class="p">,</span> <span class="n">removed_in</span><span class="o">=</span><span class="s1">&#39;4.0.0&#39;</span><span class="p">,</span> <span class="n">details</span><span class="o">=</span><span class="s1">&#39;use `send()` instead&#39;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">inject</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_async</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">preapply</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">check_result</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">num_blocks_wait</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OperationGroup</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Send operation to blockchain.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">as_transaction</span><span class="p">()</span>

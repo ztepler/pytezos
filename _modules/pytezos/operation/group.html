@@ -510,7 +510,7 @@
 <span class="sd">        :param min_confirmations: number of block injections to wait for before returning</span>
 <span class="sd">        :returns: operation group with metadata (raw RPC response)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>  <span class="c1"># reset counter</span>
 
         <span class="n">opg_hash</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell</span><span class="o">.</span><span class="n">injection</span><span class="o">.</span><span class="n">operation</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
             <span class="n">operation</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">binary_payload</span><span class="p">(),</span>
@@ -524,39 +524,16 @@
                 <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">json_payload</span><span class="p">(),</span>
             <span class="p">}</span>
 
-        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Waiting for </span><span class="si">%s</span><span class="s1"> confirmations in </span><span class="si">%s</span><span class="s1"> blocks&#39;</span><span class="p">,</span> <span class="n">min_confirmations</span><span class="p">,</span> <span class="n">num_blocks_wait</span><span class="p">)</span>
-        <span class="n">in_mempool</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="n">confirmations</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_blocks_wait</span><span class="p">):</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Waiting for the next block&#39;</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">shell</span><span class="o">.</span><span class="n">wait_next_block</span><span class="p">(</span><span class="n">time_between_blocks</span><span class="o">=</span><span class="n">time_between_blocks</span><span class="p">)</span>
+        <span class="n">operations</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell</span><span class="o">.</span><span class="n">wait_operations</span><span class="p">(</span>
+            <span class="n">opg_hashes</span><span class="o">=</span><span class="p">[</span><span class="n">opg_hash</span><span class="p">],</span> <span class="n">ttl</span><span class="o">=</span><span class="n">num_blocks_wait</span><span class="p">,</span> <span class="n">min_confirmations</span><span class="o">=</span><span class="n">min_confirmations</span><span class="p">,</span> <span class="n">time_between_blocks</span><span class="o">=</span><span class="n">time_between_blocks</span>
+        <span class="p">)</span>
 
-            <span class="k">if</span> <span class="n">in_mempool</span><span class="p">:</span>
-                <span class="k">try</span><span class="p">:</span>
-                    <span class="n">pending_opg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell</span><span class="o">.</span><span class="n">mempool</span><span class="o">.</span><span class="n">pending_operations</span><span class="p">[</span><span class="n">opg_hash</span><span class="p">]</span>
-                    <span class="k">if</span> <span class="ow">not</span> <span class="n">OperationResult</span><span class="o">.</span><span class="n">is_applied</span><span class="p">(</span><span class="n">pending_opg</span><span class="p">):</span>
-                        <span class="k">raise</span> <span class="n">RpcError</span><span class="o">.</span><span class="n">from_errors</span><span class="p">(</span><span class="n">OperationResult</span><span class="o">.</span><span class="n">errors</span><span class="p">(</span><span class="n">pending_opg</span><span class="p">))</span>
-                    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Operation </span><span class="si">%s</span><span class="s1"> is still in mempool&#39;</span><span class="p">,</span> <span class="n">opg_hash</span><span class="p">)</span>
-                    <span class="k">continue</span>
-                <span class="k">except</span> <span class="ne">StopIteration</span><span class="p">:</span>
-                    <span class="n">in_mempool</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">operations</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">check_result</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">OperationResult</span><span class="o">.</span><span class="n">is_applied</span><span class="p">(</span><span class="n">operations</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+                <span class="k">raise</span> <span class="n">RpcError</span><span class="o">.</span><span class="n">from_errors</span><span class="p">(</span><span class="n">OperationResult</span><span class="o">.</span><span class="n">errors</span><span class="p">(</span><span class="n">operations</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
 
-            <span class="k">try</span><span class="p">:</span>
-                <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell</span><span class="o">.</span><span class="n">blocks</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">:]</span><span class="o">.</span><span class="n">find_operation</span><span class="p">(</span><span class="n">opg_hash</span><span class="p">)</span>
-            <span class="k">except</span> <span class="ne">StopIteration</span><span class="p">:</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Operation </span><span class="si">%s</span><span class="s1"> not found in lastest block&#39;</span><span class="p">,</span> <span class="n">opg_hash</span><span class="p">)</span>
-                <span class="k">continue</span>
-
-            <span class="k">if</span> <span class="n">check_result</span><span class="p">:</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="n">OperationResult</span><span class="o">.</span><span class="n">is_applied</span><span class="p">(</span><span class="n">res</span><span class="p">):</span>
-                    <span class="k">raise</span> <span class="n">RpcError</span><span class="o">.</span><span class="n">from_errors</span><span class="p">(</span><span class="n">OperationResult</span><span class="o">.</span><span class="n">errors</span><span class="p">(</span><span class="n">res</span><span class="p">))</span>
-
-            <span class="n">confirmations</span> <span class="o">+=</span> <span class="mi">1</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Got </span><span class="si">%s</span><span class="s1">/</span><span class="si">%s</span><span class="s1"> confirmations&#39;</span><span class="p">,</span> <span class="n">confirmations</span><span class="p">,</span> <span class="n">min_confirmations</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">confirmations</span> <span class="o">==</span> <span class="n">min_confirmations</span><span class="p">:</span>
-                <span class="k">return</span> <span class="n">res</span>
-
-        <span class="k">raise</span> <span class="ne">TimeoutError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Operation </span><span class="si">{</span><span class="n">opg_hash</span><span class="si">}</span><span class="s1"> got </span><span class="si">{</span><span class="n">confirmations</span><span class="si">}</span><span class="s1"> confirmations in </span><span class="si">{</span><span class="n">num_blocks_wait</span><span class="si">}</span><span class="s1"> blocks&#39;</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">operations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
 
 <div class="viewcode-block" id="OperationGroup.result"><a class="viewcode-back" href="../../../operation_groups.html#pytezos.operation.group.OperationGroup.result">[docs]</a>    <span class="nd">@deprecated</span><span class="p">(</span><span class="n">deprecated_in</span><span class="o">=</span><span class="s1">&#39;3.1.0&#39;</span><span class="p">,</span> <span class="n">removed_in</span><span class="o">=</span><span class="s1">&#39;4.0.0&#39;</span><span class="p">,</span> <span class="n">details</span><span class="o">=</span><span class="s1">&#39;use `run_operation()` instead&#39;</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">result</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">OperationResult</span><span class="p">]:</span>
