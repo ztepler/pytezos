@@ -203,7 +203,7 @@
 
 <span class="k">class</span> <span class="nc">CryptoExtraFallback</span><span class="p">:</span>
     <span class="k">def</span> <span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+        <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
             <span class="s2">&quot;Please, install packages libsodium-dev, libsecp256k1-dev, and libgmp-dev, &quot;</span>
             <span class="s2">&quot;and Python libraries pysodium, secp256k1, and fastecdsa&quot;</span>
         <span class="p">)</span>
