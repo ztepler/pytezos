@@ -171,7 +171,7 @@
 
 <span class="kn">from</span> <span class="nn">pytezos.context.abstract</span> <span class="kn">import</span> <span class="n">AbstractContext</span>  <span class="c1"># type: ignore</span>
 <span class="kn">from</span> <span class="nn">pytezos.context.abstract</span> <span class="kn">import</span> <span class="n">get_originated_address</span>
-<span class="kn">from</span> <span class="nn">pytezos.crypto.encoding</span> <span class="kn">import</span> <span class="n">is_address</span><span class="p">,</span> <span class="n">is_chain_id</span><span class="p">,</span> <span class="n">is_kt</span><span class="p">,</span> <span class="n">is_pkh</span><span class="p">,</span> <span class="n">is_public_key</span><span class="p">,</span> <span class="n">is_sig</span>
+<span class="kn">from</span> <span class="nn">pytezos.crypto.encoding</span> <span class="kn">import</span> <span class="n">base58_decode</span><span class="p">,</span> <span class="n">is_address</span><span class="p">,</span> <span class="n">is_chain_id</span><span class="p">,</span> <span class="n">is_kt</span><span class="p">,</span> <span class="n">is_pkh</span><span class="p">,</span> <span class="n">is_public_key</span><span class="p">,</span> <span class="n">is_sig</span>
 <span class="kn">from</span> <span class="nn">pytezos.michelson.forge</span> <span class="kn">import</span> <span class="p">(</span><span class="n">forge_address</span><span class="p">,</span> <span class="n">forge_base58</span><span class="p">,</span> <span class="n">forge_contract</span><span class="p">,</span> <span class="n">forge_public_key</span><span class="p">,</span> <span class="n">optimize_timestamp</span><span class="p">,</span> <span class="n">unforge_address</span><span class="p">,</span>
                                      <span class="n">unforge_chain_id</span><span class="p">,</span> <span class="n">unforge_contract</span><span class="p">,</span> <span class="n">unforge_public_key</span><span class="p">,</span> <span class="n">unforge_signature</span><span class="p">)</span>
 <span class="kn">from</span> <span class="nn">pytezos.michelson.format</span> <span class="kn">import</span> <span class="n">format_timestamp</span><span class="p">,</span> <span class="n">micheline_to_michelson</span>
@@ -290,6 +290,35 @@
 
 
 <div class="viewcode-block" id="KeyType"><a class="viewcode-back" href="../../../../types.html#pytezos.michelson.types.domain.KeyType">[docs]</a><span class="k">class</span> <span class="nc">KeyType</span><span class="p">(</span><span class="n">StringType</span><span class="p">,</span> <span class="n">prim</span><span class="o">=</span><span class="s1">&#39;key&#39;</span><span class="p">):</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">raw</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">base58_decode</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">prefix</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">[:</span><span class="mi">4</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="fm">__lt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="s1">&#39;KeyType&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Keys are ordered as follows: edpk &lt; sppk &lt; p2pk</span>
+<span class="sd">        All keys are in compressed form in Tezos (flag | X) where flag specifies if Y is odd or even</span>
+<span class="sd">        https://crypto.stackexchange.com/questions/70754/ec-key-compression</span>
+<span class="sd">        For secp256r1 (aka p256) we need to cut the first byte (for unknown reason)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">curves</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;edpk&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+            <span class="s1">&#39;sppk&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+            <span class="s1">&#39;p2pk&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="p">}</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">curves</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">curves</span><span class="p">[</span><span class="n">other</span><span class="o">.</span><span class="n">prefix</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">res</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">elif</span> <span class="n">res</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">offset</span> <span class="o">=</span> <span class="n">curves</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">raw</span><span class="p">[</span><span class="n">offset</span><span class="p">:]</span> <span class="o">&lt;</span> <span class="n">other</span><span class="o">.</span><span class="n">raw</span><span class="p">[</span><span class="n">offset</span><span class="p">:]</span>
 
 <div class="viewcode-block" id="KeyType.dummy"><a class="viewcode-back" href="../../../../types.html#pytezos.michelson.types.domain.KeyType.dummy">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">dummy</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">AbstractContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;KeyType&#39;</span><span class="p">:</span>
