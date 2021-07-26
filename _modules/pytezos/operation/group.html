@@ -258,12 +258,23 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_spawn</span><span class="p">(</span><span class="n">contents</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">contents</span> <span class="o">+</span> <span class="p">[</span><span class="n">content</span><span class="p">])</span></div>
 
-<div class="viewcode-block" id="OperationGroup.fill"><a class="viewcode-back" href="../../../operation_groups.html#pytezos.operation.group.OperationGroup.fill">[docs]</a>    <span class="k">def</span> <span class="nf">fill</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">counter</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">ttl</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;OperationGroup&#39;</span><span class="p">:</span>
+<div class="viewcode-block" id="OperationGroup.fill"><a class="viewcode-back" href="../../../operation_groups.html#pytezos.operation.group.OperationGroup.fill">[docs]</a>    <span class="k">def</span> <span class="nf">fill</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">counter</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">ttl</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">gas_limit</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">storage_limit</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">minimal_nanotez_per_gas_unit</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;OperationGroup&#39;</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Try to fill all fields left unfilled, use approximate fees</span>
 <span class="sd">        (not optimal, use `autofill` to simulate operation and get precise values).</span>
 
 <span class="sd">        :param counter: Override counter value (for manual handling)</span>
 <span class="sd">        :param ttl: Number of blocks to wait in the mempool before removal (default is 5 for public network, 60 for sandbox)</span>
+<span class="sd">        :param gas_limit: Override gas_limit value (for manual handling)</span>
+<span class="sd">        :param storage_limit: Override storage_limit value (for manual handling)</span>
+<span class="sd">        :param minimal_nanotez_per_gas_unit: Override minimal_nanotez_per_gas_unit constant (for manual handling)</span>
 <span class="sd">        :rtype: OperationGroup</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;branch_offset&#39;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -276,12 +287,12 @@
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;`ttl` has to be in range (0, 60]&#39;</span><span class="p">)</span>
 
         <span class="n">chain_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">chain_id</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">get_chain_id</span><span class="p">()</span>
-        <span class="n">branch</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">branch</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell</span><span class="o">.</span><span class="n">blocks</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;head-</span><span class="si">{</span><span class="n">MAX_OPERATIONS_TTL</span> <span class="o">-</span> <span class="n">ttl</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">hash</span><span class="p">()</span>
-        <span class="n">protocol</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">protocol</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">header</span><span class="p">()[</span><span class="s1">&#39;protocol&#39;</span><span class="p">]</span>
+        <span class="n">protocol</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">protocol</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">get_protocol</span><span class="p">()</span>
+        <span class="n">branch</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">branch</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell</span><span class="o">.</span><span class="n">blocks</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;head~</span><span class="si">{</span><span class="n">MAX_OPERATIONS_TTL</span> <span class="o">-</span> <span class="n">ttl</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">hash</span><span class="p">()</span>
         <span class="n">source</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">key</span><span class="o">.</span><span class="n">public_key_hash</span><span class="p">()</span>
 
         <span class="k">if</span> <span class="n">counter</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">set_counter</span><span class="p">(</span><span class="n">counter</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">set_counter</span><span class="p">(</span><span class="n">counter</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>  <span class="c1"># which is supposedly the current state (head)</span>
 
         <span class="n">replace_map</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s1">&#39;pkh&#39;</span><span class="p">:</span> <span class="n">source</span><span class="p">,</span>
@@ -291,9 +302,11 @@
             <span class="s1">&#39;secret&#39;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">key</span><span class="o">.</span><span class="n">activation_code</span><span class="p">,</span>
             <span class="s1">&#39;period&#39;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shell</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">voting_period</span><span class="p">()),</span>
             <span class="s1">&#39;public_key&#39;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">key</span><span class="o">.</span><span class="n">public_key</span><span class="p">(),</span>
-            <span class="s1">&#39;fee&#39;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">default_fee</span><span class="p">(</span><span class="n">x</span><span class="p">)),</span>
-            <span class="s1">&#39;gas_limit&#39;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">default_gas_limit</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">constants</span><span class="p">)),</span>
-            <span class="s1">&#39;storage_limit&#39;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">default_storage_limit</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">constants</span><span class="p">)),</span>
+            <span class="s1">&#39;gas_limit&#39;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">gas_limit</span><span class="p">)</span> <span class="k">if</span> <span class="n">gas_limit</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">str</span><span class="p">(</span><span class="n">default_gas_limit</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">constants</span><span class="p">)),</span>
+            <span class="s1">&#39;storage_limit&#39;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">storage_limit</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">storage_limit</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="k">else</span> <span class="nb">str</span><span class="p">(</span><span class="n">default_storage_limit</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">constants</span><span class="p">)),</span>
+            <span class="s1">&#39;fee&#39;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">default_fee</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">gas_limit</span><span class="p">,</span> <span class="n">minimal_nanotez_per_gas_unit</span><span class="p">)),</span>
         <span class="p">}</span>
 
         <span class="k">def</span> <span class="nf">fill_content</span><span class="p">(</span><span class="n">content</span><span class="p">):</span>
@@ -494,12 +507,41 @@
         <span class="n">res</span> <span class="o">=</span> <span class="n">opg</span><span class="o">.</span><span class="n">inject</span><span class="p">(</span><span class="n">min_confirmations</span><span class="o">=</span><span class="n">min_confirmations</span><span class="p">,</span> <span class="n">num_blocks_wait</span><span class="o">=</span><span class="n">ttl</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">opg</span><span class="o">.</span><span class="n">_spawn</span><span class="p">(</span><span class="n">opg_hash</span><span class="o">=</span><span class="n">res</span><span class="p">[</span><span class="s1">&#39;hash&#39;</span><span class="p">])</span></div>
 
+<div class="viewcode-block" id="OperationGroup.send_async"><a class="viewcode-back" href="../../../operation_groups.html#pytezos.operation.group.OperationGroup.send_async">[docs]</a>    <span class="k">def</span> <span class="nf">send_async</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">ttl</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">counter</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">gas_limit</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">storage_limit</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">minimal_nanotez_per_gas_unit</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;OperationGroup&#39;</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Send operation without simulation or pre-validation</span>
+
+<span class="sd">        :param ttl: Number of blocks to wait in the mempool before removal (default is 5 for public network, 60 for sandbox)</span>
+<span class="sd">        :param counter: Set counter value</span>
+<span class="sd">        :param gas_limit: Set gas_limit value</span>
+<span class="sd">        :param storage_limit: Set storage_limit value</span>
+<span class="sd">        :param minimal_nanotez_per_gas_unit: Override minimal_nanotez_per_gas_unit constant</span>
+<span class="sd">        :rtype: OperationGroup</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">opg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span>
+            <span class="n">counter</span><span class="o">=</span><span class="n">counter</span><span class="p">,</span>
+            <span class="n">ttl</span><span class="o">=</span><span class="n">ttl</span><span class="p">,</span>
+            <span class="n">gas_limit</span><span class="o">=</span><span class="n">gas_limit</span><span class="p">,</span>
+            <span class="n">storage_limit</span><span class="o">=</span><span class="n">storage_limit</span><span class="p">,</span>
+            <span class="n">minimal_nanotez_per_gas_unit</span><span class="o">=</span><span class="n">minimal_nanotez_per_gas_unit</span><span class="p">,</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">sign</span><span class="p">()</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">opg</span><span class="o">.</span><span class="n">inject</span><span class="p">(</span><span class="n">prevalidate</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">opg</span><span class="o">.</span><span class="n">_spawn</span><span class="p">(</span><span class="n">opg_hash</span><span class="o">=</span><span class="n">res</span><span class="p">[</span><span class="s1">&#39;hash&#39;</span><span class="p">])</span></div>
+
 <div class="viewcode-block" id="OperationGroup.inject"><a class="viewcode-back" href="../../../operation_groups.html#pytezos.operation.group.OperationGroup.inject">[docs]</a>    <span class="k">def</span> <span class="nf">inject</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">check_result</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">num_blocks_wait</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
         <span class="n">time_between_blocks</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">min_confirmations</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">prevalidate</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Inject the signed operation group.</span>
@@ -508,13 +550,14 @@
 <span class="sd">        :param num_blocks_wait: number of blocks to wait for injection</span>
 <span class="sd">        :param time_between_blocks: override the corresponding parameter from constants</span>
 <span class="sd">        :param min_confirmations: number of block injections to wait for before returning</span>
+<span class="sd">        :param prevalidate: ask node to pre-validate the operation before the injection (True by default)</span>
 <span class="sd">        :returns: operation group with metadata (raw RPC response)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>  <span class="c1"># reset counter</span>
 
         <span class="n">opg_hash</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell</span><span class="o">.</span><span class="n">injection</span><span class="o">.</span><span class="n">operation</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
             <span class="n">operation</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">binary_payload</span><span class="p">(),</span>
-            <span class="n">_async</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">_async</span><span class="o">=</span><span class="ow">not</span> <span class="n">prevalidate</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">min_confirmations</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>

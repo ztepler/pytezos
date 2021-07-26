@@ -180,6 +180,7 @@
 <span class="kn">from</span> <span class="nn">pytezos.jupyter</span> <span class="kn">import</span> <span class="n">get_attr_docstring</span>
 <span class="kn">from</span> <span class="nn">pytezos.logging</span> <span class="kn">import</span> <span class="n">logger</span>
 <span class="kn">from</span> <span class="nn">pytezos.rpc.kind</span> <span class="kn">import</span> <span class="n">validation_passes</span>
+<span class="kn">from</span> <span class="nn">pytezos.rpc.protocol</span> <span class="kn">import</span> <span class="n">BlockQuery</span><span class="p">,</span> <span class="n">BlocksQuery</span>
 <span class="kn">from</span> <span class="nn">pytezos.rpc.query</span> <span class="kn">import</span> <span class="n">RpcQuery</span>
 <span class="kn">from</span> <span class="nn">pytezos.rpc.search</span> <span class="kn">import</span> <span class="n">CyclesQuery</span><span class="p">,</span> <span class="n">VotingPeriodsQuery</span>
 
@@ -190,18 +191,18 @@
 
 <div class="viewcode-block" id="ShellQuery"><a class="viewcode-back" href="../../../rpc_queries.html#pytezos.rpc.shell.ShellQuery">[docs]</a><span class="k">class</span> <span class="nc">ShellQuery</span><span class="p">(</span><span class="n">RpcQuery</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">blocks</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">blocks</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BlocksQuery</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Shortcut for `chains.main.blocks`&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">chains</span><span class="o">.</span><span class="n">main</span><span class="o">.</span><span class="n">blocks</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">head</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">head</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BlockQuery</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Shortcut for `blocks.head`&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">blocks</span><span class="o">.</span><span class="n">head</span>
 
     <span class="nd">@property</span>  <span class="c1"># type: ignore</span>
     <span class="nd">@lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">block</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">block</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BlockQuery</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Cached head block, useful if you just want to explore things.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">blocks</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">hash</span><span class="p">()]</span>
 
@@ -262,13 +263,13 @@
 
             <span class="n">prev_block_dt</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">header</span><span class="p">[</span><span class="s1">&#39;timestamp&#39;</span><span class="p">],</span> <span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">T%H:%M:%SZ&#39;</span><span class="p">)</span>
             <span class="n">elapsed_sec</span> <span class="o">=</span> <span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">()</span> <span class="o">-</span> <span class="n">prev_block_dt</span><span class="p">)</span><span class="o">.</span><span class="n">seconds</span>
-            <span class="n">sleep_sec</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">if</span> <span class="n">elapsed_sec</span> <span class="o">&gt;</span> <span class="n">block_delay</span> <span class="k">else</span> <span class="p">(</span><span class="n">block_delay</span> <span class="o">-</span> <span class="n">elapsed_sec</span><span class="p">)</span>
+            <span class="n">sleep_sec</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">elapsed_sec</span> <span class="o">&gt;</span> <span class="n">block_delay</span> <span class="k">else</span> <span class="p">(</span><span class="n">block_delay</span> <span class="o">-</span> <span class="n">elapsed_sec</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
 
             <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Sleep </span><span class="si">%d</span><span class="s1"> seconds until block </span><span class="si">%s</span><span class="s1"> is superseded&#39;</span><span class="p">,</span> <span class="n">sleep_sec</span><span class="p">,</span> <span class="n">current_block_hash</span><span class="p">)</span>
             <span class="n">sleep</span><span class="p">(</span><span class="n">sleep_sec</span><span class="p">)</span>
 
             <span class="n">next_block_hash</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-            <span class="n">timeout</span> <span class="o">=</span> <span class="n">block_delay</span> <span class="o">+</span> <span class="n">secondary_delay</span> <span class="o">*</span> <span class="n">max_priority</span>
+            <span class="n">timeout</span> <span class="o">=</span> <span class="n">block_delay</span> <span class="o">+</span> <span class="n">secondary_delay</span> <span class="o">*</span> <span class="n">max_priority</span> <span class="o">+</span> <span class="mi">1</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Waiting for a new block (</span><span class="si">%d</span><span class="s1"> sec timeout)&#39;</span><span class="p">,</span> <span class="n">timeout</span><span class="p">)</span>
 
             <span class="k">for</span> <span class="n">delay</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">timeout</span><span class="p">):</span>

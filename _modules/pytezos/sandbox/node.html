@@ -167,16 +167,19 @@
             
   <h1>Source code for pytezos.sandbox.node</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">atexit</span>
+<span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">unittest</span>
+<span class="kn">from</span> <span class="nn">concurrent.futures</span> <span class="kn">import</span> <span class="n">CancelledError</span><span class="p">,</span> <span class="n">Future</span><span class="p">,</span> <span class="n">ThreadPoolExecutor</span><span class="p">,</span> <span class="n">wait</span>
+<span class="kn">from</span> <span class="nn">threading</span> <span class="kn">import</span> <span class="n">Event</span>
 <span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">sleep</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span>
 
 <span class="kn">import</span> <span class="nn">requests.exceptions</span>
 <span class="kn">from</span> <span class="nn">testcontainers.core.generic</span> <span class="kn">import</span> <span class="n">DockerContainer</span>  <span class="c1"># type: ignore</span>
 
 <span class="kn">from</span> <span class="nn">pytezos.client</span> <span class="kn">import</span> <span class="n">PyTezosClient</span>
 <span class="kn">from</span> <span class="nn">pytezos.operation.group</span> <span class="kn">import</span> <span class="n">OperationGroup</span>
-<span class="kn">from</span> <span class="nn">pytezos.sandbox.parameters</span> <span class="kn">import</span> <span class="n">FLORENCE</span>
+<span class="kn">from</span> <span class="nn">pytezos.sandbox.parameters</span> <span class="kn">import</span> <span class="n">FLORENCE</span><span class="p">,</span> <span class="n">GRANADA</span>
 
 <span class="c1"># NOTE: Container object is a singleton which will be used in all tests inherited from class _SandboxedNodeTestCase</span>
 <span class="c1"># and stopped after all tests are completed.</span>
@@ -184,11 +187,13 @@
 <span class="n">node_container_client</span><span class="p">:</span> <span class="n">PyTezosClient</span> <span class="o">=</span> <span class="n">PyTezosClient</span><span class="p">()</span>
 <span class="n">node_fitness</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
 
+<span class="n">executor</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ThreadPoolExecutor</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
 
 <div class="viewcode-block" id="SandboxedNodeTestCase"><a class="viewcode-back" href="../../../integration_tests.html#pytezos.sandbox.node.SandboxedNodeTestCase">[docs]</a><span class="k">class</span> <span class="nc">SandboxedNodeTestCase</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Perform tests with sanboxed node in Docker container.&quot;&quot;&quot;</span>
 
-    <span class="n">IMAGE</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;bakingbad/sandboxed-node:v9.0-rc1-1&#39;</span>
+    <span class="n">IMAGE</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;bakingbad/sandboxed-node:v9.4-1&#39;</span>
     <span class="s2">&quot;Docker image to use&quot;</span>
 
     <span class="n">PORT</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
@@ -272,6 +277,41 @@
     <span class="k">def</span> <span class="nf">client</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PyTezosClient</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;PyTezos client to interact with sandboxed node.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_client</span><span class="p">()</span><span class="o">.</span><span class="n">using</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;bootstrap2&#39;</span><span class="p">)</span></div>
+
+
+<span class="k">class</span> <span class="nc">SandboxedNodeAutoBakeTestCase</span><span class="p">(</span><span class="n">SandboxedNodeTestCase</span><span class="p">):</span>
+    <span class="n">exit_event</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Event</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">baker</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Future</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="n">TIME_BETWEEN_BLOCKS</span> <span class="o">=</span> <span class="mi">3</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">autobake</span><span class="p">(</span><span class="n">time_between_blocks</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">node_url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">exit_event</span><span class="p">:</span> <span class="n">Event</span><span class="p">):</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Baker thread started&quot;</span><span class="p">)</span>
+        <span class="n">client</span> <span class="o">=</span> <span class="n">PyTezosClient</span><span class="p">()</span><span class="o">.</span><span class="n">using</span><span class="p">(</span><span class="n">shell</span><span class="o">=</span><span class="n">node_url</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">key</span><span class="p">)</span>
+        <span class="n">ptr</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">while</span> <span class="ow">not</span> <span class="n">exit_event</span><span class="o">.</span><span class="n">is_set</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">ptr</span> <span class="o">%</span> <span class="n">time_between_blocks</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">client</span><span class="o">.</span><span class="n">bake_block</span><span class="p">()</span><span class="o">.</span><span class="n">fill</span><span class="p">()</span><span class="o">.</span><span class="n">work</span><span class="p">()</span><span class="o">.</span><span class="n">sign</span><span class="p">()</span><span class="o">.</span><span class="n">inject</span><span class="p">()</span>
+            <span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">ptr</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Baker thread stopped&quot;</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">setUpClass</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">setUpClass</span><span class="p">()</span>
+        <span class="k">global</span> <span class="n">executor</span>  <span class="c1"># pylint: disable=global-statement</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">executor</span><span class="p">:</span>
+            <span class="n">executor</span> <span class="o">=</span> <span class="n">ThreadPoolExecutor</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">exit_event</span> <span class="o">=</span> <span class="n">Event</span><span class="p">()</span>  <span class="c1"># type: ignore</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">baker</span> <span class="o">=</span> <span class="n">executor</span><span class="o">.</span><span class="n">submit</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">autobake</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">TIME_BETWEEN_BLOCKS</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">get_node_url</span><span class="p">(),</span> <span class="s1">&#39;bootstrap1&#39;</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">exit_event</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">tearDownClass</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="bp">cls</span><span class="o">.</span><span class="n">exit_event</span>
+        <span class="k">assert</span> <span class="bp">cls</span><span class="o">.</span><span class="n">baker</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">exit_event</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
+        <span class="n">wait</span><span class="p">([</span><span class="bp">cls</span><span class="o">.</span><span class="n">baker</span><span class="p">])</span>
 </pre></div>
 
            </div>

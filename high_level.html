@@ -1024,7 +1024,7 @@ Can locate operation inside operation groups with multiple contents and/or inter
 <dd><p>Proxy class encapsulating a contract call: contract type scheme, contract address, parameters, and amount</p>
 <dl class="py method">
 <dt id="pytezos.contract.call.ContractCall.as_transaction">
-<code class="sig-name descname"><span class="pre">as_transaction</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="operation_groups.html#pytezos.operation.group.OperationGroup" title="pytezos.operation.group.OperationGroup"><span class="pre">pytezos.operation.group.OperationGroup</span></a><a class="reference internal" href="_modules/pytezos/contract/call.html#ContractCall.as_transaction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.contract.call.ContractCall.as_transaction" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">as_transaction</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="operation_groups.html#pytezos.operation.group.OperationGroup" title="pytezos.operation.group.OperationGroup"><span class="pre">pytezos.operation.group.OperationGroup</span></a><a class="reference internal" href="_modules/pytezos/contract/call.html#ContractCall.as_transaction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.contract.call.ContractCall.as_transaction" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get operation content.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
@@ -1162,6 +1162,26 @@ Can locate operation inside operation groups with multiple contents and/or inter
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>OperationGroup with hash filled</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pytezos.contract.call.ContractCall.send_async">
+<code class="sig-name descname"><span class="pre">send_async</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ttl</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">counter</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gas_limit</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">storage_limit</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">minimal_nanotez_per_gas_unit</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="operation_groups.html#pytezos.operation.group.OperationGroup" title="pytezos.operation.group.OperationGroup"><span class="pre">pytezos.operation.group.OperationGroup</span></a><a class="reference internal" href="_modules/pytezos/contract/call.html#ContractCall.send_async"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.contract.call.ContractCall.send_async" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send operation without simulation or pre-validation</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ttl</strong> – Number of blocks to wait in the mempool before removal (default is 5 for public network, 60 for sandbox)</p></li>
+<li><p><strong>counter</strong> – Set counter value</p></li>
+<li><p><strong>gas_limit</strong> – Set gas_limit value</p></li>
+<li><p><strong>storage_limit</strong> – Set storage_limit value</p></li>
+<li><p><strong>minimal_nanotez_per_gas_unit</strong> – Override minimal_nanotez_per_gas_unit constant</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="operation_groups.html#pytezos.operation.group.OperationGroup" title="pytezos.operation.group.OperationGroup">OperationGroup</a></p>
 </dd>
 </dl>
 </dd></dl>
