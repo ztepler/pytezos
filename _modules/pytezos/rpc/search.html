@@ -13,6 +13,8 @@
   
   <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
 
   
   
@@ -32,6 +34,7 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
         <script src="../../../_static/jquery.js"></script>
         <script src="../../../_static/underscore.js"></script>
         <script src="../../../_static/doctools.js"></script>
@@ -85,7 +88,7 @@
               
             
             
-              <p class="caption"><span class="caption-text">Contents</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../quick_start.html">Quick start</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../integration_tests.html">Michelson integration tests</a></li>
@@ -384,16 +387,14 @@
     <span class="n">__val_key__</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
 
     <span class="k">def</span> <span class="nf">_get_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BlockSliceQuery</span><span class="p">:</span>
-        <span class="n">lvl</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">metadata</span><span class="p">()[</span><span class="s1">&#39;level&#39;</span><span class="p">]</span>
+        <span class="n">lvl</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">metadata</span><span class="p">()[</span><span class="s1">&#39;level_info&#39;</span><span class="p">]</span>
         <span class="n">blocks_per_period</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="n">lvl</span><span class="p">[</span><span class="s1">&#39;level&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">lvl</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">__pos_key__</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">lvl</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">__val_key__</span><span class="p">])</span>
 
         <span class="k">def</span> <span class="nf">get_range</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">x</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="n">start_lvl</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">blocks_per_period</span> <span class="o">+</span> <span class="mi">1</span>
-            <span class="k">elif</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="n">start_lvl</span> <span class="o">=</span> <span class="p">(</span><span class="n">lvl</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">__val_key__</span><span class="p">]</span> <span class="o">+</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">blocks_per_period</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">x</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">start_lvl</span> <span class="o">=</span> <span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">blocks_per_period</span> <span class="o">+</span> <span class="mi">1</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">assert</span> <span class="kc">False</span>
+                <span class="n">start_lvl</span> <span class="o">=</span> <span class="p">(</span><span class="n">lvl</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">__val_key__</span><span class="p">]</span> <span class="o">+</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">blocks_per_period</span> <span class="o">+</span> <span class="mi">1</span>
 
             <span class="n">stop_lvl</span> <span class="o">=</span> <span class="n">start_lvl</span> <span class="o">+</span> <span class="n">blocks_per_period</span> <span class="o">-</span> <span class="mi">1</span>
             <span class="k">if</span> <span class="n">stop_lvl</span> <span class="o">&gt;</span> <span class="n">lvl</span><span class="p">[</span><span class="s1">&#39;level&#39;</span><span class="p">]:</span>

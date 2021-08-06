@@ -13,6 +13,8 @@
   
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
 
   
   
@@ -32,6 +34,7 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
@@ -87,7 +90,7 @@
               
             
             
-              <p class="caption"><span class="caption-text">Contents</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="quick_start.html">Quick start</a></li>
 <li class="toctree-l1"><a class="reference internal" href="integration_tests.html">Michelson integration tests</a></li>
@@ -172,11 +175,11 @@
   <div class="section" id="module-pytezos.protocol.protocol">
 <span id="inspecting-proposals"></span><h1>Inspecting proposals<a class="headerlink" href="#module-pytezos.protocol.protocol" title="Permalink to this headline">¶</a></h1>
 <dl class="py class">
-<dt id="pytezos.protocol.protocol.Protocol">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">pytezos.protocol.protocol.</span></code><code class="sig-name descname"><span class="pre">Protocol</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">proto</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/protocol/protocol.html#Protocol"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.protocol.protocol.Protocol" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pytezos.protocol.protocol.Protocol">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">pytezos.protocol.protocol.</span></span><span class="sig-name descname"><span class="pre">Protocol</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">proto</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/protocol/protocol.html#Protocol"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.protocol.protocol.Protocol" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="py method">
-<dt id="pytezos.protocol.protocol.Protocol.diff">
-<code class="sig-name descname"><span class="pre">diff</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">proto</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/protocol/protocol.html#Protocol.diff"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.protocol.protocol.Protocol.diff" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pytezos.protocol.protocol.Protocol.diff">
+<span class="sig-name descname"><span class="pre">diff</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">proto</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/protocol/protocol.html#Protocol.diff"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.protocol.protocol.Protocol.diff" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculates file diff between two protocol versions.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -192,8 +195,8 @@
 </dd></dl>
 
 <dl class="py method">
-<dt id="pytezos.protocol.protocol.Protocol.export_html">
-<code class="sig-name descname"><span class="pre">export_html</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/protocol/protocol.html#Protocol.export_html"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.protocol.protocol.Protocol.export_html" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pytezos.protocol.protocol.Protocol.export_html">
+<span class="sig-name descname"><span class="pre">export_html</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/protocol/protocol.html#Protocol.export_html"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.protocol.protocol.Protocol.export_html" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generates github-like side-by-side diff viewe, powered by diff2html.js</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -206,8 +209,8 @@
 </dd></dl>
 
 <dl class="py method">
-<dt id="pytezos.protocol.protocol.Protocol.export_tar">
-<code class="sig-name descname"><span class="pre">export_tar</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/protocol/protocol.html#Protocol.export_tar"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.protocol.protocol.Protocol.export_tar" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pytezos.protocol.protocol.Protocol.export_tar">
+<span class="sig-name descname"><span class="pre">export_tar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/protocol/protocol.html#Protocol.export_tar"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.protocol.protocol.Protocol.export_tar" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a tarball and dumps to a file or returns bytes.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -220,8 +223,8 @@
 </dd></dl>
 
 <dl class="py method">
-<dt id="pytezos.protocol.protocol.Protocol.from_uri">
-<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">from_uri</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uri</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/protocol/protocol.html#Protocol.from_uri"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.protocol.protocol.Protocol.from_uri" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pytezos.protocol.protocol.Protocol.from_uri">
+<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">from_uri</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uri</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/protocol/protocol.html#Protocol.from_uri"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.protocol.protocol.Protocol.from_uri" title="Permalink to this definition">¶</a></dt>
 <dd><p>Loads protocol implementation from various sources and converts it to the RPC-like format.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -234,13 +237,13 @@
 </dd></dl>
 
 <dl class="py method">
-<dt id="pytezos.protocol.protocol.Protocol.hash">
-<code class="sig-name descname"><span class="pre">hash</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/protocol/protocol.html#Protocol.hash"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.protocol.protocol.Protocol.hash" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pytezos.protocol.protocol.Protocol.hash">
+<span class="sig-name descname"><span class="pre">hash</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/protocol/protocol.html#Protocol.hash"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.protocol.protocol.Protocol.hash" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
-<dt id="pytezos.protocol.protocol.Protocol.index">
-<code class="sig-name descname"><span class="pre">index</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">dict</span><a class="reference internal" href="_modules/pytezos/protocol/protocol.html#Protocol.index"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.protocol.protocol.Protocol.index" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pytezos.protocol.protocol.Protocol.index">
+<span class="sig-name descname"><span class="pre">index</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/pytezos/protocol/protocol.html#Protocol.index"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.protocol.protocol.Protocol.index" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generates TEZOS_PROTOCOL file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -250,8 +253,8 @@
 </dd></dl>
 
 <dl class="py method">
-<dt id="pytezos.protocol.protocol.Protocol.patch">
-<code class="sig-name descname"><span class="pre">patch</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">patch</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/protocol/protocol.html#Protocol.patch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.protocol.protocol.Protocol.patch" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pytezos.protocol.protocol.Protocol.patch">
+<span class="sig-name descname"><span class="pre">patch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">patch</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/protocol/protocol.html#Protocol.patch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.protocol.protocol.Protocol.patch" title="Permalink to this definition">¶</a></dt>
 <dd><p>Applies unified diff and returns full-fledged protocol.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -266,38 +269,38 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="pytezos.protocol.protocol.dir_to_files">
-<code class="sig-prename descclassname"><span class="pre">pytezos.protocol.protocol.</span></code><code class="sig-name descname"><span class="pre">dir_to_files</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="_modules/pytezos/protocol/protocol.html#dir_to_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.protocol.protocol.dir_to_files" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pytezos.protocol.protocol.dir_to_files">
+<span class="sig-prename descclassname"><span class="pre">pytezos.protocol.protocol.</span></span><span class="sig-name descname"><span class="pre">dir_to_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pytezos/protocol/protocol.html#dir_to_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.protocol.protocol.dir_to_files" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
-<dt id="pytezos.protocol.protocol.files_to_proto">
-<code class="sig-prename descclassname"><span class="pre">pytezos.protocol.protocol.</span></code><code class="sig-name descname"><span class="pre">files_to_proto</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">files</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">dict</span><a class="reference internal" href="_modules/pytezos/protocol/protocol.html#files_to_proto"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.protocol.protocol.files_to_proto" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pytezos.protocol.protocol.files_to_proto">
+<span class="sig-prename descclassname"><span class="pre">pytezos.protocol.protocol.</span></span><span class="sig-name descname"><span class="pre">files_to_proto</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">files</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/pytezos/protocol/protocol.html#files_to_proto"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.protocol.protocol.files_to_proto" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
-<dt id="pytezos.protocol.protocol.files_to_tar">
-<code class="sig-prename descclassname"><span class="pre">pytezos.protocol.protocol.</span></code><code class="sig-name descname"><span class="pre">files_to_tar</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">files</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/protocol/protocol.html#files_to_tar"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.protocol.protocol.files_to_tar" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pytezos.protocol.protocol.files_to_tar">
+<span class="sig-prename descclassname"><span class="pre">pytezos.protocol.protocol.</span></span><span class="sig-name descname"><span class="pre">files_to_tar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">files</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytezos/protocol/protocol.html#files_to_tar"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.protocol.protocol.files_to_tar" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
-<dt id="pytezos.protocol.protocol.proto_to_bytes">
-<code class="sig-prename descclassname"><span class="pre">pytezos.protocol.protocol.</span></code><code class="sig-name descname"><span class="pre">proto_to_bytes</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">proto</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">bytes</span><a class="reference internal" href="_modules/pytezos/protocol/protocol.html#proto_to_bytes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.protocol.protocol.proto_to_bytes" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pytezos.protocol.protocol.proto_to_bytes">
+<span class="sig-prename descclassname"><span class="pre">pytezos.protocol.protocol.</span></span><span class="sig-name descname"><span class="pre">proto_to_bytes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">proto</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bytes</span></span></span><a class="reference internal" href="_modules/pytezos/protocol/protocol.html#proto_to_bytes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.protocol.protocol.proto_to_bytes" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
-<dt id="pytezos.protocol.protocol.proto_to_files">
-<code class="sig-prename descclassname"><span class="pre">pytezos.protocol.protocol.</span></code><code class="sig-name descname"><span class="pre">proto_to_files</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">proto</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="_modules/pytezos/protocol/protocol.html#proto_to_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.protocol.protocol.proto_to_files" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pytezos.protocol.protocol.proto_to_files">
+<span class="sig-prename descclassname"><span class="pre">pytezos.protocol.protocol.</span></span><span class="sig-name descname"><span class="pre">proto_to_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">proto</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pytezos/protocol/protocol.html#proto_to_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.protocol.protocol.proto_to_files" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
-<dt id="pytezos.protocol.protocol.tar_to_files">
-<code class="sig-prename descclassname"><span class="pre">pytezos.protocol.protocol.</span></code><code class="sig-name descname"><span class="pre">tar_to_files</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">raw</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="_modules/pytezos/protocol/protocol.html#tar_to_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.protocol.protocol.tar_to_files" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pytezos.protocol.protocol.tar_to_files">
+<span class="sig-prename descclassname"><span class="pre">pytezos.protocol.protocol.</span></span><span class="sig-name descname"><span class="pre">tar_to_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">raw</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pytezos/protocol/protocol.html#tar_to_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.protocol.protocol.tar_to_files" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
-<dt id="pytezos.protocol.protocol.url_to_files">
-<code class="sig-prename descclassname"><span class="pre">pytezos.protocol.protocol.</span></code><code class="sig-name descname"><span class="pre">url_to_files</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="_modules/pytezos/protocol/protocol.html#url_to_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.protocol.protocol.url_to_files" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pytezos.protocol.protocol.url_to_files">
+<span class="sig-prename descclassname"><span class="pre">pytezos.protocol.protocol.</span></span><span class="sig-name descname"><span class="pre">url_to_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pytezos/protocol/protocol.html#url_to_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytezos.protocol.protocol.url_to_files" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </div>

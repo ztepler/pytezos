@@ -13,6 +13,8 @@
   
   <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
 
   
   
@@ -32,6 +34,7 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
         <script src="../../_static/doctools.js"></script>
@@ -85,7 +88,7 @@
               
             
             
-              <p class="caption"><span class="caption-text">Contents</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../quick_start.html">Quick start</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../integration_tests.html">Michelson integration tests</a></li>
@@ -370,14 +373,19 @@
         <span class="n">num_blocks_wait</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
         <span class="n">time_between_blocks</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">prev_hash</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">block_timeout</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Wait for multiple injected operations to get enough confirmations</span>
+        <span class="sd">&quot;&quot;&quot;Wait for multiple injected operations get enough confirmations</span>
 
 <span class="sd">        :param min_confirmations: number of block injections to wait for before returning</span>
 <span class="sd">        :param num_blocks_wait: number of blocks to wait for injection</span>
 <span class="sd">        :param time_between_blocks: override the corresponding parameter from constants</span>
 <span class="sd">        :param prev_hash: Current block hash (optional). If not set, current head is used.</span>
+<span class="sd">        :param block_timeout: set block timeout (by default Pytezos will wait for a long time)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">operation_groups</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;At least one operation group has to be passed to the args&#39;</span><span class="p">)</span>
+
         <span class="n">opg_hashes</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">opg</span> <span class="ow">in</span> <span class="n">operation_groups</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">opg</span><span class="o">.</span><span class="n">opg_hash</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -390,6 +398,21 @@
             <span class="n">min_confirmations</span><span class="o">=</span><span class="n">min_confirmations</span><span class="p">,</span>
             <span class="n">current_block_hash</span><span class="o">=</span><span class="n">prev_hash</span><span class="p">,</span>
             <span class="n">time_between_blocks</span><span class="o">=</span><span class="n">time_between_blocks</span><span class="p">,</span>
+            <span class="n">block_timeout</span><span class="o">=</span><span class="n">block_timeout</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="PyTezosClient.sleep"><a class="viewcode-back" href="../../high_level.html#pytezos.client.PyTezosClient.sleep">[docs]</a>    <span class="k">def</span> <span class="nf">sleep</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_blocks</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">time_between_blocks</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">block_timeout</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Sleeps until a certain amount of blocks appended to the chain</span>
+
+<span class="sd">        :param num_blocks: number of blocks to wait for</span>
+<span class="sd">        :param time_between_blocks: override the corresponding parameter from constants</span>
+<span class="sd">        :param block_timeout: set block timeout (by default Pytezos will wait for a long time)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">block_hash</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">hash</span><span class="p">()</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">shell</span><span class="o">.</span><span class="n">wait_blocks</span><span class="p">(</span>
+                <span class="n">current_block_hash</span><span class="o">=</span><span class="n">block_hash</span><span class="p">,</span> <span class="n">max_blocks</span><span class="o">=</span><span class="n">num_blocks</span><span class="p">,</span> <span class="n">time_between_blocks</span><span class="o">=</span><span class="n">time_between_blocks</span><span class="p">,</span> <span class="n">block_timeout</span><span class="o">=</span><span class="n">block_timeout</span>
+            <span class="p">)</span>
         <span class="p">)</span></div></div>
 </pre></div>
 

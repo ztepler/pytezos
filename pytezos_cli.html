@@ -13,6 +13,8 @@
   
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
 
   
   
@@ -32,6 +34,7 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
@@ -87,7 +90,7 @@
               
             
             
-              <p class="caption"><span class="caption-text">Contents</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="quick_start.html">Quick start</a></li>
 <li class="toctree-l1"><a class="reference internal" href="integration_tests.html">Michelson integration tests</a></li>
@@ -210,8 +213,8 @@
 </div>
 <p class="rubric">Options</p>
 <dl class="std option">
-<dt id="cmdoption-pytezos-version">
-<code class="sig-name descname"><span class="pre">--version</span></code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-pytezos-version" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object std" id="cmdoption-pytezos-version">
+<span class="sig-name descname"><span class="pre">--version</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-pytezos-version" title="Permalink to this definition">¶</a></dt>
 <dd><p>Show the version and exit.</p>
 </dd></dl>
 
@@ -223,14 +226,14 @@
 </div>
 <p class="rubric">Options</p>
 <dl class="std option">
-<dt id="cmdoption-pytezos-activate-p">
-<span id="cmdoption-pytezos-activate-path"></span><code class="sig-name descname"><span class="pre">-p</span></code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname"><span class="pre">,</span> </code><code class="sig-name descname"><span class="pre">--path</span></code><code class="sig-prename descclassname"> <span class="pre">&lt;path&gt;</span></code><a class="headerlink" href="#cmdoption-pytezos-activate-p" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object std" id="cmdoption-pytezos-activate-p">
+<span id="cmdoption-pytezos-activate-path"></span><span class="sig-name descname"><span class="pre">-p</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--path</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;path&gt;</span></span><a class="headerlink" href="#cmdoption-pytezos-activate-p" title="Permalink to this definition">¶</a></dt>
 <dd><p>Path to the .json file downloaded from <a class="reference external" href="https://faucet.tzalpha.net/">https://faucet.tzalpha.net/</a></p>
 </dd></dl>
 
 <dl class="std option">
-<dt id="cmdoption-pytezos-activate-n">
-<span id="cmdoption-pytezos-activate-network"></span><code class="sig-name descname"><span class="pre">-n</span></code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname"><span class="pre">,</span> </code><code class="sig-name descname"><span class="pre">--network</span></code><code class="sig-prename descclassname"> <span class="pre">&lt;network&gt;</span></code><a class="headerlink" href="#cmdoption-pytezos-activate-n" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object std" id="cmdoption-pytezos-activate-n">
+<span id="cmdoption-pytezos-activate-network"></span><span class="sig-name descname"><span class="pre">-n</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--network</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;network&gt;</span></span><a class="headerlink" href="#cmdoption-pytezos-activate-n" title="Permalink to this definition">¶</a></dt>
 <dd><p>Default is florencenet</p>
 </dd></dl>
 
@@ -243,41 +246,41 @@
 </div>
 <p class="rubric">Options</p>
 <dl class="std option">
-<dt id="cmdoption-pytezos-deploy-p">
-<span id="cmdoption-pytezos-deploy-path"></span><code class="sig-name descname"><span class="pre">-p</span></code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname"><span class="pre">,</span> </code><code class="sig-name descname"><span class="pre">--path</span></code><code class="sig-prename descclassname"> <span class="pre">&lt;path&gt;</span></code><a class="headerlink" href="#cmdoption-pytezos-deploy-p" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object std" id="cmdoption-pytezos-deploy-p">
+<span id="cmdoption-pytezos-deploy-path"></span><span class="sig-name descname"><span class="pre">-p</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--path</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;path&gt;</span></span><a class="headerlink" href="#cmdoption-pytezos-deploy-p" title="Permalink to this definition">¶</a></dt>
 <dd><p>Path to the .tz file</p>
 </dd></dl>
 
 <dl class="std option">
-<dt id="cmdoption-pytezos-deploy-storage">
-<code class="sig-name descname"><span class="pre">--storage</span></code><code class="sig-prename descclassname"> <span class="pre">&lt;storage&gt;</span></code><a class="headerlink" href="#cmdoption-pytezos-deploy-storage" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object std" id="cmdoption-pytezos-deploy-storage">
+<span class="sig-name descname"><span class="pre">--storage</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;storage&gt;</span></span><a class="headerlink" href="#cmdoption-pytezos-deploy-storage" title="Permalink to this definition">¶</a></dt>
 <dd><p>Storage in JSON format (not Micheline)</p>
 </dd></dl>
 
 <dl class="std option">
-<dt id="cmdoption-pytezos-deploy-n">
-<span id="cmdoption-pytezos-deploy-network"></span><code class="sig-name descname"><span class="pre">-n</span></code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname"><span class="pre">,</span> </code><code class="sig-name descname"><span class="pre">--network</span></code><code class="sig-prename descclassname"> <span class="pre">&lt;network&gt;</span></code><a class="headerlink" href="#cmdoption-pytezos-deploy-n" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object std" id="cmdoption-pytezos-deploy-n">
+<span id="cmdoption-pytezos-deploy-network"></span><span class="sig-name descname"><span class="pre">-n</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--network</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;network&gt;</span></span><a class="headerlink" href="#cmdoption-pytezos-deploy-n" title="Permalink to this definition">¶</a></dt>
 <dd><p>Default is florencenet</p>
 </dd></dl>
 
 <dl class="std option">
-<dt id="cmdoption-pytezos-deploy-key">
-<code class="sig-name descname"><span class="pre">--key</span></code><code class="sig-prename descclassname"> <span class="pre">&lt;key&gt;</span></code><a class="headerlink" href="#cmdoption-pytezos-deploy-key" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object std" id="cmdoption-pytezos-deploy-key">
+<span class="sig-name descname"><span class="pre">--key</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;key&gt;</span></span><a class="headerlink" href="#cmdoption-pytezos-deploy-key" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="std option">
-<dt id="cmdoption-pytezos-deploy-github-repo-slug">
-<code class="sig-name descname"><span class="pre">--github-repo-slug</span></code><code class="sig-prename descclassname"> <span class="pre">&lt;github_repo_slug&gt;</span></code><a class="headerlink" href="#cmdoption-pytezos-deploy-github-repo-slug" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object std" id="cmdoption-pytezos-deploy-github-repo-slug">
+<span class="sig-name descname"><span class="pre">--github-repo-slug</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;github_repo_slug&gt;</span></span><a class="headerlink" href="#cmdoption-pytezos-deploy-github-repo-slug" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="std option">
-<dt id="cmdoption-pytezos-deploy-github-oauth-token">
-<code class="sig-name descname"><span class="pre">--github-oauth-token</span></code><code class="sig-prename descclassname"> <span class="pre">&lt;github_oauth_token&gt;</span></code><a class="headerlink" href="#cmdoption-pytezos-deploy-github-oauth-token" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object std" id="cmdoption-pytezos-deploy-github-oauth-token">
+<span class="sig-name descname"><span class="pre">--github-oauth-token</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;github_oauth_token&gt;</span></span><a class="headerlink" href="#cmdoption-pytezos-deploy-github-oauth-token" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="std option">
-<dt id="cmdoption-pytezos-deploy-dry-run">
-<code class="sig-name descname"><span class="pre">--dry-run</span></code><code class="sig-prename descclassname"> <span class="pre">&lt;dry_run&gt;</span></code><a class="headerlink" href="#cmdoption-pytezos-deploy-dry-run" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object std" id="cmdoption-pytezos-deploy-dry-run">
+<span class="sig-name descname"><span class="pre">--dry-run</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;dry_run&gt;</span></span><a class="headerlink" href="#cmdoption-pytezos-deploy-dry-run" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set this flag if you just want to see what would happen</p>
 </dd></dl>
 
@@ -290,26 +293,26 @@
 </div>
 <p class="rubric">Options</p>
 <dl class="std option">
-<dt id="cmdoption-pytezos-ligo-compile-contract-t">
-<span id="cmdoption-pytezos-ligo-compile-contract-tag"></span><code class="sig-name descname"><span class="pre">-t</span></code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname"><span class="pre">,</span> </code><code class="sig-name descname"><span class="pre">--tag</span></code><code class="sig-prename descclassname"> <span class="pre">&lt;tag&gt;</span></code><a class="headerlink" href="#cmdoption-pytezos-ligo-compile-contract-t" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object std" id="cmdoption-pytezos-ligo-compile-contract-t">
+<span id="cmdoption-pytezos-ligo-compile-contract-tag"></span><span class="sig-name descname"><span class="pre">-t</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--tag</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;tag&gt;</span></span><a class="headerlink" href="#cmdoption-pytezos-ligo-compile-contract-t" title="Permalink to this definition">¶</a></dt>
 <dd><p>Version or tag of Ligo compiler</p>
 </dd></dl>
 
 <dl class="std option">
-<dt id="cmdoption-pytezos-ligo-compile-contract-p">
-<span id="cmdoption-pytezos-ligo-compile-contract-path"></span><code class="sig-name descname"><span class="pre">-p</span></code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname"><span class="pre">,</span> </code><code class="sig-name descname"><span class="pre">--path</span></code><code class="sig-prename descclassname"> <span class="pre">&lt;path&gt;</span></code><a class="headerlink" href="#cmdoption-pytezos-ligo-compile-contract-p" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object std" id="cmdoption-pytezos-ligo-compile-contract-p">
+<span id="cmdoption-pytezos-ligo-compile-contract-path"></span><span class="sig-name descname"><span class="pre">-p</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--path</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;path&gt;</span></span><a class="headerlink" href="#cmdoption-pytezos-ligo-compile-contract-p" title="Permalink to this definition">¶</a></dt>
 <dd><p>Path to contract</p>
 </dd></dl>
 
 <dl class="std option">
-<dt id="cmdoption-pytezos-ligo-compile-contract-ep">
-<span id="cmdoption-pytezos-ligo-compile-contract-entry-point"></span><code class="sig-name descname"><span class="pre">-ep</span></code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname"><span class="pre">,</span> </code><code class="sig-name descname"><span class="pre">--entry-point</span></code><code class="sig-prename descclassname"> <span class="pre">&lt;entry_point&gt;</span></code><a class="headerlink" href="#cmdoption-pytezos-ligo-compile-contract-ep" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object std" id="cmdoption-pytezos-ligo-compile-contract-ep">
+<span id="cmdoption-pytezos-ligo-compile-contract-entry-point"></span><span class="sig-name descname"><span class="pre">-ep</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--entry-point</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;entry_point&gt;</span></span><a class="headerlink" href="#cmdoption-pytezos-ligo-compile-contract-ep" title="Permalink to this definition">¶</a></dt>
 <dd><p>Entrypoint for the invocation</p>
 </dd></dl>
 
 <dl class="std option">
-<dt id="cmdoption-pytezos-ligo-compile-contract-d">
-<span id="cmdoption-pytezos-ligo-compile-contract-detach"></span><code class="sig-name descname"><span class="pre">-d</span></code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname"><span class="pre">,</span> </code><code class="sig-name descname"><span class="pre">--detach</span></code><code class="sig-prename descclassname"> <span class="pre">&lt;detach&gt;</span></code><a class="headerlink" href="#cmdoption-pytezos-ligo-compile-contract-d" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object std" id="cmdoption-pytezos-ligo-compile-contract-d">
+<span id="cmdoption-pytezos-ligo-compile-contract-detach"></span><span class="sig-name descname"><span class="pre">-d</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--detach</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;detach&gt;</span></span><a class="headerlink" href="#cmdoption-pytezos-ligo-compile-contract-d" title="Permalink to this definition">¶</a></dt>
 <dd><p>Run container in detached mode</p>
 </dd></dl>
 
@@ -322,32 +325,32 @@
 </div>
 <p class="rubric">Options</p>
 <dl class="std option">
-<dt id="cmdoption-pytezos-ligo-compile-storage-t">
-<span id="cmdoption-pytezos-ligo-compile-storage-tag"></span><code class="sig-name descname"><span class="pre">-t</span></code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname"><span class="pre">,</span> </code><code class="sig-name descname"><span class="pre">--tag</span></code><code class="sig-prename descclassname"> <span class="pre">&lt;tag&gt;</span></code><a class="headerlink" href="#cmdoption-pytezos-ligo-compile-storage-t" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object std" id="cmdoption-pytezos-ligo-compile-storage-t">
+<span id="cmdoption-pytezos-ligo-compile-storage-tag"></span><span class="sig-name descname"><span class="pre">-t</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--tag</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;tag&gt;</span></span><a class="headerlink" href="#cmdoption-pytezos-ligo-compile-storage-t" title="Permalink to this definition">¶</a></dt>
 <dd><p>Version or tag of Ligo compiler</p>
 </dd></dl>
 
 <dl class="std option">
-<dt id="cmdoption-pytezos-ligo-compile-storage-p">
-<span id="cmdoption-pytezos-ligo-compile-storage-path"></span><code class="sig-name descname"><span class="pre">-p</span></code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname"><span class="pre">,</span> </code><code class="sig-name descname"><span class="pre">--path</span></code><code class="sig-prename descclassname"> <span class="pre">&lt;path&gt;</span></code><a class="headerlink" href="#cmdoption-pytezos-ligo-compile-storage-p" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object std" id="cmdoption-pytezos-ligo-compile-storage-p">
+<span id="cmdoption-pytezos-ligo-compile-storage-path"></span><span class="sig-name descname"><span class="pre">-p</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--path</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;path&gt;</span></span><a class="headerlink" href="#cmdoption-pytezos-ligo-compile-storage-p" title="Permalink to this definition">¶</a></dt>
 <dd><p>Path to contract</p>
 </dd></dl>
 
 <dl class="std option">
-<dt id="cmdoption-pytezos-ligo-compile-storage-ep">
-<span id="cmdoption-pytezos-ligo-compile-storage-entry-point"></span><code class="sig-name descname"><span class="pre">-ep</span></code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname"><span class="pre">,</span> </code><code class="sig-name descname"><span class="pre">--entry-point</span></code><code class="sig-prename descclassname"> <span class="pre">&lt;entry_point&gt;</span></code><a class="headerlink" href="#cmdoption-pytezos-ligo-compile-storage-ep" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object std" id="cmdoption-pytezos-ligo-compile-storage-ep">
+<span id="cmdoption-pytezos-ligo-compile-storage-entry-point"></span><span class="sig-name descname"><span class="pre">-ep</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--entry-point</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;entry_point&gt;</span></span><a class="headerlink" href="#cmdoption-pytezos-ligo-compile-storage-ep" title="Permalink to this definition">¶</a></dt>
 <dd><p>Entrypoint for the storage</p>
 </dd></dl>
 
 <dl class="std option">
-<dt id="cmdoption-pytezos-ligo-compile-storage-ex">
-<span id="cmdoption-pytezos-ligo-compile-storage-expression"></span><code class="sig-name descname"><span class="pre">-ex</span></code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname"><span class="pre">,</span> </code><code class="sig-name descname"><span class="pre">--expression</span></code><code class="sig-prename descclassname"> <span class="pre">&lt;expression&gt;</span></code><a class="headerlink" href="#cmdoption-pytezos-ligo-compile-storage-ex" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object std" id="cmdoption-pytezos-ligo-compile-storage-ex">
+<span id="cmdoption-pytezos-ligo-compile-storage-expression"></span><span class="sig-name descname"><span class="pre">-ex</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--expression</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;expression&gt;</span></span><a class="headerlink" href="#cmdoption-pytezos-ligo-compile-storage-ex" title="Permalink to this definition">¶</a></dt>
 <dd><p>Expression for the storage</p>
 </dd></dl>
 
 <dl class="std option">
-<dt id="cmdoption-pytezos-ligo-compile-storage-d">
-<span id="cmdoption-pytezos-ligo-compile-storage-detach"></span><code class="sig-name descname"><span class="pre">-d</span></code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname"><span class="pre">,</span> </code><code class="sig-name descname"><span class="pre">--detach</span></code><code class="sig-prename descclassname"> <span class="pre">&lt;detach&gt;</span></code><a class="headerlink" href="#cmdoption-pytezos-ligo-compile-storage-d" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object std" id="cmdoption-pytezos-ligo-compile-storage-d">
+<span id="cmdoption-pytezos-ligo-compile-storage-detach"></span><span class="sig-name descname"><span class="pre">-d</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--detach</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;detach&gt;</span></span><a class="headerlink" href="#cmdoption-pytezos-ligo-compile-storage-d" title="Permalink to this definition">¶</a></dt>
 <dd><p>Run container in detached mode</p>
 </dd></dl>
 
@@ -360,32 +363,32 @@
 </div>
 <p class="rubric">Options</p>
 <dl class="std option">
-<dt id="cmdoption-pytezos-ligo-invoke-contract-t">
-<span id="cmdoption-pytezos-ligo-invoke-contract-tag"></span><code class="sig-name descname"><span class="pre">-t</span></code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname"><span class="pre">,</span> </code><code class="sig-name descname"><span class="pre">--tag</span></code><code class="sig-prename descclassname"> <span class="pre">&lt;tag&gt;</span></code><a class="headerlink" href="#cmdoption-pytezos-ligo-invoke-contract-t" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object std" id="cmdoption-pytezos-ligo-invoke-contract-t">
+<span id="cmdoption-pytezos-ligo-invoke-contract-tag"></span><span class="sig-name descname"><span class="pre">-t</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--tag</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;tag&gt;</span></span><a class="headerlink" href="#cmdoption-pytezos-ligo-invoke-contract-t" title="Permalink to this definition">¶</a></dt>
 <dd><p>Version or tag of Ligo compiler</p>
 </dd></dl>
 
 <dl class="std option">
-<dt id="cmdoption-pytezos-ligo-invoke-contract-p">
-<span id="cmdoption-pytezos-ligo-invoke-contract-path"></span><code class="sig-name descname"><span class="pre">-p</span></code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname"><span class="pre">,</span> </code><code class="sig-name descname"><span class="pre">--path</span></code><code class="sig-prename descclassname"> <span class="pre">&lt;path&gt;</span></code><a class="headerlink" href="#cmdoption-pytezos-ligo-invoke-contract-p" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object std" id="cmdoption-pytezos-ligo-invoke-contract-p">
+<span id="cmdoption-pytezos-ligo-invoke-contract-path"></span><span class="sig-name descname"><span class="pre">-p</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--path</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;path&gt;</span></span><a class="headerlink" href="#cmdoption-pytezos-ligo-invoke-contract-p" title="Permalink to this definition">¶</a></dt>
 <dd><p>Path to contract</p>
 </dd></dl>
 
 <dl class="std option">
-<dt id="cmdoption-pytezos-ligo-invoke-contract-ep">
-<span id="cmdoption-pytezos-ligo-invoke-contract-entry-point"></span><code class="sig-name descname"><span class="pre">-ep</span></code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname"><span class="pre">,</span> </code><code class="sig-name descname"><span class="pre">--entry-point</span></code><code class="sig-prename descclassname"> <span class="pre">&lt;entry_point&gt;</span></code><a class="headerlink" href="#cmdoption-pytezos-ligo-invoke-contract-ep" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object std" id="cmdoption-pytezos-ligo-invoke-contract-ep">
+<span id="cmdoption-pytezos-ligo-invoke-contract-entry-point"></span><span class="sig-name descname"><span class="pre">-ep</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--entry-point</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;entry_point&gt;</span></span><a class="headerlink" href="#cmdoption-pytezos-ligo-invoke-contract-ep" title="Permalink to this definition">¶</a></dt>
 <dd><p>Entrypoint for the invocation</p>
 </dd></dl>
 
 <dl class="std option">
-<dt id="cmdoption-pytezos-ligo-invoke-contract-ex">
-<span id="cmdoption-pytezos-ligo-invoke-contract-expression"></span><code class="sig-name descname"><span class="pre">-ex</span></code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname"><span class="pre">,</span> </code><code class="sig-name descname"><span class="pre">--expression</span></code><code class="sig-prename descclassname"> <span class="pre">&lt;expression&gt;</span></code><a class="headerlink" href="#cmdoption-pytezos-ligo-invoke-contract-ex" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object std" id="cmdoption-pytezos-ligo-invoke-contract-ex">
+<span id="cmdoption-pytezos-ligo-invoke-contract-expression"></span><span class="sig-name descname"><span class="pre">-ex</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--expression</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;expression&gt;</span></span><a class="headerlink" href="#cmdoption-pytezos-ligo-invoke-contract-ex" title="Permalink to this definition">¶</a></dt>
 <dd><p>Expression for the invocation</p>
 </dd></dl>
 
 <dl class="std option">
-<dt id="cmdoption-pytezos-ligo-invoke-contract-d">
-<span id="cmdoption-pytezos-ligo-invoke-contract-detach"></span><code class="sig-name descname"><span class="pre">-d</span></code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname"><span class="pre">,</span> </code><code class="sig-name descname"><span class="pre">--detach</span></code><code class="sig-prename descclassname"> <span class="pre">&lt;detach&gt;</span></code><a class="headerlink" href="#cmdoption-pytezos-ligo-invoke-contract-d" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object std" id="cmdoption-pytezos-ligo-invoke-contract-d">
+<span id="cmdoption-pytezos-ligo-invoke-contract-detach"></span><span class="sig-name descname"><span class="pre">-d</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--detach</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;detach&gt;</span></span><a class="headerlink" href="#cmdoption-pytezos-ligo-invoke-contract-d" title="Permalink to this definition">¶</a></dt>
 <dd><p>Run container in detached mode</p>
 </dd></dl>
 
@@ -398,14 +401,14 @@
 </div>
 <p class="rubric">Options</p>
 <dl class="std option">
-<dt id="cmdoption-pytezos-parameter-a">
-<span id="cmdoption-pytezos-parameter-action"></span><code class="sig-name descname"><span class="pre">-a</span></code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname"><span class="pre">,</span> </code><code class="sig-name descname"><span class="pre">--action</span></code><code class="sig-prename descclassname"> <span class="pre">&lt;action&gt;</span></code><a class="headerlink" href="#cmdoption-pytezos-parameter-a" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object std" id="cmdoption-pytezos-parameter-a">
+<span id="cmdoption-pytezos-parameter-action"></span><span class="sig-name descname"><span class="pre">-a</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--action</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;action&gt;</span></span><a class="headerlink" href="#cmdoption-pytezos-parameter-a" title="Permalink to this definition">¶</a></dt>
 <dd><p>One of <cite>schema</cite></p>
 </dd></dl>
 
 <dl class="std option">
-<dt id="cmdoption-pytezos-parameter-p">
-<span id="cmdoption-pytezos-parameter-path"></span><code class="sig-name descname"><span class="pre">-p</span></code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname"><span class="pre">,</span> </code><code class="sig-name descname"><span class="pre">--path</span></code><code class="sig-prename descclassname"> <span class="pre">&lt;path&gt;</span></code><a class="headerlink" href="#cmdoption-pytezos-parameter-p" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object std" id="cmdoption-pytezos-parameter-p">
+<span id="cmdoption-pytezos-parameter-path"></span><span class="sig-name descname"><span class="pre">-p</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--path</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;path&gt;</span></span><a class="headerlink" href="#cmdoption-pytezos-parameter-p" title="Permalink to this definition">¶</a></dt>
 <dd><p>Path to the .tz file, or the following uri: &lt;network&gt;:&lt;KT-address&gt;</p>
 </dd></dl>
 
@@ -418,14 +421,14 @@
 </div>
 <p class="rubric">Options</p>
 <dl class="std option">
-<dt id="cmdoption-pytezos-sandbox-image">
-<code class="sig-name descname"><span class="pre">--image</span></code><code class="sig-prename descclassname"> <span class="pre">&lt;image&gt;</span></code><a class="headerlink" href="#cmdoption-pytezos-sandbox-image" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object std" id="cmdoption-pytezos-sandbox-image">
+<span class="sig-name descname"><span class="pre">--image</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;image&gt;</span></span><a class="headerlink" href="#cmdoption-pytezos-sandbox-image" title="Permalink to this definition">¶</a></dt>
 <dd><p>Docker image to use</p>
 </dd></dl>
 
 <dl class="std option">
-<dt id="cmdoption-pytezos-sandbox-protocol">
-<code class="sig-name descname"><span class="pre">--protocol</span></code><code class="sig-prename descclassname"> <span class="pre">&lt;protocol&gt;</span></code><a class="headerlink" href="#cmdoption-pytezos-sandbox-protocol" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object std" id="cmdoption-pytezos-sandbox-protocol">
+<span class="sig-name descname"><span class="pre">--protocol</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;protocol&gt;</span></span><a class="headerlink" href="#cmdoption-pytezos-sandbox-protocol" title="Permalink to this definition">¶</a></dt>
 <dd><p>Protocol to use</p>
 <dl class="field-list simple">
 <dt class="field-odd">Options</dt>
@@ -435,20 +438,20 @@
 </dd></dl>
 
 <dl class="std option">
-<dt id="cmdoption-pytezos-sandbox-p">
-<span id="cmdoption-pytezos-sandbox-port"></span><code class="sig-name descname"><span class="pre">-p</span></code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname"><span class="pre">,</span> </code><code class="sig-name descname"><span class="pre">--port</span></code><code class="sig-prename descclassname"> <span class="pre">&lt;port&gt;</span></code><a class="headerlink" href="#cmdoption-pytezos-sandbox-p" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object std" id="cmdoption-pytezos-sandbox-p">
+<span id="cmdoption-pytezos-sandbox-port"></span><span class="sig-name descname"><span class="pre">-p</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--port</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;port&gt;</span></span><a class="headerlink" href="#cmdoption-pytezos-sandbox-p" title="Permalink to this definition">¶</a></dt>
 <dd><p>Port to expose</p>
 </dd></dl>
 
 <dl class="std option">
-<dt id="cmdoption-pytezos-sandbox-i">
-<span id="cmdoption-pytezos-sandbox-interval"></span><code class="sig-name descname"><span class="pre">-i</span></code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname"><span class="pre">,</span> </code><code class="sig-name descname"><span class="pre">--interval</span></code><code class="sig-prename descclassname"> <span class="pre">&lt;interval&gt;</span></code><a class="headerlink" href="#cmdoption-pytezos-sandbox-i" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object std" id="cmdoption-pytezos-sandbox-i">
+<span id="cmdoption-pytezos-sandbox-interval"></span><span class="sig-name descname"><span class="pre">-i</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--interval</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;interval&gt;</span></span><a class="headerlink" href="#cmdoption-pytezos-sandbox-i" title="Permalink to this definition">¶</a></dt>
 <dd><p>Interval between baked blocks (in seconds)</p>
 </dd></dl>
 
 <dl class="std option">
-<dt id="cmdoption-pytezos-sandbox-b">
-<span id="cmdoption-pytezos-sandbox-blocks"></span><code class="sig-name descname"><span class="pre">-b</span></code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname"><span class="pre">,</span> </code><code class="sig-name descname"><span class="pre">--blocks</span></code><code class="sig-prename descclassname"> <span class="pre">&lt;blocks&gt;</span></code><a class="headerlink" href="#cmdoption-pytezos-sandbox-b" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object std" id="cmdoption-pytezos-sandbox-b">
+<span id="cmdoption-pytezos-sandbox-blocks"></span><span class="sig-name descname"><span class="pre">-b</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--blocks</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;blocks&gt;</span></span><a class="headerlink" href="#cmdoption-pytezos-sandbox-b" title="Permalink to this definition">¶</a></dt>
 <dd><p>Number of blocks to bake before exit</p>
 </dd></dl>
 
@@ -461,26 +464,26 @@
 </div>
 <p class="rubric">Options</p>
 <dl class="std option">
-<dt id="cmdoption-pytezos-smartpy-compile-s">
-<span id="cmdoption-pytezos-smartpy-compile-script"></span><code class="sig-name descname"><span class="pre">-s</span></code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname"><span class="pre">,</span> </code><code class="sig-name descname"><span class="pre">--script</span></code><code class="sig-prename descclassname"> <span class="pre">&lt;script&gt;</span></code><a class="headerlink" href="#cmdoption-pytezos-smartpy-compile-s" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object std" id="cmdoption-pytezos-smartpy-compile-s">
+<span id="cmdoption-pytezos-smartpy-compile-script"></span><span class="sig-name descname"><span class="pre">-s</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--script</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;script&gt;</span></span><a class="headerlink" href="#cmdoption-pytezos-smartpy-compile-s" title="Permalink to this definition">¶</a></dt>
 <dd><p>Path to script</p>
 </dd></dl>
 
 <dl class="std option">
-<dt id="cmdoption-pytezos-smartpy-compile-o">
-<span id="cmdoption-pytezos-smartpy-compile-output-directory"></span><code class="sig-name descname"><span class="pre">-o</span></code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname"><span class="pre">,</span> </code><code class="sig-name descname"><span class="pre">--output-directory</span></code><code class="sig-prename descclassname"> <span class="pre">&lt;output_directory&gt;</span></code><a class="headerlink" href="#cmdoption-pytezos-smartpy-compile-o" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object std" id="cmdoption-pytezos-smartpy-compile-o">
+<span id="cmdoption-pytezos-smartpy-compile-output-directory"></span><span class="sig-name descname"><span class="pre">-o</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--output-directory</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;output_directory&gt;</span></span><a class="headerlink" href="#cmdoption-pytezos-smartpy-compile-o" title="Permalink to this definition">¶</a></dt>
 <dd><p>Output directory</p>
 </dd></dl>
 
 <dl class="std option">
-<dt id="cmdoption-pytezos-smartpy-compile-d">
-<span id="cmdoption-pytezos-smartpy-compile-detach"></span><code class="sig-name descname"><span class="pre">-d</span></code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname"><span class="pre">,</span> </code><code class="sig-name descname"><span class="pre">--detach</span></code><code class="sig-prename descclassname"> <span class="pre">&lt;detach&gt;</span></code><a class="headerlink" href="#cmdoption-pytezos-smartpy-compile-d" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object std" id="cmdoption-pytezos-smartpy-compile-d">
+<span id="cmdoption-pytezos-smartpy-compile-detach"></span><span class="sig-name descname"><span class="pre">-d</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--detach</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;detach&gt;</span></span><a class="headerlink" href="#cmdoption-pytezos-smartpy-compile-d" title="Permalink to this definition">¶</a></dt>
 <dd><p>Run container in detached mode</p>
 </dd></dl>
 
 <dl class="std option">
-<dt id="cmdoption-pytezos-smartpy-compile-protocol">
-<code class="sig-name descname"><span class="pre">--protocol</span></code><code class="sig-prename descclassname"> <span class="pre">&lt;protocol&gt;</span></code><a class="headerlink" href="#cmdoption-pytezos-smartpy-compile-protocol" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object std" id="cmdoption-pytezos-smartpy-compile-protocol">
+<span class="sig-name descname"><span class="pre">--protocol</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;protocol&gt;</span></span><a class="headerlink" href="#cmdoption-pytezos-smartpy-compile-protocol" title="Permalink to this definition">¶</a></dt>
 <dd><p>Protocol to use</p>
 <dl class="field-list simple">
 <dt class="field-odd">Options</dt>
@@ -490,8 +493,8 @@
 </dd></dl>
 
 <dl class="std option">
-<dt id="cmdoption-pytezos-smartpy-compile-t">
-<span id="cmdoption-pytezos-smartpy-compile-tag"></span><code class="sig-name descname"><span class="pre">-t</span></code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname"><span class="pre">,</span> </code><code class="sig-name descname"><span class="pre">--tag</span></code><code class="sig-prename descclassname"> <span class="pre">&lt;tag&gt;</span></code><a class="headerlink" href="#cmdoption-pytezos-smartpy-compile-t" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object std" id="cmdoption-pytezos-smartpy-compile-t">
+<span id="cmdoption-pytezos-smartpy-compile-tag"></span><span class="sig-name descname"><span class="pre">-t</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--tag</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;tag&gt;</span></span><a class="headerlink" href="#cmdoption-pytezos-smartpy-compile-t" title="Permalink to this definition">¶</a></dt>
 <dd><p>Version or tag of SmartPy to use</p>
 </dd></dl>
 
@@ -504,20 +507,20 @@
 </div>
 <p class="rubric">Options</p>
 <dl class="std option">
-<dt id="cmdoption-pytezos-smartpy-test-s">
-<span id="cmdoption-pytezos-smartpy-test-script"></span><code class="sig-name descname"><span class="pre">-s</span></code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname"><span class="pre">,</span> </code><code class="sig-name descname"><span class="pre">--script</span></code><code class="sig-prename descclassname"> <span class="pre">&lt;script&gt;</span></code><a class="headerlink" href="#cmdoption-pytezos-smartpy-test-s" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object std" id="cmdoption-pytezos-smartpy-test-s">
+<span id="cmdoption-pytezos-smartpy-test-script"></span><span class="sig-name descname"><span class="pre">-s</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--script</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;script&gt;</span></span><a class="headerlink" href="#cmdoption-pytezos-smartpy-test-s" title="Permalink to this definition">¶</a></dt>
 <dd><p>Path to script</p>
 </dd></dl>
 
 <dl class="std option">
-<dt id="cmdoption-pytezos-smartpy-test-o">
-<span id="cmdoption-pytezos-smartpy-test-output-directory"></span><code class="sig-name descname"><span class="pre">-o</span></code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname"><span class="pre">,</span> </code><code class="sig-name descname"><span class="pre">--output-directory</span></code><code class="sig-prename descclassname"> <span class="pre">&lt;output_directory&gt;</span></code><a class="headerlink" href="#cmdoption-pytezos-smartpy-test-o" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object std" id="cmdoption-pytezos-smartpy-test-o">
+<span id="cmdoption-pytezos-smartpy-test-output-directory"></span><span class="sig-name descname"><span class="pre">-o</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--output-directory</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;output_directory&gt;</span></span><a class="headerlink" href="#cmdoption-pytezos-smartpy-test-o" title="Permalink to this definition">¶</a></dt>
 <dd><p>Output directory</p>
 </dd></dl>
 
 <dl class="std option">
-<dt id="cmdoption-pytezos-smartpy-test-protocol">
-<code class="sig-name descname"><span class="pre">--protocol</span></code><code class="sig-prename descclassname"> <span class="pre">&lt;protocol&gt;</span></code><a class="headerlink" href="#cmdoption-pytezos-smartpy-test-protocol" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object std" id="cmdoption-pytezos-smartpy-test-protocol">
+<span class="sig-name descname"><span class="pre">--protocol</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;protocol&gt;</span></span><a class="headerlink" href="#cmdoption-pytezos-smartpy-test-protocol" title="Permalink to this definition">¶</a></dt>
 <dd><p>Protocol to use</p>
 <dl class="field-list simple">
 <dt class="field-odd">Options</dt>
@@ -527,14 +530,14 @@
 </dd></dl>
 
 <dl class="std option">
-<dt id="cmdoption-pytezos-smartpy-test-d">
-<span id="cmdoption-pytezos-smartpy-test-detach"></span><code class="sig-name descname"><span class="pre">-d</span></code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname"><span class="pre">,</span> </code><code class="sig-name descname"><span class="pre">--detach</span></code><code class="sig-prename descclassname"> <span class="pre">&lt;detach&gt;</span></code><a class="headerlink" href="#cmdoption-pytezos-smartpy-test-d" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object std" id="cmdoption-pytezos-smartpy-test-d">
+<span id="cmdoption-pytezos-smartpy-test-detach"></span><span class="sig-name descname"><span class="pre">-d</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--detach</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;detach&gt;</span></span><a class="headerlink" href="#cmdoption-pytezos-smartpy-test-d" title="Permalink to this definition">¶</a></dt>
 <dd><p>Run container in detached mode</p>
 </dd></dl>
 
 <dl class="std option">
-<dt id="cmdoption-pytezos-smartpy-test-t">
-<span id="cmdoption-pytezos-smartpy-test-tag"></span><code class="sig-name descname"><span class="pre">-t</span></code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname"><span class="pre">,</span> </code><code class="sig-name descname"><span class="pre">--tag</span></code><code class="sig-prename descclassname"> <span class="pre">&lt;tag&gt;</span></code><a class="headerlink" href="#cmdoption-pytezos-smartpy-test-t" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object std" id="cmdoption-pytezos-smartpy-test-t">
+<span id="cmdoption-pytezos-smartpy-test-tag"></span><span class="sig-name descname"><span class="pre">-t</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--tag</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;tag&gt;</span></span><a class="headerlink" href="#cmdoption-pytezos-smartpy-test-t" title="Permalink to this definition">¶</a></dt>
 <dd><p>Version or tag of SmartPy to use</p>
 </dd></dl>
 
@@ -547,14 +550,14 @@
 </div>
 <p class="rubric">Options</p>
 <dl class="std option">
-<dt id="cmdoption-pytezos-storage-a">
-<span id="cmdoption-pytezos-storage-action"></span><code class="sig-name descname"><span class="pre">-a</span></code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname"><span class="pre">,</span> </code><code class="sig-name descname"><span class="pre">--action</span></code><code class="sig-prename descclassname"> <span class="pre">&lt;action&gt;</span></code><a class="headerlink" href="#cmdoption-pytezos-storage-a" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object std" id="cmdoption-pytezos-storage-a">
+<span id="cmdoption-pytezos-storage-action"></span><span class="sig-name descname"><span class="pre">-a</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--action</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;action&gt;</span></span><a class="headerlink" href="#cmdoption-pytezos-storage-a" title="Permalink to this definition">¶</a></dt>
 <dd><p>One of <cite>schema</cite>, <cite>default</cite>.</p>
 </dd></dl>
 
 <dl class="std option">
-<dt id="cmdoption-pytezos-storage-p">
-<span id="cmdoption-pytezos-storage-path"></span><code class="sig-name descname"><span class="pre">-p</span></code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname"><span class="pre">,</span> </code><code class="sig-name descname"><span class="pre">--path</span></code><code class="sig-prename descclassname"> <span class="pre">&lt;path&gt;</span></code><a class="headerlink" href="#cmdoption-pytezos-storage-p" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object std" id="cmdoption-pytezos-storage-p">
+<span id="cmdoption-pytezos-storage-path"></span><span class="sig-name descname"><span class="pre">-p</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--path</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;path&gt;</span></span><a class="headerlink" href="#cmdoption-pytezos-storage-p" title="Permalink to this definition">¶</a></dt>
 <dd><p>Path to the .tz file, or the following uri: &lt;network&gt;:&lt;KT-address&gt;</p>
 </dd></dl>
 
@@ -567,8 +570,8 @@
 </div>
 <p class="rubric">Options</p>
 <dl class="std option">
-<dt id="cmdoption-pytezos-update-ligo-t">
-<span id="cmdoption-pytezos-update-ligo-tag"></span><code class="sig-name descname"><span class="pre">-t</span></code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname"><span class="pre">,</span> </code><code class="sig-name descname"><span class="pre">--tag</span></code><code class="sig-prename descclassname"> <span class="pre">&lt;tag&gt;</span></code><a class="headerlink" href="#cmdoption-pytezos-update-ligo-t" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object std" id="cmdoption-pytezos-update-ligo-t">
+<span id="cmdoption-pytezos-update-ligo-tag"></span><span class="sig-name descname"><span class="pre">-t</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--tag</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;tag&gt;</span></span><a class="headerlink" href="#cmdoption-pytezos-update-ligo-t" title="Permalink to this definition">¶</a></dt>
 <dd><p>Version or tag to pull</p>
 </dd></dl>
 
@@ -581,8 +584,8 @@
 </div>
 <p class="rubric">Options</p>
 <dl class="std option">
-<dt id="cmdoption-pytezos-update-smartpy-t">
-<span id="cmdoption-pytezos-update-smartpy-tag"></span><code class="sig-name descname"><span class="pre">-t</span></code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname"><span class="pre">,</span> </code><code class="sig-name descname"><span class="pre">--tag</span></code><code class="sig-prename descclassname"> <span class="pre">&lt;tag&gt;</span></code><a class="headerlink" href="#cmdoption-pytezos-update-smartpy-t" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object std" id="cmdoption-pytezos-update-smartpy-t">
+<span id="cmdoption-pytezos-update-smartpy-tag"></span><span class="sig-name descname"><span class="pre">-t</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--tag</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;tag&gt;</span></span><a class="headerlink" href="#cmdoption-pytezos-update-smartpy-t" title="Permalink to this definition">¶</a></dt>
 <dd><p>Version or tag to pull</p>
 </dd></dl>
 
