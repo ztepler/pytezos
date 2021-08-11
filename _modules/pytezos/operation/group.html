@@ -204,7 +204,7 @@
         <span class="n">branch</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">signature</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">opg_hash</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="c1"># TODO: metadata {balance_updates, operation_result}</span>
+        <span class="n">opg_result</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">context</span><span class="o">=</span><span class="n">context</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">contents</span> <span class="o">=</span> <span class="n">contents</span> <span class="ow">or</span> <span class="p">[]</span>
@@ -213,6 +213,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">branch</span> <span class="o">=</span> <span class="n">branch</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">signature</span> <span class="o">=</span> <span class="n">signature</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">opg_hash</span> <span class="o">=</span> <span class="n">opg_hash</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">opg_result</span> <span class="o">=</span> <span class="n">opg_result</span>
 
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="n">res</span> <span class="o">=</span> <span class="p">[</span>
@@ -233,6 +234,7 @@
             <span class="n">branch</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;branch&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">branch</span><span class="p">),</span>
             <span class="n">signature</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;signature&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">signature</span><span class="p">),</span>
             <span class="n">opg_hash</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;opg_hash&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">opg_hash</span><span class="p">),</span>
+            <span class="n">opg_result</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;opg_result&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">opg_result</span><span class="p">),</span>
         <span class="p">)</span>
 
 <div class="viewcode-block" id="OperationGroup.json_payload"><a class="viewcode-back" href="../../../operation_groups.html#pytezos.operation.group.OperationGroup.json_payload">[docs]</a>    <span class="k">def</span> <span class="nf">json_payload</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
@@ -508,7 +510,7 @@
 
         <span class="n">opg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">autofill</span><span class="p">(</span><span class="n">gas_reserve</span><span class="o">=</span><span class="n">gas_reserve</span><span class="p">,</span> <span class="n">burn_reserve</span><span class="o">=</span><span class="n">burn_reserve</span><span class="p">,</span> <span class="n">ttl</span><span class="o">=</span><span class="n">ttl</span><span class="p">)</span><span class="o">.</span><span class="n">sign</span><span class="p">()</span>
         <span class="n">res</span> <span class="o">=</span> <span class="n">opg</span><span class="o">.</span><span class="n">inject</span><span class="p">(</span><span class="n">min_confirmations</span><span class="o">=</span><span class="n">min_confirmations</span><span class="p">,</span> <span class="n">num_blocks_wait</span><span class="o">=</span><span class="n">ttl</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">opg</span><span class="o">.</span><span class="n">_spawn</span><span class="p">(</span><span class="n">opg_hash</span><span class="o">=</span><span class="n">res</span><span class="p">[</span><span class="s1">&#39;hash&#39;</span><span class="p">])</span></div>
+        <span class="k">return</span> <span class="n">opg</span><span class="o">.</span><span class="n">_spawn</span><span class="p">(</span><span class="n">opg_hash</span><span class="o">=</span><span class="n">res</span><span class="p">[</span><span class="s1">&#39;hash&#39;</span><span class="p">],</span> <span class="n">opg_result</span><span class="o">=</span><span class="n">res</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="OperationGroup.send_async"><a class="viewcode-back" href="../../../operation_groups.html#pytezos.operation.group.OperationGroup.send_async">[docs]</a>    <span class="k">def</span> <span class="nf">send_async</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
