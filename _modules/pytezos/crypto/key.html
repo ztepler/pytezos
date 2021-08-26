@@ -427,6 +427,7 @@
         <span class="n">validate</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">curve</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;ed&#39;</span><span class="p">,</span>
         <span class="n">activation_code</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">language</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">DEFAULT_LANGUAGE</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;Key&#39;</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Creates a key object from a bip39 mnemonic.</span>
 
@@ -436,13 +437,14 @@
 <span class="sd">        :param validate: whether to check mnemonic or not</span>
 <span class="sd">        :param curve: b&#39;sp&#39; for secp251k1, b&#39;p2&#39; for P256/secp256r1, b&#39;ed&#39; for Ed25519 (default)</span>
 <span class="sd">        :param activation_code: secret for initializing account balance</span>
+<span class="sd">        :param language: The English label for the language of the mnemonic. This is needed for validation</span>
 <span class="sd">        :rtype: Key</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mnemonic</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
             <span class="n">mnemonic</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">mnemonic</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">validate</span><span class="p">:</span>
-            <span class="n">validate_mnemonic</span><span class="p">(</span><span class="n">mnemonic</span><span class="p">)</span>
+            <span class="n">validate_mnemonic</span><span class="p">(</span><span class="n">mnemonic</span><span class="p">,</span> <span class="n">language</span><span class="o">=</span><span class="n">language</span><span class="p">)</span>
 
         <span class="n">seed</span> <span class="o">=</span> <span class="n">Mnemonic</span><span class="o">.</span><span class="n">to_seed</span><span class="p">(</span><span class="n">mnemonic</span><span class="p">,</span> <span class="n">passphrase</span><span class="o">=</span><span class="n">email</span> <span class="o">+</span> <span class="n">passphrase</span><span class="p">)</span>
 
