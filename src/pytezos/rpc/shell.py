@@ -1,8 +1,8 @@
+from asyncio import sleep
 from binascii import hexlify
 from datetime import datetime
 from functools import lru_cache
-from time import sleep
-from typing import Any, Dict, Generator, List, Optional
+from typing import Any, AsyncGenerator, Dict, List, Optional
 
 import requests
 import simplejson as json
@@ -62,7 +62,7 @@ class ShellQuery(RpcQuery, path=''):
         """Shortcut for `chains.main.mempool`"""
         return self.chains.main.mempool
 
-    def wait_blocks(
+    async def wait_blocks(
         self,
         current_block_hash: str,
         max_blocks: int = 1,
@@ -70,7 +70,7 @@ class ShellQuery(RpcQuery, path=''):
         yield_current=False,
         time_between_blocks: Optional[int] = None,
         block_timeout: Optional[int] = None,
-    ) -> Generator[str, None, None]:
+    ) -> AsyncGenerator[str, None]:
         """Iterates over future blocks (waits and yields block hash)
 
         :param current_block_hash: hash of the current block (head)
@@ -103,14 +103,14 @@ class ShellQuery(RpcQuery, path=''):
             sleep_sec = 1 if elapsed_sec > time_between_blocks else (time_between_blocks - elapsed_sec + 1)
 
             logger.info('Sleep %d seconds until block %s is superseded', sleep_sec, current_block_hash)
-            sleep(sleep_sec)
+            await sleep(sleep_sec)
 
             next_block_hash: Optional[str] = None
 
             for delay in range(block_timeout):
                 next_block_hash = self.head.hash()
                 if current_block_hash == next_block_hash:
-                    sleep(1)
+                    await sleep(1)
                 else:
                     logger.info('Found new block %s (%d sec delay)', next_block_hash, delay)
                     break
@@ -123,7 +123,7 @@ class ShellQuery(RpcQuery, path=''):
             else:
                 raise TimeoutError('Reached timeout (%d sec) while waiting for the next block', block_timeout)
 
-    def wait_operations(
+    async def wait_operations(
         self,
         opg_hashes: List[str],
         ttl: int,
@@ -151,7 +151,7 @@ class ShellQuery(RpcQuery, path=''):
         if block_hash is None:
             block_hash = self.head.hash()
 
-        for block_hash in self.wait_blocks(
+        async for block_hash in self.wait_blocks(
             current_block_hash=block_hash,
             max_blocks=ttl,
             yield_current=True,
@@ -187,7 +187,7 @@ class ShellQuery(RpcQuery, path=''):
         if len(operations) < len(opg_hashes):
             raise StopIteration('Only %d of %d operations were included, stopping', len(operations), len(opg_hashes))
 
-        for _ in self.wait_blocks(block_hash, max_blocks=min_confirmations - 1, time_between_blocks=time_between_blocks):
+        async for _ in self.wait_blocks(block_hash, max_blocks=min_confirmations - 1, time_between_blocks=time_between_blocks):
             for opg_hash in opg_hashes:
                 confirmations[opg_hash] += 1
                 logger.info('Operation %s has %d/%d confirmations', opg_hash, confirmations[opg_hash], min_confirmations)
@@ -195,7 +195,7 @@ class ShellQuery(RpcQuery, path=''):
         return operations
 
     @deprecated(deprecated_in='3.2.2', removed_in='4.0.0', details=f'Use wait_blocks() instead')
-    def wait_next_block(
+    async def wait_next_block(
         self,
         delay_sec=1,
         prev_hash=None,
@@ -222,7 +222,7 @@ class ShellQuery(RpcQuery, path=''):
             else:
                 sleep_sec = time_between_blocks
             logger.info('Wait %s seconds until block %s is finalized', sleep_sec, prev_hash)
-            sleep(sleep_sec)
+            await sleep(sleep_sec)
 
         if max_iterations is None:
             max_iterations = max(1, time_between_blocks)
@@ -230,7 +230,7 @@ class ShellQuery(RpcQuery, path=''):
         for _ in range(max_iterations):
             current_block_hash = self.head.hash()
             if current_block_hash == prev_hash:
-                sleep(delay_sec)
+                await sleep(delay_sec)
             else:
                 return current_block_hash
         raise StopIteration("Timeout")

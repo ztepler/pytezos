@@ -1,3 +1,4 @@
+import asyncio
 import logging
 
 from pytezos.sandbox.node import SandboxedNodeTestCase
@@ -15,7 +16,9 @@ class WaitHelpersTestCase(SandboxedNodeTestCase):
             for _ in range(2)
         ]
         with self.assertRaises(TimeoutError):
-            client.wait(*operations, num_blocks_wait=1, time_between_blocks=1, block_timeout=2)
+            asyncio.run(
+                client.wait(*operations, num_blocks_wait=1, time_between_blocks=1, block_timeout=2)
+            )
 
         self.bake_block()
 
@@ -24,11 +27,15 @@ class WaitHelpersTestCase(SandboxedNodeTestCase):
             for _ in range(2)
         ])
         with self.assertRaises(TimeoutError):
-            client.wait(*operations, num_blocks_wait=1, time_between_blocks=1, block_timeout=2)
+            asyncio.run(
+                client.wait(*operations, num_blocks_wait=1, time_between_blocks=1, block_timeout=2)
+            )
 
         head_hash = client.shell.head.hash()
         self.bake_block()
 
-        client.wait(*operations, num_blocks_wait=1, time_between_blocks=1, prev_hash=head_hash)
+        asyncio.run(
+            client.wait(*operations, num_blocks_wait=1, time_between_blocks=1, prev_hash=head_hash)
+        )
         bootstrap3 = self.client.shell.contracts[sandbox_addresses['bootstrap3']]()
         self.assertEqual('4000000004000', bootstrap3['balance'])

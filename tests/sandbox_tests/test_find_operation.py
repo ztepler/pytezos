@@ -1,3 +1,4 @@
+import asyncio
 from pytezos.sandbox.node import SandboxedNodeAutoBakeTestCase
 from pytezos.sandbox.parameters import sandbox_addresses
 from pytezos.operation.result import OperationResult
@@ -14,7 +15,7 @@ class FindOperationTestCase(SandboxedNodeAutoBakeTestCase):
 
     def test_2_sleep(self) -> None:
         level_from = self.client.shell.head.level()
-        self.client.sleep(2)
+        asyncio.run(self.client.sleep(2))
         level_to = self.client.shell.head.level()
         self.assertEqual(2, level_to - level_from)
 

@@ -1,3 +1,4 @@
+import asyncio
 from pytezos.sandbox.node import SandboxedNodeAutoBakeTestCase
 from pytezos import ContractInterface
 from pytezos.operation.result import OperationResult
@@ -52,9 +53,9 @@ class ConcurrentTransactionsTestCase(SandboxedNodeAutoBakeTestCase):
             )
             for idx, i in enumerate(range(50))
         ]
-        self.client.wait(
+        asyncio.run(self.client.wait(
             *txs,
             time_between_blocks=self.TIME_BETWEEN_BLOCKS,
             min_confirmations=1
-        )
+        ))
         self.assertEqual(1225, int(contract.storage() - value_before))

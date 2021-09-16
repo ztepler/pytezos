@@ -1,3 +1,4 @@
+import asyncio
 from pprint import pformat
 from typing import Any, Dict, List, Optional, Union
 
@@ -403,12 +404,14 @@ class OperationGroup(ContextMixin, ContentMixin):
                 **self.json_payload(),
             }
 
-        operations = self.shell.wait_operations(
-            opg_hashes=[opg_hash],
-            ttl=num_blocks_wait,
-            min_confirmations=min_confirmations,
-            time_between_blocks=time_between_blocks,
-            block_timeout=block_timeout,
+        operations = asyncio.run(
+            self.shell.wait_operations(
+                opg_hashes=[opg_hash],
+                ttl=num_blocks_wait,
+                min_confirmations=min_confirmations,
+                time_between_blocks=time_between_blocks,
+                block_timeout=block_timeout,
+            )
         )
 
         assert len(operations) == 1
